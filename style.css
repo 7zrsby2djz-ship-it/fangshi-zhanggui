@@ -244,3 +244,8 @@ input[type=range]{width:100%;accent-color:var(--jade)}
 .opt .it{font-family:var(--serif);font-size:13.5px;color:var(--ink);line-height:1.6}
 .evid{margin:4px 0 0;padding-left:1.2em;font-size:14px;line-height:1.8;font-family:var(--serif)}
 details summary{cursor:pointer}
+.tbl tr.tap{cursor:pointer}
+.tbl tr.tap td:first-child{text-decoration:none}
+.lesson summary{font-size:12.5px;color:var(--jade);margin-top:2px}
+.lesson p{font-family:var(--serif);font-size:14px;line-height:1.85;margin-top:4px}
+.t3{display:flex;gap:6px;flex-wrap:wrap}

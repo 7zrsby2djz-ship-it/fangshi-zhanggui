@@ -59,7 +59,7 @@ function newGame(seed) {
   return s;
 }
 
-const DEFAULTS = () => ({ intel: {}, isold: {}, heat: 0, extraNews: [], accused: {}, baiSold: {}, intelSeenN: 0 });
+const DEFAULTS = () => ({ statLog: [], intel: {}, isold: {}, heat: 0, extraNews: [], accused: {}, baiSold: {}, intelSeenN: 0 });
 function migrate(s) { const d = DEFAULTS(); for (const k in d) if (s[k] === undefined) s[k] = d[k]; return s; }
 
 /* ----- lots ----- */
@@ -227,7 +227,25 @@ function finish() {
   S.complaints = [];
   S.events = [];
   S.phase = 'end'; S.lifespanLeft = M.lifespan - 1;
+  const sc = scoreTotal(), best = store.get(BEST_KEY);
+  S.finalScore = sc; S.prevBest = best ? best.score : null;
+  if (!best || sc > best.score) store.set(BEST_KEY, { score: sc, grade: gradeOf(), at: Date.now() });
 }
+const BEST_KEY = 'fangshi-best-v1';
+function gradeOf() { const m = S.stats.fooled + S.stats.wronged; return S.flags.debt || m >= 4 ? '下' : (S.level >= 5 && m <= 1) ? '上' : '中'; }
+function scoreRows() {
+  const nw = netWorth(true);
+  return [
+    { k: 'saw', label: '看穿', n: S.stats.saw, per: 10 },
+    { k: 'fooled', label: '吃虧', n: S.stats.fooled, per: -15 },
+    { k: 'wronged', label: '錯怪好人', n: S.stats.wronged, per: -10 },
+    { label: '境界（每比煉氣四層高一層）', n: Math.max(0, S.level - M.startLevel), per: 30 },
+    { label: '身家（每十靈石）', n: Math.floor(Math.max(0, nw) / 10), per: 1 },
+    { label: '名聲（散修圈＋宗門圈）', n: (S.rep.loose || 0) + (S.rep.sect || 0), per: 5 },
+    { label: '欠錢不語', n: S.debt ? 1 : 0, per: -30 }
+  ];
+}
+const scoreTotal = () => scoreRows().reduce((a, r) => a + r.n * r.per, 0);
 
 /* ================= encounters ================= */
 function dealAvail(d) { return !S.done[d.id] && S.day >= d.days[0] && S.day <= d.days[1] && needOk(d.need); }
@@ -450,9 +468,11 @@ function decide(key) {
   e.th.push({ k: 'res', t: sub(res.text, e.npc), notes });
   // judgement stats
   if (!d.neutral && !d.extra) {
-    if (key === 'expose') { if (o.right) S.stats.saw++; else S.stats.wronged++; }
-    else if ((d.verdict || []).includes(key) && ok) S.stats.saw++;
-    else if (key === 'deal') S.stats.fooled++;
+    let kind = null;
+    if (key === 'expose') kind = o.right ? 'saw' : 'wronged';
+    else if ((d.verdict || []).includes(key) && ok) kind = 'saw';
+    else if (key === 'deal') kind = 'fooled';
+    if (kind) { S.stats[kind]++; S.statLog.push({ deal: e.deal, kind, key, day: S.day }); }
   }
   S.log.push({ day: S.day, t: `${NP[e.npc].name}：${d.title}（${e.done.label}）` });
   scanLearn();
@@ -921,8 +941,8 @@ function renderPlace() {
     if (S.day === M.marketDay) h += `<h2 class="sec-h">擺攤</h2><p class="small muted">市集日可以自己擺個攤，客人多是逛街的散修，賣得快、利薄。照市價九五折，最多擺三批貨。</p><button class="btn quiet wide" data-act="stall" ${S.place.stalled ? 'disabled' : ''}>${S.place.stalled ? '今天擺過了' : '擺攤'}</button>`;
   }
   if (id === 'huichun') {
-    h += `<h2 class="sec-h">藥櫃</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>貨</th><th class="r">價</th><th></th></tr></thead><tbody>`;
-    for (const s of p.sells) { const pr = rp(price(s.item) * s.mult); h += `<tr><td><button class="g-link" style="margin:0" data-act="lore" data-id="${s.item}">${esc(IT[s.item].name)}</button><div class="small muted">${esc(IT[s.item].grade)}</div></td><td class="r">${fmt(pr)}</td><td class="r"><button class="btn quiet" style="min-height:34px" data-act="hbuy" data-id="${s.item}" ${S.stones < pr ? 'disabled' : ''}>買一${esc(IT[s.item].unit)}</button></td></tr>`; }
+    h += `<h2 class="sec-h">藥櫃</h2><p class="small muted" style="margin-bottom:6px">回春堂賣得比市價貴一成半，收貨只給八折，拿來轉賣通常虧錢。要賺，得趕在消息讓價錢漲起來之前買；定神香、養氣丹則是夜裡打坐自己用的。你不煉丹。</p><div class="tbl-wrap"><table class="tbl"><thead><tr><th>貨</th><th class="r">價</th><th></th></tr></thead><tbody>`;
+    for (const s of p.sells) { const pr = rp(price(s.item) * s.mult); h += `<tr><td><button class="g-link" style="margin:0" data-act="lore" data-id="${s.item}">${esc(IT[s.item].name)}</button><div class="small muted">${esc(IT[s.item].grade)}${['dingshen', 'yangqi'].includes(s.item) ? '　·　<span class="jade">夜裡打坐用</span>' : ''}</div></td><td class="r">${fmt(pr)}</td><td class="r"><button class="btn quiet" style="min-height:34px" data-act="hbuy" data-id="${s.item}" ${S.stones < pr ? 'disabled' : ''}>買一${esc(IT[s.item].unit)}</button></td></tr>`; }
     for (const x of p.display) h += `<tr><td><button class="g-link" style="margin:0" data-act="lore" data-id="${x}">${esc(IT[x].name)}</button><div class="small muted">${esc(IT[x].stat)}</div></td><td class="r muted">—</td><td></td></tr>`;
     h += `</tbody></table></div><h2 class="sec-h">賣給回春堂</h2>`;
     const mine = S.lots.filter(l => (IT[l.item].sell || []).includes('huichun'));
@@ -1018,9 +1038,9 @@ function renderEnd() {
   const missed = COUNTED.length - counted.length;
   const nw = netWorth(true);
   const mistakes = S.stats.fooled + S.stats.wronged;
-  const grade = S.flags.debt || mistakes >= 4 ? '下' : (S.level >= 5 && mistakes <= 1) ? '上' : '中';
+  const grade = gradeOf();
   const T = M.truthLabels;
-  const truths = counted.map(id => { const d = DEALS[id]; const t = d.truth; return `<div class="truth"><b>${esc(d.title.includes(NP[d.npc].name) ? d.title : NP[d.npc].name + '：' + d.title)}</b><div class="t3"><span class="pill">${esc(T.goods[t.goods])}</span><span class="pill">${esc(T.origin[t.origin])}</span><span class="pill ${t.intent === 'plain' ? '' : 'cin'}">${esc(T.intent[t.intent])}</span></div><span class="small muted">你的處置：${esc(labelOf(id, S.done[id]))}${S.flags['won_' + id] ? '，後來到執事堂告成了' : ''}</span></div>`; }).join('');
+  const truths = counted.map(id => { const d = DEALS[id]; const t = d.truth; return `<div class="truth"><b>${esc(d.title.includes(NP[d.npc].name) ? d.title : NP[d.npc].name + '：' + d.title)}</b><div class="t3"><span class="pill">${esc(T.goods[t.goods])}</span><span class="pill">${esc(T.origin[t.origin])}</span><span class="pill ${t.intent === 'plain' ? '' : 'cin'}">${esc(T.intent[t.intent])}</span></div><span class="small muted">你的處置：${esc(labelOf(id, S.done[id]))}${S.flags['won_' + id] ? '，後來到執事堂告成了' : ''}</span>${d.lesson ? `<details class="lesson"><summary>線索在哪</summary><p>${esc(d.lesson)}</p></details>` : ''}</div>`; }).join('');
   return `<section class="stack" style="padding-top:18px">
     <div class="row"><div><span class="label">第一個月</span><div class="grade">${grade}等</div></div><div style="margin-left:auto;text-align:right"><span class="label">長生典</span><div class="serif cin" style="font-size:20px;font-weight:700">尚餘${monthsText(S.lifespan - 1)}</div></div></div>
     ${S.cards.length ? `<div class="stack">${S.cards.map(c => `<div class="event"><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p>${c.notes && c.notes.length ? `<div class="fxline">${esc(c.notes.join('　'))}</div>` : ''}</div>`).join('')}</div>` : ''}
@@ -1031,9 +1051,15 @@ function renderEnd() {
       ${S.debt ? `<tr><td>欠錢不語</td><td class="r cin">－${fmt(S.debt)}</td></tr>` : ''}
       <tr><td><b>身家</b></td><td class="r"><b>${fmt(nw)}</b></td></tr>
       <tr><td>修為</td><td class="r">${lvName(S.level)}　${S.xp}/${M.xpNeed[S.level]}</td></tr>
-      <tr><td>看穿</td><td class="r">${S.stats.saw}</td></tr><tr><td>吃虧</td><td class="r">${S.stats.fooled}</td></tr><tr><td>錯怪好人</td><td class="r">${S.stats.wronged}</td></tr>
       <tr><td>這個月錯過的生意</td><td class="r">${missed} 筆</td></tr>
     </tbody></table></div>
+    <h2 class="sec-h">評等</h2><div class="card stack">
+      ${[['修為到煉氣五層', S.level >= 5, lvName(S.level)], ['被騙＋錯怪不超過一次', mistakes <= 1, `${mistakes} 次`], ['月底沒有欠債', !S.flags.debt, S.flags.debt ? '欠錢記' : '沒有']].map(([t, ok, v]) => `<div class="row"><span class="${ok ? 'jade' : 'cin'}" style="width:1.2em">${ok ? '✓' : '✗'}</span><span style="flex:1">${t}</span><span class="small muted">${esc(v)}</span></div>`).join('')}
+      <p class="small muted">三條都做到是上等。欠債，或被騙＋錯怪四次以上，是下等。其他是中等。</p></div>
+    <h2 class="sec-h">帳面分</h2><div class="card"><table class="tbl score"><thead><tr><th>項目</th><th class="r">數</th><th class="r">每個</th><th class="r">分</th></tr></thead><tbody>
+      ${scoreRows().map(r => `<tr${r.k && r.n ? ` class="tap" data-act="statsheet" data-id="${r.k}"` : ''}><td>${esc(r.label)}${r.k && r.n ? '<span class="small jade">　看是哪幾筆 ›</span>' : ''}</td><td class="r">${r.n}</td><td class="r muted">${r.per > 0 ? '＋' : '－'}${Math.abs(r.per)}</td><td class="r ${r.n * r.per < 0 ? 'cin' : ''}">${r.n * r.per > 0 ? '＋' : r.n * r.per < 0 ? '－' : ''}${Math.abs(r.n * r.per)}</td></tr>`).join('')}
+      <tr><td><b>合計</b></td><td></td><td></td><td class="r"><b>${scoreTotal()}</b></td></tr></tbody></table>
+      <p class="small muted" style="margin-top:8px">${S.prevBest == null ? '這是你第一次結算，之後每一輪都會跟最高分比。' : S.finalScore > S.prevBest ? `新紀錄。之前最高 ${S.prevBest} 分。` : `你的最高紀錄是 ${S.prevBest} 分。`}</p></div>
     <h2 class="sec-h">這個月的真相</h2><div>${truths || '<p class="muted">這個月你沒談成什麼生意。</p>'}</div>
     ${(() => { const ts = (D.endings.teasers || []).filter(t => needOk(t.need)).slice(0, 3); return ts.length ? `<h2 class="sec-h">還沒完的事</h2><div class="stack">${ts.map(t => `<p class="serif" style="line-height:1.9">${esc(t.text)}</p>`).join('')}</div>` : ''; })()}
     <p class="serif muted" style="margin-top:12px">${esc(D.endings.next)}</p>
@@ -1147,6 +1173,10 @@ function renderSheet() {
   } else if (sh.type === 'accuse') {
     const a = ACC.find(x => x.id === sh.id), had = evidenceHad(a);
     h = `<h2>${esc(a.label)}</h2><p class="small muted" style="margin-top:6px">你手上的證據：</p>${had.length ? `<ul class="evid">${had.map(ev => `<li>${esc(ev.text)}</li>`).join('')}</ul>` : '<p class="small" style="margin-top:4px">什麼都沒有。</p>'}<p class="small muted" style="margin-top:8px">告了就收不回來。</p><button class="opt danger" data-act="accusego" data-id="${a.id}"><b>去告</b><span>周執事會聽你說完</span></button>`;
+  } else if (sh.type === 'stat') {
+    const T = { saw: '看穿', fooled: '吃虧', wronged: '錯怪好人' }, TL = M.truthLabels;
+    const list = (S.statLog || []).filter(x => x.kind === sh.id);
+    h = `<h2>${T[sh.id]}</h2>` + (list.length ? list.map(x => { const d = DEALS[x.deal], t = d.truth; return `<div class="card" style="margin-top:10px"><b class="serif">${esc(NP[d.npc].name + '：' + d.title)}</b><div class="t3" style="margin:6px 0">${['goods', 'origin', 'intent'].map(k => `<span class="pill ${k === 'intent' && t.intent !== 'plain' ? 'cin' : ''}">${esc(TL[k][t[k]])}</span>`).join(' ')}</div><p class="small">${esc(M.dayNames[x.day - 1])}，你選了「${esc(labelOf(x.deal, x.key))}」。${S.flags['won_' + x.deal] ? '後來到執事堂告成了，這筆不算吃虧。' : ''}</p>${d.lesson ? `<p class="serif" style="margin-top:6px;line-height:1.85">${esc(d.lesson)}</p>` : ''}</div>`; }).join('') : '<p class="muted">沒有紀錄。</p>');
   } else if (sh.type === 'menu') {
     h = `<h2>選單</h2>${sh.confirm ? `<p class="small">重新開始會清掉這一局。確定嗎？</p><button class="opt danger" data-act="new"><b>確定，重新開始</b><span>這一局會消失</span></button>` : `<button class="opt" data-act="home"><b>回到封面</b><span>進度會保留</span></button><button class="opt" data-act="askrestart"><b>重新開始</b><span>清掉這一局</span></button>`}`;
   }
@@ -1249,6 +1279,7 @@ function onAct(a, el) {
     case 'tbuy': buyTea(+el.dataset.i); commit(); break;
     case 'overhear': overhear(); commit(); break;
     case 'askbai': UI.sheet = { type: 'askbai' }; render(); break;
+    case 'statsheet': UI.sheet = { type: 'stat', id }; render(); break;
     case 'intelsheet': UI.sheet = { type: 'sellintel' }; render(); break;
     case 'sellintel': sellAtTea(id); commit(); break;
     case 'accusesheet': UI.sheet = { type: 'accuse', id }; render(); break;

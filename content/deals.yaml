@@ -19,6 +19,7 @@ deals:
   qty: 10
   price: 6
   truth: {goods: genuine, origin: clean, intent: squeeze}
+  lesson: 「新礦脈」只是他說的。執事堂沒貼告示，鐵老蔫也沒聽說；他說「要跌」時嘴角往上，你一沉默他就加價。真要跌，他不會急著收。
   verdict: [decline, expose]
   open: 「〈你〉，聽說了沒？北面開了新礦脈，寒鐵要跌。你爹留下那些寒鐵，趁還有人要，我幫你接手。六塊一斤。」
   ask: {q: 錢掌櫃怎麼突然要收寒鐵？, a: 「錢記做的就是寒鐵生意，跌了我也得收。收的人少，我收的就便宜。這是幫你。」}
@@ -56,6 +57,7 @@ deals:
   qty: 1
   price: 3
   truth: {goods: undervalued, origin: inheritance, intent: plain}
+  lesson: 三塊錢一箱你爹的遺物，問得出寄放的來龍去脈，價錢也不圖什麼。這筆沒有陷阱，該收。
   verdict: [deal]
   open: 「〈你〉，你爹當年寄在我這兒一箱舊東西，十二年了，佔地方。三塊靈石，你拿回去。」
   ask: {q: 裡面是什麼？, a: 「舊帳本、破劍穗、幾個空盒子。值錢的早沒了，我可沒動過，你別多想。」}
@@ -88,6 +90,7 @@ deals:
   price: 40
   lot: {q: 0.02, label: 傳承玉簡（據說）}
   truth: {goods: fake, origin: clean, intent: con}
+  lesson: 洞府在第幾座沙丘、石門上刻什麼都記得，叩了兩日半卻撐不住——故事太完整了。白七娘今年見過四枚，姚四年輕時也買過；鑑定，摸不到禁制。
   verdict: [decline, expose, refer]
   open: 「施主有緣。此乃一位前輩坐化前封存的傳承玉簡，需以神識叩問三日方顯。貧道修為淺薄，叩不開，只求換些盤纏。四十靈石。」
   ask: {q: 道長從哪裡得來的？, a: 「貧道在西漠一處洞府撿到。洞府主人留書：『有緣者得之。』」}
@@ -124,6 +127,7 @@ deals:
   price: 10
   lot: {q: 1.05, label: 野生赤炎草}
   truth: {goods: genuine, origin: clean, intent: plain}
+  lesson: 葉背金線粗細一致，根上帶著林子深處才有的黑土，老葛也替她說話。十塊一株是公道價。
   verdict: [deal]
   intro: 田埂盡頭站著一個背藥簍的姑娘，簍裡幾株赤炎草還帶著土。
   open: 「野生的，二十年上下。十塊一株。」
@@ -157,6 +161,7 @@ deals:
   price: 13
   lot: {q: 0.65, label: 五十年赤炎草, flags: [painted]}
   truth: {goods: inferior, origin: clean, intent: dump}
+  lesson: 年份、日期、山溝記得清清楚楚，又說玉盒養得住靈性；老葛說南嶺地火不穩，草長不老。對著光看，後兩道金線比較粗，顏色也新。
   verdict: [decline, expose, refer]
   open: 「〈你〉，好東西。五十年的赤炎草，五株。十三塊一株，回春堂收都要十五。」
   ask: {q: 哪來的？, a: 「南嶺採的，我年年去。這批是運氣好。」}
@@ -195,6 +200,7 @@ deals:
   price: 40
   lot: {q: 1, label: 雪蟾酥, flags: [stolen, sect], perishDay: 6}
   truth: {goods: genuine, origin: stolen, intent: plain}
+  lesson: 玉匣是寒潭宗的制式，底下刮花了一塊；舅舅「上個月……不，開春」走的，說到一半改口；燒火的雜役拿不到二階靈物。宗門正在北林找一個送貨的人。買下，就是收贓。
   verdict: [decline, report, special, expose]
   intro: 她把一方玉匣放在櫃上。玉匣底部有一塊被刮花的地方。
   open: 「這個，你收不收？」
@@ -271,6 +277,7 @@ deals:
   price: 3
   lot: {q: 1, label: 會發燙的灰石頭}
   truth: {goods: undervalued, origin: clean, intent: plain}
+  lesson: 晚上會發燙，石心有一線暗紅，是地火靈髓。鐵老蔫一聽就叫你別讓孩子賣掉。
   verdict: [deal, expose, special]
   open: 「〈你〉，這塊你看看，晚上會發燙，真的！三塊靈石。」
   ask: {q: 在哪撿的？, a: 「南嶺山腳，跟一堆石頭混在一起。」}
@@ -335,6 +342,7 @@ deals:
   price: 5
   lot: {q: 0.25, label: 陶記避水符, flags: [damp]}
   truth: {goods: flawed, origin: clean, intent: innocent}
+  lesson: 符讓徒弟搬去城東倉庫放過幾天，而城東連下了三天雨，倉庫漏水。對著光看，十張的硃砂都暈開了。陶老符自己也不知道——點破，比買下或告他都好。
   verdict: [expose, decline]
   open: 「避水符，十張，五塊一張。我陶某畫了四十年符，你去問。」
   ask: {q: 都是您自己畫的？, a: 「自己畫的。前陣子……不，上個月，讓徒弟搬到城東倉庫放了幾天，這兩天才搬回來擺攤。」}
@@ -368,6 +376,7 @@ deals:
   price: 8
   lot: {q: 1, label: 斷水刀（殘）, flags: [stolen]}
   truth: {goods: genuine, origin: stolen, intent: plain}
+  lesson: 刀柄的纏繩纏得極細，是給一隻小手纏的；刀上的裂誰補的，他說不出來；鐵老蔫記得，補這把刀的是個瘦小的年輕人。執事堂正在找一個佩刀的瘦小散修。
   verdict: [decline, expose, report]
   open: 「好刀，斷水刀。八塊，拿走。」
   ask: {q: 刀是你的？, a: 「我自己的，用了十年。」}
@@ -403,6 +412,7 @@ deals:
   price: 9
   lot: {q: 1, label: 柳郎中的療傷丹, flags: [sting, sect]}
   truth: {goods: genuine, origin: stolen, intent: sting}
+  lesson: 半價的療傷丹，開口就說「不用問來歷」，說「乾淨」時眼睛看著門外；瓶底的硃印沒擦乾淨。白七娘說，他賣過三回好東西，三家鋪子被查。
   verdict: [decline, expose, report]
   open: 「〈你〉，上好的療傷丹，三枚。九塊一枚。不用問來歷，乾淨得很。」
   ask: {q: 丹是哪來的？, a: 「城西一位孫老爺，腿上的傷好了，丹藥用不完，託我轉賣。」}
@@ -437,6 +447,7 @@ deals:
   itemName: 一個油布包裹
   price: 5
   truth: {goods: fake, origin: contraband, intent: proxy}
+  lesson: 火漆的印紋歪了半分，分量不止幾塊樣品；鐵老蔫說錢記從不給人看樣品；「後天出城」是有人放出來的說法。收下，就是替人藏東西。
   verdict: [decline, expose, special]
   intro: 包裹用油布裹著，封著寒潭宗的火漆。
   open: 「〈你〉，幫個忙。這包東西後天有人來取，替我轉交。五塊辛苦費。」
@@ -507,6 +518,7 @@ deals:
   price: 4
   lot: {q: 1, label: 鐵背狼牙（活取）, flags: [alive]}
   truth: {goods: genuine, origin: clean, intent: plain}
+  lesson: 狼群下山的消息、他手臂上的傷、帶血絲的牙根，全都對得上。這筆是真的，價錢也公道。
   verdict: [deal, special]
   intro: 他的左臂纏著布，布上滲著血。
   open: 「許掌櫃，狼牙，八枚。四塊一枚。」
@@ -545,6 +557,7 @@ deals:
   price: 5
   lot: {q: 1, label: 霜紋玉牌}
   truth: {goods: genuine, origin: clean, intent: plain}
+  lesson: 小石頭先拿給你看，是因為你上回沒坑他。名字不是他刮的。
   verdict: [deal]
   open: 「掌櫃的，上回你沒坑我。這個，我先給你看。」
   ask: {q: 在哪撿的？, a: 「南嶺的溪裡，卡在石縫裡。」}
@@ -648,6 +661,7 @@ deals:
   qty: 1
   price: 10
   truth: {goods: genuine, origin: clean, intent: plain}
+  lesson: 刀柄的細繩是她纏的，她手小。這筆沒有陷阱，只看你怎麼做。
   verdict: [deal, special, report]
   open: 「掌櫃的……這把刀，是我哥的。」
   ask: {q: 你哥哥是誰？, a: 「余小六。三個月前出城，就沒回來。」}
@@ -700,6 +714,7 @@ deals:
   price: 9
   payDouble: true
   truth: {goods: genuine, origin: clean, intent: test}
+  lesson: 錢袋可以掂一掂：五斤寒鐵四十五塊，袋裡至少九十。阿福說帳房給的，他沒點。這是試探——點出多給了，才算過關。
   verdict: [special]
   open: 「許掌櫃，執事堂要五斤寒鐵修門閂。周執事說照老價，九塊一斤。錢在這兒。」他把一袋靈石放在櫃上。
   ask: {q: 執事堂自己沒有寒鐵？, a: 「庫裡的是宗門的，不能動。周執事說，坊市的事，用坊市的貨。」}

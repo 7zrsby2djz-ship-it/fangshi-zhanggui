@@ -86,6 +86,14 @@ with sync_playwright() as p:
         click('.sheet [data-act=accusego]'); shot('50-accused', True)
         ev("T.leavePlace(); T.UI.tab='intel'"); shot('51-ledger', True)
         ev("S().flags.gave_knife=true; S().flags.daoren_caught=true; S().flags.yao_closed=true; S().phase='end'; T.UI.tab='main'"); shot('52-end', True)
+    elif mode == 'end':
+        pol = sys.argv[3] if len(sys.argv) > 3 else 'mid'
+        pg.evaluate(f"window.__POL=['{pol}']")
+        js = (ROOT / 'tools' / 'sim.js').read_text()
+        pg.evaluate(js.replace("for (let i = 0; i < 120; i++)", "for (let i = 0; i < 1; i++)"))
+        pg.evaluate("(()=>{const T=window.__fs; T.UI.view='game'; T.UI.tab='main'; T.render();})()"); shot('60-end-' + pol, True)
+        if pg.locator('tr.tap').count():
+            pg.locator('tr.tap').last.click(); pg.wait_for_timeout(200); shot('61-stat-' + pol)
     elif mode == 'eval':
         print(pg.evaluate(sys.argv[3]))
     elif mode == 'js':

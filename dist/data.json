@@ -1399,6 +1399,7 @@
     "origin": "clean",
     "intent": "squeeze"
    },
+   "lesson": "「新礦脈」只是他說的。執事堂沒貼告示，鐵老蔫也沒聽說；他說「要跌」時嘴角往上，你一沉默他就加價。真要跌，他不會急著收。",
    "verdict": [
     "decline",
     "expose"
@@ -1529,6 +1530,7 @@
     "origin": "inheritance",
     "intent": "plain"
    },
+   "lesson": "三塊錢一箱你爹的遺物，問得出寄放的來龍去脈，價錢也不圖什麼。這筆沒有陷阱，該收。",
    "verdict": [
     "deal"
    ],
@@ -1675,6 +1677,7 @@
     "origin": "clean",
     "intent": "con"
    },
+   "lesson": "洞府在第幾座沙丘、石門上刻什麼都記得，叩了兩日半卻撐不住——故事太完整了。白七娘今年見過四枚，姚四年輕時也買過；鑑定，摸不到禁制。",
    "verdict": [
     "decline",
     "expose",
@@ -1797,6 +1800,7 @@
     "origin": "clean",
     "intent": "plain"
    },
+   "lesson": "葉背金線粗細一致，根上帶著林子深處才有的黑土，老葛也替她說話。十塊一株是公道價。",
    "verdict": [
     "deal"
    ],
@@ -1898,6 +1902,7 @@
     "origin": "clean",
     "intent": "dump"
    },
+   "lesson": "年份、日期、山溝記得清清楚楚，又說玉盒養得住靈性；老葛說南嶺地火不穩，草長不老。對著光看，後兩道金線比較粗，顏色也新。",
    "verdict": [
     "decline",
     "expose",
@@ -2040,6 +2045,7 @@
     "origin": "stolen",
     "intent": "plain"
    },
+   "lesson": "玉匣是寒潭宗的制式，底下刮花了一塊；舅舅「上個月……不，開春」走的，說到一半改口；燒火的雜役拿不到二階靈物。宗門正在北林找一個送貨的人。買下，就是收贓。",
    "verdict": [
     "decline",
     "report",
@@ -2318,6 +2324,7 @@
     "origin": "clean",
     "intent": "plain"
    },
+   "lesson": "晚上會發燙，石心有一線暗紅，是地火靈髓。鐵老蔫一聽就叫你別讓孩子賣掉。",
    "verdict": [
     "deal",
     "expose",
@@ -2547,6 +2554,7 @@
     "origin": "clean",
     "intent": "innocent"
    },
+   "lesson": "符讓徒弟搬去城東倉庫放過幾天，而城東連下了三天雨，倉庫漏水。對著光看，十張的硃砂都暈開了。陶老符自己也不知道——點破，比買下或告他都好。",
    "verdict": [
     "expose",
     "decline"
@@ -2679,6 +2687,7 @@
     "origin": "stolen",
     "intent": "plain"
    },
+   "lesson": "刀柄的纏繩纏得極細，是給一隻小手纏的；刀上的裂誰補的，他說不出來；鐵老蔫記得，補這把刀的是個瘦小的年輕人。執事堂正在找一個佩刀的瘦小散修。",
    "verdict": [
     "decline",
     "expose",
@@ -2813,6 +2822,7 @@
     "origin": "stolen",
     "intent": "sting"
    },
+   "lesson": "半價的療傷丹，開口就說「不用問來歷」，說「乾淨」時眼睛看著門外；瓶底的硃印沒擦乾淨。白七娘說，他賣過三回好東西，三家鋪子被查。",
    "verdict": [
     "decline",
     "expose",
@@ -2947,6 +2957,7 @@
     "origin": "contraband",
     "intent": "proxy"
    },
+   "lesson": "火漆的印紋歪了半分，分量不止幾塊樣品；鐵老蔫說錢記從不給人看樣品；「後天出城」是有人放出來的說法。收下，就是替人藏東西。",
    "verdict": [
     "decline",
     "expose",
@@ -3178,6 +3189,7 @@
     "origin": "clean",
     "intent": "plain"
    },
+   "lesson": "狼群下山的消息、他手臂上的傷、帶血絲的牙根，全都對得上。這筆是真的，價錢也公道。",
    "verdict": [
     "deal",
     "special"
@@ -3301,6 +3313,7 @@
     "origin": "clean",
     "intent": "plain"
    },
+   "lesson": "小石頭先拿給你看，是因為你上回沒坑他。名字不是他刮的。",
    "verdict": [
     "deal"
    ],
@@ -3561,6 +3574,7 @@
     "origin": "clean",
     "intent": "plain"
    },
+   "lesson": "刀柄的細繩是她纏的，她手小。這筆沒有陷阱，只看你怎麼做。",
    "verdict": [
     "deal",
     "special",
@@ -3728,6 +3742,7 @@
     "origin": "clean",
     "intent": "test"
    },
+   "lesson": "錢袋可以掂一掂：五斤寒鐵四十五塊，袋裡至少九十。阿福說帳房給的，他沒點。這是試探——點出多給了，才算過關。",
    "verdict": [
     "special"
    ],

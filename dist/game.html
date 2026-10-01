@@ -419,7 +419,7 @@ function runEvent(evo) {
 }
 function openShop() { S.phase = 'day'; UI.tab = 'main'; }
 function advanceSlot() {
-  S.slot++; S.place = null; S.enc = null;
+  S.slot++; S.place = null; S.enc = null; S.phase = 'day';
   if (S.slot >= 3) {
     if (S.day === M.days && !S.dues) startDues();
     else S.phase = 'night';
@@ -1224,7 +1224,7 @@ function renderBar() {
       const opts = encOptions(); const p = opts.find(o => o.primary && !o.disabled);
       h += `<div class="decide">${p ? `<button class="btn jade col" data-act="decide" data-k="${p.key}">${esc(p.label)}<span class="sub">${esc(p.desc)}</span></button>` : ''}<button class="btn primary" data-act="decidesheet" ${p ? '' : 'style="grid-column:1/-1"'}>${p ? '其他處置…' : '處置…'}</button></div>`;
     }
-  } else if (S.phase === 'place') h = `<button class="btn primary wide" data-act="leave">離開${esc(PL[S.place.id].name)}</button>` + nav();
+  } else if (S.phase === 'place' && S.place) h = `<button class="btn primary wide" data-act="leave">離開${esc(PL[S.place.id].name)}</button>` + nav();
   else if (S.phase === 'night') h = S.night ? `<button class="btn primary wide" data-act="sleep">${S.day >= M.days ? '這個月過去了' : '就寢'}</button>` : `<button class="btn primary wide" data-act="meditate">${UI.night.invest || UI.night.pill ? '打坐' : '不打坐，睡覺'}</button>` + nav();
   else if (S.phase === 'day') h = (S.slot >= 3 ? `<button class="btn primary wide" data-act="evening">收鋪</button>` : '') + nav();
   else if (S.phase === 'end') h = nav();
@@ -1244,7 +1244,7 @@ function render() {
   else if (S.phase === 'morning') h = renderMorning();
   else if (S.phase === 'day') h = renderHub();
   else if (S.phase === 'enc') h = renderEnc();
-  else if (S.phase === 'place') h = renderPlace();
+  else if (S.phase === 'place') { if (S.place) h = renderPlace(); else { S.phase = 'day'; h = renderHub(); } }
   else if (S.phase === 'night') h = renderNight();
   else if (S.phase === 'end') h = renderEnd();
   $app.innerHTML = h;

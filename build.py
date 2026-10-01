@@ -10,6 +10,7 @@ data = {
     'items': L('items'), 'npcs': L('npcs'), 'news': L('news'), 'deals': L('deals')['deals'],
     'places': {**L('places')['places'], **{k: v for k, v in L('places').items() if k != 'places'}},
     'events': L('events')['events'],
+    'intel': L('intel')['intel'], 'heat': L('intel')['heat'], 'accuse': L('intel')['accuse'],
 }
 data['meta']['truthLabels'] = meta['truthLabels']
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')

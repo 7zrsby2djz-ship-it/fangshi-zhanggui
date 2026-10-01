@@ -29,6 +29,20 @@ events:
       - if: {}
         text: 葛小滿紅著眼睛回來了，把赤炎草放在櫃上：「師父說，這草不到二十年，藥性也虛。」張掌事要你退錢。
         fx: {rel: {zhang: -1, xiaoman: -1}, rep: {sect: -1}, tag: {sect: 以次充好}}
+  e_tao_back:
+    title: 陶老符上門
+    cases:
+      - if: {flag: [tao_reported], holdFlag: damp}
+        text: 陶老符來了，站在門外，沒有進門。他把一包靈石放在門檻上：「符是陶某的倉庫漏了，錢，我退你一些。可你去執事堂告我……陶某畫了四十年符，頭一回被人告。」他走了，背比上回駝。
+        fx: {buyback: {flag: damp, ratio: 0.4}, rel: {tao: -2}, mem: {tao: 你去執事堂告他。他還是來退了錢。}}
+      - if: {holdFlag: damp}
+        text: 天剛亮，陶老符就站在門口，手裡攥著一個布包。「這兩天好幾個人回來找我，說符一沾水就化。」他的聲音有點啞，「是倉庫漏了，陶某不知道。你那批，我收回來，錢退你四成。剩下的……陶某實在拿不出了。」
+        fx: {buyback: {flag: damp, ratio: 0.4}, rel: {tao: 1}, mem: {tao: 符受了潮，他自己上門收回去，退了四成的錢。}}
+      - if: {flag: [tao_reported]}
+        text: 陶老符從許記門口走過，沒有停下來。聽說他這兩天挨家挨戶，去找買過他符的人。
+        fx: {rel: {tao: -2}}
+      - if: {}
+        text: 陶老符來了一趟，說他那批符受了潮，問你手上還有沒有。你說都出手了。他朝你作了個揖，嘆著氣走了：「那是陶某對不住買符的人。」
   melt:
     xuechan: 你打開玉匣。裡面只剩一汪清水，涼的。
     default: 「{name}」放壞了。

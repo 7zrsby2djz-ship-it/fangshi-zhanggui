@@ -41,6 +41,10 @@
       if (policy === 'wise') for (const l of [...T.S.lots]) if (['langya', 'lingsui', 'duandao'].includes(l.item)) T.sellToSmith(l.id);
     }
     if (id === 'office' && policy === 'wise') { if (T.held('xuechan')) T.turnIn('xuechan', 'entrust'); if (T.S.lots.some(l => l.flags.includes('sting'))) T.turnIn('sting'); }
+    if (id === 'tea' && policy !== 'cautious') {
+      const ids = Object.keys(T.S.intel).filter(i => T.IN[i]).filter(i => policy !== 'wise' || (T.IN[i].truth !== false && !T.IN[i].leak)).sort((a, b) => T.intelOffer(b).price - T.intelOffer(a).price);
+      for (const i of ids.slice(0, 2)) if (T.intelOffer(i).price) T.sellAtTea(i);
+    }
     if (id === 'tea') { if (!T.S.done.d20 && S.day >= 5) { T.startDeal('d20', 'tea'); T.decide(policy === 'naive' && T.encOptions().some(o => o.key === 'sellhot') ? 'sellhot' : 'decline'); T.closeEnc(); } }
     if (id === 'huichun' && policy !== 'cautious') for (const l of [...T.S.lots]) { const o = T.S.lots.includes(l); if (o && ['chiyan', 'liaoshang', 'lingsui'].includes(l.item)) T.sellToHuichun(l.id); }
   }
@@ -74,14 +78,14 @@
       errors.push('stuck phase ' + S.phase); break;
     }
     const S = T.S;
-    return { stones: Math.round(S.stones), nw: Math.round(T.netWorth(true)), lv: S.level, debt: S.debt, saw: S.stats.saw, fooled: S.stats.fooled, wronged: S.stats.wronged, seen: Object.keys(S.done).filter(k => !['missed', 'na'].includes(S.done[k])).length };
+    return { heat: S.heat, sold: Object.keys(S.isold).length, stones: Math.round(S.stones), nw: Math.round(T.netWorth(true)), lv: S.level, debt: S.debt, saw: S.stats.saw, fooled: S.stats.fooled, wronged: S.stats.wronged, seen: Object.keys(S.done).filter(k => !['missed', 'na'].includes(S.done[k])).length };
   }
   const out = {};
   for (const policy of (window.__POL || ['wise', 'naive', 'cautious', 'random'])) {
     const rs = [];
     for (let i = 0; i < 120; i++) { try { rs.push(play(1000 + i * 7, policy)); } catch (e) { errors.push(policy + ': ' + e.message + ' ' + (e.stack || '').split('\n')[1]); } }
     const avg = k => Math.round(rs.reduce((a, r) => a + r[k], 0) / Math.max(1, rs.length) * 10) / 10;
-    out[policy] = { n: rs.length, stones: avg('stones'), networth: avg('nw'), level: avg('lv'), debtRate: Math.round(rs.filter(r => r.debt > 0).length / Math.max(1, rs.length) * 100) + '%', lv5Rate: Math.round(rs.filter(r => r.lv >= 5).length / Math.max(1, rs.length) * 100) + '%', saw: avg('saw'), fooled: avg('fooled'), wronged: avg('wronged'), dealsSeen: avg('seen'), top: Math.round(rs.filter(r => !r.debt && r.lv >= 5 && r.fooled + r.wronged <= 1).length / Math.max(1, rs.length) * 100) + '%' };
+    out[policy] = { n: rs.length, stones: avg('stones'), networth: avg('nw'), level: avg('lv'), debtRate: Math.round(rs.filter(r => r.debt > 0).length / Math.max(1, rs.length) * 100) + '%', lv5Rate: Math.round(rs.filter(r => r.lv >= 5).length / Math.max(1, rs.length) * 100) + '%', saw: avg('saw'), fooled: avg('fooled'), wronged: avg('wronged'), dealsSeen: avg('seen'), heat: avg('heat'), intelSold: avg('sold'), top: Math.round(rs.filter(r => !r.debt && r.lv >= 5 && r.fooled + r.wronged <= 1).length / Math.max(1, rs.length) * 100) + '%' };
   }
   out.errors = [...new Set(errors)].slice(0, 12);
   return out;

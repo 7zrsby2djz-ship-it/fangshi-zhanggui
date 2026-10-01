@@ -10,6 +10,13 @@ news:
     goods: [xuechan]
     ask: [聽雨樓, 執事堂]
 
+  - id: n_market1
+    day: 1
+    source: 坊市告示
+    text: 初三市集日。外地的攤子進城，青石街的攤子比平常多一倍，只擺這一天。當天也可以自己擺攤。
+    goods: []
+    ask: [青石街市集]
+
   - id: n_vein
     day: 1
     source: 聽雨樓傳出
@@ -52,6 +59,20 @@ news:
       - {item: dingshen, from: 3, to: 4, mult: 1.3}
       - {item: dingshen, from: 5, to: 6, mult: 1.6}
 
+  - id: n_market2
+    day: 2
+    source: 坊市告示
+    text: 明天市集日。外地攤子只擺一天，錯過了就要等下個月。
+    goods: []
+    ask: [青石街市集]
+
+  - id: n_market3
+    day: 3
+    source: 坊市
+    text: 今天市集日。天還沒亮，青石街上就擠滿了外地來的攤子。
+    goods: []
+    ask: [青石街市集]
+
   - id: n_rain
     day: 2
     source: 坊間
@@ -79,6 +100,7 @@ news:
     day: 4
     source: 坊間傳言
     cond: aheng_taken
+    notCond: aheng_leak
     text: 散修們說，許記的掌櫃會報官。採藥的阿蘅被執事堂帶走了，到現在還沒放出來。
     goods: []
     ask: []

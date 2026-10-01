@@ -351,7 +351,7 @@ deals:
     - {who: tie, cost: 0, a: 「老陶？手藝沒話說。人老實，就是不太管倉庫。」}
     - {who: bai, cost: 5, a: 「城東那幾間倉庫，這陣子屋頂漏得厲害。」}
   opts:
-    deal: {label: 買下, text: 陶老符把符疊好，用紅繩紮起來遞給你：「你識貨。」}
+    deal: {label: 買下, text: 陶老符把符疊好，用紅繩紮起來遞給你：「你識貨。」, fx: {flag: [bought_bishui], event: [{id: e_tao_back, at: 5}]}}
     decline: {text: 陶老符也不在意，轉頭招呼下一位客人。}
     expose: {right: true, label: 點破, text: 你把一張符舉到光下，指給他看那圈紅暈。陶老符的臉一下子白了。他翻了好幾張，嘴唇發抖：「是倉庫……是倉庫漏了。」他把符收起來，朝你深深一揖，又從懷裡摸出兩張：「這兩張我一直貼身放著，你拿去。」, fx: {give: [{item: bishui, qty: 2, cost: 0, label: 陶記避水符（貼身的）}], rel: {tao: 3}, rep: {loose: 1}, tag: {loose: 眼睛毒}, flag: [tao_grateful], mem: {tao: 你點破他的符受了潮，他很感激。}}}
     report: {text: 周執事：「受潮的符？這也來報？」, fx: {rel: {zhou: -1}}}
@@ -625,6 +625,7 @@ deals:
   side: task
   item: info
   itemName: 消息
+  infoBuyer: true
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
   open: 「許掌櫃這個月，看穿了不少人吧？說一件給我聽。價錢好商量。」
@@ -634,21 +635,6 @@ deals:
   silence: 「……不說也好。嘴緊的人，我也喜歡。」
   opts:
     decline: {label: 什麼都不說, text: 白七娘笑了：「許掌櫃嘴緊。」她放下一包茶葉走了。, fx: {rel: {bai: 1}, mem: {bai: 想買你的消息，你什麼都沒說。}}}
-    info_yao:
-      label: 賣「姚四畫金線」（十）
-      need: {flag: [knows_yao_paints]}
-      text: 白七娘點點頭，像是早就知道，又像是第一次聽說。她數了十塊靈石給你。
-      fx: {stones: 10, flag: [sold_info_yao], mem: {bai: 你把姚四畫金線的事賣給了她。}}
-    info_liu:
-      label: 賣「柳郎中是釣魚的」（十五）
-      need: {anyFlag: [passed_sting, liu_exposed]}
-      text: 白七娘的笑深了一點：「這一則，值錢。」她數了十五塊靈石給你。
-      fx: {stones: 15, flag: [sold_info_liu], mem: {bai: 你把柳郎中的底細賣給了她。}}
-    info_pkg:
-      label: 賣「錢記的包裹」（三十）
-      need: {flag: [pkg_peeked]}
-      text: 白七娘的手停在算盤上。過了很久，她說：「許掌櫃，這一則，我替你壓著。三十塊，算我買你閉嘴。」
-      fx: {stones: 30, flag: [sold_info_pkg], rel: {bai: 1}, mem: {bai: 你把錢記包裹的事告訴了她。她說替你壓著。}}
 
 - id: d19
   title: 認刀的人

@@ -228,3 +228,19 @@ input[type=range]{width:100%;accent-color:var(--jade)}
 .truth b{font-family:var(--serif);font-size:15.5px}
 .truth .t3{display:flex;gap:6px;flex-wrap:wrap}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--barh) + 14px);z-index:35;background:var(--ink);color:var(--sheet);padding:8px 14px;border-radius:999px;font-size:13.5px;max-width:88vw;text-align:center}
+
+/* ---------- v0.2: intel ledger, market day, notes ---------- */
+.nav{grid-template-columns:repeat(5,minmax(0,1fr))}
+.nav button.new em{color:var(--cinnabar);opacity:1}
+.ln.note{max-width:100%;align-self:center}
+.ln.note .tx{font-family:var(--sans);font-size:12px;letter-spacing:.08em;color:var(--jade);border:1px dashed var(--jade);border-radius:999px;padding:1px 10px}
+.place.hot{border:1.5px solid var(--cinnabar)}
+.place.hot b em{font-style:normal;font-family:var(--sans);font-size:11px;color:var(--cinnabar);border:1px solid var(--cinnabar);border-radius:999px;padding:0 6px;margin-left:6px;vertical-align:2px}
+.intels{display:grid}
+.intel{padding:10px 0;border-bottom:1px dashed var(--rule);display:grid;gap:4px}
+.intel:last-child{border-bottom:0}
+.intel .it{font-family:var(--serif);font-size:15px;line-height:1.75}
+.intel .im{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.opt .it{font-family:var(--serif);font-size:13.5px;color:var(--ink);line-height:1.6}
+.evid{margin:4px 0 0;padding-left:1.2em;font-size:14px;line-height:1.8;font-family:var(--serif)}
+details summary{cursor:pointer}

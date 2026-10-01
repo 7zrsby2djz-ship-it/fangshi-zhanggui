@@ -225,3 +225,50 @@ dangpiao:
   stat: 不可交易
   text: 紙色暗黃。上頭寫著：「今典壽元四十年，到期不贖，人死當絕。」落款是你的名字。字是你寫的，手抖得很厲害。
   sell: []
+
+# —— 第二個月 ——
+luopan:
+  name: 尋脈羅盤
+  cat: tool
+  unit: 個
+  grade: 一階法器
+  base: 60
+  perish: null
+  stat: 天池水銀不散｜指針尋地脈
+  text: 看地脈的人用的羅盤。天池裡那滴水銀聚而不散，指針自己會轉，轉到礦脈的方向就停。礦上的人說，好羅盤會記得主人最後一次指的方向。
+  hidden:
+    - {label: 築基可見, need: {realm: 10}, text: 指針停的地方不是礦脈，是北面礦上一條封了十二年的舊坑道。}
+  sell: [walk]
+
+yaopai:
+  name: 寒潭宗外門腰牌
+  cat: story
+  unit: 塊
+  grade: 宗門信物
+  base: 0
+  perish: null
+  stat: 寒潭宗外門制式｜背刻姓名｜不可交易
+  text: 外門弟子出門辦事，腰牌不離身。腰牌在，人就在；腰牌不在，執事堂就得派人去找。
+
+sidai:
+  name: 舊儲物袋
+  cat: tool
+  unit: 個
+  grade: 一階法器
+  base: 18
+  perish: null
+  stat: 內有一方小空間｜袋口花紋被挑掉
+  text: 儲物袋是散修的半個家。袋口的花紋會告訴你它的主人屬於哪裡，所以拿到別人儲物袋的人，第一件事就是挑掉花紋。
+  sell: [walk]
+
+canye:
+  name: 帳冊缺頁
+  cat: story
+  unit: 疊
+  grade: 雜物
+  base: 0
+  perish: null
+  stat: 七頁｜字是你爹的｜最後兩頁燒焦了
+  text: 幾頁從帳冊上整齊裁下來的紙。字是你爹的字，墨色有深有淺，像是好幾天裡斷斷續續寫的。
+  hidden:
+    - {label: 你讀過了, need: {flag: got_pages}, text: 「壬午年三月十七：錢兄薦寒鐵三百斤，價廉，無印。周執事言可入帳。霜華說，這批鐵不能收。」「三月十八：收了。霜華一夜沒睡。」「三月十九：霜華說，要是出事，帶衡兒去找她師姐。」後面兩頁燒焦了，只剩一個「典」字。}

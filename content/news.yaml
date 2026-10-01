@@ -141,6 +141,36 @@ news:
     effects:
       - {item: hantie, from: 6, to: 6, mult: 1.05}
 
+# ═════ 第二個月 ═════
+  - {id: n2_lu, month: 2, day: 1, source: 坊間, text: 寒潭宗內門派了一位執法弟子下山，查上個月北林失物的案子。聽說人已經住進了執事堂。, goods: [xuechan], ask: [執事堂, 聽雨樓]}
+  - {id: n2_market1, month: 2, day: 1, source: 坊市告示, text: 初四市集日。外地的攤子進城，只擺這一天。, goods: [], ask: [青石街市集]}
+  - id: n2_iron
+    month: 2
+    day: 2
+    source: 執事堂告示
+    text: 北面礦上點貨，少了三百斤寒鐵，沒有印記。凡收無印寒鐵者，與盜同罪。
+    goods: [hantie]
+    ask: [執事堂, 鐵老蔫]
+    effects:
+      - {item: hantie, from: 2, to: 6, mult: 1.15}
+  - {id: n2_shen, month: 2, day: 3, source: 執事堂告示, text: 上個月在北林失蹤的外門弟子沈青，已在北林溪底尋獲。知情者，賞五十。, goods: [], ask: [執事堂]}
+  - {id: n2_dan, month: 2, day: 3, source: 回春堂, text: 回春堂說，下一季的築基丹要漲價。, goods: [zhuji], ask: [回春堂]}
+  - {id: n2_market3, month: 2, day: 3, source: 坊市告示, text: 明天市集日。, goods: [], ask: [青石街市集]}
+  - id: n2_market4
+    month: 2
+    day: 4
+    source: 坊市
+    text: 今天市集日。北邊來了個香商，有人說他的定神香便宜得嚇人。
+    goods: [dingshen]
+    ask: [青石街市集, 回春堂]
+    effects:
+      - {item: dingshen, from: 4, to: 6, mult: 0.92}
+  - {id: n2_wolf, month: 2, day: 5, source: 執事堂告示, text: 北林解封。藥田的路也通了。, goods: [], ask: [城外藥田]}
+  - {id: g2_qian, month: 2, day: 3, source: 坊間, cond: qian_confronted, text: 錢不語這兩天沒怎麼笑。有人看見他一個人在執事堂門口站了很久。, goods: [], ask: []}
+  - {id: g2_siti, month: 2, day: 5, source: 坊間, cond: siti_caught, text: 許記被執事堂查了，搬出來一堆無印寒鐵。有人說，十二年前也是這樣。, goods: [], ask: []}
+  - {id: g2_scar, month: 2, day: 6, source: 坊間, cond: scar_caught, text: 執事堂在南嶺抓了一個臉上有疤的刀客。北林的案子，有了下文。, goods: [], ask: []}
+  - {id: g2_zhang, month: 2, day: 6, source: 坊間, cond: zhang_exposed, text: 回春堂今天沒開門。聽說張掌事被請去了執事堂，到現在還沒出來。, goods: [], ask: []}
+
 # 聽雨樓的消息單：花靈石買一則傳言。真假不標示。
 teahouse:
   - {day: 1, price: 6, text: 錢記這兩天在收寒鐵，收得很急。, true: true}
@@ -154,6 +184,16 @@ teahouse:
   - {day: 5, price: 6, text: 回春堂要漲療傷丹的價。, true: true}
   - {day: 5, price: 8, text: 鬼市有人在收寒潭宗的東西，價錢給得很高。, true: true}
   - {day: 6, price: 6, text: 執事堂今天要貼告示，跟寒鐵有關。, true: true}
+  - {month: 2, day: 1, price: 6, text: 錢記這個月要出一批寒鐵，價錢低得不像話。, true: true}
+  - {month: 2, day: 1, price: 5, text: 下山的那位陸師兄，在內門排得上號，誰的面子都不給。, true: true}
+  - {month: 2, day: 2, price: 6, text: 北林溪邊有人看見一個瘦小子，右手纏著布。, true: true}
+  - {month: 2, day: 2, price: 7, text: 疤臉已經出城了，往北走的。, true: false}
+  - {month: 2, day: 3, price: 6, text: 孟三娘那個羅盤，懂行的人說值五六十。, true: true}
+  - {month: 2, day: 4, price: 5, text: 北地來的那個香商，上個月在別的坊市也擺過攤，擺了一天就走。, true: true}
+  - {month: 2, day: 4, price: 8, text: 有人在坊市裡打聽一個右手受傷的瘦小子，出手很大方。, true: true}
+  - {month: 2, day: 5, price: 7, text: 鬼市這個月出了一枚築基丹。, true: true}
+  - {month: 2, day: 5, price: 6, text: 回春堂這一季的帳，陸執法已經看過了。, true: false}
+  - {month: 2, day: 6, price: 6, text: 錢掌櫃最近常去執事堂喝茶。, true: true}
 
 # 偷聽：坐在聽雨樓，聽到的片段。每天一句。
 overhear:
@@ -163,6 +203,12 @@ overhear:
   - {day: 4, text: 「……許記那小子，櫃下放了東西沒有？……再等兩天。」}
   - {day: 5, text: 「……丹坊那兩枚，這季還是老規矩？……鬼市見。」}
   - {day: 6, text: 「……長生典的人，這個月又去了許記。那小子還剩多久？」}
+  - {month: 2, day: 1, text: 「……許記那小子上個月沒上鉤。這個月，換個餌……」}
+  - {month: 2, day: 2, text: 「……那瘦小子要是落到疤臉手上，北林的事就沒人說得清了……」}
+  - {month: 2, day: 3, text: 「……陸師兄的冊子上，第七家是許記……」}
+  - {month: 2, day: 4, text: 「……霜華的孩子？那瞎眼婆子在街上等了十二年……」}
+  - {month: 2, day: 5, text: 「……丹坊這季的兩枚，有一枚還沒出手……」}
+  - {month: 2, day: 6, text: 「……長生典那位，這個月又去買燈了。」}
 
 # 上門散客會順口說的閒話（收斂時比較願意說）
 gossip:
@@ -172,3 +218,11 @@ gossip:
   4: [執事堂貼了懸賞，找一個叫余小六的。, 有個郎中在城裡賣便宜的療傷丹，便宜得嚇人。, 北邊來的駝隊在收定神香，有多少收多少。]
   5: [狼下山了，傷了兩個人，其中一個是城外種藥的。, 療傷丹今天又漲了。, 錢掌櫃這兩天臉色不好。]
   6: [執事堂說礦脈的事是謠言。早說嘛。, 月底了，執事堂又要收規費。, 鐵老蔫說他想煉一把好刀，就缺一塊會發燙的料。]
+
+gossip2:
+  1: [聽說寒潭宗內門來人了，執事堂這兩天天天點燈到半夜。, 錢記這個月要出一批便宜的寒鐵，有人等著搶。, 北林那邊的狼走了，可宗門的人還在溪邊轉。]
+  2: [執事堂貼了告示，說收無印寒鐵與盜同罪。, 有人在北林溪邊撿到一隻草鞋，很小。, 孟三娘那個羅盤，錢記只肯出五塊。]
+  3: [沈青？就是上個月沒回宗門的那個外門弟子。, 北林溪底撈上來一個人，說是寒潭宗的。, 明天市集日，聽說北邊有香商要來。]
+  4: [北地香商的香便宜得嚇人，我買了兩束。, 今天市集上，外地人比本地人還多。, 盲婆婆今天的燈一盞都沒賣，坐在那兒發呆。]
+  5: [北林解封了，藥田的路也通了。, 鬼市有人在賣築基丹，你信不信？, 回春堂的張掌事這兩天臉色不太好。]
+  6: [月底了，執事堂又要收規費。, 錢掌櫃這兩天常往執事堂跑。, 長生典的人又去盲婆婆那兒買燈了。]

@@ -6,11 +6,14 @@ places:
     blurb: 青石板路兩邊擺滿了攤子。賣什麼的都有，大多是不值錢的東西，偶爾混著一件值錢的。
     blurbMarketDay: 今天是市集日，攤子比平常多一倍，外地人也來了。
     stalls:
-      - {npc: mang, deal: d10, days: [1, 6], goods: 狐尾燈，一排一排掛著，燈影輕輕擺動。}
+      - {npc: mang, deals: [d10, m210], month: all, days: [1, 6], goods: 狐尾燈，一排一排掛著，燈影輕輕擺動。}
       - {npc: stone, deal: d09, days: [1, 3], goods: 一塊舊布上擺著十幾塊石頭，灰的、黑的、帶紋的。}
-      - {npc: tie, special: smith, days: [1, 6], goods: 一張油膩的木台，台上擺著幾把不好看的刀，和一堆等著修的東西。}
+      - {npc: tie, special: smith, month: all, days: [1, 6], goods: 一張油膩的木台，台上擺著幾把不好看的刀，和一堆等著修的東西。}
       - {npc: tao, deal: d07, days: [3, 3], goods: 一疊一疊的黃紙符籙，用石頭壓著。}
       - {npc: scar, deal: d08, days: [3, 3], goods: 地上一塊破布，布上只有一把刀。}
+      - {npc: stone, deal: m204, month: 2, days: [2, 4], goods: 小石頭的攤子挪到了鐵老蔫旁邊。布上的石頭少了，多了一塊帶紅紋的。}
+      - {npc: xiangke, deal: m211, month: 2, days: [4, 4], goods: 一車用麻繩捆好的定神香，香氣衝得人睜不開眼。}
+      - {npc: scar, deal: m212, month: 2, days: [4, 4], goods: 地上一塊破布，布上放著一個舊儲物袋。}
 
   huichun:
     name: 回春堂
@@ -46,6 +49,8 @@ places:
       bai: 許掌櫃想打聽我？這個價，你付不起。
       dianzhu: 長生典的事，聽雨樓不賣。
       hu: 鬼市的人，我不認得。
+      lu: 陸師兄？寒潭宗執法堂的。他一下山，坊市裡就有人睡不著了。
+      meng: 孟三娘的男人是看地脈的，去年冬天死在北面礦上。礦上說是塌方。
 
   office:
     name: 執事堂
@@ -57,7 +62,7 @@ places:
     name: 城外藥田
     hours: [0]
     npc: ge
-    closed: [5]
+    closed: {1: [5]}
     closedText: 北林封了，藥田那條路也有人守著。守衛說，狼還在附近。
     blurb: 出城往北半個時辰，一片一片的藥田。老葛蹲在田埂上抽菸。
 
@@ -76,6 +81,7 @@ places:
 # 藥田的老葛：直接買。q 是實際品質（玩家看到的是老葛的說法）
 herbStock:
   - {days: [1, 3], item: chiyan, price: 8, q: 0.75, max: 6, say: 「種的，十五年上下。金線一道，不多不少。」}
+  - {month: 2, days: [1, 6], item: chiyan, price: 9, q: 0.85, max: 6, say: 「這個月地火穩了，草長得慢，金線兩道，二十年上下。」}
   - {days: [4, 6], item: chiyan, price: 5, q: 0.55, max: 8, say: 「今年地火旺，草長得急，金線都齊了，可藥性虛。我跟你說實話，便宜給你。」}
 
 # 鐵老蔫的攤子：收貨、訂製
@@ -86,6 +92,9 @@ smith:
     duanshui: {mult: 0.9, say: 「……這刀我補過。」}
     lingsui: {fixed: 50, say: 「這石頭……我收。五十。我想用它煉一把刀。」}
     duandao: {mult: 0.85, say: 「我打的刀，我收回來。」}
+    luopan: {mult: 0.85, say: 「尋脈羅盤？好東西。我收。」}
+  sells:
+    - {item: hantie, mult: 1.0, lot: 5, month: 2, label: 鐵老蔫的寒鐵（有印）}
   commission:
     item: duandao
     needItem: hantie
@@ -109,3 +118,10 @@ walkins:
   demand:
     5: {pill: 3, weapon: 3, beast: 0.5}
     6: {pill: 2, weapon: 2}
+  demand2:
+    1: {ore: 1.5, herb: 1.3}
+    2: {ore: 2, tool: 1.5}
+    3: {ore: 2, pill: 1.5}
+    4: {incense: 2, herb: 1.5, talisman: 1.5}
+    5: {pill: 2, weapon: 1.5, tool: 1.5}
+    6: {pill: 2, herb: 1.5}

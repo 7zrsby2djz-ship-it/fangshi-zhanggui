@@ -43,6 +43,49 @@ events:
         fx: {rel: {tao: -2}}
       - if: {}
         text: 陶老符來了一趟，說他那批符受了潮，問你手上還有沒有。你說都出手了。他朝你作了個揖，嘆著氣走了：「那是陶某對不住買符的人。」
+  e_siti_raid:
+    title: 執事堂查鐵
+    cases:
+      - if: {holdFlag: contraband}
+        text: 周執事帶著四個人進門，直奔庫房，把那批沒有印記的寒鐵一塊一塊搬出來，擺在街上給人看：「北面礦上丟的，就是這批。」他罰了你六十，鐵全數沒收。對門錢記今天沒開門。
+        fx: {confiscate: contraband, stones: -60, rep: {sect: -1, loose: -1}, tag: {sect: 收私鐵}, rel: {zhou: -2}, flag: [siti_caught]}
+        face: shock
+      - if: {}
+        text: 周執事帶人進門，翻遍了庫房，沒找到那批鐵。他問你賣去了哪裡，你答不上來。周執事罰了你六十：「收私鐵賺的錢，吐出來。」
+        fx: {stones: -60, rep: {sect: -1}, tag: {sect: 收私鐵}, rel: {zhou: -1}, flag: [siti_caught]}
+        face: sweat
+  e_bigdeal_dirty:
+    title: 礦上點貨
+    cases:
+      - if: {}
+        text: 阿福跑回來，臉是白的：「許掌櫃，礦上點貨，你給的寒鐵裡有沒印記的！」下午周執事親自來了，把那批鐵退回你的庫房，貨款收了回去，又罰了你八十：「拿私鐵充宗門的貨，許掌櫃好大的膽子。」
+        fx: {stones: -80, rel: {zhou: -3}, rep: {sect: -2}, tag: {sect: 拿私鐵充數}, flag: [siti_caught, lost_big_deal]}
+        face: shock
+  e_kuang_dirty:
+    title: 礦工又來了
+    cases:
+      - if: {}
+        text: 礦工揹著簍子回來，把幾塊沒有印記的寒鐵摔在櫃上：「礦上點貨，差點把我當成賊！」他把鐵退了回來，把錢要了回去，在門口罵了半天，整條街都聽見了。
+        fx: {rep: {sect: -1, loose: -1}, tag: {loose: 賣私鐵}, flag: [siti_spread]}
+        face: sweat
+  e_han_cut:
+    title: 韓九回來了
+    cases:
+      - if: {}
+        text: 韓九牽著駱駝又回來了，把幾束香放在櫃上：「掌櫃的，這香一點就嗆，燒得比蠟燭還快。」他沒有吵，只是把香退了回來，把錢要了回去，臨走時說：「北邊的人，要的是能睡著的香。」
+        fx: {rel: {han: -2}, rep: {loose: -1}, tag: {loose: 賣次貨}}
+        face: sweat
+  e_zhuji_audit:
+    title: 陸執法來了
+    cases:
+      - if: {has: {zhuji: 1}}
+        text: 陸執法清點回春堂這一季的築基丹，帳上九枚，庫裡七枚。他順著鬼市的線，查到了許記。他把那枚築基丹收進袖子裡：「許掌櫃，宗門的東西，不是有錢就買得到的。」罰了你五十。
+        fx: {confiscateItem: zhuji, stones: -50, rel: {lu: -2}, rep: {sect: -1}, tag: {sect: 收宗門的丹}, flag: [zhuji_caught]}
+        face: shock
+      - if: {}
+        text: 陸執法清點回春堂這一季的築基丹，帳上九枚，庫裡七枚。他來許記問了一句：「鬼市那枚築基丹，許掌櫃轉給誰了？」你沒答。他看了你很久，走了。
+        fx: {rel: {lu: -2}, flag: [zhuji_traced]}
+        face: sweat
   melt:
     xuechan: 你打開玉匣。裡面只剩一汪清水，涼的。
     default: 「{name}」放壞了。
@@ -50,3 +93,58 @@ events:
     painted: 金線是畫的！
     damp: 符一沾水就化了！
     default: 這是什麼次貨！
+
+# 每個月初一早上，依上個月的事情出現的卡片（全部符合的都會出現）
+monthStart:
+  2:
+    - need: {flag: [aheng_paid], not: [betrayed_aheng, aheng_leak, ahe_taken]}
+      title: 一捆赤炎草
+      text: 門口放著一捆用濕布包好的赤炎草，沒有留話。布是阿蘅的。
+      fx: {give: [{item: chiyan, qty: 2, cost: 0, q: 1.05, label: 阿蘅留下的赤炎草}]}
+      face: smile
+    - need: {flag: [aheng_taken], not: [aheng_leak]}
+      title: 阿蘅放出來了
+      text: 聽說阿蘅被執事堂關了七天，昨天放出來了。她瘦了一圈，從許記門口經過的時候，沒有往裡看。
+      face: sad
+    - need: {flag: [aheng_leak]}
+      title: 阿蘅放出來了
+      text: 阿蘅放出來了。她從許記門口經過，停了一下，看了你一眼，什麼都沒說。
+      face: sweat
+    - need: {flag: [ahe_taken], not: [aheng_taken]}
+      title: 洞府區
+      text: 阿蘅的屋子空了。聽說她一個人去了鬼市。
+      face: sad
+    - need: {flag: [yao_closed]}
+      title: 姚四走了
+      text: 姚四的石屋空了，門沒鎖，桌上那碟金粉也不見了。鄰居說，他走之前去過一趟聽雨樓，手裡拿著一個布包。
+      fx: {flag: [yao_left]}
+      face: think
+    - need: {flag: [xuechan_sold_qian]}
+      title: 對門
+      text: 錢不語交完罰款回來那天，在許記門口站了很久，笑著跟你打了聲招呼。他的笑，跟以前一模一樣。
+      face: uneasy
+    - need: {flag: [gave_knife]}
+      title: 山棗
+      text: 門縫裡塞著一小包曬乾的山棗。布包上的結，打得很細。
+      face: smile
+    - need: {flag: [daoren_caught]}
+      title: 執事堂的告示
+      text: 執事堂貼了告示：賣假玉簡的道士已經押送出境，他袖中的玉簡，查出同一個來處——坊市裡有人在批這種貨。
+      face: smug
+    - need: {flag: [gave_tie_lingsui]}
+      title: 鐵老蔫的爐子
+      text: 鐵老蔫的爐子連著燒了好幾夜。小石頭蹲在爐子邊拉風箱，臉燻得黑黑的——鐵老蔫收他當學徒了。
+      fx: {flag: [stone_apprentice]}
+      face: smile
+    - need: {flag: [scar_grudge]}
+      title: 門板
+      text: 門板上那道刀痕還在。昨夜有人在你門口站了一會兒，腳印到天亮才被掃掉。
+      face: uneasy
+    - need: {flag: [zhou_warned]}
+      title: 執事堂
+      text: 周執事從許記門口經過，沒有停，也沒有看你。他身後多跟了一個人。
+      face: uneasy
+    - need: {}
+      title: 錢不語來串門
+      text: 錢不語一早就過來了，手裡提著一包點心：「許老弟，新的一個月，生意興隆！」他把點心放下，眼睛在你的庫房裡轉了一圈。
+      face: think

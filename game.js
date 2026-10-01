@@ -5,7 +5,14 @@ const D = __GAME_DATA__;
 const M = D.meta, IT = D.items, NP = D.npcs, PL = D.places, NEWS = D.news.news;
 const DEALS = {}; D.deals.forEach(d => { DEALS[d.id] = d; });
 const IN = D.intel || {}, ACC = D.accuse || [];
-const COUNTED = D.deals.filter(d => !d.extra).map(d => d.id);
+const MON = () => (S && S.month) || 1;
+const inMonth = x => x.month === 'all' || (x.month || 1) === MON();
+const MD = () => ({ marketDay: M.marketDay, dues: M.dues, duesHigh: M.duesHigh, ...((M.months || {})[MON()] || {}) });
+const LAST_MONTH = Math.max(1, ...D.deals.map(d => typeof d.month === 'number' ? d.month : 1));
+const MONTH_CN = ['', '一', '二', '三', '四', '五', '六'];
+const monthLabel = m => '第' + MONTH_CN[m || 1] + '個月';
+const dayLabel = (day, m) => ((m || 1) !== MON() ? '上個月' : '') + (M.dayNames[day - 1] || '');
+const countedIds = () => D.deals.filter(d => !d.extra && (d.month === 'all' ? MON() === 1 : inMonth(d))).map(d => d.id);
 const SAVE_KEY = 'fangshi-p1-v1';
 const SLOT = ['辰時', '午時', '申時'];
 const CN = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
@@ -39,8 +46,68 @@ const ICON = {
   pkg: `<path d="M8 20l16-8 16 8v16l-16 8-16-8z"/><path d="M8 20l16 8 16-8M24 28v16"/><path d="M16 16l16 8" stroke-width="1"/><circle cx="24" cy="28" r="3" fill="var(--cinnabar)" stroke="none"/>`,
   mask: `<path d="M10 14c4-6 24-6 28 0 2 10-4 22-14 26-10-4-16-16-14-26z"/><path d="M15 20c2-3 6-3 7 1-3 2-5 2-7-1zM33 20c-2-3-6-3-7 1 3 2 5 2 7-1z"/><path d="M19 32l2 3 2-3M25 32l2 3 2-3"/><path d="M14 13l6 3M34 13l-6 3" ${CIN}/>`,
   info: `<path d="M9 12h30v24H9z"/><path d="M9 12l15 13 15-13"/><path d="M30 31l5 5" ${CIN}/>`,
+  luopan: `<circle cx="24" cy="25" r="16"/><circle cx="24" cy="25" r="10" stroke-width="1.1"/><path d="M24 15l3 10-3 10-3-10z"/><path d="M24 15l3 10h-6z" fill="var(--cinnabar)" stroke="none"/><circle cx="24" cy="25" r="1.6" fill="currentColor" stroke="none"/><path d="M24 7v2M24 41v2M6 25h2M40 25h2" stroke-width="1.2"/>`,
+  yaopai: `<path d="M24 3v5"/><rect x="14" y="8" width="20" height="30" rx="4"/><path d="M14 38l10 6 10-6"/><path d="M19 16c3-2 7 2 10 0M19 22c3-2 7 2 10 0" ${JADE}/><path d="M22 29h4v5h-4z" stroke-width="1.2"/>`,
+  sidai: `<path d="M14 18c-4 6-5 15-1 21 3 4 19 4 22 0 4-6 3-15-1-21z"/><path d="M14 18c4-3 16-3 20 0"/><path d="M18 15l-2-5M30 15l2-5M16 10c4 2 12 2 16 0" stroke-width="1.3"/><path d="M20 22l1 2M24 21l1 2M28 22l1 2" stroke-width="1" stroke-dasharray="1 2"/><path d="M22 34h4" ${CIN}/>`,
+  canye: `<path d="M10 10h22l6 6v26H10z"/><path d="M32 10v6h6"/><path d="M30 20v18M25 20v18M20 20v14" stroke-width="1.1"/><path d="M10 42l3-3 3 2 3-3 3 2" stroke-width="1.3"/><path d="M14 16h8" ${CIN}/>`,
   dues: `<rect x="7" y="10" width="34" height="28" rx="2"/><path d="M7 18h34M14 10v28M24 10v28M34 10v28" stroke-width="1.1"/><circle cx="14" cy="14" r="2"/><circle cx="24" cy="25" r="2"/><circle cx="34" cy="30" r="2"/><circle cx="14" cy="28" r="2"/>`
 };
+/* ----- ink portraits: one head per person, features swapped by expression ----- */
+const FACES = ['neutral', 'smile', 'laugh', 'cold', 'angry', 'shock', 'sad', 'cry', 'uneasy', 'think', 'sweat', 'smug'];
+function portrait(who, f = 'neutral', cls = '') {
+  const L = who === 'me' ? { head: 'long', hair: 'topknot', beard: 'stubble', age: 'mid' } : ((NP[who] || {}).look);
+  if (!L) return '';
+  if (!FACES.includes(f)) f = 'neutral';
+  const P = [], A = (d, extra = '') => P.push(`<path d="${d}" ${extra}/>`);
+  const head = { round: 'M19 34c0-10 6-17 13-17s13 7 13 17-6 18-13 18-13-8-13-18z', long: 'M20 33c0-11 5-17 12-17s12 6 12 17c0 11-5 20-12 20s-12-9-12-20z', square: 'M19 30c0-9 6-14 13-14s13 5 13 14v8c0 9-6 14-13 14s-13-5-13-14z', thin: 'M21 33c0-10 5-16 11-16s11 6 11 16-5 19-11 19-11-9-11-19z' }[L.head || 'round'];
+  A('M13 64c2-7 9-11 19-11s17 4 19 11'); A('M27 53l5 5 5-5', 'stroke-width="1.3"');
+  A(head, 'fill="var(--sheet)"');
+  const hair = {
+    topknot: 'M19 30c1-9 6-13 13-13s12 4 13 13c-4-5-9-7-13-7s-9 2-13 7zM29 17c0-3 1-5 3-5s3 2 3 5',
+    bun: 'M19 32c0-10 6-15 13-15s13 5 13 15c-3-6-8-9-13-9s-10 3-13 9zM20 30c-3 4-3 12-1 16M44 30c3 4 3 12 1 16M38 16a5 5 0 1 0 0.1 0',
+    bald: 'M25 21c2-1 4-1 5 0',
+    hat: 'M17 26h30M20 26l2-9h20l2 9M24 17v-3h16v3',
+    crown: 'M19 30c1-9 6-13 13-13s12 4 13 13c-4-5-9-7-13-7s-9 2-13 7zM27 16h10l-1-5h-8z',
+    scarf: 'M18 31c0-11 6-16 14-16s14 5 14 16c-4-3-9-5-14-5s-10 2-14 5zM18 31c-1 6 0 12 2 16M46 31c1 6 0 12-2 16',
+    messy: 'M19 31c0-9 5-14 13-14s13 5 13 14M19 27l3-6 2 4 3-7 3 5 3-6 3 5 3-4 2 5 3-1',
+    veil: 'M17 30c0-11 7-16 15-16s15 5 15 16v20M17 30v20'
+  }[L.hair || 'topknot'];
+  if (hair) A(hair, L.hair === 'bun' ? 'fill="none"' : '');
+  if (L.age === 'old') { A('M24 26h5M35 26h5', 'stroke-width="1" opacity=".6"'); A('M22 44c1 2 2 3 3 3M42 44c-1 2-2 3-3 3', 'stroke-width="1" opacity=".6"'); }
+  // brows
+  const BR = { neutral: ['M24 31h5', 'M35 31h5'], smile: ['M24 30q2.5-1.5 5 0', 'M35 30q2.5-1.5 5 0'], laugh: ['M24 29q2.5-2 5 0', 'M35 29q2.5-2 5 0'], cold: ['M24 32h5', 'M35 32h5'], angry: ['M24 29l5 3', 'M40 29l-5 3'], shock: ['M24 28q2.5-2.5 5 0', 'M35 28q2.5-2.5 5 0'], sad: ['M24 31l5-2', 'M40 31l-5-2'], cry: ['M24 31l5-2', 'M40 31l-5-2'], uneasy: ['M24 31q1.2-1.6 2.5 0t2.5 0', 'M35 31q1.2-1.6 2.5 0t2.5 0'], think: ['M24 31h5', 'M35 29.5q2.5-1.5 5 0'], sweat: ['M24 30l5-1', 'M40 30l-5-1'], smug: ['M24 31h5', 'M35 30l5 1'] }[f];
+  BR.forEach(b => A(b, `stroke-width="${f === 'angry' ? 2.4 : 1.7}"`));
+  // eyes
+  if (L.blind) { A('M24.5 35.5h4.5M35 35.5h4.5', 'stroke-width="1.6"'); }
+  else {
+    const dot = (x, y, r = 1.3) => P.push(`<circle cx="${x}" cy="${y}" r="${r}" fill="currentColor" stroke="none"/>`);
+    if (f === 'smile' || f === 'laugh') { A('M24.5 36q2.25-2.5 4.5 0M35 36q2.25-2.5 4.5 0'); }
+    else if (f === 'shock') { P.push('<circle cx="26.7" cy="35.5" r="2.4"/><circle cx="37.3" cy="35.5" r="2.4"/>'); dot(26.7, 35.5, .9); dot(37.3, 35.5, .9); }
+    else if (f === 'cold' || f === 'smug') { A('M24.5 35h4.5M35 35h4.5'); dot(26.5, 36.3, 1); dot(37, 36.3, 1); }
+    else if (f === 'uneasy') { dot(28.2, 35.8); dot(38.8, 35.8); }
+    else if (f === 'think') { dot(27.5, 34.6); dot(38, 34.6); }
+    else if (f === 'cry' || f === 'sad') { A('M24.5 35.5q2.25 1.5 4.5 0M35 35.5q2.25 1.5 4.5 0'); }
+    else if (f === 'sweat') { A('M24.5 35.8l2.2-1 2.3 1M35 35.8l2.2-1 2.3 1'); }
+    else { dot(26.7, 35.6); dot(37.3, 35.6); }
+  }
+  if (L.mask) A('M31 26c4-2 11-2 14 2 1 6-1 12-6 15-3-2-6-5-8-9z', 'fill="var(--sheet)"'), A('M36 33.5c1.2-1.4 3-1.4 4 .4-1.4 1-2.8 1-4-.4z'), A('M34 27l3 2M43 28l-3 2', 'stroke="var(--cinnabar)"');
+  // mouth
+  const MO = { neutral: 'M29.5 45h5', smile: 'M28.5 44q3.5 3 7 0', laugh: 'M28 43.5q4 6 8 0z', cold: 'M29 45.5h6', angry: 'M28.5 46.5q3.5-3 7 0', shock: 'M30.5 46a1.6 2.2 0 1 0 3.2 0a1.6 2.2 0 1 0 -3.2 0', sad: 'M29 46.5q3-2 6 0', cry: 'M28.5 47q3.5-3.5 7 0', uneasy: 'M28.5 45.5q1.2-1.4 2.4 0t2.3 0t2.3 0', think: 'M31 45.5h4', sweat: 'M28.5 45q1.8 1.6 3.5 0t3.5 0', smug: 'M29 45.5q3.5 1 6.5-1.5' }[f];
+  A(MO, f === 'laugh' ? 'fill="var(--sheet)"' : '');
+  if (L.beard === 'goatee') A('M30 49c1 4 3 5 4 0', 'stroke-width="1.3"');
+  if (L.beard === 'full') A('M22 43c1 7 5 11 10 11s9-4 10-11', 'stroke-width="1.3"');
+  if (L.beard === 'stubble') A('M27 49.5h.1M30 50.5h.1M33 50.5h.1M36 49.5h.1', 'stroke-width="1.4"');
+  if (L.scar) A('M22 29l9 17', 'stroke="var(--cinnabar)" stroke-width="1.4"');
+  if (L.bandage) A('M15 58l6 2 1-4-6-2z', 'stroke-width="1.2"');
+  if (L.mole) P.push('<circle cx="40" cy="42" r=".9" fill="currentColor" stroke="none"/>');
+  // comic marks
+  if (f === 'angry') A('M45 22l3-1-1 3M48 25l1 3-3-1', 'stroke="var(--cinnabar)" stroke-width="1.5"');
+  if (f === 'shock') A('M14 22l3 3M12 30h4M50 22l-3 3M52 30h-4', 'stroke-width="1.3"');
+  if (f === 'cry') A('M26 38c-1 3-1 5 0 6M38 38c1 3 1 5 0 6', 'stroke="var(--jade)" stroke-width="1.5"');
+  if (f === 'uneasy' || f === 'sweat') A('M46 24c-2 3-2 5 0 6 2-1 2-3 0-6z', 'stroke="var(--jade)" stroke-width="1.3"');
+  if (f === 'smile' && L.blush) A('M22 40h3M39 40h3', 'stroke="var(--cinnabar)" stroke-width="1" opacity=".7"');
+  return `<svg class="face ${cls}" viewBox="8 8 48 56" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${P.join('')}</svg>`;
+}
 const icon = (id, cls = '') => ICON[id] ? `<svg class="ico ${cls}" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICON[id]}</svg>` : '';
 
 /* ================= utils ================= */
@@ -89,7 +156,7 @@ function newGame(seed) {
   return s;
 }
 
-const DEFAULTS = () => ({ statLog: [], intel: {}, isold: {}, heat: 0, extraNews: [], accused: {}, baiSold: {}, intelSeenN: 0 });
+const DEFAULTS = () => ({ month: 1, monthStartLevel: M.startLevel, history: [], statLog: [], intel: {}, isold: {}, heat: 0, extraNews: [], accused: {}, baiSold: {}, intelSeenN: 0 });
 function migrate(s) { const d = DEFAULTS(); for (const k in d) if (s[k] === undefined) s[k] = d[k]; return s; }
 
 /* ----- lots ----- */
@@ -113,7 +180,7 @@ const lotValue = (l, day = S.day, trueQ = false) => price(l.item, day) * ((trueQ
 /* ----- relations ----- */
 const rel = n => S.rel[n] || 0;
 function addRel(n, d) { S.rel[n] = rel(n) + d; S.met[n] = true; }
-function addMem(n, t) { (S.mem[n] = S.mem[n] || []).push({ day: S.day, t }); S.met[n] = true; }
+function addMem(n, t) { (S.mem[n] = S.mem[n] || []).push({ day: S.day, m: MON(), t }); S.met[n] = true; }
 function attitude(n) { const r = rel(n); return r <= -4 ? '結仇' : r <= -2 ? '有隙' : r >= 4 ? '交心' : r >= 2 ? '熟客' : '生客'; }
 function bucketOf(npc) { const n = NP[npc]; if (!n) return 'eq'; if (n.level >= 10 && S.level < 10) return 'far'; const d = S.level - n.level; return d >= 3 ? 'up' : d <= -3 ? 'down' : 'eq'; }
 function callYou(npc) { const c = (NP[npc] || {}).call || {}; const b = bucketOf(npc); return (b === 'far' || b === 'down' ? c.down : b === 'up' ? c.up : c.eq) || '掌櫃'; }
@@ -122,8 +189,8 @@ const quote = t => /^[「（…]/.test(t) ? t : '「' + t + '」';
 const npcLv = n => NP[n].conceal ? '修為看不透' : lvName(NP[n].level);
 
 /* ================= prices ================= */
-function newsMult(item, day) { let m = 1; for (const n of NEWS) for (const e of (n.effects || [])) if (e.item === item && day >= e.from && day <= e.to) m *= e.mult; return m; }
-function price(item, day = S.day) { const b = IT[item] && IT[item].base; if (!b) return 0; return rp(b * newsMult(item, day) * (1 + (hash(S.seed + item + day) - 0.5) * 0.08)); }
+function newsMult(item, day) { let m = 1; for (const n of NEWS) if (inMonth(n)) for (const e of (n.effects || [])) if (e.item === item && day >= e.from && day <= e.to) m *= e.mult; return m; }
+function price(item, day = S.day) { const b = IT[item] && IT[item].base; if (!b) return 0; return rp(b * newsMult(item, day) * (1 + (hash(S.seed + item + (MON() > 1 ? 'm' + MON() : '') + day) - 0.5) * 0.08)); }
 
 /* ================= needs & effects ================= */
 function needOk(need, enc) {
@@ -140,8 +207,11 @@ function needOk(need, enc) {
   if (need.noticed && !(enc && (enc.appraised || enc.press > 0))) return false;
   if (need.backFlag && !(enc && enc.back && (enc.back.flags || []).includes(need.backFlag))) return false;
   if (need.intel && !need.intel.every(i => S.intel[i])) return false;
+  if (need.notIntel && need.notIntel.some(i => S.intel[i])) return false;
   if (need.lotKnown && !S.lots.some(l => l.item === need.lotKnown && l.known)) return false;
   if (need.anyOf && !need.anyOf.some(n => needOk(n, enc))) return false;
+  if (need.month && need.month !== MON()) return false;
+  if (need.relMax) for (const [k, v] of Object.entries(need.relMax)) if (rel(k) > v) return false;
   return true;
 }
 function applyFx(fx, ctx = {}) {
@@ -180,7 +250,11 @@ function applyFx(fx, ctx = {}) {
 function beginDay() {
   S.phase = 'morning'; S.slot = 0; S.place = null; S.enc = null; S.night = null;
   S.spirit = M.spirit[S.level] || 2; S.dayStartStones = S.stones; S.cards = [];
-  if (S.day === 1) S.cards.push({ title: D.events.e_intro.title, text: D.events.e_intro.text });
+  if (S.day === 1 && MON() === 1) S.cards.push({ title: D.events.e_intro.title, text: D.events.e_intro.text });
+  if (S.day === 1 && MON() > 1) {
+    S.cards.push({ title: '長生典的字條', text: `天還沒亮，門縫裡又塞進來一張字條：「許公子，尚餘${monthsText(S.lifespan)}。」`, face: 'think' });
+    for (const c of ((D.events.monthStart || {})[MON()] || [])) if (needOk(c.need || {})) S.cards.push({ title: c.title, text: c.text, notes: applyFx(c.fx), face: c.face });
+  }
   // perish
   for (const l of [...S.lots]) if (l.perishDay && S.day >= l.perishDay) {
     S.lots = S.lots.filter(x => x !== l);
@@ -190,7 +264,7 @@ function beginDay() {
   // scheduled events
   for (const ev of S.events.filter(e => e.day === S.day)) runEvent(ev);
   S.events = S.events.filter(e => e.day !== S.day);
-  if (S.day === 4 && S.flags.aheng_entrust && !S.flags.aheng_taken) S.cards.push({ title: D.events.e_aheng_warn.title, text: D.events.e_aheng_warn.text });
+  if (MON() === 1 && S.day === 4 && S.flags.aheng_entrust && !S.flags.aheng_taken) S.cards.push({ title: D.events.e_aheng_warn.title, text: D.events.e_aheng_warn.text });
   // complaints
   for (const c of S.complaints.filter(c => c.day === S.day)) {
     S.stones -= c.refund; S.rep.loose -= 1; S.repTag.loose = '賣次貨';
@@ -204,7 +278,7 @@ function beginDay() {
     S.cards.push({ title: '刀好了', text: PL.smith.commission.done });
   }
   // news
-  S.todayNews = NEWS.filter(n => n.day === S.day && (!n.cond || S.flags[n.cond]) && !(n.notCond && S.flags[n.notCond])).map(n => n.id);
+  S.todayNews = NEWS.filter(n => inMonth(n) && n.day === S.day && (!n.cond || S.flags[n.cond]) && !(n.notCond && S.flags[n.notCond])).map(n => n.id);
   if (S.todayNews.includes('n_bounty')) S.flags.bounty_seen = true;
 }
 function runEvent(evo) {
@@ -212,16 +286,16 @@ function runEvent(evo) {
   if (id.startsWith('leak:')) {
     const I = IN[id.slice(5)]; if (!I || !I.leak) return;
     const c = I.leak.cases.find(x => needOk(x.if || {})); if (!c) return;
-    S.cards.push({ title: c.title || '風聲', text: c.text, notes: applyFx(c.fx) }); return;
+    S.cards.push({ title: c.title || '風聲', text: c.text, notes: applyFx(c.fx), face: c.face || 'sweat' }); return;
   }
   if (id.startsWith('burn:')) {
     const iid = id.slice(5), I = IN[iid], paid = (S.isold[iid] || {}).price || 0;
     const back = Math.min(paid, Math.max(0, S.stones));
     S.stones -= back; addRel('bai', -2); S.flags.bai_burned = true; S.isold[iid].burned = true;
     addMem('bai', `你賣給她的「${I.short}」，是假的。`);
-    S.cards.push({ title: '聽雨樓來人', text: I.burn, notes: back ? ['－' + fmt(back) + ' 靈石'] : [] }); return;
+    S.cards.push({ title: '聽雨樓來人', text: I.burn, notes: back ? ['－' + fmt(back) + ' 靈石'] : [], face: 'sweat' }); return;
   }
-  if (id.startsWith('heat:')) { const h = D.heat[id.slice(5)]; if (!h) return; applyFx(h.fx); S.cards.push({ title: h.title, text: h.text }); return; }
+  if (id.startsWith('heat:')) { const h = D.heat[id.slice(5)]; if (!h) return; applyFx(h.fx); S.cards.push({ title: h.title, text: h.text, face: 'uneasy' }); return; }
   const ev = D.events[id]; if (!ev) return;
   if (evo.refund) { S.stones -= evo.refund; if (evo.back) addLot({ ...evo.back, known: true }); }
   if (!ev.cases) { S.cards.push({ title: ev.title, text: ev.text }); return; }
@@ -229,7 +303,7 @@ function runEvent(evo) {
   if (!c) return;
   const notes = applyFx(c.fx);
   if (evo.refund) notes.unshift('退錢 ' + fmt(evo.refund) + ' 靈石');
-  S.cards.push({ title: ev.title, text: c.text, notes });
+  S.cards.push({ title: ev.title, text: c.text, notes, face: c.face });
 }
 function openShop() { S.phase = 'day'; UI.tab = 'main'; }
 function advanceSlot() {
@@ -242,7 +316,7 @@ function advanceSlot() {
 function endDay() {
   S.stanceDays[S.stance] = (S.stanceDays[S.stance] || 0) + 1;
   for (const d of D.deals) {
-    if (S.done[d.id] || d.extra || d.days[1] !== S.day) continue;
+    if (S.done[d.id] || d.extra || !inMonth(d) || d.days[1] !== S.day) continue;
     if (d.missed && needOk(d.need)) applyFx(d.missed);
     S.done[d.id] = needOk(d.need) ? 'missed' : 'na';
   }
@@ -256,20 +330,36 @@ function finish() {
   for (const c of S.complaints) { S.stones -= c.refund; S.rep.loose -= 1; S.repTag.loose = '賣次貨'; S.cards.push({ title: '有人回來退貨', text: `在你這兒買${c.label}的人回來了：「${D.events.complaint[c.reason] || D.events.complaint.default}」你退了 ${fmt(c.refund)} 塊靈石。` }); }
   S.complaints = [];
   S.events = [];
-  S.phase = 'end'; S.lifespanLeft = M.lifespan - 1;
-  const sc = scoreTotal(), best = store.get(BEST_KEY);
+  S.phase = 'end'; S.lifespanLeft = S.lifespan - 1;
+  const sc = scoreTotal(), best = store.get(bestKey());
   S.finalScore = sc; S.prevBest = best ? best.score : null;
-  if (!best || sc > best.score) store.set(BEST_KEY, { score: sc, grade: gradeOf(), at: Date.now() });
+  if (!best || sc > best.score) store.set(bestKey(), { score: sc, grade: gradeOf(), at: Date.now() });
+}
+function goalLevel() { return (S.monthStartLevel || M.startLevel) + 1; }
+function nextMonth() {
+  if (MON() >= LAST_MONTH) return;
+  S.history.push({ m: MON(), grade: gradeOf(), score: S.finalScore, stats: { ...S.stats } });
+  S.month = MON() + 1; S.day = 1; S.lifespan -= 1; S.monthStartLevel = S.level;
+  const melted = S.lots.filter(l => l.perishDay); S.lots = S.lots.filter(l => !l.perishDay);
+  if (S.commission && !S.commission.done) S.commission.ready = Math.max(2, S.commission.ready - M.days);
+  Object.assign(S, { stats: { saw: 0, fooled: 0, wronged: 0 }, teaBought: {}, overheard: {}, herbBought: {}, baiSold: {}, dues: null, wind: 0, stanceDays: { 收斂: 0, 外放: 0 }, log: [], events: [], complaints: [], extraNews: [], finalScore: null, prevBest: null });
+  S.flags['month' + (S.month - 1) + '_done'] = true;
+  S.heat = Math.floor((S.heat || 0) / 2); delete S.flags.heat3; delete S.flags.heat5;
+  for (const d of D.deals) if (d.month === 'all' && S.done[d.id] && !['special', 'special2'].includes(S.done[d.id])) delete S.done[d.id];
+  S.smithBought = {};
+  beginDay();
+  for (const l of melted) S.cards.unshift({ title: '東西壞了', text: (D.events.melt[l.item] || D.events.melt.default.replace('{name}', l.label)) });
 }
 const BEST_KEY = 'fangshi-best-v1';
-function gradeOf() { const m = S.stats.fooled + S.stats.wronged; return S.flags.debt || m >= 4 ? '下' : (S.level >= 5 && m <= 1) ? '上' : '中'; }
+const bestKey = () => BEST_KEY + (MON() > 1 ? '-m' + MON() : '');
+function gradeOf() { const m = S.stats.fooled + S.stats.wronged; return S.debt > 0 || m >= 4 ? '下' : (S.level >= goalLevel() && m <= 1) ? '上' : '中'; }
 function scoreRows() {
   const nw = netWorth(true);
   return [
     { k: 'saw', label: '看穿', n: S.stats.saw, per: 10 },
     { k: 'fooled', label: '吃虧', n: S.stats.fooled, per: -15 },
     { k: 'wronged', label: '錯怪好人', n: S.stats.wronged, per: -10 },
-    { label: '境界（每比煉氣四層高一層）', n: Math.max(0, S.level - M.startLevel), per: 30 },
+    { label: '境界（這個月每升一層）', n: Math.max(0, S.level - (S.monthStartLevel || M.startLevel)), per: 30 },
     { label: '身家（每十靈石）', n: Math.floor(Math.max(0, nw) / 10), per: 1 },
     { label: '名聲（散修圈＋宗門圈）', n: (S.rep.loose || 0) + (S.rep.sect || 0), per: 5 },
     { label: '欠錢不語', n: S.debt ? 1 : 0, per: -30 }
@@ -278,7 +368,7 @@ function scoreRows() {
 const scoreTotal = () => scoreRows().reduce((a, r) => a + r.n * r.per, 0);
 
 /* ================= encounters ================= */
-function dealAvail(d) { return !S.done[d.id] && S.day >= d.days[0] && S.day <= d.days[1] && needOk(d.need); }
+function dealAvail(d) { return inMonth(d) && !S.done[d.id] && S.day >= d.days[0] && S.day <= d.days[1] && needOk(d.need); }
 function nextShopDeal() { return D.deals.filter(d => d.where === 'shop' && dealAvail(d)).sort((a, b) => (b.prio || 0) - (a.prio || 0))[0] || null; }
 
 function startDeal(id, from) {
@@ -291,15 +381,17 @@ function startDeal(id, from) {
     const lots = S.lots.filter(l => l.item === d.item);
     lots.sort((a, b) => (b.known ? b.q : 1) - (a.known ? a.q : 1));
     enc.lot = lots[0] ? lots[0].id : null;
-    enc.qty = Math.min(d.qty || 1, held(d.item));
+    enc.qty = Math.min(d.qty || 1, lots[0] ? lots[0].qty : 0);
   }
   if (IT[d.item]) S.codex[d.item] = true;
   if (d.intro) enc.th.push({ k: 'narr', t: sub(d.intro, npc) });
   if (id === 'd18') {
     const high = S.wind >= M.windHigh || S.stones >= M.richHigh;
-    enc.due = high ? M.duesHigh : M.dues; enc.high = high;
-    enc.th.push({ k: 'npc', t: high ? d.openHigh : d.open });
+    enc.due = high ? MD().duesHigh : MD().dues; enc.high = high;
+    enc.th.push({ k: 'npc', t: high ? d.openHigh.replace('一百', cnNum(MD().duesHigh)) : d.open.replace('八十', cnNum(MD().dues)) });
+    if (S.debt > 0) { enc.debtDue = rp(S.debt * 1.3); enc.due += enc.debtDue; enc.th.push({ k: 'narr', t: `錢不語也從對門踱了過來，手裡捏著一張借據：「許老弟，上個月墊的 ${fmt(S.debt)}，三分利，${fmt(enc.debtDue)}。一起算了吧。」` }); enc.th.push({ k: 'sys', t: `規費加還錢記，一共 ${fmt(enc.due)}。` }); }
   } else enc.th.push({ k: 'npc', t: sub(d.open, npc) });
+  enc.face = d.openFace || baseFace(npc);
   // realm & stance layer: adjust the opening price and say so
   if ((d.side === 'sell' || d.side === 'buy') && !d.extra) {
     const b = bucketOf(npc);
@@ -328,13 +420,15 @@ function pushTells(enc, after) {
   const d = DEALS[enc.deal]; if (!d || !d.tells) return;
   const bonus = S.flags.lamp && enc.from === 'shop' ? 2 : 0;
   const diff = S.level - NP[enc.npc].level + bonus;
-  for (const t of d.tells) if (t.after === after && diff >= t.need && !enc.th.some(x => x.t === t.text)) enc.th.push({ k: 'tell', t: t.text });
+  for (const t of d.tells) if (t.after === after && diff >= t.need && !enc.th.some(x => x.t === t.text)) { enc.th.push({ k: 'tell', t: t.text }); if (t.f) enc.face = t.f; }
 }
 function spend(enc, n) {
   enc.tea -= n;
-  if (enc.tea <= 0 && !enc.cold) { enc.tea = 0; enc.cold = true; enc.th.push({ k: 'npc', t: quote(sub(NP[enc.npc].cold, enc.npc)) }); }
+  if (enc.tea <= 0 && !enc.cold) { enc.tea = 0; enc.cold = true; say(enc, quote(sub(NP[enc.npc].cold, enc.npc)), 'cold'); }
 }
 const pride3 = enc => NP[enc.npc].traits.pride >= 3;
+const baseFace = npc => ((NP[npc] || {}).look || {}).base || 'neutral';
+function say(e, t, f) { e.th.push({ k: 'npc', t, f }); if (f) e.face = f; }
 
 function canAct(act) {
   const e = S.enc; if (!e || e.done) return false;
@@ -357,19 +451,19 @@ function canAct(act) {
 }
 function actAsk() {
   const e = S.enc, d = DEALS[e.deal];
-  e.asked = true; e.th.push({ k: 'me', t: d.ask.q || '這東西，怎麼來的？' }); e.th.push({ k: 'npc', t: sub(d.ask.a, e.npc) });
+  e.asked = true; e.th.push({ k: 'me', t: d.ask.q || '這東西，怎麼來的？' }); say(e, sub(d.ask.a, e.npc), d.ask.f || baseFace(e.npc));
   pushTells(e, 'ask'); learnTrigger(e.deal + ':ask'); spend(e, 1);
 }
 function actPress() {
   const e = S.enc, d = DEALS[e.deal], p = d.press[e.press++];
-  e.th.push({ k: 'me', t: p.q }); e.th.push({ k: 'npc', t: sub(p.a, e.npc) });
+  e.th.push({ k: 'me', t: p.q }); say(e, sub(p.a, e.npc), p.f || baseFace(e.npc));
   pushTells(e, 'press'); learnTrigger(e.deal + ':press' + (e.press - 1));
   spend(e, 2 + (pride3(e) && ['down', 'far'].includes(bucketOf(e.npc)) ? 1 : 0));
 }
 function actSilence() {
   const e = S.enc, d = DEALS[e.deal];
-  e.silent = true; e.th.push({ k: 'me', t: '（你沒有說話，只是看著對方。）' });
-  if (typeof d.silence === 'object') e.th.push({ k: 'narr', t: sub(d.silence.narr, e.npc) }); else e.th.push({ k: 'npc', t: sub(d.silence, e.npc) });
+  e.silent = true; e.th.push({ k: 'me', t: '（你沒有說話，只是看著對方。）', f: 'think' });
+  if (typeof d.silence === 'object') { e.th.push({ k: 'narr', t: sub(d.silence.narr, e.npc) }); if (d.silence.f) e.face = d.silence.f; } else say(e, sub(d.silence, e.npc), d.silenceFace || baseFace(e.npc));
   if (d.silenceRaise && d.silenceRaise > e.price) e.price = d.silenceRaise;
   if (d.silenceDrop && d.silenceDrop < e.price) e.price = d.silenceDrop;
   pushTells(e, 'silence'); learnTrigger(e.deal + ':silence');
@@ -379,7 +473,7 @@ function actHaggle() {
   const e = S.enc, d = DEALS[e.deal];
   e.th.push({ k: 'me', t: d.side === 'buy' ? '再加一點。' : d.side === 'task' ? '辛苦費，再加一點。' : '便宜點。' });
   if (bucketOf(e.npc) === 'far' || (bucketOf(e.npc) === 'down' && pride3(e))) {
-    e.haggle = d.haggle.length; e.th.push({ k: 'npc', t: quote(sub(NP[e.npc].refuse, e.npc)) }); spend(e, 2); return;
+    e.haggle = d.haggle.length; say(e, quote(sub(NP[e.npc].refuse, e.npc)), 'cold'); spend(e, 2); return;
   }
   let step = null;
   while (e.haggle < d.haggle.length) {
@@ -387,8 +481,8 @@ function actHaggle() {
     const better = d.side === 'sell' ? s.price < e.price : s.price > e.price;
     if (better) { step = s; break; }
   }
-  if (step) { e.price = step.price; e.th.push({ k: 'npc', t: sub(step.a, e.npc) }); }
-  else e.th.push({ k: 'npc', t: quote(sub(NP[e.npc].refuse, e.npc)) });
+  if (step) { e.price = step.price; say(e, sub(step.a, e.npc), step.f || 'think'); }
+  else say(e, quote(sub(NP[e.npc].refuse, e.npc)), 'cold');
   pushTells(e, 'haggle'); spend(e, 2);
 }
 function actAppraise() {
@@ -410,7 +504,7 @@ function actVerify(who) {
   if (v.cost && S.stones < v.cost) { toast('靈石不夠'); return; }
   S.stones -= v.cost || 0; S.slot++; e.verified.push(who); S.met[who] = true;
   e.th.push({ k: 'me', t: `（「容我想想。」你出門去找${NP[who].name}${v.cost ? `，花了 ${v.cost} 塊靈石` : ''}。回來時，已經是${SLOT[S.slot]}。）` });
-  e.th.push({ k: 'npc', who, t: sub(v.a, who) });
+  e.th.push({ k: 'npc', who, t: sub(v.a, who), f: v.f || baseFace(who) });
   if (!learnTrigger(`${e.deal}:verify:${who}`)) noteGeneric(`${NP[who].name}談「${d.title}」：${sub(v.a, who)}`, 'verify');
 }
 
@@ -429,6 +523,7 @@ function encOptions() {
     return out;
   }
   const d = DEALS[e.deal], out = [];
+  if (d.infoBarter) for (const id of Object.keys(S.intel).filter(i => IN[i] && intelSolo(IN[i]))) { const o = intelOffer(id); if (o.price) out.push({ key: 'barter:' + id, label: `拿「${IN[id].short}」換`, desc: '不收錢。這則消息就出去了' }); }
   if (d.infoBuyer) for (const id of Object.keys(S.intel).filter(i => IN[i])) { const o = intelOffer(id, 1.1); if (o.price) out.push({ key: 'info:' + id, label: `賣「${IN[id].short}」`, desc: `${o.price} 靈石` }); }
   for (const key of OPT_ORDER) {
     const o = d.opts[key]; if (!o) continue;
@@ -465,6 +560,7 @@ function decide(key) {
   const d = DEALS[e.deal];
   if (e.deal === 'd18') return decideDues(key);
   if (key.startsWith('info:')) return decideInfo(key.slice(5));
+  if (key.startsWith('barter:')) return decideBarter(key.slice(7));
   let o = d.opts[key]; if (!o) return;
   let ok = needOk(o.need, e);
   const res = ok ? o : o.fail;
@@ -484,6 +580,7 @@ function decide(key) {
       const l = lotById(e.lot); if (!l) return;
       const q = Math.min(e.qty, l.qty);
       takeQty(d.item, q, l.id); S.stones += unit * q; notes.push('＋' + fmt(unit * q) + ' 靈石');
+      if (d.dirty && l.flags.includes(d.dirty.flag)) { if (d.dirty.event) S.events.push({ id: d.dirty.event, day: S.day + 1, refund: unit * q, back: { item: l.item, qty: q, cost: l.cost, q: l.q, flags: l.flags, label: l.label } }); if (d.dirty.fx) applyFx(d.dirty.fx); }
       if (d.honestyTest) {
         if (l.q < 0.8) S.events.push({ id: 'e_xiaoman_back', day: S.day + 1, refund: unit * q, back: { ...l, qty: q } });
         else { addRel('zhang', 1); addRel('xiaoman', 1); }
@@ -492,17 +589,23 @@ function decide(key) {
     } else if (d.side === 'task' && key === 'deal' && d.price) { S.stones += unit; notes.push('＋' + fmt(unit) + ' 靈石'); }
   }
   notes = notes.concat(applyFx(res.fx, { price: unit, enc: e }));
+  let extraText = '';
+  for (const x of (res.extra || [])) if (needOk(x.if || {}, e)) { notes = notes.concat(applyFx(x.fx)); extraText += x.text || ''; }
   if (ok) learnTrigger(`${e.deal}:opt:${key}`);
   if (!(d.repeatable && key === 'decline')) S.done[e.deal] = key;
-  e.done = { key, label: ok ? label0 : '沒談成', notes };
-  e.th.push({ k: 'res', t: sub(res.text, e.npc), notes });
+  const SEAL = { deal: d.side === 'sell' ? '買下' : d.side === 'buy' ? '賣出' : '答應', decline: '婉拒', expose: '拆穿', report: '報官', refer: '轉介', sellhot: '銷贓', mask: '鬼面', pay: '照付', poor: '哭窮' };
+  const seal = !ok ? '不成' : (res.seal || o.seal || (label0.length <= 2 ? label0 : SEAL[key] || '另議'));
+  e.done = { key, label: ok ? label0 : '沒談成', notes, seal };
+  e.th.push({ k: 'res', t: sub(res.text, e.npc) + extraText, notes });
+  e.face = res.f || (key === 'expose' ? (o.right ? 'shock' : 'angry') : key === 'report' ? 'shock' : key === 'deal' ? 'smile' : e.face);
   // judgement stats
   if (!d.neutral && !d.extra) {
     let kind = null;
     if (key === 'expose') kind = o.right ? 'saw' : 'wronged';
     else if ((d.verdict || []).includes(key) && ok) kind = 'saw';
     else if (key === 'deal') kind = 'fooled';
-    if (kind) { S.stats[kind]++; S.statLog.push({ deal: e.deal, kind, key, day: S.day }); }
+    if (kind && (d.noJudge || []).includes(key)) kind = null;
+    if (kind) { S.stats[kind]++; S.statLog.push({ deal: e.deal, kind, key, day: S.day, m: MON() }); }
   }
   S.log.push({ day: S.day, t: `${NP[e.npc].name}：${d.title}（${e.done.label}）` });
   scanLearn();
@@ -520,19 +623,19 @@ function decideDues(key) {
     const took = [];
     for (const l of ls) { if (S.stones >= e.due) break; S.stones += pawnValue(l); took.push(l.label + '×' + l.qty); S.lots = S.lots.filter(x => x !== l); }
     e.th.push({ k: 'npc', t: `周執事讓人把${took.join('、')}搬走：「照市價七成，算你抵了。」` });
-    if (S.stones >= e.due) { S.stones -= e.due; e.th.push({ k: 'res', t: d.opts.pay.text, notes: ['－' + e.due + ' 靈石', '貨抵：' + took.join('、')] }); e.done = { key: 'pay', label: '貨抵' }; S.dues = { paid: true, amount: e.due }; }
+    if (S.stones >= e.due) { S.stones -= e.due; if (e.debtDue) S.debt = 0; e.th.push({ k: 'res', t: d.opts.pay.text, notes: ['－' + e.due + ' 靈石', '貨抵：' + took.join('、')] }); e.done = { key: 'pay', label: '貨抵' }; S.dues = { paid: true, amount: e.due }; }
     return;
   }
   if (key === 'poor') {
     e.poorTried = true;
-    if ((S.stanceDays['收斂'] || 0) >= 4 && S.wind < M.windHigh) { e.due = M.dues; e.th.push({ k: 'npc', t: d.opts.poor.text }); }
-    else { e.th.push({ k: 'npc', t: d.opts.poor.fail.text }); applyFx(d.opts.poor.fail.fx); }
+    if ((S.stanceDays['收斂'] || 0) >= 4 && S.wind < M.windHigh) { e.due = MD().dues + (e.debtDue || 0); e.th.push({ k: 'npc', t: d.opts.poor.text.replace('八十', cnNum(MD().dues)) }); }
+    else { e.th.push({ k: 'npc', t: d.opts.poor.fail.text.replace('一百', cnNum(MD().duesHigh)) }); applyFx(d.opts.poor.fail.fx); }
     return;
   }
   if (key === 'pay') {
-    if (S.stones >= e.due) { S.stones -= e.due; e.th.push({ k: 'res', t: d.opts.pay.text, notes: ['－' + e.due + ' 靈石'] }); e.done = { key, label: '照付' }; }
+    if (S.stones >= e.due) { S.stones -= e.due; if (e.debtDue) { S.debt = 0; addMem('qian', '你把上個月的借款連本帶利還清了。'); } e.th.push({ k: 'res', t: d.opts.pay.text + (e.debtDue ? '錢不語把借據撕了，笑著拱拱手。' : ''), notes: ['－' + e.due + ' 靈石'] }); e.done = { key, label: '照付' }; }
     else {
-      const owe = e.due - S.stones; S.debt = owe; S.stones = 0; S.flags.debt = true; addMem('qian', `月底替你墊了 ${fmt(owe)} 靈石的規費。`);
+      const owe = e.due - S.stones; S.debt = rp(owe); S.stones = 0; S.flags.debt = true; addMem('qian', `月底替你墊了 ${fmt(owe)} 靈石的規費。`);
       e.th.push({ k: 'res', t: `錢不語在門口探頭：「差多少？我先替你墊上。」他把 ${fmt(owe)} 塊靈石放在櫃上：「三分利，下個月還。不急，不急。」`, notes: ['欠錢不語 ' + fmt(owe)] });
       e.done = { key, label: '墊付' };
     }
@@ -544,8 +647,8 @@ function decideDues(key) {
 function startWalkin() {
   const W = PL.walkins, k = 'w' + S.day + '-' + S.slot;
   const who = W.who[Math.floor(rnd(k + 'who') * W.who.length)];
-  const dem = W.demand[S.day] || {};
-  const sellable = S.lots.filter(l => (IT[l.item].sell || []).includes('walk') && !l.flags.includes('sect') && !l.flags.includes('sting'));
+  const dem = ((MON() > 1 ? W['demand' + MON()] : W.demand) || {})[S.day] || {};
+  const sellable = S.lots.filter(l => (IT[l.item].sell || []).includes('walk') && !l.flags.some(f => ['sect', 'sting', 'contraband'].includes(f)));
   if (S.stance === '外放') S.wind++;
   const enc = { generic: true, who, npc: null, tea: 3, teaMax: 3, th: [], done: null, from: 'shop', chatted: false, haggled: false, lot: null };
   if (sellable.length && rnd(k + 'want') < 0.8) {
@@ -568,7 +671,7 @@ function startWalkin() {
 function actChat() {
   const e = S.enc; e.chatted = true; e.tea -= 1;
   e.th.push({ k: 'me', t: '最近坊市裡有什麼新鮮事？' });
-  const pool = D.news.gossip[S.day] || [];
+  const pool = ((MON() > 1 ? D.news['gossip' + MON()] : D.news.gossip) || {})[S.day] || [];
   const give = S.stance === '收斂' || rnd('g' + S.day + S.slot) < 0.3;
   S.gossipSeen = S.gossipSeen || {};
   const line = pool.find(g => !S.gossipSeen[g]);
@@ -609,9 +712,10 @@ function startDues() { S.dues = { paid: false }; startDeal('d18', 'dues'); }
 function placeOpen(id) {
   const p = PL[id]; if (!p) return false;
   if (p.days && !p.days.includes(S.day)) return false;
-  if (p.closed && p.closed.includes(S.day)) return 'closed';
+  if (closedDays(p).includes(S.day)) return 'closed';
   return p.hours.includes(S.slot);
 }
+function closedDays(p) { return Array.isArray(p.closed) ? (MON() === 1 ? p.closed : []) : ((p.closed || {})[MON()] || []); }
 function enterPlace(id) {
   S.place = { id, acted: false, homeSeen: null }; S.phase = 'place';
   const p = PL[id]; if (p.npc) S.met[p.npc] = true;
@@ -619,7 +723,8 @@ function enterPlace(id) {
   if (id === 'pawn') S.codex.dangpiao = true;
 }
 function leavePlace() { advanceSlot(); }
-function stallsToday() { return PL.market.stalls.filter(s => S.day >= s.days[0] && S.day <= s.days[1]); }
+function stallsToday() { return PL.market.stalls.filter(s => inMonth(s) && S.day >= s.days[0] && S.day <= s.days[1] && !(s.deal && DEALS[s.deal] && !S.done[s.deal] && !needOk(DEALS[s.deal].need))); }
+const stallDeal = s => (s.deals || (s.deal ? [s.deal] : [])).map(id => DEALS[id]).find(d => d && dealAvail(d)) || DEALS[(s.deals || [s.deal])[0]];
 function smithOffer(l) {
   const b = PL.smith.buys[l.item]; if (!b) return null;
   if (b.fixed) return b.fixed * l.q;
@@ -660,7 +765,7 @@ function buyFromHuichun(item) {
   if (S.stones < p) { toast('靈石不夠'); return; }
   S.stones -= p; addLot({ item, qty: 1, cost: p, known: true }); toast(`買了一${IT[item].unit}${IT[item].name}`);
 }
-function herbStock() { return PL.herbStock.find(h => S.day >= h.days[0] && S.day <= h.days[1]); }
+function herbStock() { return PL.herbStock.find(h => inMonth(h) && S.day >= h.days[0] && S.day <= h.days[1]); }
 function buyHerb() {
   const h = herbStock(); const n = S.herbBought[S.day] || 0;
   if (!h || n >= h.max || S.stones < h.price) return;
@@ -669,13 +774,13 @@ function buyHerb() {
   if (ex) ex.qty++; else addLot({ item: h.item, qty: 1, cost: h.price, q: h.q, label: h.q < 0.7 ? '老葛的赤炎草（早熟）' : '老葛的赤炎草', known: true, from: 'ge' + S.day });
 }
 function buyTea(i) {
-  const t = D.news.teahouse.filter(x => x.day === S.day)[i]; if (!t) return;
+  const t = D.news.teahouse.filter(x => inMonth(x) && x.day === S.day)[i]; if (!t) return;
   const b = S.teaBought[S.day] = S.teaBought[S.day] || [];
   if (b.includes(i) || S.stones < t.price) return;
   S.stones -= t.price; b.push(i); S.log.push({ day: S.day, t: '聽雨樓：' + t.text, rumor: true });
   noteGeneric('聽雨樓的消息單：' + t.text, 'bai');
 }
-function overhear() { if (S.overheard[S.day]) return; S.overheard[S.day] = true; const oh = D.news.overhear.find(o => o.day === S.day); if (oh) noteGeneric('在聽雨樓聽到隔壁桌說：' + oh.text, 'bai'); }
+function overhear() { if (S.overheard[S.day]) return; S.overheard[S.day] = true; const oh = D.news.overhear.find(o => inMonth(o) && o.day === S.day); if (oh && !learnTrigger('oh:' + MON() + ':' + S.day)) noteGeneric('在聽雨樓聽到隔壁桌說：' + oh.text, 'bai'); }
 function askBai(who) {
   const c = PL.tea.askCost; if (S.stones < c) { toast('靈石不夠'); return; }
   S.stones -= c; S.place.say = '「' + (PL.tea.about[who] || '這個人，我不熟。') + '」'; S.place.sayWho = 'bai'; UI.sheet = null;
@@ -720,12 +825,12 @@ function visitHome(npc) { S.place.homeSeen = npc; S.place.acted = true; S.met[np
   if (npc === 'aheng') { S.flags.saw_aheng_home = true; addMem('aheng', '門口有一雙男人的鞋，鞋底是鬼市巷子的黑泥。'); }
   if (npc === 'tie') addMem('tie', '屋裡有一張給孩子坐的小板凳。');
 }
-function homesKnown() { return Object.keys(NP).filter(n => NP[n].home && (S.homes[n] || (n === 'aheng' && (rel('aheng') >= 2 || S.flags.aheng_entrust)))); }
+function homesKnown() { return Object.keys(NP).filter(n => NP[n].home && !(n === 'yao' && S.flags.yao_left) && !(n === 'aheng' && S.flags.ahe_taken && MON() > 1) && (S.homes[n] || (n === 'aheng' && (rel('aheng') >= 2 || S.flags.aheng_entrust)))); }
 
 /* ================= intel ================= */
 function learnIntel(id, src) {
   if (S.intel[id] || !IN[id]) return false;
-  S.intel[id] = { day: S.day, src };
+  S.intel[id] = { day: S.day, m: MON(), src };
   if (S.enc && S.enc.th) S.enc.th.push({ k: 'note', t: '記進消息簿：' + IN[id].short });
   return true;
 }
@@ -734,7 +839,7 @@ function learnTrigger(trig) {
   for (const [id, I] of Object.entries(IN)) if ((I.from || []).includes(trig)) { hit = true; learnIntel(id, trig); }
   return hit;
 }
-function noteGeneric(text, src) { const k = 'g' + Math.floor(hash(text) * 1e9); if (!S.intel[k]) S.intel[k] = { day: S.day, src, text }; }
+function noteGeneric(text, src) { const k = 'g' + Math.floor(hash(text) * 1e9); if (!S.intel[k]) S.intel[k] = { day: S.day, m: MON(), src, text }; }
 function scanLearn() {
   for (const [id, I] of Object.entries(IN)) {
     if (S.intel[id]) continue;
@@ -744,22 +849,23 @@ function scanLearn() {
 const FRESH = [1, 0.85, 0.7, 0.55];
 const intelShared = I => (I.sharedIf || []).some(f => S.flags[f]);
 const intelSolo = I => !!I.exclusive && !intelShared(I);
-const intelDead = I => (I.expire && S.day > I.expire) || (I.expireFlag || []).some(f => S.flags[f]);
-const intelPublic = I => I.public && S.day >= I.public;
-function intelAge(rec) { const a = S.day - rec.day; return a <= 0 ? '新鮮' : a === 1 ? '還熱' : a === 2 ? '溫了' : '舊了'; }
+const intelDead = I => ((I.month || 1) !== MON() && !I.evergreen) || (I.expire && S.day > I.expire) || (I.expireFlag || []).some(f => S.flags[f]);
+const intelAgeDays = rec => (MON() - (rec.m || 1)) * M.days + S.day - rec.day;
+const intelPublic = I => I.public && ((I.month || 1) < MON() || S.day >= I.public);
+function intelAge(rec) { const a = intelAgeDays(rec); return a <= 0 ? '新鮮' : a === 1 ? '還熱' : a === 2 ? '溫了' : '舊了'; }
 function intelOffer(id, premium = 1) {
   const rec = S.intel[id]; if (!rec) return { price: 0, why: '' };
   if (!IN[id]) return { price: 0, why: rec.src === 'bai' ? '聽雨樓自己的消息' : rec.src === 'street' ? '坊間人人都在說' : '這種話，她自己問得到' };
   const I = IN[id];
-  if (S.isold[id]) return { price: 0, why: '已經賣給她了' };
+  if (S.isold[id]) return { price: 0, why: S.isold[id].barter ? '已經拿去換過了' : '已經賣給她了' };
   if (I.fromBai) return { price: 0, why: '聽雨樓自己的消息' };
   if (I.refuse) return { price: 0, why: '她不收', refuse: I.refuse };
   if (!I.value) return { price: 0, why: '這也算消息？' };
   if (intelDead(I)) return { price: 0, why: '舊聞，沒人要了' };
   if (I.fixedPrice) return { price: I.fixedPrice, why: '' };
-  let v = I.value * FRESH[Math.min(3, Math.max(0, S.day - rec.day))];
+  let v = I.value * FRESH[Math.min(3, Math.max(0, intelAgeDays(rec)))];
   if (intelPublic(I)) v *= 0.25; else if (intelSolo(I)) v *= 1.2;
-  if (I.hot && S.day >= I.hot[0] && S.day <= I.hot[1]) v *= 1.25;
+  if (I.hot && (I.month || 1) === MON() && S.day >= I.hot[0] && S.day <= I.hot[1]) v *= 1.25;
   if (S.flags.bai_burned) v *= 0.6;
   if (S.heat >= 5) v *= 0.8;
   const price = Math.round(v * premium);
@@ -769,7 +875,7 @@ function baiSays(I, p) { return I.baiText || (p >= 15 ? '白七娘的笑深了�
 function sellIntel(id, premium = 1) {
   const I = IN[id], o = intelOffer(id, premium); if (!I || !o.price) return null;
   const solo = intelSolo(I);
-  S.stones += o.price; S.isold[id] = { day: S.day, price: o.price };
+  S.stones += o.price; S.isold[id] = { day: S.day, m: MON(), price: o.price };
   S.heat += 1 + (solo ? 1 : 0);
   if (I.sellFlag) S.flags[I.sellFlag] = true;
   addMem('bai', `你賣給她一則消息：${I.short}。`);
@@ -790,16 +896,31 @@ function sellAtTea(id) {
   S.baiSold[S.day] = (S.baiSold[S.day] || 0) + 1;
   S.place.say = baiSays(I, p); toast(`＋${p} 靈石`);
 }
+function decideBarter(id) {
+  const e = S.enc, d = DEALS[e.deal], I = IN[id], o = d.opts.barter; if (!I || !o) return;
+  const solo = intelSolo(I);
+  S.isold[id] = { day: S.day, m: MON(), price: 0, barter: true }; S.heat += 1 + (solo ? 1 : 0);
+  if (I.sellFlag) S.flags[I.sellFlag] = true;
+  if (I.leak) S.events.push({ id: 'leak:' + id, day: S.day + 1 });
+  if (I.spread && !I.suppress) S.extraNews.push({ day: S.day + 1, src: '聽雨樓傳出', text: I.spread });
+  for (const lv of Object.keys(D.heat || {}).map(Number).sort((a, b) => a - b)) if (S.heat >= lv && !S.flags['heat' + lv]) { S.flags['heat' + lv] = true; S.events.push({ id: 'heat:' + lv, day: S.day + 1 }); }
+  e.th.push({ k: 'me', t: `（你把「${I.short}」說給她聽。）` });
+  const notes = applyFx(o.fx);
+  e.th.push({ k: 'res', t: sub(o.text, e.npc), notes });
+  e.done = { key: 'barter', label: '拿消息換', notes, seal: '換訊' }; S.done[e.deal] = 'barter';
+  S.log.push({ day: S.day, t: `拿「${I.short}」跟白七娘換了消息` });
+  scanLearn();
+}
 function decideInfo(id) {
   const e = S.enc, I = IN[id]; const p = sellIntel(id, 1.1); if (p == null) return;
   e.th.push({ k: 'me', t: `（你把「${I.short}」說給她聽。）` });
   e.th.push({ k: 'res', t: baiSays(I, p), notes: ['＋' + fmt(p) + ' 靈石'] });
-  e.done = { key: 'info', label: '賣消息', notes: [] }; S.done[e.deal] = 'info';
+  e.done = { key: 'info', label: '賣消息', notes: [], seal: '賣訊' }; S.done[e.deal] = 'info';
 }
 /* ----- accusations ----- */
 const accuseList = () => ACC.filter(a => !S.accused[a.id] && needOk(a.show));
 function evidenceHad(a) {
-  return a.evidence.filter(ev => ev.lotKnown ? S.lots.some(l => l.item === ev.lotKnown && l.known) : ev.lotFlag ? S.lots.some(l => l.known && l.flags.includes(ev.lotFlag)) : ev.has ? held(ev.has) > 0 : ev.intel ? !!S.intel[ev.intel] : false);
+  return a.evidence.filter(ev => ev.lotKnown ? S.lots.some(l => l.item === ev.lotKnown && l.known) : ev.lotFlag ? S.lots.some(l => l.known && l.flags.includes(ev.lotFlag)) : ev.has ? held(ev.has) > 0 : ev.intel ? !!S.intel[ev.intel] : ev.flag ? !!S.flags[ev.flag] : false);
 }
 function accuse(id) {
   const a = ACC.find(x => x.id === id); if (!a || S.accused[id]) return;
@@ -822,12 +943,13 @@ function accuse(id) {
 function meditate(invest, burn, pill) {
   invest = Math.max(0, Math.min(invest, S.stones, M.nightCap));
   let gain = invest * (burn ? 1.4 : 1);
-  if (burn) takeQty('dingshen', 1);
+  let burnQ = 1;
+  if (burn) { const bl = S.lots.find(l => l.item === 'dingshen'); burnQ = bl ? bl.q : 1; takeQty('dingshen', 1, bl && bl.id); gain = invest * (1 + 0.4 * burnQ); }
   if (pill) { takeQty('yangqi', 1); gain += S.pillYesterday ? 9 : 18; }
   S.stones -= invest; S.xp += Math.round(gain); S.pillYesterday = !!pill;
   const before = S.level; let need = M.xpNeed[S.level];
   while (S.level < 9 && S.xp >= need) { S.xp -= need; S.level++; need = M.xpNeed[S.level]; }
-  S.night = { invest, gain: Math.round(gain), up: S.level > before };
+  S.night = { invest, gain: Math.round(gain), up: S.level > before, weak: burn && burnQ < 0.9 };
 }
 function netWorth(trueQ = true) { return S.stones + S.lots.reduce((a, l) => a + lotValue(l, Math.min(S.day, M.days), trueQ), 0) - S.debt; }
 
@@ -847,8 +969,9 @@ const teaWord = r => r > 0.67 ? '熱' : r > 0.34 ? '溫' : r > 0 ? '涼' : '冷'
 function renderHUD() {
   if (!S || UI.view === 'title') { $hud.hidden = true; return; }
   $hud.hidden = false;
-  const dn = M.dayNames[Math.min(S.day, M.days) - 1] || '月底';
-  const tag = S.day === M.marketDay ? '市集日' : S.day < M.marketDay ? M.dayNames[M.marketDay - 1] + '市集' : S.day === M.days ? '月底' : '';
+  const dn = (MON() > 1 ? `<small class="mon">${monthLabel(MON())}</small>` : '') + (M.dayNames[Math.min(S.day, M.days) - 1] || '月底');
+  const mk = MD().marketDay;
+  const tag = S.day === mk ? '市集日' : S.day < mk ? M.dayNames[mk - 1] + '市集' : S.day === M.days ? '月底' : '';
   const slots = ['辰', '午', '申', '戌'].map((s, i) => {
     const cur = S.phase === 'end' ? 4 : S.phase === 'morning' ? -1 : (S.phase === 'night' || S.phase === 'dues' || S.slot >= 3) ? 3 : S.slot;
     return `<span class="${i < cur ? 'past' : i === cur ? 'now' : ''}">${s}</span>`;
@@ -868,10 +991,10 @@ function renderTitle() {
       <svg class="seal" viewBox="0 0 60 60" aria-hidden="true"><rect x="4" y="4" width="52" height="52" rx="4" fill="none" stroke="var(--cinnabar)" stroke-width="3"/><text x="30" y="27" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="17" fill="var(--cinnabar)">長生</text><text x="30" y="47" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="17" fill="var(--cinnabar)">典押</text></svg></div>
       <p class="lede">${esc(D.intro.lede)}</p>
     </div>
-    <h1 class="title-v">坊市掌櫃<small>許記 · 第一個月</small></h1>
+    <h1 class="title-v">坊市掌櫃<small>許記 · ${saved ? monthLabel(S.month) : monthLabel(1)}</small></h1>
   </section>
   <section class="card stack"><p class="lede">${esc(D.intro.how)}</p><p class="lede small muted">${esc(D.intro.stance)}</p><p class="lede"><b>${esc(D.intro.goal)}</b></p></section>
-  <div class="title-actions">${saved ? `<button class="btn primary wide" data-act="continue">繼續：${M.dayNames[Math.min(S.day, M.days) - 1]}</button><button class="btn quiet wide" data-act="askrestart">重新開始</button>` : `<button class="btn primary wide" data-act="new">開張</button>`}</div>`;
+  <div class="title-actions">${saved ? `<button class="btn primary wide" data-act="continue">繼續：${S.month > 1 ? monthLabel(S.month) + '・' : ''}${M.dayNames[Math.min(S.day, M.days) - 1]}</button><button class="btn quiet wide" data-act="askrestart">重新開始</button>` : `<button class="btn primary wide" data-act="new">開張</button>`}</div>`;
 }
 
 function newsHTML(id, short) {
@@ -882,7 +1005,7 @@ function newsHTML(id, short) {
 const extraToday = () => (S.extraNews || []).filter(n => n.day === S.day);
 const extraHTML = n => `<div class="newscard"><div class="src">${esc(n.src)}</div><div class="txt">${esc(n.text)}</div></div>`;
 function renderMorning() {
-  const cards = S.cards.map(c => `<div class="event"><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p>${c.notes && c.notes.length ? `<div class="fxline">${esc(c.notes.join('　'))}</div>` : ''}</div>`).join('');
+  const cards = S.cards.map(c => `<div class="event${c.face ? ' withface' : ''}">${c.face ? portrait('me', c.face, 'evface') : ''}<h3>${esc(c.title)}</h3><p>${esc(c.text)}</p>${c.notes && c.notes.length ? `<div class="fxline">${esc(c.notes.join('　'))}</div>` : ''}</div>`).join('');
   return `<h2 class="sec-h">晨報</h2>${cards ? `<div class="stack">${cards}</div>` : ''}
   <div class="card" style="margin-top:12px">${S.todayNews.map(id => newsHTML(id)).join('') + extraToday().map(extraHTML).join('') || '<p class="muted">今天坊市很安靜。</p>'}</div>
   <p class="small muted" style="margin-top:10px">消息不保證是真的。放消息的人，通常最想讓它成真。</p>`;
@@ -902,10 +1025,10 @@ function renderHub() {
       let note = '';
       if (o === 'closed') note = '今天封路';
       else if (!o) note = '這個時辰沒開（' + p.hours.map(x => SLOT[x][0]).join('、') + '）';
-      else if (id === 'market') note = S.day === M.marketDay ? '外地攤子只擺今天，還可以自己擺攤' : stallsToday().map(s => NP[s.npc].name).join('、') + (S.day < M.marketDay ? `（${M.dayNames[M.marketDay - 1]}市集日）` : '');
+      else if (id === 'market') note = S.day === MD().marketDay ? '外地攤子只擺今天，還可以自己擺攤' : stallsToday().map(s => NP[s.npc].name).join('、') + (S.day < MD().marketDay ? `（${M.dayNames[MD().marketDay - 1]}市集日）` : '');
       else if (id === 'homes') note = homesKnown().length ? '知道 ' + homesKnown().length + ' 處住址' : '還不知道誰住哪';
       else if (p.npc) note = NP[p.npc].name + (id === 'tea' ? '　消息、偷聽' : id === 'office' ? (S.flags.bounty_seen ? '　懸賞' : '') : '');
-      const hot = id === 'market' && S.day === M.marketDay;
+      const hot = id === 'market' && S.day === MD().marketDay;
       h += `<button class="place${hot ? ' hot' : ''}" data-act="enter" data-id="${id}" ${o === true ? '' : 'disabled'}><b>${esc(p.name)}${hot ? '<em>市集日</em>' : ''}</b><span>${esc(note)}</span></button>`;
     }
     h += `</div>`;
@@ -936,16 +1059,16 @@ function goodsCard(e) {
     if (ls.length > 1) lots = `<div class="lotpick" role="group" aria-label="賣哪一批">${ls.map(l => `<button data-act="pick" data-id="${l.id}" class="${l.id === e.lot ? 'on' : ''}">${esc(l.label)} ×${l.qty}${l.known && l.q < 0.9 ? '（成色差）' : ''}</button>`).join('')}</div>`;
   }
   return `<div class="goods${e.done ? ' done' : ''}">${it ? `<div class="g-grade">${esc(it.grade)}</div>` : ''}<div class="g-name">${icon(d.item)}<span>${esc(name)}${e.qty > 1 ? ' × ' + e.qty : ''}</span></div>
-    <div class="g-price">${price_}</div>${lots}${it && it.text ? `<button class="g-link" data-act="lore" data-id="${d.item}">物品文本</button>` : ''}${e.done ? sealSVG(e.done.label) : ''}</div>`;
+    <div class="g-price">${price_}</div>${lots}${it && it.text ? `<button class="g-link" data-act="lore" data-id="${d.item}">物品文本</button>` : ''}${e.done ? sealSVG(e.done.seal || e.done.label) : ''}</div>`;
 }
 function renderEnc() {
   const e = S.enc;
   let head;
   if (e.generic) head = `<div class="who"><div><div class="nm">散客</div><div class="rl">${esc(e.who)}</div></div><div class="tea">${teaSVG(e.tea / e.teaMax)}<span>${teaWord(e.tea / e.teaMax)}</span></div></div>`;
-  else { const n = NP[e.npc]; head = `<div class="who"><div><div class="nm">${esc(n.name)}</div><div class="rl">${esc(n.role)}</div><div class="lv muted">${esc(npcLv(e.npc))}${S.rel[e.npc] ? '　·　' + attitude(e.npc) : ''}</div></div><div class="tea" title="對方的耐心">${teaSVG(e.tea / e.teaMax)}<span>${teaWord(e.tea / e.teaMax)}</span></div></div>`; }
+  else { const n = NP[e.npc]; head = `<div class="who">${portrait(e.npc, e.face, 'big')}<div><div class="nm">${esc(n.name)}</div><div class="rl">${esc(n.role)}</div><div class="lv muted">${esc(npcLv(e.npc))}${S.rel[e.npc] ? '　·　' + attitude(e.npc) : ''}</div></div><div class="tea" title="對方的耐心">${teaSVG(e.tea / e.teaMax)}<span>${teaWord(e.tea / e.teaMax)}</span></div></div>`; }
   const th = e.th.map(x => {
-    if (x.k === 'npc') return `<div class="ln"><span class="sp">${esc(x.who ? NP[x.who].name : e.generic ? '散客' : NP[e.npc].name)}</span><span class="tx">${esc(x.t)}</span></div>`;
-    if (x.k === 'me') return `<div class="ln me"><span class="tx">${esc(x.t)}</span></div>`;
+    if (x.k === 'npc') return `<div class="ln"><span class="sp">${x.who ? portrait(x.who, x.f, 'tiny') : ''}${esc(x.who ? NP[x.who].name : e.generic ? '散客' : NP[e.npc].name)}</span><span class="tx">${esc(x.t)}</span></div>`;
+    if (x.k === 'me') return `<div class="ln me">${x.f ? portrait('me', x.f, 'tiny me') : ''}<span class="tx">${esc(x.t)}</span></div>`;
     if (x.k === 'sys') return `<div class="ln sys"><span class="label">靈識</span><span class="tx">${esc(x.t)}</span></div>`;
     if (x.k === 'res') return `<div class="ln res"><span class="tx">${esc(x.t)}</span>${x.notes && x.notes.length ? `<span class="small muted">${esc(x.notes.join('　'))}</span>` : ''}</div>`;
     return `<div class="ln ${x.k}"><span class="tx">${esc(x.t)}</span></div>`;
@@ -955,20 +1078,20 @@ function renderEnc() {
 
 function renderPlace() {
   const id = S.place.id, p = PL[id];
-  let h = `<div class="who"><div><div class="nm">${esc(p.name)}</div><div class="rl">${esc(SLOT[S.slot] || '')}</div></div></div><p class="serif" style="margin-top:8px;line-height:1.85">${esc(p.blurb)}${id === 'market' && S.day === M.marketDay ? ' ' + esc(p.blurbMarketDay) : ''}</p>`;
+  let h = `<div class="who"><div><div class="nm">${esc(p.name)}</div><div class="rl">${esc(SLOT[S.slot] || '')}</div></div></div><p class="serif" style="margin-top:8px;line-height:1.85">${esc(p.blurb)}${id === 'market' && S.day === MD().marketDay ? ' ' + esc(p.blurbMarketDay) : ''}</p>`;
   if (S.place.say) h += `<div class="ln" style="margin-top:12px">${S.place.sayWho || p.npc ? `<span class="sp">${esc(NP[S.place.sayWho || p.npc].name)}</span>` : ''}<span class="tx">${esc(S.place.say)}</span></div>`;
   if (id === 'market') {
     h += `<h2 class="sec-h">攤子</h2><div class="stack">`;
     for (const s of stallsToday()) {
       const n = NP[s.npc];
       if (s.special === 'smith') { h += smithHTML(s); continue; }
-      const d = DEALS[s.deal], done = S.done[s.deal];
+      const d = stallDeal(s), done = d && S.done[d.id];
       const avail = d && dealAvail(d);
       h += `<div class="person"><div class="ph"><b>${esc(n.name)}</b><span class="small muted">${esc(n.role)}</span></div><p class="serif small">${esc(s.goods)}</p>
-        ${avail ? `<button class="btn quiet" data-act="deal" data-id="${s.deal}">上前看看</button>` : `<span class="small muted">${done ? '已經談過了。' : '今天沒有你的事。'}</span>`}${s.npc === 'mang' && done !== 'special' && S.flags.mang_saw_jiansui && held('yupai') && !S.flags.mang_saw_yupai ? `<button class="btn quiet" data-act="mangyupai">給她看霜紋玉牌</button>` : ''}</div>`;
+        ${avail ? `<button class="btn quiet" data-act="deal" data-id="${d.id}">上前看看</button>` : `<span class="small muted">${done ? '已經談過了。' : '今天沒有你的事。'}</span>`}${s.npc === 'mang' && done !== 'special' && S.flags.mang_saw_jiansui && held('yupai') && !S.flags.mang_saw_yupai ? `<button class="btn quiet" data-act="mangyupai">給她看霜紋玉牌</button>` : ''}</div>`;
     }
     h += `</div>`;
-    if (S.day === M.marketDay) h += `<h2 class="sec-h">擺攤</h2><p class="small muted">市集日可以自己擺個攤，客人多是逛街的散修，賣得快、利薄。照市價九五折，最多擺三批貨。</p><button class="btn quiet wide" data-act="stall" ${S.place.stalled ? 'disabled' : ''}>${S.place.stalled ? '今天擺過了' : '擺攤'}</button>`;
+    if (S.day === MD().marketDay) h += `<h2 class="sec-h">擺攤</h2><p class="small muted">市集日可以自己擺個攤，客人多是逛街的散修，賣得快、利薄。照市價九五折，最多擺三批貨。</p><button class="btn quiet wide" data-act="stall" ${S.place.stalled ? 'disabled' : ''}>${S.place.stalled ? '今天擺過了' : '擺攤'}</button>`;
   }
   if (id === 'huichun') {
     h += `<h2 class="sec-h">藥櫃</h2><p class="small muted" style="margin-bottom:6px">回春堂賣得比市價貴一成半，收貨只給八折，拿來轉賣通常虧錢。要賺，得趕在消息讓價錢漲起來之前買；定神香、養氣丹則是夜裡打坐自己用的。你不煉丹。</p><div class="tbl-wrap"><table class="tbl"><thead><tr><th>貨</th><th class="r">價</th><th></th></tr></thead><tbody>`;
@@ -979,10 +1102,10 @@ function renderPlace() {
     h += mine.length ? `<div class="stack">${mine.map(l => { const o = huichunOffer(l); return `<div class="row"><span class="serif" style="flex:1;min-width:0">${esc(l.label)} × ${l.qty}</span><button class="btn quiet" data-act="hsell" data-id="${l.id}">${typeof o === 'number' ? '賣 ' + fmt(o * l.qty) : '問問看'}</button></div>`; }).join('')}</div><p class="small muted" style="margin-top:6px">回春堂照市價八折收，成色照實算。張掌事看得出金線真假。</p>` : `<p class="small muted">你手上沒有回春堂收的貨。</p>`;
   }
   if (id === 'tea') {
-    if (DEALS.d20 && dealAvail(DEALS.d20)) h += `<button class="go" style="margin-top:12px" data-act="deal" data-id="d20"><div><div class="gt">窗邊的人</div><div class="gd">窗邊有個戴鬼面的人，朝你招了招手。</div></div><span class="arrow">›</span></button>`;
-    const list = D.news.teahouse.filter(x => x.day === S.day), bought = S.teaBought[S.day] || [];
+    h += placeDeals('tea');
+    const list = D.news.teahouse.filter(x => inMonth(x) && x.day === S.day), bought = S.teaBought[S.day] || [];
     h += `<h2 class="sec-h">消息單</h2><div class="stack">${list.map((t, i) => bought.includes(i) ? `<div class="newscard"><div class="src">買到的消息</div><div class="txt">${esc(t.text)}</div></div>` : `<div class="row"><span class="small muted" style="flex:1">一則消息</span><button class="btn quiet" data-act="tbuy" data-i="${i}" ${S.stones < t.price ? 'disabled' : ''}>${t.price} 靈石</button></div>`).join('') || '<p class="small muted">今天沒有新消息。</p>'}</div>`;
-    const oh = D.news.overhear.find(o => o.day === S.day);
+    const oh = D.news.overhear.find(o => inMonth(o) && o.day === S.day);
     h += `<h2 class="sec-h">偷聽</h2>${S.overheard[S.day] ? `<div class="ln"><span class="sp">隔壁桌</span><span class="tx">${esc(oh.text)}</span></div>` : `<button class="btn quiet wide" data-act="overhear">挑張桌子坐下</button>`}`;
     h += `<h2 class="sec-h">問白七娘一個人</h2><p class="small muted">每問一個人 ${PL.tea.askCost} 塊靈石。她只說她願意說的。</p><button class="btn quiet wide" data-act="askbai">問……</button>`;
     const bn = S.baiSold[S.day] || 0;
@@ -991,7 +1114,8 @@ function renderPlace() {
   if (id === 'office') {
     const n = NP.zhou;
     h += `<div class="ln" style="margin-top:12px"><span class="sp">${esc(n.name)}</span><span class="tx">${esc(rel('zhou') >= 2 ? '「許掌櫃，有事？」' : rel('zhou') <= -2 ? '「又是你。」' : '「什麼事？」')}</span></div>`;
-    if (S.flags.bounty_seen) h += `<h2 class="sec-h">懸賞</h2>${newsHTML('n_bounty', true)}`;
+    if (S.flags.bounty_seen && MON() === 1) h += `<h2 class="sec-h">懸賞</h2>${newsHTML('n_bounty', true)}`;
+    if (MON() === 2 && S.day >= 3 && !S.flags.scar_caught) h += `<h2 class="sec-h">懸賞</h2>${newsHTML('n2_shen', true)}`;
     const acts = [];
     if (held('xuechan')) acts.push(`<button class="opt" data-act="turnxc"><b>交出雪蟾酥</b><span>懸賞${S.flags.bounty_seen ? '六十' : '還沒貼出來，先給四十'}</span></button>`);
     if (held('duanshui') && S.flags.bounty_seen) acts.push(`<button class="opt" data-act="turn" data-k="duanshui"><b>交出斷水刀</b><span>余小六的佩刀，賞二十</span></button>`);
@@ -1004,7 +1128,7 @@ function renderPlace() {
     if (placeOpen('herb') === 'closed') h += `<p class="serif" style="margin-top:12px">${esc(p.closedText)}</p>`;
     else {
       const hs = herbStock(), n = S.herbBought[S.day] || 0;
-      if (DEALS.d05 && dealAvail(DEALS.d05)) h += `<button class="go" style="margin-top:12px" data-act="deal" data-id="d05"><div><div class="gt">背藥簍的姑娘</div><div class="gd">田埂盡頭站著一個背藥簍的姑娘，簍裡的赤炎草還帶著土。</div></div><span class="arrow">›</span></button>`;
+      h += placeDeals('herb');
       if (hs) h += `<h2 class="sec-h">老葛的赤炎草</h2><div class="ln"><span class="sp">老葛</span><span class="tx">${esc(hs.say)}</span></div><div class="row" style="margin-top:8px"><span class="small muted" style="flex:1">${cnPrice(hs.price)}一株　·　今天還剩 ${hs.max - n} 株</span><button class="btn quiet" data-act="herb" ${n >= hs.max || S.stones < hs.price ? 'disabled' : ''}>買一株</button></div>`;
     }
   }
@@ -1022,11 +1146,18 @@ function renderPlace() {
   }
   return h;
 }
+function placeDeals(where) {
+  return D.deals.filter(d => d.where === where && dealAvail(d)).map(d => `<button class="go" style="margin-top:12px" data-act="deal" data-id="${d.id}"><div><div class="gt">${esc(d.hook ? d.hook.t : NP[d.npc].name)}</div><div class="gd">${esc(d.hook ? d.hook.d : d.title)}</div></div><span class="arrow">›</span></button>`).join('');
+}
 function smithHTML(s) {
   const n = NP.tie, c = PL.smith.commission;
-  const mine = S.lots.filter(l => PL.smith.buys[l.item]);
+  const mine = S.lots.filter(l => PL.smith.buys[l.item] && !l.flags.includes('contraband'));
+  const dirty = S.lots.some(l => l.flags.includes('contraband'));
+  const sellCfg = (PL.smith.sells || []).filter(inMonth);
   let h = `<div class="person"><div class="ph"><b>${esc(n.name)}</b><span class="small muted">${esc(n.role)}</span></div><p class="serif small">${esc(s.goods)}</p>`;
   h += mine.length ? mine.map(l => { const o = smithOffer(l); const tot = PL.smith.buys[l.item].fixed ? o : o * l.qty; return `<div class="row"><span class="small" style="flex:1;min-width:0">${esc(l.label)} × ${l.qty}</span><button class="btn quiet" style="min-height:34px" data-act="ssell" data-id="${l.id}">賣 ${fmt(tot)}</button></div>`; }).join('') : `<span class="small muted">他收寒鐵、狼牙、刀，和會發燙的石頭。</span>`;
+  if (dirty) h += `<span class="small muted">你那批沒有印記的寒鐵，他看了一眼就推回來：「這個我不收。你最好也別留。」</span>`;
+  for (const c of sellCfg) { const pr = rp(price(c.item) * c.mult); h += `<div class="row"><span class="small" style="flex:1">他也賣${esc(IT[c.item].name)}：${fmt(pr)} 一${esc(IT[c.item].unit)}，一次${cnNum(c.lot)}${esc(IT[c.item].unit)}</span><button class="btn quiet" style="min-height:34px" data-act="sbuy" data-id="${c.item}" ${S.stones < pr * c.lot ? 'disabled' : ''}>買 ${fmt(pr * c.lot)}</button></div>`; }
   if (S.commission && !S.commission.done) h += `<span class="small muted">訂的刀，${M.dayNames[S.commission.ready - 1]}好。</span>`;
   else if (!S.commission) h += `<button class="btn quiet" data-act="commission" ${held(c.needItem) < c.needQty || S.stones < c.fee ? 'disabled' : ''}>訂一把寒鐵短刀（${c.needQty}斤寒鐵＋${c.fee}靈石，三天）</button>`;
   return h + `</div>`;
@@ -1038,7 +1169,7 @@ function renderNight() {
   const need = M.xpNeed[S.level];
   if (n) {
     const dayDelta = S.stones - S.dayStartStones;
-    return `<section class="night stack"><h2>夜</h2><p class="serif">${n.invest || n.gain ? `你點了燈，打坐到三更。修為增加 ${n.gain}。` : '你沒有打坐，早早睡了。'}${n.up ? `<br><b class="jade">突破了。你現在是${lvName(S.level)}。靈識也寬了一些。</b>` : ''}</p>
+    return `<section class="night stack"><h2>夜</h2><p class="serif">${n.invest || n.gain ? `你點了燈，打坐到三更。修為增加 ${n.gain}。${n.weak ? '那束定神香燒得特別快，煙也嗆，心總靜不下來。' : ''}` : '你沒有打坐，早早睡了。'}${n.up ? `<br><b class="jade">突破了。你現在是${lvName(S.level)}。靈識也寬了一些。</b>` : ''}</p>
       <div class="card"><div class="row"><span class="label" style="flex:1">今天的靈石</span><b class="num ${dayDelta >= 0 ? 'down' : 'up'}">${dayDelta >= 0 ? '＋' : '－'}${fmt(Math.abs(dayDelta))}</b></div><div class="row"><span class="label" style="flex:1">修為</span><b class="num">${S.xp} / ${need}</b></div></div></section>`;
   }
   const max = Math.min(M.nightCap, Math.floor(S.stones));
@@ -1064,17 +1195,19 @@ function updateNight() {
 }
 
 function renderEnd() {
-  const counted = COUNTED.filter(id => S.done[id] && S.done[id] !== 'missed' && S.done[id] !== 'na');
-  const missed = COUNTED.length - counted.length;
+  const CT = countedIds();
+  const counted = CT.filter(id => S.done[id] && S.done[id] !== 'missed' && S.done[id] !== 'na');
+  const missed = CT.length - counted.length;
+  const EN = (MON() > 1 && D.endings['m' + MON()]) || D.endings;
   const nw = netWorth(true);
   const mistakes = S.stats.fooled + S.stats.wronged;
   const grade = gradeOf();
   const T = M.truthLabels;
   const truths = counted.map(id => { const d = DEALS[id]; const t = d.truth; return `<div class="truth"><b>${esc(d.title.includes(NP[d.npc].name) ? d.title : NP[d.npc].name + '：' + d.title)}</b><div class="t3"><span class="pill">${esc(T.goods[t.goods])}</span><span class="pill">${esc(T.origin[t.origin])}</span><span class="pill ${t.intent === 'plain' ? '' : 'cin'}">${esc(T.intent[t.intent])}</span></div><span class="small muted">你的處置：${esc(labelOf(id, S.done[id]))}${S.flags['won_' + id] ? '，後來到執事堂告成了' : ''}</span>${d.lesson ? `<details class="lesson"><summary>線索在哪</summary><p>${esc(d.lesson)}</p></details>` : ''}</div>`; }).join('');
   return `<section class="stack" style="padding-top:18px">
-    <div class="row"><div><span class="label">第一個月</span><div class="grade">${grade}等</div></div><div style="margin-left:auto;text-align:right"><span class="label">長生典</span><div class="serif cin" style="font-size:20px;font-weight:700">尚餘${monthsText(S.lifespan - 1)}</div></div></div>
+    <div class="row"><div><span class="label">${monthLabel(MON())}</span><div class="grade">${grade}等</div></div><div style="margin-left:auto;text-align:right"><span class="label">長生典</span><div class="serif cin" style="font-size:20px;font-weight:700">尚餘${monthsText(S.lifespan - 1)}</div></div></div>
     ${S.cards.length ? `<div class="stack">${S.cards.map(c => `<div class="event"><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p>${c.notes && c.notes.length ? `<div class="fxline">${esc(c.notes.join('　'))}</div>` : ''}</div>`).join('')}</div>` : ''}
-    <p class="serif" style="line-height:1.95">${esc(grade === '上' ? D.endings.top : grade === '中' ? D.endings.mid : S.flags.debt ? D.endings.low : D.endings.lowFooled)}</p>
+    <p class="serif" style="line-height:1.95">${esc((grade === '上' ? EN.top : grade === '中' ? EN.mid : S.debt > 0 ? EN.low : EN.lowFooled).replace('{left}', monthsText(S.lifespan - 1)))}</p>
     <div class="card"><table class="tbl"><tbody>
       <tr><td>靈石</td><td class="r">${fmt(S.stones)}</td></tr>
       <tr><td>庫房（照真實成色）</td><td class="r">${fmt(S.lots.reduce((a, l) => a + lotValue(l, M.days, true), 0))}</td></tr>
@@ -1084,27 +1217,28 @@ function renderEnd() {
       <tr><td>這個月錯過的生意</td><td class="r">${missed} 筆</td></tr>
     </tbody></table></div>
     <h2 class="sec-h">評等</h2><div class="card stack">
-      ${[['修為到煉氣五層', S.level >= 5, lvName(S.level)], ['被騙＋錯怪不超過一次', mistakes <= 1, `${mistakes} 次`], ['月底沒有欠債', !S.flags.debt, S.flags.debt ? '欠錢記' : '沒有']].map(([t, ok, v]) => `<div class="row"><span class="${ok ? 'jade' : 'cin'}" style="width:1.2em">${ok ? '✓' : '✗'}</span><span style="flex:1">${t}</span><span class="small muted">${esc(v)}</span></div>`).join('')}
+      ${[['修為比月初高一層（' + lvName(goalLevel()) + '）', S.level >= goalLevel(), lvName(S.level)], ['被騙＋錯怪不超過一次', mistakes <= 1, `${mistakes} 次`], ['月底沒有欠債', !(S.debt > 0), S.debt > 0 ? '欠錢記' : '沒有']].map(([t, ok, v]) => `<div class="row"><span class="${ok ? 'jade' : 'cin'}" style="width:1.2em">${ok ? '✓' : '✗'}</span><span style="flex:1">${t}</span><span class="small muted">${esc(v)}</span></div>`).join('')}
       <p class="small muted">三條都做到是上等。欠債，或被騙＋錯怪四次以上，是下等。其他是中等。</p></div>
     <h2 class="sec-h">帳面分</h2><div class="card"><table class="tbl score"><thead><tr><th>項目</th><th class="r">數</th><th class="r">每個</th><th class="r">分</th></tr></thead><tbody>
       ${scoreRows().map(r => `<tr${r.k && r.n ? ` class="tap" data-act="statsheet" data-id="${r.k}"` : ''}><td>${esc(r.label)}${r.k && r.n ? '<span class="small jade">　看是哪幾筆 ›</span>' : ''}</td><td class="r">${r.n}</td><td class="r muted">${r.per > 0 ? '＋' : '－'}${Math.abs(r.per)}</td><td class="r ${r.n * r.per < 0 ? 'cin' : ''}">${r.n * r.per > 0 ? '＋' : r.n * r.per < 0 ? '－' : ''}${Math.abs(r.n * r.per)}</td></tr>`).join('')}
       <tr><td><b>合計</b></td><td></td><td></td><td class="r"><b>${scoreTotal()}</b></td></tr></tbody></table>
       <p class="small muted" style="margin-top:8px">${S.prevBest == null ? '這是你第一次結算，之後每一輪都會跟最高分比。' : S.finalScore > S.prevBest ? `新紀錄。之前最高 ${S.prevBest} 分。` : `你的最高紀錄是 ${S.prevBest} 分。`}</p></div>
     <h2 class="sec-h">這個月的真相</h2><div>${truths || '<p class="muted">這個月你沒談成什麼生意。</p>'}</div>
-    ${(() => { const ts = (D.endings.teasers || []).filter(t => needOk(t.need)).slice(0, 3); return ts.length ? `<h2 class="sec-h">還沒完的事</h2><div class="stack">${ts.map(t => `<p class="serif" style="line-height:1.9">${esc(t.text)}</p>`).join('')}</div>` : ''; })()}
-    <p class="serif muted" style="margin-top:12px">${esc(D.endings.next)}</p>
-    <button class="btn primary wide" data-act="new">再開一次張</button></section>`;
+    ${(() => { const ts = (EN.teasers || []).filter(t => needOk(t.need)).slice(0, 3); return ts.length ? `<h2 class="sec-h">還沒完的事</h2><div class="stack">${ts.map(t => `<p class="serif" style="line-height:1.9">${esc(t.text)}</p>`).join('')}</div>` : ''; })()}
+    <p class="serif muted" style="margin-top:12px">${esc(EN.next)}</p>
+    ${MON() < LAST_MONTH ? `<button class="btn primary wide" data-act="nextmonth">進入${monthLabel(MON() + 1)}</button><button class="btn quiet wide" style="margin-top:8px" data-act="new">從頭再開一次張</button>` : `<button class="btn primary wide" data-act="new">從頭再開一次張</button>`}</section>`;
 }
 function labelOf(id, key) {
   const d = DEALS[id], o = d.opts[key];
   if (String(key).startsWith('info')) return '賣了消息';
+  if (key === 'barter') return '拿消息換';
   if (!o) return key;
   if (o.label) return o.label;
   return ({ deal: d.side === 'sell' ? '買下' : d.side === 'buy' ? '賣給他' : '答應', decline: '婉拒', expose: '拆穿', report: '報執事堂', refer: '轉介給錢記' })[key] || key;
 }
 
 function renderStore() {
-  const lots = S.lots.map(l => { const it = IT[l.item]; const v = it.base ? lotValue(l) : 0; const flags = l.known ? l.flags.map(f => ({ painted: '金線是畫的', damp: '受潮', stolen: '燙手', sting: '瓶底有印', sect: '寒潭宗的東西', alive: '活取', entrusted: '阿蘅託付' })[f]).filter(Boolean) : [];
+  const lots = S.lots.map(l => { const it = IT[l.item]; const v = it.base ? lotValue(l) : 0; const flags = l.known ? l.flags.map(f => ({ painted: '金線是畫的', damp: '受潮', stolen: '燙手', sting: '瓶底有印', sect: '寒潭宗的東西', alive: '活取', entrusted: '阿蘅託付', contraband: '沒有印記', fake: '假的', cut: '摻了東西', evidence: '證物' })[f]).filter(Boolean) : [];
     return `<tr><td><button class="g-link ilink" style="margin:0" data-act="lore" data-id="${l.item}">${icon(l.item, 'sm')}<span>${esc(l.label)}</span></button>${flags.length ? `<div class="small cin">${esc(flags.join('、'))}${l.known && l.q < 0.9 ? '，成色' + Math.round(l.q * 10) + '成' : ''}</div>` : ''}${l.perishDay ? `<div class="small cin">${M.dayNames[l.perishDay - 1] || ''}化</div>` : ''}</td><td class="r">${l.qty}</td><td class="r">${fmt(l.cost)}</td><td class="r">${it.base ? fmt(v) : '—'}</td><td class="r">${!l.known && S.spirit > 0 ? `<button class="btn quiet" style="min-height:32px;font-size:13px" data-act="lotapp" data-id="${l.id}">鑑定</button>` : ''}</td></tr>`; }).join('');
   const items = Object.keys(IT).filter(k => IT[k].base && IT[k].base < 100 && S.codex[k]);
   const board = items.map(k => { const p = price(k), y = S.day > 1 ? price(k, S.day - 1) : p; const ch = p > y ? `<span class="up">▲</span>` : p < y ? `<span class="down">▼</span>` : ''; return `<tr><td class="nm">${icon(k, 'sm')} ${esc(IT[k].name)}</td><td class="r">${fmt(p)} ${ch}</td><td class="r muted">${esc(IT[k].unit)}</td></tr>`; }).join('');
@@ -1119,7 +1253,7 @@ function renderPeople() {
   const cards = people.map(n => { const p = NP[n], m = S.mem[n] || [];
     return `<div class="person"><div class="ph"><b>${esc(p.name)}</b><span class="small muted">${esc(p.role)}　·　${esc(npcLv(n))}</span><span class="pill" style="margin-left:auto">${attitude(n)}</span></div>
       <p class="small">${esc(p.surface)}</p>${S.homes[n] ? '<span class="small jade">知道住處</span>' : ''}
-      ${m.length ? `<ul>${m.map(x => `<li>${esc(M.dayNames[x.day - 1])}　${esc(x.t)}</li>`).join('')}</ul>` : ''}
+      ${m.length ? `<ul>${m.map(x => `<li>${esc(dayLabel(x.day, x.m))}　${esc(x.t)}</li>`).join('')}</ul>` : ''}
       <div class="tags" role="group" aria-label="你的標籤">${tagset.map(t => `<button data-act="tag" data-id="${n}" data-v="${t}" class="${(S.tags[n] || '未定') === t ? 'on' : ''}">${t}</button>`).join('')}</div>
       <textarea id="note-${n}" data-note="${n}" placeholder="你的備註">${esc(S.notes[n] || '')}</textarea></div>`; }).join('');
   return `<h2 class="sec-h">名聲</h2><div class="card stack">${rep || '<p class="small muted">還沒有人說你什麼。</p>'}</div><h2 class="sec-h">人脈簿</h2><p class="small muted" style="margin-bottom:8px">遊戲不替你下結論。標籤是你自己貼的，貼錯了也是你的事。</p><div class="stack">${cards || '<p class="muted">還沒見過什麼人。</p>'}</div>`;
@@ -1145,7 +1279,7 @@ function intelRow(id) {
   if (I) {
     const sold = S.isold[id];
     if (sold && sold.burned) pills.push('<span class="pill cin">白七娘說是假的</span>');
-    else if (sold) pills.push(`<span class="pill cin">${esc(M.dayNames[sold.day - 1] || '')}賣過</span>`);
+    else if (sold) pills.push(`<span class="pill cin">${esc(dayLabel(sold.day, sold.m))}賣過</span>`);
     if (I.value || I.refuse) {
       if (intelDead(I)) pills.push('<span class="pill">舊聞</span>');
       else if (intelPublic(I)) pills.push('<span class="pill">人盡皆知</span>');
@@ -1154,11 +1288,11 @@ function intelRow(id) {
     }
   }
   const src = srcLabel(rec, I);
-  return `<div class="intel"><div class="it">${esc(text)}</div><div class="im"><span class="small muted">${esc(M.dayNames[rec.day - 1] || '')}${src ? '　' + esc(src) : ''}</span>${pills.join('')}</div></div>`;
+  return `<div class="intel"><div class="it">${esc(text)}</div><div class="im"><span class="small muted">${esc(dayLabel(rec.day, rec.m))}${src ? '　' + esc(src) : ''}</span>${pills.join('')}</div></div>`;
 }
 function renderIntel() {
   S.intelSeenN = Object.keys(S.intel).length;
-  const ids = Object.keys(S.intel).sort((a, b) => S.intel[b].day - S.intel[a].day);
+  const ids = Object.keys(S.intel).sort((a, b) => ((S.intel[b].m || 1) * 10 + S.intel[b].day) - ((S.intel[a].m || 1) * 10 + S.intel[a].day));
   const seen = ids.filter(i => IN[i] && IN[i].kind === 'seen');
   const heard = ids.filter(i => (IN[i] && IN[i].kind !== 'seen') || (!IN[i] && S.intel[i].src === 'verify'));
   const misc = ids.filter(i => !IN[i] && S.intel[i].src !== 'verify');
@@ -1194,7 +1328,7 @@ function renderSheet() {
     const lot = S.lots.find(l => l.item === 'xuechan');
     h = `<h2>周執事問：「從哪收的？」</h2>` + (lot && lot.flags.includes('entrusted') ? `<button class="opt" data-act="turnxcw" data-v="entrust"><b>「阿蘅託我交的。」</b><span>賞錢分她一半</span></button>` : `<button class="opt danger" data-act="turnxcw" data-v="aheng"><b>「採藥的阿蘅。」</b><span>說實話</span></button><button class="opt" data-act="turnxcw" data-v="other"><b>「一個路過的散修。」</b><span>他不一定信</span></button>`);
   } else if (sh.type === 'stall') {
-    const ls = S.lots.filter(l => IT[l.item].base && (IT[l.item].sell || []).includes('walk') && !l.flags.includes('sect') && !l.flags.includes('sting'));
+    const ls = S.lots.filter(l => IT[l.item].base && (IT[l.item].sell || []).includes('walk') && !l.flags.some(f => ['sect', 'sting', 'contraband'].includes(f)));
     const pick = UI.stallPick || [];
     h = `<h2>擺攤</h2><p class="small muted">最多三批。照今日市價九五折賣出，成色差的貨，第二天可能有人回來退。</p>` + (ls.length ? ls.map(l => `<label class="check" style="margin-top:8px"><input type="checkbox" data-stall="${l.id}" ${pick.includes(l.id) ? 'checked' : ''} ${!pick.includes(l.id) && pick.length >= 3 ? 'disabled' : ''}><span>${esc(l.label)} × ${l.qty}<br><span class="small muted">約 ${fmt(rp(price(l.item) * 0.95) * l.qty)} 靈石</span></span></label>`).join('') + `<button class="btn primary wide" style="margin-top:12px" data-act="stallgo" ${pick.length ? '' : 'disabled'}>擺出去</button>` : '<p class="muted">沒有可以擺的貨。</p>');
   } else if (sh.type === 'sellintel') {
@@ -1205,7 +1339,7 @@ function renderSheet() {
     h = `<h2>${esc(a.label)}</h2><p class="small muted" style="margin-top:6px">你手上的證據：</p>${had.length ? `<ul class="evid">${had.map(ev => `<li>${esc(ev.text)}</li>`).join('')}</ul>` : '<p class="small" style="margin-top:4px">什麼都沒有。</p>'}<p class="small muted" style="margin-top:8px">告了就收不回來。</p><button class="opt danger" data-act="accusego" data-id="${a.id}"><b>去告</b><span>周執事會聽你說完</span></button>`;
   } else if (sh.type === 'stat') {
     const T = { saw: '看穿', fooled: '吃虧', wronged: '錯怪好人' }, TL = M.truthLabels;
-    const list = (S.statLog || []).filter(x => x.kind === sh.id);
+    const list = (S.statLog || []).filter(x => x.kind === sh.id && (x.m || 1) === MON());
     h = `<h2>${T[sh.id]}</h2>` + (list.length ? list.map(x => { const d = DEALS[x.deal], t = d.truth; return `<div class="card" style="margin-top:10px"><b class="serif">${esc(NP[d.npc].name + '：' + d.title)}</b><div class="t3" style="margin:6px 0">${['goods', 'origin', 'intent'].map(k => `<span class="pill ${k === 'intent' && t.intent !== 'plain' ? 'cin' : ''}">${esc(TL[k][t[k]])}</span>`).join(' ')}</div><p class="small">${esc(M.dayNames[x.day - 1])}，你選了「${esc(labelOf(x.deal, x.key))}」。${S.flags['won_' + x.deal] ? '後來到執事堂告成了，這筆不算吃虧。' : ''}</p>${d.lesson ? `<p class="serif" style="margin-top:6px;line-height:1.85">${esc(d.lesson)}</p>` : ''}</div>`; }).join('') : '<p class="muted">沒有紀錄。</p>');
   } else if (sh.type === 'menu') {
     h = `<h2>選單</h2>${sh.confirm ? `<p class="small">重新開始會清掉這一局。確定嗎？</p><button class="opt danger" data-act="new"><b>確定，重新開始</b><span>這一局會消失</span></button>` : `<button class="opt" data-act="home"><b>回到封面</b><span>進度會保留</span></button><button class="opt" data-act="askrestart"><b>重新開始</b><span>清掉這一局</span></button>`}`;
@@ -1303,6 +1437,7 @@ function onAct(a, el) {
     case 'close': closeEnc(); commit('top'); break;
     case 'lore': UI.sheet = { type: 'lore', id }; render(); break;
     case 'ssell': sellToSmith(+id); commit(); break;
+    case 'sbuy': { const c = (PL.smith.sells || []).find(x => x.item === id), pr = rp(price(id) * c.mult) * c.lot; S.smithBought = S.smithBought || {}; if ((S.smithBought[S.day] || 0) >= 2) { toast('鐵老蔫：「今天就這麼多了。」'); commit(); break; } if (S.stones >= pr) { S.smithBought[S.day] = (S.smithBought[S.day] || 0) + 1; S.stones -= pr; addLot({ item: id, qty: c.lot, cost: rp(price(id) * c.mult), known: true, label: c.label || IT[id].name }); toast(`向鐵老蔫買了${cnNum(c.lot)}${IT[id].unit}${IT[id].name}`); } commit(); break; }
     case 'commission': commission(); commit(); break;
     case 'hbuy': buyFromHuichun(id); commit(); break;
     case 'hsell': sellToHuichun(+id); commit(); break;
@@ -1329,6 +1464,7 @@ function onAct(a, el) {
     case 'evening': S.phase = 'night'; commit('top'); break;
     case 'meditate': meditate(UI.night.invest, UI.night.burn, UI.night.pill); UI.night = { invest: 0, burn: false, pill: false }; commit('top'); break;
     case 'sleep': endDay(); commit('top'); break;
+    case 'nextmonth': nextMonth(); UI.tab = 'main'; commit('top'); break;
   }
 }
 function marketStall(ids) {
@@ -1374,7 +1510,7 @@ function start(data) {
   render();
 }
 window.claude?.hot?.snapshot?.(() => ({ S, view: UI.view, tab: UI.tab }));
-window.__fs = { newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN,
+window.__fs = { newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN,
   get S() { return S; }, set S(v) { S = v; }, UI, D, DEALS, NP, IT };
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 })();

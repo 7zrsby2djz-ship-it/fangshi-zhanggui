@@ -14,6 +14,7 @@ qian:
   refuse: 許老弟，這價錢，是看在你爹的面子上。
   cold: 許老弟，給句痛快話。
   circle: 坊市商人
+  look: {head: square, hair: hat, beard: goatee, mole: true, base: smile}
 
 yao:
   name: 姚四
@@ -28,6 +29,7 @@ yao:
   home:
     text: 姚四住在洞府區最舊的一排石屋。門沒鎖。桌上一碟金粉，一支極細的狼毫筆，筆尖還是濕的。牆角堆著幾株赤炎草，葉背的金線，有的三道，有的五道。
     line: 「小許？你怎麼找到這兒來了。坐，坐。」他把那碟金粉往桌下推了推。
+  look: {head: thin, hair: topknot, beard: goatee, age: old, base: smile}
 
 bai:
   name: 白七娘
@@ -40,6 +42,7 @@ bai:
   refuse: 消息的價錢，從來不二價。
   cold: 許掌櫃，茶涼了。
   circle: 坊市商人
+  look: {head: round, hair: bun, blush: true, base: smile}
 
 aheng:
   name: 阿蘅
@@ -54,6 +57,7 @@ aheng:
   home:
     text: 阿蘅住在洞府區邊上一間租來的小屋。門口兩雙鞋，一雙是她的，一雙是男人的，鞋底的泥是黑的。坊市裡只有一條巷子是這種黑泥，就是夜裡才開的那條。
     line: 她開門看見你，愣了一下，回頭把裡屋的門帶上：「掌櫃的有事？」
+  look: {head: thin, hair: scarf, base: cold}
 
 tie:
   name: 鐵老蔫
@@ -68,6 +72,7 @@ tie:
   home:
     text: 鐵老蔫的石屋後面是個小鍛爐，爐火沒熄。牆上掛著一把沒開刃的刀胚，刀胚上刻著兩個字，被煙燻得看不清。角落裡有一張小板凳，凳腳纏著新布，是給孩子坐的。
     line: 「……來了就坐。」他沒抬頭，手裡的鎚子也沒停。
+  look: {head: square, hair: messy, beard: stubble, age: old, base: cold}
 
 mang:
   name: 盲婆婆
@@ -80,6 +85,7 @@ mang:
   refuse: 我的燈，不講價。
   cold: 去吧。
   circle: 散修
+  look: {head: round, hair: bun, blind: true, age: old, base: neutral}
 
 stone:
   name: 小石頭
@@ -91,6 +97,7 @@ stone:
   refuse: 那、那就不賣了。
   cold: 掌櫃的，你還要不要呀？
   circle: 散修
+  look: {head: round, hair: messy, blush: true, base: smile}
 
 ge:
   name: 老葛
@@ -102,6 +109,7 @@ ge:
   refuse: 這價錢，我真的不能再少了。
   cold: 許掌櫃，我還要趕路。
   circle: 散修
+  look: {head: square, hair: scarf, beard: stubble, age: old, base: neutral}
 
 zhou:
   name: 周正
@@ -113,6 +121,7 @@ zhou:
   refuse: 執事堂的規矩，不講價。
   cold: 許掌櫃，我沒那個閒工夫。
   circle: 寒潭宗
+  look: {head: long, hair: hat, beard: goatee, base: cold}
 
 zhang:
   name: 張守拙
@@ -124,6 +133,7 @@ zhang:
   refuse: 規矩就是規矩。
   cold: 許掌櫃請回吧。
   circle: 寒潭宗
+  look: {head: long, hair: crown, beard: full, age: old, base: cold}
 
 liu:
   name: 柳郎中
@@ -135,6 +145,7 @@ liu:
   refuse: 掌櫃的真會做生意。
   cold: 掌櫃的慢慢想，我不急。
   circle: 散修
+  look: {head: thin, hair: topknot, beard: goatee, base: smile}
 
 hu:
   name: 戴鬼面的人
@@ -147,6 +158,7 @@ hu:
   refuse: 熟客九折，生客加三成。
   cold: 許掌櫃想好了再來找我。
   circle: 鬼市
+  look: {head: long, hair: topknot, mask: true, base: neutral}
 
 # —— 只出現一次的人 ——
 daoren:
@@ -160,6 +172,7 @@ daoren:
   cold: 施主無緣，貧道告辭。
   circle: 散修
   oneoff: true
+  look: {head: thin, hair: crown, beard: goatee, base: smile}
 
 tao:
   name: 陶老符
@@ -172,6 +185,7 @@ tao:
   cold: 你慢慢看，我招呼別人去。
   circle: 散修
   oneoff: true
+  look: {head: round, hair: bald, beard: full, age: old, base: neutral}
 
 scar:
   name: 疤臉
@@ -184,6 +198,7 @@ scar:
   cold: 不要拉倒。
   circle: 散修
   oneoff: true
+  look: {head: square, hair: messy, scar: true, base: cold}
 
 han:
   name: 韓九
@@ -196,6 +211,7 @@ han:
   cold: 掌櫃的，駝隊等不得。
   circle: 散修
   oneoff: true
+  look: {head: square, hair: scarf, beard: full, base: neutral}
 
 xiaoman:
   name: 葛小滿
@@ -208,6 +224,7 @@ xiaoman:
   cold: 掌櫃的，師父等著我回去。
   circle: 寒潭宗
   oneoff: true
+  look: {head: round, hair: bun, blush: true, base: neutral}
 
 xiaoqi:
   name: 余小七
@@ -220,6 +237,7 @@ xiaoqi:
   cold: ……
   circle: 散修
   oneoff: true
+  look: {head: round, hair: bun, base: sad}
 
 dianzhu:
   name: 長生典典主
@@ -232,6 +250,7 @@ dianzhu:
   refuse: 長生典不講價。
   cold: 許公子請回。
   circle: 長生典
+  look: {head: long, hair: veil, mask: true, base: neutral}
 afu:
   name: 阿福
   role: 執事堂雜役
@@ -243,3 +262,70 @@ afu:
   cold: 許掌櫃，我還要回去覆命。
   circle: 寒潭宗
   oneoff: true
+  look: {head: round, hair: topknot, base: neutral}
+
+# —— 第二個月 ——
+xiaoliu:
+  name: 瘦小的年輕人
+  role: 右手纏著布
+  level: 3
+  traits: {greed: 1, nerve: 1, pride: 2, trust: 2, patience: 2, backing: 1}
+  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
+  surface: 十八九歲，身形瘦小，說話的時候眼睛一直看著門口。
+  refuse: 就、就這個價。
+  cold: 掌櫃的，我得走了。
+  circle: 散修
+  oneoff: true
+  look: {head: thin, hair: messy, bandage: true, base: uneasy}
+
+lu:
+  name: 陸執法
+  role: 寒潭宗執法堂弟子
+  level: 11
+  conceal: true
+  traits: {greed: 1, nerve: 3, pride: 2, trust: 2, patience: 3, backing: 3}
+  call: {up: 許掌櫃, eq: 許掌櫃, down: 許掌櫃}
+  surface: 穿內門青袍的年輕人，手上總拿著一本冊子。
+  refuse: 執法堂不談價錢。
+  cold: 許掌櫃，我還有六家要問。
+  circle: 寒潭宗
+  look: {head: long, hair: crown, base: cold}
+
+meng:
+  name: 孟三娘
+  role: 穿素服的婦人
+  level: 2
+  traits: {greed: 1, nerve: 1, pride: 2, trust: 3, patience: 2, backing: 1}
+  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
+  surface: 一身素服，說話很輕，手總放在懷裡那個布包上。
+  refuse: 這、這是我當家的東西……
+  cold: 掌櫃的，我先回去了。
+  circle: 散修
+  oneoff: true
+  look: {head: round, hair: scarf, base: sad}
+
+xiangke:
+  name: 北地香商
+  role: 外地商人
+  level: 5
+  traits: {greed: 3, nerve: 2, pride: 1, trust: 1, patience: 1, backing: 1}
+  call: {up: 客官, eq: 客官, down: 客官}
+  surface: 嗓門很大，攤子上的香氣衝得人睜不開眼。
+  refuse: 虧本了！真虧本了！
+  cold: 客官不買，別擋著後頭的人。
+  circle: 散修
+  oneoff: true
+  look: {head: round, hair: hat, mole: true, base: smile}
+
+kuang:
+  name: 礦工
+  role: 北面礦上下山的人
+  level: 4
+  traits: {greed: 1, nerve: 1, pride: 1, trust: 3, patience: 2, backing: 2}
+  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
+  surface: 滿手老繭，指甲縫裡是黑的，背著一個空簍子。
+  refuse: 礦上給的就這麼多。
+  cold: 掌櫃的，工頭等著呢。
+  circle: 散修
+  oneoff: true
+  look: {head: square, hair: scarf, beard: stubble, base: neutral}

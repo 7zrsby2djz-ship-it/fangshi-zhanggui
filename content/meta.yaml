@@ -6,7 +6,7 @@ meta:
   startStones: 120
   startLevel: 4
   startXp: 30
-  xpNeed: {4: 100, 5: 130, 6: 160, 7: 200, 8: 240, 9: 300}
+  xpNeed: {4: 100, 5: 100, 6: 140, 7: 200, 8: 240, 9: 300}
   spirit: {4: 2, 5: 3, 6: 3, 7: 4, 8: 4, 9: 5}
   dues: 80
   duesHigh: 100
@@ -15,6 +15,8 @@ meta:
   lifespan: 18
   nightCap: 30
   redeemCost: 300
+  months:
+    2: {marketDay: 4, dues: 80, duesHigh: 110}
   startLots:
     - {item: hantie, qty: 10, cost: 8, label: 寒鐵（你爹留下的）}
     - {item: dingshen, qty: 1, cost: 22, label: 定神香}
@@ -28,10 +30,18 @@ intro:
 
 truthLabels:
   goods: {genuine: 貨真價實, inferior: 以次充好, fake: 假貨, flawed: 暗傷, undervalued: 不識貨}
-  origin: {clean: 來路乾淨, stolen: 贓物, contraband: 禁物, inheritance: 遺物}
-  intent: {plain: 單純買賣, con: 騙局, dump: 拋貨局, squeeze: 壓價局, setup: 仙人跳, sting: 釣魚, proxy: 借刀, test: 試探, innocent: 無心之過}
+  origin: {clean: 來路乾淨, stolen: 贓物, contraband: 禁物, inheritance: 遺物, evidence: 證物}
+  intent: {plain: 單純買賣, con: 騙局, dump: 拋貨局, squeeze: 壓價局, setup: 仙人跳, sting: 釣魚, proxy: 借刀, test: 試探, innocent: 無心之過, bribe: 封口}
 
 kaozheng:
+  canye:
+    title: 缺的七頁
+    need: {has: {canye: 1}}
+    text: 「壬午年三月十七：錢兄薦寒鐵三百斤，價廉，無印。周執事言可入帳。霜華說，這批鐵不能收。」「三月十八：收了。霜華一夜沒睡。」「三月十九：霜華說，要是出事，帶衡兒去找她師姐。」那天，你爹把箱子和這幾頁交給了姚四。三月二十一，天沒亮，執事堂進了許記的倉庫。
+  shuanghua:
+    title: 霜華
+    need: {flag: [mang_told_mother]}
+    text: 你娘叫霜華，玄霜門最後一代弟子。三回結是她教你爹打的；她的師姐，在青石街擺了十二年燈攤，等一個姓許的孩子。盲婆婆說，你娘走的那年，不是你們說的那樣。
   twoledgers:
     title: 兩本帳
     need: {has: {zhangce: 1, zhangye: 1}}
@@ -60,3 +70,20 @@ endings:
     - {need: {flag: [passed_test], not: [lost_big_deal]}, text: 阿福說，下個月執事堂有一筆大生意。周執事記得你退回去的那四十五塊。}
     - {need: {flag: [aheng_entrust], not: [betrayed_aheng, aheng_leak]}, text: 阿蘅說她信你一次。坊市裡，肯信人一次的人不多。}
   next: 下個月：寒潭宗開始追查失物，鬼市的門對你半開，錢不語的笑容沒有變。
+  m2:
+    top: 這個月，坊市裡的人開始知道，許記的掌櫃不好騙。長生典的字條準時塞進門縫：「許公子，尚餘{left}。」你把它跟那幾頁帳紙壓在一起。
+    mid: 規費繳了，鋪子還開著。長生典的字條準時塞進門縫：「許公子，尚餘{left}。」十二年前的帳，還差幾筆。
+    low: 錢不語又在門口站了一會兒，看著許記的招牌。長生典的字條準時塞進門縫：「許公子，尚餘{left}。」
+    lowFooled: 這個月，你被騙的比看穿的多。長生典的字條準時塞進門縫：「許公子，尚餘{left}。」
+    next: 第三個月，還在寫。
+    teasers:
+      - {need: {flag: [mang_told_mother]}, text: 盲婆婆說，你娘走的那年，不是你們說的那樣。她說下個月，要帶你去一個地方。}
+      - {need: {flag: [got_pages], not: [mang_told_mother]}, text: 帳紙上寫著：「要是出事，帶衡兒去找她師姐。」你娘的師姐，在坊市裡等了你十二年——你還不知道是誰。}
+      - {need: {flag: [scar_caught]}, text: 疤臉在執事堂只說了一句話：「玉匣不是我要的。是有人出錢，要那個弟子回不了宗門。」}
+      - {need: {flag: [xiaoliu_truth], not: [scar_caught]}, text: 余小六還躲在南嶺。疤臉也還在找他。}
+      - {need: {flag: [qian_confronted]}, text: 錢不語那天在門口說的話，你想了一整夜。他沒說自己是被冤枉的，他說的是「你爹要是有你一半小心」。}
+      - {need: {flag: [zhang_exposed]}, text: 張掌事交代了丹坊帳外的兩枚築基丹。買丹的人是誰，他咬死不說。}
+      - {need: {flag: [took_zhang_money]}, text: 你收了張掌事的四十塊。這個人情，他記著，你也記著。}
+      - {need: {flag: [knows_raid], not: [qian_confronted]}, text: 白七娘說，那天清早，錢不語在對街站到天亮。他在等什麼？}
+      - {need: {flag: [siti_caught]}, text: 有人說，十二年前，許記也是這樣被查的。一模一樣。}
+      - {need: {flag: [did_big_deal]}, text: 阿福說，北面礦上的閘門修好了。周執事下個月還有生意，這回要的是別的東西。}

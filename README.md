@@ -2,7 +2,7 @@
 
 修仙坊市的店鋪推理遊戲。主角許衡（人稱許半兩）壽元只剩十八個月，靠看穿來客的真假、讀懂消息做生意，把靈石換成修為。
 
-目前進度：**P1，第一個月可玩**（6 天、20 筆交易、20 位人物、9 個地點）＋ **v0.2 消息簿**（消息可以賣、會傳開、會被追查；執事堂可以拿證據告人；市集日提前預告）。
+目前進度：**兩個月可玩**。第一個月 6 天、20 筆交易；第二個月 6 天、19 筆交易（跨月延續貨物、人情、消息、債務）。另有消息簿、執事堂告發、墨線物品圖示、NPC 墨線表情。
 
 > ⚠️ 劇透警告：`content/deals.yaml` 裡寫著每筆交易的真相，`content/intel.yaml` 寫著每則消息的真假與後果。只想玩的人請不要先看。
 
@@ -21,11 +21,18 @@
 | `content/deals.yaml` | 二十筆交易（真相三層、台詞、線索、處置與後果） |
 | `content/places.yaml` | 地點、回春堂、藥田、鐵老蔫、散客 |
 | `content/events.yaml` | 早晨事件（釣魚、告發、退貨等） |
+| `content/events.yaml` 的 `monthStart` | 每個月初一依上個月的事出現的卡片 |
 | `content/intel.yaml` | 消息簿：每則消息怎麼得知、值多少、真假、賣出後的反應；坊市注意度；執事堂告發 |
 | `game.js` / `style.css` / `template.html` | 遊戲程式與介面 |
 | `build.py` | 把 content 與程式合成 `dist/game.html` |
 | `dist/data.json` | 合併後的完整資料，方便閱讀或審核 |
 | `tools/sim.js`, `tools/harness.py` | 自動試玩與數值模擬（Playwright） |
+
+## 寫內容的慣例
+
+- 交易、晨報、消息單、偷聽、攤位、藥田加 `month: 2` 就只在第二個月出現；`month: all` 每個月都在。
+- 台詞可以加 `f:` 指定表情（neutral smile laugh cold angry shock sad cry uneasy think sweat smug）。說謊的人在沒有境界門檻的台詞上不要用會洩題的表情；微表情放在 `tells` 裡。
+- 人物外觀在 `npcs.yaml` 的 `look`。
 
 ## 重新產生遊戲
 

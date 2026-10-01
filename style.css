@@ -261,3 +261,13 @@ details summary{cursor:pointer}
 .codex button.lock{grid-template-columns:1fr}
 .lore-h{display:flex;align-items:center;gap:10px}
 .tbl .nm .ico.sm{margin-right:2px}
+
+/* ---------- ink portraits ---------- */
+.face{flex:none;color:var(--ink)}
+.face.big{width:64px;height:75px;margin-right:2px;margin-top:-4px}
+.face.tiny{width:20px;height:23px;vertical-align:-6px;margin-right:4px}
+.ln.me .face.tiny{align-self:flex-end}
+.ln.me{display:flex;align-items:flex-start;gap:4px;justify-content:flex-end}
+.event.withface{position:relative;padding-right:64px}
+.face.evface{position:absolute;right:8px;top:10px;width:48px;height:56px}
+.hud-day small.mon{font-size:12px;font-weight:500;color:var(--ink-2);margin-right:6px;letter-spacing:.08em}

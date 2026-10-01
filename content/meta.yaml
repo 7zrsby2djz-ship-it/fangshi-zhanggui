@@ -1,0 +1,49 @@
+meta:
+  title: 坊市掌櫃
+  days: 6
+  dayNames: [初一, 初二, 初三, 初四, 初五, 初六]
+  marketDay: 3
+  startStones: 120
+  startLevel: 4
+  startXp: 30
+  xpNeed: {4: 100, 5: 130, 6: 160, 7: 200, 8: 240, 9: 300}
+  spirit: {4: 2, 5: 3, 6: 3, 7: 4, 8: 4, 9: 5}
+  dues: 80
+  duesHigh: 100
+  windHigh: 3
+  richHigh: 220
+  lifespan: 18
+  nightCap: 30
+  redeemCost: 300
+  startLots:
+    - {item: hantie, qty: 10, cost: 8, label: 寒鐵（你爹留下的）}
+    - {item: dingshen, qty: 1, cost: 22, label: 定神香}
+
+intro:
+  lede: 你叫許衡，三十一歲，煉氣四層，坊市裡的人叫你許半兩。十二年前，你爹的鋪子一夜之間背上八千靈石的債，你去長生典典了四十年壽元，保住了招牌。如今典期將至。
+  ticket: 今典壽元四十年，到期不贖，人死當絕。
+  stance: 右上角可以切換氣息。收斂：別人看不清你的修為，比較願意閒聊，也比較敢騙你。外放：別人規矩些，讓價也爽快，但樹大招風，月底執事堂會多收你一筆。
+  goal: 這個月：月底要繳坊市規費八十。修為到煉氣五層，而且被騙、錯怪加起來不超過一次，就算上等。
+  how: 每天三個時辰，每個時辰選一件事：顧店，等客人上門；或出門，去市集、丹坊、茶樓、執事堂、藥田、洞府區。客人說的話，有真有假。遊戲不會告訴你誰在說謊。
+
+truthLabels:
+  goods: {genuine: 貨真價實, inferior: 以次充好, fake: 假貨, flawed: 暗傷, undervalued: 不識貨}
+  origin: {clean: 來路乾淨, stolen: 贓物, contraband: 禁物, inheritance: 遺物}
+  intent: {plain: 單純買賣, con: 騙局, dump: 拋貨局, squeeze: 壓價局, setup: 仙人跳, sting: 釣魚, proxy: 借刀, test: 試探, innocent: 無心之過}
+
+kaozheng:
+  twoledgers:
+    title: 兩本帳
+    need: {has: {zhangce: 1, zhangye: 1}}
+    text: 你爹的帳上寫：「壬午年三月，收寒鐵三百斤，付靈石四十。」錢記的帳頁寫：「壬午年三月，出寒鐵三百斤予許記，收四十。另，周，二十。」同一筆生意，兩邊都記了。多出來的那一筆，只記在一邊。
+  xuanshuang:
+    title: 三回結
+    need: {flag: [mang_saw_jiansui, mang_saw_yupai]}
+    text: 一條燒焦的劍穗，一塊刮掉名字的玉牌，一盞照得見說謊的人的燈。盲婆婆說，打三回結的最後一個人，是她師妹。她問你，長生典那個人，今年還會不會來買燈。
+
+endings:
+  top: 這個月，你看穿的比被騙的多。長生典的字條準時塞進門縫：「許公子，尚餘一年又五個月。」你把字條摺好，壓在那本缺頁的帳冊底下。
+  mid: 規費繳了，鋪子還開著。長生典的字條準時塞進門縫：「許公子，尚餘一年又五個月。」日子還長，也不長。
+  low: 錢不語替你墊了規費。他走的時候，在門口多站了一會兒，看了看許記的招牌。長生典的字條準時塞進門縫：「許公子，尚餘一年又五個月。」
+  lowFooled: 這個月，你被騙的次數比你看穿的多。庫房裡堆著賣不出去的東西，有的金線是畫的，有的一沾水就化。長生典的字條準時塞進門縫：「許公子，尚餘一年又五個月。」
+  next: 下個月：寒潭宗開始追查失物，鬼市的門對你半開，錢不語的笑容沒有變。

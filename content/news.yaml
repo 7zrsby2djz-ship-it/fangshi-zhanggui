@@ -1,0 +1,152 @@
+# 晨報。effects：{item, from, to, mult}，自 from 日至 to 日（含）市價乘上 mult。
+# cond：只有在旗標成立時才出現（例如玩家做過某事，消息才傳開）。
+# goods：牽動的貨；ask：哪裡打聽得到。玩家看不到真假。
+
+news:
+  - id: n_missing
+    day: 1
+    source: 茶樓閒談
+    text: 寒潭宗一名外門弟子送貨途中失蹤，已經三天了。宗門的人在北林一帶找了兩回。
+    goods: [xuechan]
+    ask: [聽雨樓, 執事堂]
+
+  - id: n_vein
+    day: 1
+    source: 聽雨樓傳出
+    text: 聽說北面寒鐵礦脈新開了一條支脈。真開了，寒鐵恐怕要大跌。
+    goods: [hantie]
+    ask: [聽雨樓, 鐵老蔫]
+    effects:
+      - {item: hantie, from: 1, to: 5, mult: 0.8}
+
+  - id: n_dihuo
+    day: 2
+    source: 藥農傳話
+    text: 南嶺地火異動，山民說夜裡地面發燙，井水都是溫的。
+    goods: [chiyan, lingsui]
+    ask: [城外藥田, 回春堂]
+    effects:
+      - {item: chiyan, from: 4, to: 6, mult: 0.7}
+
+  - id: n_zhuji
+    day: 2
+    source: 回春堂告示
+    text: 本季築基丹九枚，已全數配出。下季請早。
+    goods: [zhuji]
+    ask: [回春堂]
+
+  - id: n_bounty
+    day: 3
+    source: 執事堂懸賞
+    text: 尋寒潭宗失物「雪蟾酥」一匣，賞六十靈石。另尋散修余小六，十九歲，身形瘦小，佩刀一把，知其下落者賞二十。
+    goods: [xuechan, duanshui]
+    ask: [執事堂]
+
+  - id: n_xiang
+    day: 3
+    source: 市價
+    text: 定神香一日漲了三成。回春堂說貨不缺，就是買的人突然多了。
+    goods: [dingshen]
+    ask: [回春堂, 聽雨樓]
+    effects:
+      - {item: dingshen, from: 3, to: 4, mult: 1.3}
+      - {item: dingshen, from: 5, to: 6, mult: 1.6}
+
+  - id: n_rain
+    day: 2
+    source: 坊間
+    text: 城東連下了三天雨，幾家鋪子的倉庫進了水。
+    goods: [bishui]
+    ask: [市集]
+
+  - id: g_yao
+    day: 4
+    source: 坊間傳言
+    cond: exposed_yao
+    text: 聽說許記的掌櫃把姚四打了一頓。也有人說，是姚四把許記的掌櫃打了。
+    goods: []
+    ask: []
+
+  - id: g_tao
+    day: 4
+    source: 坊間傳言
+    cond: tao_grateful
+    text: 陶老符逢人就說，許記的掌櫃眼睛毒，救了他十張符的名聲。
+    goods: []
+    ask: []
+
+  - id: g_report
+    day: 4
+    source: 坊間傳言
+    cond: aheng_taken
+    text: 散修們說，許記的掌櫃會報官。採藥的阿蘅被執事堂帶走了，到現在還沒放出來。
+    goods: []
+    ask: []
+
+  - id: n_wolves
+    day: 5
+    source: 執事堂告示
+    text: 城北鐵背狼群下山，傷了兩個藥農。即日起封北林，散修不得擅入。
+    goods: [liaoshang, langya, duandao]
+    ask: [執事堂, 城外藥田]
+    effects:
+      - {item: liaoshang, from: 5, to: 6, mult: 1.4}
+      - {item: duandao, from: 5, to: 6, mult: 1.3}
+      - {item: langya, from: 6, to: 6, mult: 0.7}
+
+  - id: n_qian_raid
+    day: 5
+    source: 坊間
+    cond: xuechan_to_qian
+    text: 錢記昨天被執事堂查了半日，說是收了寒潭宗的東西。今天錢記沒開門。
+    goods: []
+    ask: []
+
+  - id: n_qian_fined
+    day: 5
+    source: 坊間
+    cond: xuechan_sold_qian
+    text: 寒潭宗在城裡追回一匣失物，經手的錢記被罰了一大筆。錢掌櫃逢人便說，是有人害他。
+    goods: []
+    ask: []
+
+  - id: n_vein_false
+    day: 6
+    source: 執事堂告示
+    text: 北面礦脈並無新開支脈，坊間傳言不實。寒鐵照舊價收售。
+    goods: [hantie]
+    ask: [執事堂]
+    effects:
+      - {item: hantie, from: 6, to: 6, mult: 1.05}
+
+# 聽雨樓的消息單：花靈石買一則傳言。真假不標示。
+teahouse:
+  - {day: 1, price: 6, text: 錢記這兩天在收寒鐵，收得很急。, true: true}
+  - {day: 1, price: 4, text: 有人看見一個採藥的姑娘，從北林出來時抱著一個包袱。, true: true}
+  - {day: 2, price: 5, text: 姚四這陣子在城裡到處賣赤炎草，賣得很急。, true: true}
+  - {day: 2, price: 6, text: 回春堂的張掌事想調回宗門，最近格外小心。, true: true}
+  - {day: 3, price: 6, text: 外地來的那個疤臉，是寒潭宗派來找人的。, true: false}
+  - {day: 3, price: 8, text: 北林的獵戶說，狼這陣子叫得特別凶，往年冬天才這樣。, true: true}
+  - {day: 4, price: 5, text: 那個遊方郎中柳先生，上個月在王記賣過一回好丹藥。第二天王記就被查了。, true: true}
+  - {day: 4, price: 7, text: 錢掌櫃後天要出城收貨。, true: false}
+  - {day: 5, price: 6, text: 回春堂要漲療傷丹的價。, true: true}
+  - {day: 5, price: 8, text: 鬼市有人在收寒潭宗的東西，價錢給得很高。, true: true}
+  - {day: 6, price: 6, text: 執事堂今天要貼告示，跟寒鐵有關。, true: true}
+
+# 偷聽：坐在聽雨樓，聽到的片段。每天一句。
+overhear:
+  - {day: 1, text: 「……三百斤，執事堂的帳上只寫三十……周那邊打點過了……」}
+  - {day: 2, text: 「……那孩子不是失蹤。北林那條溪，我親眼看見……噓。」}
+  - {day: 3, text: 「……鐵老蔫那個刀胚，二十年了，還沒開刃……」}
+  - {day: 4, text: 「……許記那小子，櫃下放了東西沒有？……再等兩天。」}
+  - {day: 5, text: 「……丹坊那兩枚，這季還是老規矩？……鬼市見。」}
+  - {day: 6, text: 「……長生典的人，這個月又去了許記。那小子還剩多久？」}
+
+# 上門散客會順口說的閒話（收斂時比較願意說）
+gossip:
+  1: [北林那邊這幾天不太平，宗門的人進進出出。, 長生典的門今天開了，一個月就開這一天。, 回春堂的藥櫃又添了新貨，貴得很。]
+  2: [南嶺的井水都溫了，我舅舅說是地火。, 回春堂的築基丹又沒了，九枚，跟往年一樣。, 有個道士在城裡賣什麼傳承玉簡，說要叩三天。]
+  3: [今天市集日，東頭那個瞎眼婆婆的燈，賣得比往常快。, 定神香漲了，我昨晚也沒睡好。, 城東那場雨，好幾家的倉庫都淹了。]
+  4: [執事堂貼了懸賞，找一個叫余小六的。, 有個郎中在城裡賣便宜的療傷丹，便宜得嚇人。, 北邊來的駝隊在收定神香，有多少收多少。]
+  5: [狼下山了，傷了兩個人，其中一個是城外種藥的。, 療傷丹今天又漲了。, 錢掌櫃這兩天臉色不好。]
+  6: [執事堂說礦脈的事是謠言。早說嘛。, 月底了，執事堂又要收規費。, 鐵老蔫說他想煉一把好刀，就缺一塊會發燙的料。]

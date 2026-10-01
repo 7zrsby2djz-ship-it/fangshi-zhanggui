@@ -1,0 +1,227 @@
+# 物品：性能欄（stat）＋ 敘述欄（text）＋ 隱藏句（hidden）
+# cat: herb 靈草 / incense 香 / talisman 符 / beast 妖獸材料 / ore 礦材 / pill 丹藥 / spirit 靈物 / weapon 兵器 / story 雜物 / tool 器物
+# base: 一單位的基準市價（下品靈石）；perish: 靈性天數（null = 不壞）
+# sell: 誰會收（huichun 回春堂 / tie 鐵老蔫 / walk 上門散客）
+
+chiyan:
+  name: 赤炎草
+  cat: herb
+  unit: 株
+  grade: 一階靈草
+  base: 12
+  perish: 30
+  stat: 年份 10～80 年｜離土後靈性 30 日｜火屬丹藥主材
+  text: 生於地火裂隙，根鬚扎在燙石裡，葉背有細如髮的金線。年份每長十年，金線多一道。坊間數金線定價，於是有人學會了畫。
+  hidden:
+    - {label: 築基可見, need: {realm: 10}, text: 地火一旺，此草便早熟。早熟者金線齊全，藥力只有六成。}
+  sell: [huichun, walk]
+
+dingshen:
+  name: 定神香
+  cat: incense
+  unit: 束
+  grade: 一階雜貨
+  base: 25
+  perish: null
+  stat: 一束十炷｜不壞｜打坐時點燃，修為轉換加四成
+  text: 燃一炷可定心神一個時辰。坊市散修打坐必點，所以它從不缺貨，也從不漲價。若哪天定神香漲了，不是香少了，是很多人睡不著。
+  sell: [huichun, walk]
+
+bishui:
+  name: 避水符
+  cat: talisman
+  unit: 張
+  grade: 一階符籙
+  base: 8
+  perish: null
+  stat: 存放不當會受潮｜渡水、探秘境必備
+  text: 黃紙硃砂，一筆成形。受潮的避水符，硃砂邊緣會暈開一圈極淡的紅。所有製符師都知道這件事，所以他們賣符時從不讓你對著光看。
+  sell: [walk]
+
+langya:
+  name: 鐵背狼牙
+  cat: beast
+  unit: 枚
+  grade: 一階妖獸材料
+  base: 6
+  perish: null
+  stat: 不壞｜煉器、入藥兩用
+  text: 牙根若帶血絲，取下時狼還沒死透。獵戶說活取的牙更利，丹師說活取的牙帶著怨，入藥發苦。兩種人都在買，所以獵戶從不先殺狼。
+  sell: [tie, huichun, walk]
+
+hantie:
+  name: 寒鐵
+  cat: ore
+  unit: 斤
+  grade: 一階礦材
+  base: 9
+  perish: null
+  stat: 不壞｜煉器主材
+  text: 北面礦脈所出，色如積水，冬日握之不冷，冷是被它吸走了。礦脈歸寒潭宗，坊市流通的寒鐵，每一斤都經過執事堂的帳。帳面上。
+  sell: [tie, walk]
+
+liaoshang:
+  name: 療傷丹
+  cat: pill
+  unit: 枚
+  grade: 一階丹藥
+  base: 18
+  perish: null
+  stat: 止血續筋，壓住內傷三日
+  text: 散修出城前總會買兩枚，買了往往捨不得吃。於是療傷丹最常出現的地方，是死人的身上。
+  sell: [huichun, walk]
+
+yangqi:
+  name: 養氣丹
+  cat: pill
+  unit: 枚
+  grade: 一階丹藥
+  base: 22
+  perish: null
+  stat: 打坐時服用，修為加十八｜連日服用，藥力減半
+  text: 服之可助一夜行氣。丹坊說一夜一枚即可，散修總想一夜兩枚。於是第二枚的藥力，大多化成了丹毒。
+  sell: [huichun, walk]
+
+xuechan:
+  name: 雪蟾酥
+  cat: spirit
+  unit: 匣
+  grade: 二階靈物
+  base: 70
+  perish: 7
+  stat: 凝成後七日化為清水，玉匣只能延緩｜療傷聖藥
+  text: 寒潭雪蟾耳後所凝，一隻雪蟾一生只得一錢，凝成之日便是死期。酥成七日即化為清水，寒潭宗以玉匣封存，也只能多留它幾天。宗門帳上記得清楚：每一錢都有去處。
+  hidden:
+    - {label: 築基可見, need: {realm: 10}, text: 酥面若有細紋如冰裂，是凝成不過十日。}
+  sell: []
+
+lingsui:
+  name: 地火靈髓
+  cat: spirit
+  unit: 塊
+  grade: 二階靈物
+  base: 60
+  perish: null
+  stat: 器修淬刃、丹師溫爐
+  text: 地火精氣凝於石中，色如死灰，石心一線暗紅。離開地脈後，日間沉寂，入夜回溫。
+  sell: [huichun, tie]
+
+duanshui:
+  name: 斷水刀（殘）
+  cat: weapon
+  unit: 把
+  grade: 一階法器
+  base: 10
+  perish: null
+  stat: 有修補痕
+  text: 刀身有一道舊裂，被人用銅汁仔細補過，補痕打磨得幾乎看不見。補刀的人手藝很好，好到願意替一把只值十塊靈石的刀花三天工夫。除非那道裂痕本身，就是要藏起來的東西。
+  hidden:
+    - {label: 築基可見, need: {realm: 10}, text: 裂痕的走向，與一門叫「碎星指」的指法留下的勁力相符。}
+  sell: [tie, walk]
+
+duandao:
+  name: 寒鐵短刀
+  cat: weapon
+  unit: 把
+  grade: 一階法器
+  base: 40
+  perish: null
+  stat: 鐵老蔫打造｜不壞
+  text: 鐵老蔫打的刀，不好看。刀背厚，刀刃薄，握柄纏得很緊。他說好看的刀是給人看的，他的刀是給人用的。
+  sell: [tie, walk]
+
+yujian:
+  name: 無字玉簡
+  cat: tool
+  unit: 枚
+  grade: 品階不明
+  base: 40
+  perish: null
+  stat: 據說需以神識叩問三日方顯
+  text: 玉簡內空無一字。賣家說這是某位前輩坐化前封存的傳承，需以神識叩問三日方顯。坊市裡這樣的玉簡很多，願意叩三日的人很少，所以騙子們從不缺生意。偶爾，也真有一枚會說話。
+  sell: [walk]
+
+zhuji:
+  name: 築基丹
+  cat: pill
+  unit: 枚
+  grade: 二階丹藥
+  base: 600
+  perish: null
+  stat: 突破築基的關鍵物｜本季已配完
+  text: 一枚築基丹，是一個散修半生的積蓄，或是一個宗門弟子一年的月例。回春堂每季只出九枚，從不多一枚。據說是丹方所限。據說。
+  hidden:
+    - {label: 前世記憶可見, need: {flag: memory}, text: 第三季那一爐，出了十一枚。}
+  sell: []
+
+hudeng:
+  name: 狐尾燈
+  cat: tool
+  unit: 盞
+  grade: 手作
+  base: 30
+  perish: null
+  stat: 盲婆婆製｜擺在鋪子裡，上門客的小動作更容易看見
+  text: 燈罩用的是狐尾內側的軟毛，點起來燈影會輕輕擺動，像有什麼東西在燈後面呼吸。她說這燈照得見說謊的人。她的燈賣得很好，從沒有人回來說不靈。
+  sell: []
+
+zhangce:
+  name: 缺頁帳冊
+  cat: story
+  unit: 本
+  grade: 雜物
+  base: 0
+  perish: null
+  stat: 不可修煉｜市價幾乎為零
+  text: 一本商號的流水帳，字跡工整，最後七頁被整齊裁去。剩下的帳目每一筆都對得上，只有一筆：「壬午年三月，收寒鐵三百斤，付靈石四十。」那一年的寒鐵，四十塊靈石只買得到三十斤。
+  hidden:
+    - {label: 你讀時可見, need: {flag: got_box}, text: 你認得這筆跡。是你爹的。}
+  sell: []
+
+zhangye:
+  name: 一頁帳紙（抄本）
+  cat: story
+  unit: 頁
+  grade: 雜物
+  base: 0
+  perish: null
+  stat: 你自己抄的
+  text: 錢不語的包裹裡，包寒鐵的襯紙是從一本舊帳冊上撕下來的。你抄了一份。上面寫著：「壬午年三月，出寒鐵三百斤予許記，收四十。另，周，二十。」字跡圓潤，不是你爹的。
+  sell: []
+
+jiansui:
+  name: 半截劍穗
+  cat: story
+  unit: 條
+  grade: 雜物
+  base: 0
+  perish: null
+  stat: 不可修煉
+  text: 青絲編成，末端燒焦。穗結是玄霜門的「三回結」，那個門派已經三十年沒人打這種結了。舊貨堆從不說它從哪裡來。
+  hidden:
+    - {label: 盲婆婆摸過後可見, need: {flag: mang_saw_jiansui}, text: 她說，打這種結的人，最後一個是她師妹。}
+  sell: []
+
+yupai:
+  name: 霜紋玉牌
+  cat: story
+  unit: 塊
+  grade: 雜物
+  base: 0
+  perish: null
+  stat: 不可修煉
+  text: 玉牌一面刻霜紋，一面刻名字。名字被人用指甲一點一點刮掉了。刮的人很有耐心，或者很恨。
+  hidden:
+    - {label: 盲婆婆摸過後可見, need: {flag: mang_saw_yupai}, text: 她摸了很久，說了一個名字，然後問你：「長生典那個人，今年還會來買燈嗎？」}
+  sell: []
+
+dangpiao:
+  name: 長生典當票
+  cat: story
+  unit: 張
+  grade: 不可交易
+  base: 0
+  perish: null
+  stat: 不可交易
+  text: 紙色暗黃。上頭寫著：「今典壽元四十年，到期不贖，人死當絕。」落款是你的名字。字是你寫的，手抖得很厲害。
+  sell: []

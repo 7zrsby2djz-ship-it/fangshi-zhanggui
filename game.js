@@ -13,6 +13,36 @@ const lvName = n => n <= 9 ? `煉氣${CN[n]}層` : (['築基初期', '築基中�
 const PUBLIC_VERIFY = ['bai', 'tie', 'ge'];
 const TEA = { 1: 3, 2: 4, 3: 6 };
 
+/* ================= ink icons (48×48, currentColor ink; accents use theme vars) ================= */
+const CIN = 'stroke="var(--cinnabar)"', JADE = 'stroke="var(--jade)"', GOLD = 'stroke="var(--gold)"';
+const ICON = {
+  chiyan: `<path d="M24 41V13"/><path d="M24 23C17 21 13 16 12 9c6 1 11 5 12 14z"/><path d="M24 30c7-2 11-7 12-13-6 1-11 5-12 13z"/><path d="M24 13c-3-4-2-8 0-10 2 2 3 6 0 10z"/><path d="M24 41l-5 4M24 41v5M24 41l5 4"/><path d="M15 12l7 8M33 20l-7 6" ${GOLD} stroke-width="1.2"/>`,
+  dingshen: `<path d="M12 34h24"/><path d="M14 34h20l-3 8H17z"/><path d="M24 34V15"/><circle cx="24" cy="14" r="1.6" fill="var(--cinnabar)" stroke="none"/><path d="M24 11c-3-3 3-5 0-8"/><path d="M28 12c3-3-1-5 2-8" stroke-width="1.2" opacity=".55"/>`,
+  bishui: `<rect x="15" y="5" width="18" height="38" rx="1"/><path d="M20 11h8M24 11v19M19 18c3-2 7 2 10 0M20 25c3-2 6 2 8 0M21 34l3 4 3-4" ${CIN}/>`,
+  langya: `<path d="M18 6c-1 12 2 26 12 37 1-9 1-23-2-37z"/><path d="M18 9c4 2 7 2 10 0"/><path d="M20 7v3M26 7v2.5" ${CIN} stroke-width="1.4"/>`,
+  hantie: `<path d="M8 32l6-14 14-4 12 8-2 14-16 4z"/><path d="M14 18l8 8 6-12M22 26v14M22 26l18-4" stroke-width="1.2"/><path d="M29 26l5-2M30 31l5-2" ${JADE} stroke-width="1.4"/>`,
+  liaoshang: `<path d="M20 15h8v4c6 2 9 7 9 12 0 7-6 11-13 11s-13-4-13-11c0-5 3-10 9-12z"/><path d="M19 9h10v6H19z" ${CIN}/><rect x="19" y="27" width="10" height="8" stroke-width="1.2"/>`,
+  yangqi: `<path d="M8 34h32"/><path d="M8 34c6 6 26 6 32 0"/><circle cx="18" cy="29" r="4"/><circle cx="30" cy="29" r="4"/><circle cx="24" cy="21" r="4"/><circle cx="24" cy="21" r="1" fill="var(--jade)" stroke="none"/>`,
+  xuechan: `<path d="M7 13h34v5H7z"/><rect x="9" y="18" width="30" height="21" rx="2"/><path d="M24 23v10M19.7 25.5l8.6 5M19.7 30.5l8.6-5" ${JADE}/><path d="M12 36l4-2-1 2 4-2" stroke-width="1"/>`,
+  lingsui: `<path d="M10 30c-2-8 4-18 14-19s17 7 15 17-11 13-19 11c-6-1-9-4-10-9z"/><path d="M16 28c4-4 8 2 12-4 2-3 5-2 6-4" ${CIN}/><circle cx="15" cy="20" r=".8" fill="currentColor"/><circle cx="31" cy="33" r=".8" fill="currentColor"/>`,
+  duanshui: `<path d="M13 36L36 8c3-2 5 0 3 3L16 39z"/><path d="M10 33l8 8"/><path d="M13 38l-7 7" stroke-width="3.2"/><path d="M26 21l2 2-2 1 2 2" ${GOLD} stroke-width="1.5"/>`,
+  duandao: `<path d="M15 34l19-20 4-2-2 4-19 19z"/><path d="M12 31l7 7"/><path d="M15 36l-7 7" stroke-width="3.2"/>`,
+  yujian: `<rect x="14" y="7" width="20" height="35" rx="3"/><circle cx="24" cy="12" r="1.6"/><path d="M24 10c-4-5-8-5-10-7"/><path d="M19 19h10M19 25h10M19 31h10" stroke-dasharray="1 3" opacity=".5"/>`,
+  zhuji: `<circle cx="24" cy="21" r="7"/><path d="M12 15a14 14 0 0 1 24 0M10 23a14 14 0 0 0 4 8M38 23a14 14 0 0 1-4 8" ${GOLD} stroke-width="1.2" stroke-dasharray="2 3"/><path d="M24 28v7"/><path d="M14 35h20l-3 7H17z"/>`,
+  hudeng: `<path d="M24 3v6M18 9h12"/><path d="M17 12c-3 6-3 14 0 20h14c3-6 3-14 0-20z"/><path d="M18 12h12M18 32h12"/><path d="M24 12v20" stroke-width="1" opacity=".5"/><path d="M24 27c-2-2-1-5 0-6 1 1 2 4 0 6z" ${CIN}/><path d="M24 32c-2 6 2 8-2 14 6-3 7-9 4-14"/>`,
+  zhangce: `<path d="M10 8h24v34H10z"/><path d="M10 14h4M10 22h4M10 30h4M10 38h4"/><rect x="20" y="12" width="8" height="15" stroke-width="1.2"/><path d="M34 29l3 2-2 3 3 2-2 3 2 2" stroke-width="1.3"/>`,
+  zhangye: `<path d="M12 9l3-3 3 2 3-2 3 2 3-2 3 2 3-2 3 2v33H12z"/><path d="M31 13v22M26 13v26M21 13v16" stroke-width="1.1"/><circle cx="18" cy="36" r="3" ${CIN}/>`,
+  jiansui: `<path d="M24 4c-4 0-4 5 0 5s4-5 0-5zM24 9v5"/><path d="M24 14c-6 0-6 6 0 6s6-6 0-6zM20 17h8"/><path d="M21 20l-3 18M23 20l-1 19M25 20l1 19M27 20l3 18"/><path d="M17 39c3 5 11 5 14 0" stroke-width="3" opacity=".75"/>`,
+  yupai: `<path d="M24 3v7"/><path d="M14 10h20v24l-10 10-10-10z"/><path d="M24 17v14M18 21l12 6M18 27l12-6" ${JADE}/>`,
+  dangpiao: `<rect x="9" y="7" width="30" height="35" rx="1"/><path d="M15 14h18M15 20h18M15 26h10"/><rect x="25" y="29" width="9" height="9" ${CIN}/>`,
+  box: `<path d="M7 18h34v22H7z"/><path d="M7 18l4-8h26l4 8"/><rect x="21" y="18" width="6" height="7"/><path d="M7 30h34" stroke-width="1"/>`,
+  pkg: `<path d="M8 20l16-8 16 8v16l-16 8-16-8z"/><path d="M8 20l16 8 16-8M24 28v16"/><path d="M16 16l16 8" stroke-width="1"/><circle cx="24" cy="28" r="3" fill="var(--cinnabar)" stroke="none"/>`,
+  mask: `<path d="M10 14c4-6 24-6 28 0 2 10-4 22-14 26-10-4-16-16-14-26z"/><path d="M15 20c2-3 6-3 7 1-3 2-5 2-7-1zM33 20c-2-3-6-3-7 1 3 2 5 2 7-1z"/><path d="M19 32l2 3 2-3M25 32l2 3 2-3"/><path d="M14 13l6 3M34 13l-6 3" ${CIN}/>`,
+  info: `<path d="M9 12h30v24H9z"/><path d="M9 12l15 13 15-13"/><path d="M30 31l5 5" ${CIN}/>`,
+  dues: `<rect x="7" y="10" width="34" height="28" rx="2"/><path d="M7 18h34M14 10v28M24 10v28M34 10v28" stroke-width="1.1"/><circle cx="14" cy="14" r="2"/><circle cx="24" cy="25" r="2"/><circle cx="34" cy="30" r="2"/><circle cx="14" cy="28" r="2"/>`
+};
+const icon = (id, cls = '') => ICON[id] ? `<svg class="ico ${cls}" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICON[id]}</svg>` : '';
+
 /* ================= utils ================= */
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -889,7 +919,7 @@ function goodsCard(e) {
   if (e.generic) {
     if (!e.lot) return '';
     const l = lotById(e.lot), it = IT[e.item];
-    return `<div class="goods${e.done ? ' done' : ''}"><div class="g-grade">${esc(it.grade)}　·　你的貨：${esc(l ? l.label : it.name)}</div><div class="g-name">${esc(it.name)} × ${e.qty}</div>
+    return `<div class="goods${e.done ? ' done' : ''}"><div class="g-grade">${esc(it.grade)}　·　你的貨：${esc(l ? l.label : it.name)}</div><div class="g-name">${icon(e.item)}<span>${esc(it.name)} × ${e.qty}</span></div>
       <div class="g-price"><b>${fmt(e.price)}</b><span class="muted">靈石／${esc(it.unit)}</span><span class="g-mkt">今日市價 ${fmt(price(e.item))}　·　你的成本 ${l ? fmt(l.cost) : '—'}</span></div>
       <button class="g-link" data-act="lore" data-id="${e.item}">物品文本</button>${e.done ? sealSVG(e.done.label) : ''}</div>`;
   }
@@ -905,7 +935,7 @@ function goodsCard(e) {
     const ls = S.lots.filter(l => l.item === d.item);
     if (ls.length > 1) lots = `<div class="lotpick" role="group" aria-label="賣哪一批">${ls.map(l => `<button data-act="pick" data-id="${l.id}" class="${l.id === e.lot ? 'on' : ''}">${esc(l.label)} ×${l.qty}${l.known && l.q < 0.9 ? '（成色差）' : ''}</button>`).join('')}</div>`;
   }
-  return `<div class="goods${e.done ? ' done' : ''}">${it ? `<div class="g-grade">${esc(it.grade)}</div>` : ''}<div class="g-name">${esc(name)}${e.qty > 1 ? ' × ' + e.qty : ''}</div>
+  return `<div class="goods${e.done ? ' done' : ''}">${it ? `<div class="g-grade">${esc(it.grade)}</div>` : ''}<div class="g-name">${icon(d.item)}<span>${esc(name)}${e.qty > 1 ? ' × ' + e.qty : ''}</span></div>
     <div class="g-price">${price_}</div>${lots}${it && it.text ? `<button class="g-link" data-act="lore" data-id="${d.item}">物品文本</button>` : ''}${e.done ? sealSVG(e.done.label) : ''}</div>`;
 }
 function renderEnc() {
@@ -942,8 +972,8 @@ function renderPlace() {
   }
   if (id === 'huichun') {
     h += `<h2 class="sec-h">藥櫃</h2><p class="small muted" style="margin-bottom:6px">回春堂賣得比市價貴一成半，收貨只給八折，拿來轉賣通常虧錢。要賺，得趕在消息讓價錢漲起來之前買；定神香、養氣丹則是夜裡打坐自己用的。你不煉丹。</p><div class="tbl-wrap"><table class="tbl"><thead><tr><th>貨</th><th class="r">價</th><th></th></tr></thead><tbody>`;
-    for (const s of p.sells) { const pr = rp(price(s.item) * s.mult); h += `<tr><td><button class="g-link" style="margin:0" data-act="lore" data-id="${s.item}">${esc(IT[s.item].name)}</button><div class="small muted">${esc(IT[s.item].grade)}${['dingshen', 'yangqi'].includes(s.item) ? '　·　<span class="jade">夜裡打坐用</span>' : ''}</div></td><td class="r">${fmt(pr)}</td><td class="r"><button class="btn quiet" style="min-height:34px" data-act="hbuy" data-id="${s.item}" ${S.stones < pr ? 'disabled' : ''}>買一${esc(IT[s.item].unit)}</button></td></tr>`; }
-    for (const x of p.display) h += `<tr><td><button class="g-link" style="margin:0" data-act="lore" data-id="${x}">${esc(IT[x].name)}</button><div class="small muted">${esc(IT[x].stat)}</div></td><td class="r muted">—</td><td></td></tr>`;
+    for (const s of p.sells) { const pr = rp(price(s.item) * s.mult); h += `<tr><td><button class="g-link ilink" style="margin:0" data-act="lore" data-id="${s.item}">${icon(s.item, 'sm')}<span>${esc(IT[s.item].name)}</span></button><div class="small muted">${esc(IT[s.item].grade)}${['dingshen', 'yangqi'].includes(s.item) ? '　·　<span class="jade">夜裡打坐用</span>' : ''}</div></td><td class="r">${fmt(pr)}</td><td class="r"><button class="btn quiet" style="min-height:34px" data-act="hbuy" data-id="${s.item}" ${S.stones < pr ? 'disabled' : ''}>買一${esc(IT[s.item].unit)}</button></td></tr>`; }
+    for (const x of p.display) h += `<tr><td><button class="g-link ilink" style="margin:0" data-act="lore" data-id="${x}">${icon(x, 'sm')}<span>${esc(IT[x].name)}</span></button><div class="small muted">${esc(IT[x].stat)}</div></td><td class="r muted">—</td><td></td></tr>`;
     h += `</tbody></table></div><h2 class="sec-h">賣給回春堂</h2>`;
     const mine = S.lots.filter(l => (IT[l.item].sell || []).includes('huichun'));
     h += mine.length ? `<div class="stack">${mine.map(l => { const o = huichunOffer(l); return `<div class="row"><span class="serif" style="flex:1;min-width:0">${esc(l.label)} × ${l.qty}</span><button class="btn quiet" data-act="hsell" data-id="${l.id}">${typeof o === 'number' ? '賣 ' + fmt(o * l.qty) : '問問看'}</button></div>`; }).join('')}</div><p class="small muted" style="margin-top:6px">回春堂照市價八折收，成色照實算。張掌事看得出金線真假。</p>` : `<p class="small muted">你手上沒有回春堂收的貨。</p>`;
@@ -1075,9 +1105,9 @@ function labelOf(id, key) {
 
 function renderStore() {
   const lots = S.lots.map(l => { const it = IT[l.item]; const v = it.base ? lotValue(l) : 0; const flags = l.known ? l.flags.map(f => ({ painted: '金線是畫的', damp: '受潮', stolen: '燙手', sting: '瓶底有印', sect: '寒潭宗的東西', alive: '活取', entrusted: '阿蘅託付' })[f]).filter(Boolean) : [];
-    return `<tr><td><button class="g-link" style="margin:0" data-act="lore" data-id="${l.item}">${esc(l.label)}</button>${flags.length ? `<div class="small cin">${esc(flags.join('、'))}${l.known && l.q < 0.9 ? '，成色' + Math.round(l.q * 10) + '成' : ''}</div>` : ''}${l.perishDay ? `<div class="small cin">${M.dayNames[l.perishDay - 1] || ''}化</div>` : ''}</td><td class="r">${l.qty}</td><td class="r">${fmt(l.cost)}</td><td class="r">${it.base ? fmt(v) : '—'}</td><td class="r">${!l.known && S.spirit > 0 ? `<button class="btn quiet" style="min-height:32px;font-size:13px" data-act="lotapp" data-id="${l.id}">鑑定</button>` : ''}</td></tr>`; }).join('');
+    return `<tr><td><button class="g-link ilink" style="margin:0" data-act="lore" data-id="${l.item}">${icon(l.item, 'sm')}<span>${esc(l.label)}</span></button>${flags.length ? `<div class="small cin">${esc(flags.join('、'))}${l.known && l.q < 0.9 ? '，成色' + Math.round(l.q * 10) + '成' : ''}</div>` : ''}${l.perishDay ? `<div class="small cin">${M.dayNames[l.perishDay - 1] || ''}化</div>` : ''}</td><td class="r">${l.qty}</td><td class="r">${fmt(l.cost)}</td><td class="r">${it.base ? fmt(v) : '—'}</td><td class="r">${!l.known && S.spirit > 0 ? `<button class="btn quiet" style="min-height:32px;font-size:13px" data-act="lotapp" data-id="${l.id}">鑑定</button>` : ''}</td></tr>`; }).join('');
   const items = Object.keys(IT).filter(k => IT[k].base && IT[k].base < 100 && S.codex[k]);
-  const board = items.map(k => { const p = price(k), y = S.day > 1 ? price(k, S.day - 1) : p; const ch = p > y ? `<span class="up">▲</span>` : p < y ? `<span class="down">▼</span>` : ''; return `<tr><td class="nm">${esc(IT[k].name)}</td><td class="r">${fmt(p)} ${ch}</td><td class="r muted">${esc(IT[k].unit)}</td></tr>`; }).join('');
+  const board = items.map(k => { const p = price(k), y = S.day > 1 ? price(k, S.day - 1) : p; const ch = p > y ? `<span class="up">▲</span>` : p < y ? `<span class="down">▼</span>` : ''; return `<tr><td class="nm">${icon(k, 'sm')} ${esc(IT[k].name)}</td><td class="r">${fmt(p)} ${ch}</td><td class="r muted">${esc(IT[k].unit)}</td></tr>`; }).join('');
   return `<h2 class="sec-h">庫房</h2>${S.lots.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>貨</th><th class="r">數</th><th class="r">成本</th><th class="r">估值</th><th></th></tr></thead><tbody>${lots}</tbody></table></div><p class="small muted" style="margin-top:6px">估值照今日市價。成色你沒看過的，照賣家的說法算。鑑定一批貨，花一點靈識。</p>` : '<p class="muted">庫房空了。</p>'}
     <h2 class="sec-h">今日市價</h2><div class="tbl-wrap"><table class="tbl"><tbody>${board}</tbody></table></div><p class="small muted" style="margin-top:6px">只列你見過的貨。紅漲綠跌。</p>`;
 }
@@ -1141,7 +1171,7 @@ function renderIntel() {
 function renderCodex() {
   const keys = Object.keys(IT);
   const seen = keys.filter(k => S.codex[k]);
-  const grid = keys.map(k => S.codex[k] ? `<button data-act="lore" data-id="${k}"><b>${esc(IT[k].name)}</b><span>${esc(IT[k].grade)}${unlockedHidden(k).length ? '　·　隱藏句 ' + unlockedHidden(k).length : ''}</span></button>` : `<button class="lock" disabled><b>？？？</b><span>未見過</span></button>`).join('');
+  const grid = keys.map(k => S.codex[k] ? `<button data-act="lore" data-id="${k}">${icon(k)}<b>${esc(IT[k].name)}</b><span>${esc(IT[k].grade)}${unlockedHidden(k).length ? '　·　隱藏句 ' + unlockedHidden(k).length : ''}</span></button>` : `<button class="lock" disabled><b>？？？</b><span>未見過</span></button>`).join('');
   const kz = Object.entries(D.kaozheng).filter(([, v]) => needOk(v.need)).map(([, v]) => `<div class="card" style="margin-top:8px"><b class="serif">${esc(v.title)}</b><p class="lore" style="margin-top:6px">${esc(v.text)}</p></div>`).join('');
   return `<h2 class="sec-h">圖鑑　${seen.length}／${keys.length}</h2><div class="codex">${grid}</div>${kz ? `<h2 class="sec-h">考據</h2>${kz}` : ''}`;
 }
@@ -1152,7 +1182,7 @@ function renderSheet() {
   let h = '';
   if (sh.type === 'lore') {
     const it = IT[sh.id]; S.codex[sh.id] = true;
-    h = `<span class="label">${esc(it.grade)}</span><h2>${esc(it.name)}</h2><div class="lore-stat">${esc(it.stat)}${it.base && it.base < 100 ? `　·　今日市價 ${fmt(price(sh.id))}` : ''}</div><div class="lore">${esc(it.text)}</div>${unlockedHidden(sh.id).map(x => `<div class="hidden-line"><span class="label">${esc(x.label)}</span>${esc(x.text)}</div>`).join('')}`;
+    h = `<span class="label">${esc(it.grade)}</span><h2 class="lore-h">${icon(sh.id, 'lg')}<span>${esc(it.name)}</span></h2><div class="lore-stat">${esc(it.stat)}${it.base && it.base < 100 ? `　·　今日市價 ${fmt(price(sh.id))}` : ''}</div><div class="lore">${esc(it.text)}</div>${unlockedHidden(sh.id).map(x => `<div class="hidden-line"><span class="label">${esc(x.label)}</span>${esc(x.text)}</div>`).join('')}`;
   } else if (sh.type === 'verify') {
     h = `<h2>查證</h2><p class="small muted">去找人問一問，會花掉一個時辰。對方會等你，但第三方也有自己的立場。</p>` + verifyList().map(v => `<button class="opt" data-act="verifyw" data-id="${v.who}" ${v.used || (v.cost && S.stones < v.cost) ? 'disabled' : ''}><b>${esc(NP[v.who].name)}</b><span>${esc(NP[v.who].role)}${v.cost ? `　·　${v.cost} 靈石` : '　·　不收錢'}${v.used ? '　·　問過了' : ''}</span></button>`).join('');
   } else if (sh.type === 'decide') {

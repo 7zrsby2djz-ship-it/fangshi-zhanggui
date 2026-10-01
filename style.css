@@ -249,3 +249,15 @@ details summary{cursor:pointer}
 .lesson summary{font-size:12.5px;color:var(--jade);margin-top:2px}
 .lesson p{font-family:var(--serif);font-size:14px;line-height:1.85;margin-top:4px}
 .t3{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- ink icons ---------- */
+.ico{width:34px;height:34px;flex:none;color:var(--ink);vertical-align:middle}
+.ico.sm{width:22px;height:22px;margin-right:4px}
+.ico.lg{width:52px;height:52px}
+.goods .g-name{display:flex;align-items:center;gap:10px}
+.g-link.ilink{display:inline-flex;align-items:center;gap:2px}
+.codex button{grid-template-columns:auto 1fr;column-gap:8px;align-items:center}
+.codex button .ico{grid-row:span 2;width:32px;height:32px}
+.codex button.lock{grid-template-columns:1fr}
+.lore-h{display:flex;align-items:center;gap:10px}
+.tbl .nm .ico.sm{margin-right:2px}

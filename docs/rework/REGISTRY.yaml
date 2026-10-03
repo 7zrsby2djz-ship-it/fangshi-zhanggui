@@ -10,7 +10,7 @@ status_legend:
 id_policy:
   stable: 下列25NPC／23item既有ID維持；新顯示名不等於新ID。
   migration: 確需改ID先列alias與存檔/YAML/JS引用遷移，未執行。
-  adoption: S01 v0.4已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
+  adoption: S01 v0.4與S02 v0.2已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
 protagonist:
   id: me
   status: 確定
@@ -97,11 +97,11 @@ npcs:
     legacy_display_name: 老葛
     legacy_role: 城外藥農
     working_display_name: 老葛
-    working_name_status: 建議：S02 v0.2工作原型稱呼；未經使用者逐項核准
+    working_name_status: 確定：本幕稱呼已隨S02 v0.2通過；正式角色卡與未出場設定未擴大核准
     function_to_retain: 生產供應、家庭與議價
     rewrite_note: 本稿為藥農，談乾貨占吃飯桌、箱蓋難合的生活困擾；知道太早裝箱會悶壞，未把專業人寫笨。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: S02 v0.2工作原型
+    adopted_scene: S02 v0.2核准原型
   zhou:
     status: 現況
     legacy_display_name: 周正
@@ -177,11 +177,11 @@ npcs:
     legacy_display_name: 韓九
     legacy_role: 駝隊管事
     working_display_name: 韓九
-    working_name_status: 建議：S02 v0.2工作原型稱呼；未經使用者逐項核准
+    working_name_status: 確定：本幕稱呼已隨S02 v0.2通過；正式角色卡與未出場設定未擴大核准
     function_to_retain: 區域運輸、外地需求
     rewrite_note: 本稿為幫人走山路送貨者，少說完整解釋、以負重及回家時間談需求；駱駝及北方口音不入稿。沒有固定新住址、家庭或已成功行程。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: S02 v0.2工作原型
+    adopted_scene: S02 v0.2核准原型
   xiaoman:
     status: 現況
     legacy_display_name: 葛小滿
@@ -626,7 +626,7 @@ supplement_A_event:
   new_promises_in_S01: 0
   third_month_schedule: null
 S02_work_spec:
-  status: 待審閱原型；稿內局部事實固定，未入遊戲
+  status: S02 v0.2原型已由偉銓通過；核准語感樣本，未入遊戲
   scene_version: S02 v0.2
   full_card: prose/S02_v0.2_review.md
   speakers:
@@ -800,8 +800,8 @@ S12_work_spec:
 style_revision:
   decision: U20261003-05
   rules: STYLE_LOCK.md
-  approved_sample: S01 v0.4；正文不動
-  current_prose: S02–S12 v0.2語感局部修訂，待偉銓審閱
+  approved_sample: S01 v0.4與S02 v0.2；正文不動
+  current_prose: S02 v0.2已通過；S03–S12 v0.2仍待偉銓審閱
   historical_prose: v0.1事件保留，語感不作樣本
   invariants: 貨種、數量、收付、歸屬、知識層級、來源ID、刻文、承諾與行動格不改
   place_display: 新版正文稱店裡／許衡的店；許記是舊版對照標籤，正式店名未定

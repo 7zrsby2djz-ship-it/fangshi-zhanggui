@@ -1,0 +1,157 @@
+# W04提案資料；不是當前引擎輸入，未實裝／未測。
+contractVersion: 1
+status: proposal_unimplemented
+storyVersion: taiwan-m1m2-v1
+storyApproval: U20261003-11
+engineeringApproval: null
+baseGameCommit: c8a5bf6b3013e977879678e226e6aa158d2c0eee
+scope: [O101]
+validation:
+  unknownFields: reject
+  unknownPredicates: reject
+  supportedPredicates: [intelHeld, sourceSnapshotValid, fundsAtLeast, stateIs, withinWindow, stockOwned, receiptAbsent]
+  itemReferences: must_exist_before_any_cash_mutation
+  quantities: nonnegative_integer
+  immutableAfterPrepare: [sourceSnapshot, quoteSnapshot]
+  receiptAndMoneyAndStock: one_persisted_state_transaction
+  incompatibleSave: preserve_raw_and_quarantine
+clock:
+  daysPerMonth: 6
+  absDayExpression: '(month - 1) * 6 + day'
+  validPlayableDay: [1, 6]
+  tickEndPhase: false
+  callbackStorage: opportunities_and_inbox
+  forbiddenCallbackStorage: S.events
+itemProposal:
+  id: wax_wrap_set
+  workId: wax_wrap_set
+  legacyAlias: null
+  forbiddenAliases: [bishui, box, sidai]
+  name: 塗蠟厚布包裹布與棉繩
+  quantityUnit: 份
+  componentsPerUnit: {cloth: 1, cottonCord: 2}
+  clothApproxSizeCm: [100, 100]
+  supernatural: false
+  limitations: [不供浸水, 不供長時暴雨, 不使濕貨變乾, 折角須覆住]
+intelProposal:
+  - id: i_opp_rain
+    from: ['news:seen:n_rain']
+    sourceGroup: news:n_rain
+    kind: rumor
+    supplierTruthRequired: false
+    opportunityValidThroughAbsDay: 3
+  - id: i_opp101_trip
+    from: ['scene:S03:han_trip_complete']
+    sourceGroup: han:M1D3:trip_M1D4
+    kind: npc_firsthand_claim
+    departureAbsDay: 4
+    cargoCount: 4
+    cargoUnitMassG: 1000
+    observationScope: 韓九自述S02離店後到溪邊石壁見滴水，後段未走；不驗證倉庫雨災。
+  - id: i_opp101_return
+    from: ['opp:O101:return_read']
+    sourceGroup: han:M1D6:report_O101
+    kind: report_claim_with_separate_shop_observation
+opportunityProposal:
+  id: O101
+  customer: han
+  supplier: tie
+  replacesLegacyDealInNewStory: d13
+  replacementPolicy: all_new_story_states_no_duplicate_incense_sale
+  discover:
+    requiredIntelIds: [i_opp_rain, i_opp101_trip]
+    throughAbsDay: 3
+    excludesHiddenTruth: true
+    cardMayShowMissingSupply: true
+  source:
+    trigger: scene:S03:tie_four_wraps_observed
+    checkedFlag: opp101_source_checked
+    place: market
+    visitAbsDay: 3
+    batchId: O101_tie_M1D3_batch1
+    itemId: wax_wrap_set
+    qtyAvailable: 4
+    unitPrice: 6
+    totalPrice: 24
+    expires: leave_current_visit_session
+    observations: 每張少量清水停留數到十下未透背面，翻看無可見破洞。
+    refreshOnLoad: false
+  prepare:
+    commandProposal: prepareOpportunity
+    requiredPredicates: [intelHeld, sourceSnapshotValid, fundsAtLeast, stateIs, withinWindow, receiptAbsent]
+    fromStates: [available]
+    throughAbsDay: 3
+    sourceSessionRequired: true
+    additionalActionSlots: 0
+    cashDelta: -24
+    stock: {itemId: wax_wrap_set, qty: 4, unit: 份, owner: player, location: dedicated}
+    consumeOrdinaryInventory: false
+    receiptKey: 'O101:prepare'
+  quote:
+    prepareTotal: 24
+    saleTotal: 36
+    termsVersion: 1
+    saleThroughAbsDay: 4
+    followsPriceFunction: false
+    followsRealmStanceAdjustment: false
+    refreshOnRenderOrLoad: false
+  customerWindow:
+    absDay: 4
+    location: shop
+    selectionRule: first_shop_action_with_prepared_O101
+    actionSlots: 1
+    scheduleGate: W04_SCHEDULE_review_required
+  sale:
+    commandProposal: saleOpportunity
+    requiredPredicates: [stateIs, withinWindow, stockOwned, receiptAbsent]
+    requiresActualFitAndPaymentConfirmation: true
+    cashDelta: 36
+    transferStockOwnerTo: han
+    dedicatedStockAfter: 0
+    cargoPlayerOwned: false
+    cargoPropOwner: external_owner_unknown
+    cargoCustodian: han
+    receiptKey: 'O101:sale'
+    returnPromiseAbsDay: 6
+  return:
+    commandProposals: [deliverOpportunityReturn, readOpportunityReturn]
+    earliestAbsDay: 6
+    actionSlots: 0
+    requiresSaleReceipt: true
+    deliveryReceiptKey: 'O101:return_deliver'
+    readReceiptKey: 'O101:return_read'
+    playerIntelGrantedOn: read_only
+    cashDelta: 0
+    ordinaryGoodsGranted: []
+    reportClaim: 韓九說四包收貨時乾，途中僅石壁段滴水，未浸水或淋一路。
+    shopObservation: 展示一張外角泥點／折痕的布，當下摸乾背面。
+    displayedClothOwner: han
+    displayedClothReturnedTo: han
+    nextOrderCreated: false
+  unsoldDisposition:
+    commandProposal: expireOpportunity
+    appliesIfPreparedAndUnsold: true
+    trigger: customer_window_closed_or_service_declined_as_unfit
+    receiptKey: 'O101:disposition'
+    mode: transfer_to_ordinary_inventory
+    transfer: {itemId: wax_wrap_set, qty: 4, unit: 份, owner: player}
+    dedicatedStockAfter: 0
+    cashRefund: 0
+    referenceAssetValue: 16
+    referenceAssetValueStatus: proposal_unbalanced_not_cash_or_guaranteed_sale
+    mutuallyExclusiveWith: sale_receipt
+    duplicateOriginPolicy: quarantine_if_lot_exists_without_disposition_receipt
+  decline:
+    finalChoice: 這次不做
+    finalState: declined
+    cashDelta: 0
+    stockDelta: 0
+    deferChoice: 先不做
+    deferUntil: source_and_prepare_window_expire
+    ordinaryBusinessRemainsAvailable: true
+receiptsProposal:
+  separateStages: [prepare, sale, return_deliver, return_read, disposition]
+  repeatedCommand: return_existing_receipt_without_mutation
+  insufficientGoodsOrMoney: no_mutation
+  saveFailure: no_commit_no_success_render
+  invalidPartialRecord: quarantine_no_reward_replay

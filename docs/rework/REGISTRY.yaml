@@ -10,7 +10,7 @@ status_legend:
 id_policy:
   stable: 下列25NPC／23item既有ID維持；新顯示名不等於新ID。
   migration: 確需改ID先列alias與存檔/YAML/JS引用遷移，未執行。
-  adoption: S01 v0.4與S02–S04 v0.2已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
+  adoption: S01 v0.4與S02–S12 v0.2已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
 protagonist:
   id: me
   status: 確定
@@ -57,11 +57,11 @@ npcs:
     legacy_display_name: 阿蘅
     legacy_role: 採藥散修
     working_display_name: 阿蘅
-    working_name_status: 建議：S09 v0.2沿用姓名，口吻與行程為原型候選
+    working_name_status: 確定：S09／S11／S12 v0.2姓名、口吻與稿內行程隨原型通過；未出場設定未擴大核准
     function_to_retain: 有技能的採集者、信任與家人壓力
     rewrite_note: 自主採集者，考量回家後晾貨與家務負擔；談短程／過夜而不診斷大病，不因拒接失去故事。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: S09 v0.2工作原型
+    adopted_scene: S09／S11／S12 v0.2核准原型
   tie:
     status: 現況
     legacy_display_name: 鐵老蔫
@@ -157,11 +157,11 @@ npcs:
     legacy_display_name: 陶老符
     legacy_role: 製符師
     working_display_name: 陶師傅
-    working_name_status: 建議：S10–S11工作稱呼／職務重構，尚待閱讀核准
+    working_name_status: 確定：S10–S11 v0.2陶師傅稱呼與本幕職務隨原型通過；完整角色卡未擴大核准
     function_to_retain: 工藝、保存事故與補償
     rewrite_note: 本稿修補容器並供普通木框／夾罐；限當面確認現貨，不把製符能力移到普通器具。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: S10–S11 v0.2工作原型
+    adopted_scene: S10–S11 v0.2核准原型
   scar:
     status: 現況
     legacy_display_name: 疤臉
@@ -267,11 +267,11 @@ npcs:
     legacy_display_name: 礦工
     legacy_role: 北面礦上下山的人
     working_display_name: 阿岳
-    working_name_status: 建議：S07 v0.2工作稱呼，未經使用者逐項核准
+    working_name_status: 確定：S07–S09 v0.2阿岳稱呼與本幕搬貨職務隨原型通過；未出場設定未擴大核准
     function_to_retain: 礦區需求與工作限制
     rewrite_note: 本稿限礦區搬貨工，修自己的背架布罩固定扣；無官職／許可權，資料只到自述及現物。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: S07–S09 v0.2工作原型
+    adopted_scene: S07–S09 v0.2核准原型
 items:
   chiyan:
     status: 現況
@@ -545,18 +545,18 @@ opportunity_candidates:
       status: 驗收試算，非正式售價
     not_sold: 轉庫存估值16：現金-24／資產-8；不得轉貨又退錢
     missing_decisions:
-    - 實物與供應人
+    - 正式物件ID與供應入口掛接（實物及鐵師傅已隨原型通過）
     - 日內供應有效期
     - 顧客窗口與舊客展延
     - 訊息取得觸發
     - 失敗結果規則
-    prototype_goods: S03四份塗蠟厚布包裹布與棉繩，普通非異能材料；工作提案非避水符換皮
+    prototype_goods: S03四份塗蠟厚布包裹布與棉繩，普通非異能材料；核准原型實物，非避水符換皮
     source_supplier: tie鐵師傅，現場檢四份及報價；本幕職務呈現已通過，旗標／期限待W04
     prototype_status: S03投入24／S04收到36／S06韓九說四包未濕正常收貨，服務及回報結清；無額外回報款，不證明全部雨訊。
   O201:
     status: 建議
     function: 礦區維修規格與交期
-    reuse: m218／m213擇一
+    reuse: W04提案選m218替代；m213組織大單保持獨立，受其既有前提及Q02門檻約束
     prototype_goods: 四只布罩U形鋼扣＋核對／試裝服務，原鐵礦石不變形
     source_supplier: tie平日工坊，阿岳說入口，許衡實際見現貨
     source_need: kuang阿岳自述布罩繩磨損、帶舊扣測量
@@ -564,11 +564,11 @@ opportunity_candidates:
       prepare: 16
       sale: 24
       status: 工作試算未平衡，另售原礦2公斤收入20非商案利潤
-    prototype_status: S08成交／S09本人用後回報，該稿結清；未建立遊戲旗標，正式替代m218/m213仍待W04
+    prototype_status: S08成交／S09本人用後回報，該稿結清；W04提案替代m218，未建立正式遊戲旗標
   O202:
     status: 建議
     function: 有限預算與身體限制
-    reuse: m219需求功能，不直接等同原採購劇情
+    reuse: 新O202資料承接S09；W04核對m219實為xiaoman收chiyan，主企劃槽位引用有誤，不直接替代m219
     prototype_customer: aheng阿蘅
     prototype_status: S09比較當日／過夜的負擔，但許衡本次不接；沒有備貨收款。
     alternative_card: prose/S09_v0.2_review.md的O202可接案候選卡；不是正文已做
@@ -671,7 +671,7 @@ prototype_items:
     player_visible: 外觀、試水、供量、價格、包法與使用限制；沒有故事隱藏異能
     return_observation: S06韓九展示一張外角泥點／折痕，許衡當下摸乾背面；途中只石壁段滴水，四包收貨時乾為韓九第一手自述。展示後仍韓九帶回，沒有退款／借物／贈物。
   dry_mint_leaf:
-    status: 建議：W03工作物件ID，正式ID／等級庫存／存檔掛接待W04，不是chiyan別名
+    status: 核准原型內的局部事實；W03工作物件ID，正式ID／等級庫存／存檔掛接待W04，不是chiyan別名
     name: 乾薄荷葉
     first_scene: S05 v0.2
     origin: 老葛稱自產，帶來這批300公克
@@ -684,7 +684,7 @@ prototype_items:
     - S05 v0.2 review
     player_visible: 本批形態／重量／議價及付款；不沿用赤炎草年份真假能力
   cover_steel_buckle:
-    status: 建議：W03工作物件ID，正式引擎掛接待W04，非hantie變形或別名
+    status: 核准原型內的局部事實；W03工作物件ID，正式引擎掛接待W04，非hantie變形或別名
     name: 布罩U形鋼扣
     first_scene: S07展示阿岳舊件；S08取得新件
     appearance: 新件四只，內寬3公分、厚3公釐，依已記固定孔位置，內側磨平；原舊件有磨繩毛邊
@@ -699,7 +699,7 @@ prototype_items:
     - S09 v0.2 review
     player_visible: 尺寸、缺口、來源、試合、報價與使用範圍
   jug_frame_sleeve:
-    status: 建議：W03工作ID，正式引擎掛接待W04
+    status: 核准原型內的局部事實；W03工作ID，正式引擎掛接待W04
     name: 木框布襯護套
     first_scene: S10 v0.2
     origin: 陶師傅本次市場現成兩只木框加乾布襯
@@ -708,7 +708,7 @@ prototype_items:
     ownership: S10付18短暫許衡專用2，收28交韓九、專用0；S12未贈／退回玩家
     return_observation: S12韓九本人說兩壺送達未碰壞、途中緊繩一次；下游護套去向未明，不編轉贈
   old_repaired_jug:
-    status: 建議：W03故事物工作ID，不是可購玩家商品
+    status: 核准原型內的局部事實；W03故事物工作ID，不是可購玩家商品
     name: 帶修補片的舊保溫壺
     first_scene: S10 v0.2
     origin: 未具名原貨主委託韓九運送修好兩壺，其中一只底角修補片可見字
@@ -716,7 +716,7 @@ prototype_items:
     ownership: 原貨主；韓九承運，S12自述交還原貨主；許衡僅配放，未持有入庫
     limits: 常規容器；不同物件現持有鏈不證明更早歷史來源獨立
   sample_tool_set:
-    status: 建議：W03工作ID，正式引擎掛接待W04
+    status: 核准原型內的局部事實；W03工作ID，正式引擎掛接待W04
     name: 長木夾與帶框玻璃罐
     first_scene: S11 v0.2
     origin: S10本人告知入口，S11實到陶師傅平日供應點見一套現貨
@@ -725,7 +725,7 @@ prototype_items:
     ownership: S11付20後許衡專用1；收32後阿蘅、專用0，S12仍她
     limits: 只取樣保存，不保進霧或人體安全、無特殊燈能力
   fog_shell_fragment:
-    status: 建議：W03唯一異界材料工作ID，不移植既有物能力
+    status: 核准原型內的局部事實；W03唯一異界材料工作ID，不移植既有物能力
     name: 霧殼薄片
     first_scene: S11 v0.2
     origin: 阿蘅自述熟草坡旁淺凹霧邊棉布結硬殼；許衡未見凝結
@@ -734,7 +734,7 @@ prototype_items:
     ownership: 新舊兩片一直阿蘅，展示後各自帶回；未贈／借／售玩家
     limits: 不定用途或售價，不擴成霧對人體／其他材料反應規則
   commemorative_lunchbox:
-    status: 建議：W03故事物工作ID，非自動取得道具
+    status: 核准原型內的局部事實；W03故事物工作ID，非自動取得道具
     name: 家用紀念便當盒
     first_scene: S11 v0.2日常裝乾糧；S12整理繩時讀盒蓋
     origin: 阿蘅家中沿用；工作送別同事留字為長輩說法經她轉述
@@ -748,60 +748,60 @@ S04_work_spec:
   delta: 收到36一次，96→132；四份布繩屬韓九，專用量0；香菇僅暫交包貨，原貨主未具名。
   next: 韓九約M1D6早晨回報
 S05_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
   scene_version: S05 v0.2
   full_card: prose/S05_v0.2_review.md
   delta: 付8，132→124；乾薄荷300公克轉許衡，較完整200／碎100，尚未售出。
   next: 韓九回報仍待M1D6，月底未付
 S06_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
   scene_version: S06 v0.2
   full_card: prose/S06_v0.2_review.md
   delta: 回報無收款；韓九布展示後帶回，庫存不重加；實付普通費80，124→44。
   next: O101此原型服務／回報結清；下一趟未定，S07接44及原庫存
 S07_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
   scene_version: S07 v0.2
   full_card: prose/S07_v0.2_review.md
   delta: 現金44與鐵礦石6公斤不變；阿岳舊扣帶回，約翌日先確認現貨再試裝。
   next: S08需實際去所述工坊、看四成品與適配，不先發貨或保證承重
 S08_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
   scene_version: S08 v0.2
   full_card: prose/S08_v0.2_review.md
   delta: 自有原礦2公斤售20，購鋼扣4只付16，再交付阿岳收24；44→72，原礦餘4公斤；阿岳原架／原件仍自有。
   next: M2D3阿岳答應回報；外出1＋顧店1，本日2格，不吞免費成交
 S09_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
   scene_version: S09 v0.2
   full_card: prose/S09_v0.2_review.md
   delta: 阿岳依約講一次用後情況，O201本稿回報清；阿蘅談兩行程但不接配貨，現金72不動。
   next: S10才處理O203；O202可接案兩款另見S09 review候選卡，不改本稿拒接帳。
 
 S10_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
   scene_version: S10 v0.2
   full_card: prose/S10_v0.2_review.md
   delta: 72－18＋28＝82；兩護套屬韓九，專用0；兩壺及修補片仍原貨主，韓九承運。
   next: 約M2D6回報壺柄／收貨；陶師傅當面告知平日供應入口，庫存仍需實到確認。
 S11_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
   scene_version: S11 v0.2
   full_card: prose/S11_v0.2_review.md
   delta: 相遇1＋同往供應點1；82－20＋32＝94，器具交阿蘅，專用0；未售霧殼、未同行入霧。
   next: 約M2D6回報取樣／短程結果；空飯盒仍阿蘅，刻字許衡尚未讀。
 S12_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
   scene_version: S12 v0.2
   full_card: prose/S12_v0.2_review.md
   delta: 兩案晨間本人回報無獎金；器具及新舊樣片／飯盒各歸原主；實付普通費80，94→14，薄荷未售。
-  next: 本路線第二月完成三案，O202拒接；待閱讀及Claude局部編修，未開始W04或第三月。
+  next: 本路線第二月完成三案，O202拒接；全部正文已通過，W04資料與時段拆解，第三月未開始。
 
 style_revision:
   decision: U20261003-05
   rules: STYLE_LOCK.md
-  approved_sample: S01 v0.4與S02–S04 v0.2；正文不動
-  current_prose: S02–S04 v0.2已通過；S05–S12 v0.2仍待偉銓審閱
+  approved_sample: S01 v0.4與S02–S12 v0.2；正文不動
+  current_prose: S02–S12 v0.2全部通過；W04拆解已交付／Q01、Q02放行待定
   historical_prose: v0.1事件保留，語感不作樣本
   invariants: 貨種、數量、收付、歸屬、知識層級、來源ID、刻文、承諾與行動格不改
   place_display: 新版正文稱店裡／許衡的店；許記是舊版對照標籤，正式店名未定

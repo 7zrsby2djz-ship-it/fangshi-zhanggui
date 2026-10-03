@@ -1,6 +1,6 @@
 # 重構接手入口
 
-工作版：2026-10-03｜W03十二幕全部通過，W04資料與時段拆解。遊戲基底main `c8a5bf6b3013e977879678e226e6aa158d2c0eee`；W04起始remote `6fbe08bba4d05dc731dc363ac9a96edbf8c943d3`。分支 `rework/taiwan-m1m2-sol`；最新提交以本分支git log／GitHub ref為準。`dist/game.html`仍是原版。
+工作版：2026-10-04｜W03十二幕全部通過，W04拆解交付；W05工程基線通過；下一包O101。遊戲基底main `c8a5bf6b3013e977879678e226e6aa158d2c0eee`；W04起始remote `6fbe08bba4d05dc731dc363ac9a96edbf8c943d3`。分支 `rework/taiwan-m1m2-sol`；最新提交以本分支git log／GitHub ref為準。`dist/game.html`仍是原版。
 
 ## 已核准與當前工作
 
@@ -8,14 +8,14 @@
 
 最新方向U20261003-09／10：許衡外出可遇到人、得到客源／消息／商機；舊物年代多樣，2029/12/31不泛用為製造日。壺2029.12／換內膽無日，便當盒2029/12/31與淡人名，皆未確定製造日期。旁白與台詞一律採現代台灣繁體中文，重量用公克／公斤。
 
-W00–W03原型工作完成。本包[W04_HANDOFF](W04_HANDOFF.md)已由6.1 SOL拆解場景→資料→接口，排每月18格、消息與供貨、成交及回流。統籌已核對，拆解文件已交付。Q01/Q02仍待足夠定案，本包提供具體選項，不能拿原型核准當作已通過世界門檻。W04拆解不是遊戲實裝；W05基線、W06 O101切片尚未開始。
+W00–W03原型工作完成。本包[W04_HANDOFF](W04_HANDOFF.md)已由6.1 SOL拆解場景→資料→接口，排每月18格、消息與供貨、成交及回流。統籌已核對，拆解文件已交付。Q01/Q02已於U20261004-01選兩題方案A：保留生命交易、地方職責分開，具體機理與制度細節仍未知。W04拆解不是遊戲實裝；[W05基線](W05_BASELINE.md)已由統籌重跑驗收通過。下一包W06只實作O101；本包提交後開工。
 
 ## 讀取順序
 
 1. 首次接手完整讀 `sources/MASTER_PLAN_v1.0.txt`：權威施工文件；使用者最新明確決策優先。
 2. `sources/SUPPLEMENT_A_2026-10-03.txt`：少量後續候選，不增加第三月工程。
-3. [CANON_AND_DECISIONS](CANON_AND_DECISIONS.md)及[STYLE_LOCK](STYLE_LOCK.md)：確定／現況／建議／待定，最新U20261003-09至11。
-4. [W04_HANDOFF](W04_HANDOFF.md)、資料契約與排程檔：當前施工包及門檻。
+3. [CANON_AND_DECISIONS](CANON_AND_DECISIONS.md)及[STYLE_LOCK](STYLE_LOCK.md)：確定／現況／建議／待定，最新U20261003-09至11及U20261004-01。
+4. [W04_HANDOFF](W04_HANDOFF.md)、資料契約與排程檔及[W05基線](W05_BASELINE.md)：O101施工基準與可重現基線。
 5. [REGISTRY.yaml](REGISTRY.yaml)、[SCENES](SCENES.md)、[STATE_AND_HANDOFF](STATE_AND_HANDOFF.md)：穩定ID、逐幕前提、收付／所有權與工程狀態。
 6. [W03_READING](W03_READING.md)：S01 v0.4及S02–S12 v0.2核准正文。處理一幕時帶其全文／review與上一幕六項差異，不憑聊天記憶續寫。
 
@@ -23,4 +23,4 @@ W00–W03原型工作完成。本包[W04_HANDOFF](W04_HANDOFF.md)已由6.1 SOL�
 
 6.1 SOL負責資料拆解、工程基線、後續程式與測試；統籌整合範圍、決策、連續性、驗收與提交。Claude恢復工作後按W09交局部意見，帶base commit／scene version，最多五個主要問題；不因換模型全面重寫核准稿。
 
-同一時間只有一方改核心程式或同一份交易YAML。W04提案分檔交付，未改content、game.js、build.py、dist；沒有build、模擬、瀏覽器或人工試玩。未替Claude發訊息，也未宣稱他已審閱。本輪不寫第三月、不定末日原因、不合併或發佈。後續工程必須遵守主企劃W04＋W05→W06的依賴。
+同一時間只有一方改核心程式或同一份交易YAML。W04提案分檔交付，該包未改content、game.js、build.py、dist，僅做文件排程檢查。W05已整理資料檢查、測試路徑與舊存檔基線，只移除一個被覆蓋的重複鍵；解析結果、核心程式與dist不變。原JS在Node VM經實際載入／存檔驗證，未測真實瀏覽器、視覺或平衡。未替Claude發訊息，也未宣稱他已審閱。本輪不寫第三月、不定末日原因、不合併或發佈。後續工程必須遵守主企劃W04＋W05→W06的依賴。

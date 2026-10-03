@@ -801,7 +801,7 @@ style_revision:
   decision: U20261003-05
   rules: STYLE_LOCK.md
   approved_sample: S01 v0.4與S02–S12 v0.2；正文不動
-  current_prose: S02–S12 v0.2全部通過；W04拆解已交付／Q01、Q02放行待定
+  current_prose: S02–S12 v0.2全部通過；W04拆解已交付／Q01、Q02方向定案（U20261004-01）
   historical_prose: v0.1事件保留，語感不作樣本
   invariants: 貨種、數量、收付、歸屬、知識層級、來源ID、刻文、承諾與行動格不改
   place_display: 新版正文稱店裡／許衡的店；許記是舊版對照標籤，正式店名未定

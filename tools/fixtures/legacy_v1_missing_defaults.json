@@ -1,0 +1,172 @@
+{
+  "v": 1,
+  "seed": 5052026,
+  "day": 1,
+  "slot": 2,
+  "phase": "day",
+  "stones": 116.5,
+  "level": 4,
+  "xp": 30,
+  "spirit": 2,
+  "stance": "收斂",
+  "stanceDays": {
+    "收斂": 0,
+    "外放": 0
+  },
+  "wind": 0,
+  "lots": [
+    {
+      "id": 1,
+      "item": "hantie",
+      "qty": 10,
+      "cost": 8,
+      "q": 1,
+      "flags": [],
+      "label": "寒鐵（你爹留下的）",
+      "known": true,
+      "perishDay": null,
+      "from": null
+    },
+    {
+      "id": 2,
+      "item": "dingshen",
+      "qty": 1,
+      "cost": 22,
+      "q": 1,
+      "flags": [],
+      "label": "定神香",
+      "known": true,
+      "perishDay": null,
+      "from": null
+    },
+    {
+      "id": 3,
+      "item": "zhangce",
+      "qty": 1,
+      "cost": 0,
+      "q": 1,
+      "flags": [],
+      "label": "缺頁帳冊",
+      "known": true,
+      "perishDay": null,
+      "from": null
+    },
+    {
+      "id": 4,
+      "item": "jiansui",
+      "qty": 1,
+      "cost": 0,
+      "q": 1,
+      "flags": [],
+      "label": "半截劍穗",
+      "known": true,
+      "perishDay": null,
+      "from": null
+    },
+    {
+      "id": 5,
+      "item": "hudeng",
+      "qty": 1,
+      "cost": 0,
+      "q": 1,
+      "flags": [],
+      "label": "狐尾燈",
+      "known": true,
+      "perishDay": null,
+      "from": null
+    }
+  ],
+  "lotSeq": 5,
+  "flags": {
+    "got_box": true,
+    "lamp": true,
+    "mang_saw_jiansui": true
+  },
+  "rel": {
+    "mang": 3
+  },
+  "met": {
+    "yao": true,
+    "mang": true
+  },
+  "mem": {
+    "yao": [
+      {
+        "day": 1,
+        "m": 1,
+        "t": "把你爹寄放的舊箱子還給了你。"
+      }
+    ],
+    "mang": [
+      {
+        "day": 1,
+        "m": 1,
+        "t": "摸過你的劍穗，送你一盞狐尾燈。"
+      }
+    ]
+  },
+  "tags": {},
+  "notes": {},
+  "homes": {
+    "yao": true
+  },
+  "rep": {
+    "loose": 0,
+    "sect": 0,
+    "ghost": 0
+  },
+  "repTag": {},
+  "done": {
+    "d02": "deal",
+    "d10": "special"
+  },
+  "events": [],
+  "cards": [
+    {
+      "title": "長生典的字條",
+      "text": "天還沒亮，門縫裡塞進來一張字條。紙色暗黃，字跡很淡：「許公子，尚餘一年又六個月。」落款是長生典。"
+    }
+  ],
+  "todayNews": [
+    "n_missing",
+    "n_market1",
+    "n_vein"
+  ],
+  "codex": {
+    "hantie": true,
+    "dingshen": true,
+    "zhangce": true,
+    "jiansui": true,
+    "hudeng": true
+  },
+  "teaBought": {},
+  "overheard": {},
+  "herbBought": {},
+  "commission": null,
+  "pillYesterday": false,
+  "enc": null,
+  "place": null,
+  "night": null,
+  "dues": null,
+  "debt": 0,
+  "lifespan": 18,
+  "stats": {
+    "saw": 1,
+    "fooled": 0,
+    "wronged": 0
+  },
+  "complaints": [],
+  "log": [
+    {
+      "day": 1,
+      "t": "姚四：一箱舊貨（收下箱子）"
+    },
+    {
+      "day": 1,
+      "t": "盲婆婆：狐尾燈（給她看半截劍穗）"
+    }
+  ],
+  "sold": [],
+  "dayStartStones": 120,
+  "lifespanLeft": 18
+}

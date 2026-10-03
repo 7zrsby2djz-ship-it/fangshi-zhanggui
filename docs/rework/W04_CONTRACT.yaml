@@ -3,7 +3,9 @@ contractVersion: 1
 status: proposal_unimplemented
 storyVersion: taiwan-m1m2-v1
 storyApproval: U20261003-11
-engineeringApproval: null
+engineeringApproval: W04-ROOT-20261004
+engineeringApprovalScope: [O101]
+worldDirectionApproval: U20261004-01
 baseGameCommit: c8a5bf6b3013e977879678e226e6aa158d2c0eee
 scope: [O101]
 validation:

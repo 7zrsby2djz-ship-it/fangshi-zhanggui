@@ -690,7 +690,6 @@ deals:
   opts:
     deal: {label: 賣給她（十）, text: 她把布袋裡的靈石全倒在櫃上，十塊，一塊不多。她抱著刀，一直沒哭。, fx: {rep: {loose: 2}, tag: {loose: 厚道}, rel: {xiaoqi: 3}, mem: {xiaoqi: 你把哥哥的刀賣還給她。}}}
     special:
-      seal: 買下
       seal: 還刀
       label: 把刀還給她
       text: 你把刀推到她面前，沒收錢。她抱著刀，終於哭了。

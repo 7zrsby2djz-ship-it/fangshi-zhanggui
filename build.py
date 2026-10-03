@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Build the single-file game: merge content YAML into data, inline CSS/JS into the template."""
-import json, pathlib, sys, yaml
+import json, pathlib, sys
+from tools.check_content import check_content, load_yaml
 root = pathlib.Path(__file__).parent
 c = root / 'content'
-L = lambda n: yaml.safe_load((c / f'{n}.yaml').read_text(encoding='utf-8'))
+check_content(root)  # 在寫出產物前拒絕重複鍵／ID。
+L = lambda n: load_yaml(c / f'{n}.yaml')
 meta = L('meta')
 data = {
     'meta': meta['meta'], 'intro': meta['intro'], 'kaozheng': meta['kaozheng'], 'endings': meta['endings'],

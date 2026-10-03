@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "cc95bd3abf9e4fe3f678fc75d3887ae2dd7e0708",
+  "normalization": "JSON roundtrip keys; sort_keys=True, ensure_ascii=False, separators=(comma,colon), UTF-8, SHA256",
+  "content": {
+    "content/deals.yaml": "bb476b7a8a5bdbce89e3d365098c161244cbc325779db26f9913d7b4d9171219",
+    "content/events.yaml": "6040f5334ed854a56aff93e2ff24ec2961e72a60b5bafba652394b72ec8bad01",
+    "content/intel.yaml": "c48baf38325013dab6ad568e30eb6252e4e5ff6f57312e48273c5704916001c4",
+    "content/items.yaml": "124dd07e2bcf851d53546953b8434645a53807334a4474c525f0d850f8b3366b",
+    "content/meta.yaml": "397e4025314f9410e85881108b41b92b02b4727d16d7dadaf44d04072adaf57a",
+    "content/news.yaml": "be158038b75316063df7a3ffe76f076fef23a1303187107072d9844460896d25",
+    "content/npcs.yaml": "67a0359d29624a1fca7ecbd9b2cbd3c0937f3d5aa5ce0b53e67bde6aa6f8d4a4",
+    "content/places.yaml": "6e4f7571c09feb8658589baa619e97237d08d7df1d03beca5ae2b761842252f4"
+  },
+  "data": "cf2861bdc9981c303b71030d3c2e07dd558d7f3808f19e0c58835ba65dd848e9"
+}

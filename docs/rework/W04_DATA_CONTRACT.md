@@ -6,7 +6,7 @@
 
 最新使用者「好，那S05至S12都通過了，繼續下一步工作」（U20261003-11）核准S01 v0.4與S02–S12 v0.2原型。**核准的是各幕局部故事事實與原型路徑，不是本頁新增存檔結構、flags、報價快照、供應期限、失約估值、回流排程或O202替代故事。** 全部正文保持原樣；review中舊「待審」是歷史記錄。正式遊戲取決於實際選擇，不自動重播此條路徑。
 
-時段與舊客窗口見 [W04_SCHEDULE.md](W04_SCHEDULE.md)；Q01/Q02可評審方案及放行門檻見統籌的[W04_HANDOFF.md](W04_HANDOFF.md)。本頁給資料與接口，排程未核准／未實測之前不稱W04已放行W06。W05基線獨立，不能把本頁文字核對當它的測試結果。
+時段與舊客窗口見 [W04_SCHEDULE.md](W04_SCHEDULE.md)；Q01/Q02可評審方案及放行門檻見統籌的[W04_HANDOFF.md](W04_HANDOFF.md)。本頁給資料與接口，統籌已核對排程及O101工程契約，U20261004-01已定Q01/Q02方向；W06仍須W05實際基線通過。W05基線獨立，不能把本頁文字核對當它的測試結果。
 
 ## 1. 實碼入口與缺口
 
@@ -100,9 +100,9 @@ intel metadata增加 `kind`、`sourceGroup`、`scope`、`observedAbsDay`、`vali
 
 承諾只在實際prepare與韓九接受明早方案後記；回報承諾只在實際sold時記。未做/expired沒有共同送貨成果與回報獎勵。O101這趟固定0回報款，展示布仍han；未到時不把“沒來”解讀死亡。
 
-售價snapshot建议：`quoteId/quotedAtAbsDay/termsVersion/prepareTotal=24/saleTotal=36/saleExpiresAbsDay=4/customer=han/quantity=4/scope/returnsCash=0`。存檔/重繪不重抽。不套 `startDeal()`的境界/外放單位倍率或 `price()`的日價波動；其他普通交易仍按原規則。適配服務加價是玩家看得懂的服務內容，不只是同貨強漲。
+售價snapshot建議：`quoteId/quotedAtAbsDay/termsVersion/prepareTotal=24/saleTotal=36/saleExpiresAbsDay=4/customer=han/quantity=4/scope/returnsCash=0`。存檔/重繪不重抽。不套 `startDeal()`的境界/外放單位倍率或 `price()`的日價波動；其他普通交易仍按原規則。適配服務加價是玩家看得懂的服務內容，不只是同貨強漲。
 
-來源snapshot建议：`snapshotId/supplier=tie/batchId/itemId/qtyAvailable=4/unitPrice=6/totalPrice=24/checkedAtAbsDay=3/visitSessionId/validUntil=leaveVisit/observations/limits`。備貨前複驗session、remainingQty與條款版本；離場未買不跨日預約，不無限供應；買後持有從source轉stock。snapshot不是供貨地址旗標，更不是所有tie商品永久可買。
+來源snapshot建議：`snapshotId/supplier=tie/batchId/itemId/qtyAvailable=4/unitPrice=6/totalPrice=24/checkedAtAbsDay=3/visitSessionId/validUntil=leaveVisit/observations/limits`。備貨前複驗session、remainingQty與條款版本；離場未買不跨日預約，不無限供應；買後持有從source轉stock。snapshot不是供貨地址旗標，更不是所有tie商品永久可買。
 
 ## 6. O201–O204逐案接口（不提前實裝）
 
@@ -123,7 +123,7 @@ O202節點級未決：目前批2份普通布及兩方案都只在review候選，
 
 三筆必獨立：`prepareReceipt`（扣成本＋玩家專用貨）、`saleReceipt`（專用貨轉客戶＋成交款＋回報約定）、`returnReceipt`（回報投遞/讀取消費的結果，本批0款0物）。另有`dispositionReceipt`（未售轉普通）、普通S08礦售receipt、月費receipt。不能一個 `rewarded`布爾同時保護全部環節。
 
-每案記錄 `id/instanceId/state/revision/discoveredAt/preparedAt/customerWindow/returnAt/quoteSnapshot/sourceSnapshot/stock/receipts/outcomeId/inbox`。receipt鍵建议 `instanceId:prepare`、`:sale`、`:return_deliver`、`:return_read`、`:disposition`；同命令重複返回既有收據，不再扣/發。prepare禁止使用既有故事物／受託品；第一包只從supplier買，未開放玩家庫存混配。
+每案記錄 `id/instanceId/state/revision/discoveredAt/preparedAt/customerWindow/returnAt/quoteSnapshot/sourceSnapshot/stock/receipts/outcomeId/inbox`。receipt鍵建議 `instanceId:prepare`、`:sale`、`:return_deliver`、`:return_read`、`:disposition`；同命令重複返回既有收據，不再扣/發。prepare禁止使用既有故事物／受託品；第一包只從supplier買，未開放玩家庫存混配。
 
 事務步驟（提案）：
 
@@ -177,6 +177,8 @@ O202節點級未決：目前批2份普通布及兩方案都只在review候選，
 
 ## 8. 歷史證據分層與未定接口
 
+2026-10-04更新：Q01/Q02已採W04_HANDOFF兩題A，下表原列決策邊界按此方向施工；交易機理、制度細節及其他未決項仍不能補成答案。
+
 | 記錄 | 親眼/原文 | NPC說法 | 允許推論 | blocked推論 |
 | --- | --- | --- | --- | --- |
 | S10壺修補片 | 「2029.12」「換內膽」，**無日**；這次親見刻字 | han說外殼舊、這次也換膽，片送來已有 | 與另物比較同年12月；記一項維修相關字樣 | 原刻者/原刻時間/制造日/2029-12-31/末日原因 |
@@ -185,7 +187,7 @@ O202節點級未決：目前批2份普通布及兩方案都只在review候選，
 
 不把所有舊物貼2029/12/31，不為了分散日期先造其他年分道具。knowledge record存 `literalText/datePrecision/month_or_day/meaningClaim/sourceType/sourceChain`，日期只作原文及局部比較；不能自動轉成通用manufacturedAt。不同現持有鏈僅是現持有鏈不同，不能計成兩條已驗證百年前獨立證據。
 
-| 未定項 | 可評審邊界／技術建议 | 受阻的正式寫入 |
+| 未定項 | 可評審邊界／技術建議 | 受阻的正式寫入 |
 | --- | --- | --- |
 | Q01 18月/生命交易/家庭債 | 保留數值與legacy profile；新故事可先沿期限壓力、暫不解釋機制；具體兩組選項見[W04_HANDOFF.md](W04_HANDOFF.md)，不擅加AI詛咒或植入裝置 | intro/ticket、pawn/redeem文、beginDay月初字條、renderHub期限來源與endings/家族歷史正式重寫；schema可存期限，不宣告新機制 |
 | Q02 地方/藥行/礦區權責 | 派出所稱呼方向確定；周正與陸不同職責必須選擇當地職權方案，詳[W04_HANDOFF.md](W04_HANDOFF.md)；場景內未具名收費可不指定機關 | office/accuse/turnIn/制度告發及強制移交、收費者身份、組织采購與所有舊組织文字；不把宗門全域替換成警察 |
@@ -194,7 +196,7 @@ O202節點級未決：目前批2份普通布及兩方案都只在review候選，
 | Q05 月度壓縮 | 技術absDay以6日為當前profile參數；不是自然月六天，不算星期 | 對外正式日歷說明與將來月長變動遷移；參數變動需另version |
 | Q06 名稱/ID/能力 | 已出現稱呼/物件按核准正文；本頁新增ID非別名 | 未出場人物/物品能力、空間器具與舊神秘功能不能整體核准 |
 
-W06可以分開施工技術基線與O101內部循環，但新故事完整開場／月初／月結仍受Q01/Q02門檻，不以「先保留原文」宣稱新版世界全完成。供貨窗口、舊客時段與必要台詞一致性依schedule評審。root統籌批准之後才由W05/W06按各自授權啟動。
+W06可以分開施工技術基線與O101內部循環，但新故事完整開場／月初／月結需遵守已定Q01/Q02方向及仍未知的細節，不以「先保留原文」宣稱新版世界全完成。供貨窗口、舊客時段與必要台詞一致性依schedule評審。root統籌批准之後才由W05/W06按各自授權啟動。
 
 ## 9. 本輪核對與後續驗收
 

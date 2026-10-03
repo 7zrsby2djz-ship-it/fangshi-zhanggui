@@ -1,16 +1,26 @@
 """Playwright harness: wrap like the artifact host, play scripted flows, take phone screenshots."""
-import json, pathlib, sys
-from playwright.sync_api import sync_playwright
-SP = pathlib.Path('/tmp/claude-0/-home-claude-fangshi-zhanggui/dc256064-7031-54f3-af6e-c29f959e9f5a/scratchpad/fs'); SP.mkdir(parents=True, exist_ok=True)
+import argparse, json, pathlib
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('mode', nargs='?', default='flow', choices=['flow', 'sim', 'late', 'places', 'v2', 'end', 'eval', 'js'])
+parser.add_argument('scheme', nargs='?', default='light', choices=['light', 'dark'])
+parser.add_argument('argument', nargs='?', help='策略、eval 程式或 js 檔路徑')
+parser.add_argument('--game', type=pathlib.Path, help='遊戲 HTML；預設為 repo/dist/game.html')
+parser.add_argument('--output-dir', type=pathlib.Path, default=pathlib.Path('/tmp/fangshi-harness'), help='wrapper 與 screenshots 輸出目錄')
+args = parser.parse_args()
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError:
+    parser.exit(2, '缺少 Playwright，請在已安裝 playwright 與 Chromium 的環境執行。\n')
+SP = args.output_dir.expanduser().resolve(); SP.mkdir(parents=True, exist_ok=True)
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-GAME = (ROOT / 'dist' / 'game.html').read_text(encoding='utf-8')
+GAME = (args.game or ROOT / 'dist' / 'game.html').expanduser().resolve().read_text(encoding='utf-8')
 WRAP = ('<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
         '<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui;background:#fafafa}img{max-width:100%}[hidden]{display:none!important}</style>'
         '</head><body>' + GAME + '</body></html>')
 page_file = SP / 'wrapped.html'; page_file.write_text(WRAP, encoding='utf-8')
 shots = SP / 'shots'; shots.mkdir(exist_ok=True)
-mode = sys.argv[1] if len(sys.argv) > 1 else 'flow'
-scheme = sys.argv[2] if len(sys.argv) > 2 else 'light'
+mode, scheme = args.mode, args.scheme
 with sync_playwright() as p:
     b = p.chromium.launch()
     ctx = b.new_context(viewport={'width': 402, 'height': 874}, device_scale_factor=2, color_scheme=scheme, is_mobile=True, has_touch=True)
@@ -49,7 +59,7 @@ with sync_playwright() as p:
         pg.evaluate("(()=>{const T=window.__fs; T.S.phase='night'; T.S.slot=3; T.render();})()")
         shot('15-night', True)
     elif mode == 'sim':
-        pol = sys.argv[3] if len(sys.argv) > 3 else None
+        pol = args.argument
         if pol: pg.evaluate(f'window.__POL = {json.dumps(pol.split(","))}')
         res = pg.evaluate((ROOT / 'tools' / 'sim.js').read_text())
         print(json.dumps(res, ensure_ascii=False, indent=1))
@@ -87,16 +97,18 @@ with sync_playwright() as p:
         ev("T.leavePlace(); T.UI.tab='intel'"); shot('51-ledger', True)
         ev("S().flags.gave_knife=true; S().flags.daoren_caught=true; S().flags.yao_closed=true; S().phase='end'; T.UI.tab='main'"); shot('52-end', True)
     elif mode == 'end':
-        pol = sys.argv[3] if len(sys.argv) > 3 else 'mid'
-        pg.evaluate(f"window.__POL=['{pol}']")
+        pol = args.argument or 'mid'
+        pg.evaluate(f'window.__POL={json.dumps([pol])}')
         js = (ROOT / 'tools' / 'sim.js').read_text()
         pg.evaluate(js.replace("for (let i = 0; i < 120; i++)", "for (let i = 0; i < 1; i++)"))
         pg.evaluate("(()=>{const T=window.__fs; T.UI.view='game'; T.UI.tab='main'; T.render();})()"); shot('60-end-' + pol, True)
         if pg.locator('tr.tap').count():
             pg.locator('tr.tap').last.click(); pg.wait_for_timeout(200); shot('61-stat-' + pol)
     elif mode == 'eval':
-        print(pg.evaluate(sys.argv[3]))
+        if not args.argument: parser.error('eval 需要程式參數')
+        print(pg.evaluate(args.argument))
     elif mode == 'js':
-        print(json.dumps(pg.evaluate(pathlib.Path(sys.argv[3]).read_text()), ensure_ascii=False, indent=1))
+        if not args.argument: parser.error('js 需要檔案路徑')
+        print(json.dumps(pg.evaluate(pathlib.Path(args.argument).read_text(encoding='utf-8')), ensure_ascii=False, indent=1))
     print('ERRORS:', errors if errors else 'none')
     b.close()

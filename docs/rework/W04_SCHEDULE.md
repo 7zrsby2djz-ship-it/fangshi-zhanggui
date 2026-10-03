@@ -2,7 +2,7 @@
 
 2026-10-03｜工程拆解建議，未寫入遊戲。來源基底：本地 `77167f7`（本輪已核對其對應遠端 `6fbe08bba4d05dc731dc363ac9a96edbf8c943d3`），遊戲 main `c8a5bf6`。最新使用者已通過 S01 v0.4 與 S02–S12 v0.2 原型；原型正文不改。本頁的排程、資料期限、排序和失約規則是施工提案，尚非使用者逐項拍板。舊工作文件的「S05–S12待審」已被最新指示更新。
 
-已完整讀主企劃／補充 A、START_HERE、CANON、STYLE_LOCK、SCENES、STATE_AND_HANDOFF、十二幕當前正文與 review；再核對 `content/deals.yaml`、`places.yaml`、相關 news／intel／events 與 `game.js`。僅取可用時段、公開需求及期限相依；舊答案不拿來替玩家決策。W04 的排程拆解可交付；Q01／Q02 正式移植 gate、W05 基線及正常遊玩驗收仍未解除。
+已完整讀主企劃／補充 A、START_HERE、CANON、STYLE_LOCK、SCENES、STATE_AND_HANDOFF、十二幕當前正文與 review；再核對 `content/deals.yaml`、`places.yaml`、相關 news／intel／events 與 `game.js`。僅取可用時段、公開需求及期限相依；舊答案不拿來替玩家決策。2026-10-04更新：W04排程已由統籌核對作O101施工基準；Q01／Q02方向已依U20261004-01採兩題A。W05基線及正常遊玩驗收仍須實際通過。
 
 ## 一、真實原碼與所需新介面
 

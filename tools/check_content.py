@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""檢查 content YAML 重複鍵及各 ID 命名空間的唯一性。"""
+import argparse
+import pathlib
+import sys
+
+import yaml
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+class UniqueKeyLoader(yaml.SafeLoader):
+    def construct_mapping(self, node, deep=False):
+        self.flatten_mapping(node)
+        seen = {}
+        for key_node, _ in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if key in seen:
+                raise yaml.constructor.ConstructorError(
+                    '第一次出現的鍵', seen[key], f'重複 YAML 鍵：{key}', key_node.start_mark)
+            seen[key] = key_node.start_mark
+        return super().construct_mapping(node, deep=deep)
+
+
+def load_yaml(path):
+    with pathlib.Path(path).open(encoding='utf-8') as stream:
+        return yaml.load(stream, Loader=UniqueKeyLoader)
+
+
+def check_ids(rows, label):
+    seen = set()
+    for index, row in enumerate(rows):
+        ident = row.get('id') if isinstance(row, dict) else None
+        if not isinstance(ident, str) or not ident.strip():
+            raise ValueError(f'{label}[{index}] 缺少非空字串 ID')
+        if ident in seen:
+            raise ValueError(f'{label}[{index}] 重複 ID：{ident}')
+        seen.add(ident)
+    return len(seen)
+
+
+def check_content(root=ROOT):
+    content = pathlib.Path(root) / 'content'
+    docs = {p.stem: load_yaml(p) for p in sorted(content.glob('*.yaml'))}
+    counts = {name: len(docs[name]) for name in ('items', 'npcs')}
+    for name, key in [('deals', 'deals'), ('news', 'news'), ('intel', 'accuse')]:
+        counts[key] = check_ids(docs[name][key], f'{name}.{key}')
+    # 物品／NPC／消息／事件／場所的字典 key 就是 ID，已由 loader 驗唯一。
+    for name, key in [('intel', 'intel'), ('events', 'events'), ('places', 'places')]:
+        counts[key] = len(docs[name][key])
+    return len(docs), counts
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--root', type=pathlib.Path, default=ROOT)
+    parser.add_argument('--yaml', type=pathlib.Path, action='append', default=[], help='另外檢查 YAML 重複鍵；可重複使用')
+    args = parser.parse_args()
+    try:
+        number, counts = check_content(args.root)
+        for path in args.yaml:
+            load_yaml(path)
+    except (yaml.YAMLError, ValueError, OSError) as exc:
+        print(exc, file=sys.stderr)
+        return 1
+    print(f'通過：{number} 份 content YAML，額外 {len(args.yaml)} 份 YAML；ID 數量 {counts}')
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -10,7 +10,7 @@ status_legend:
 id_policy:
   stable: 下列25NPC／23item既有ID維持；新顯示名不等於新ID。
   migration: 確需改ID先列alias與存檔/YAML/JS引用遷移，未執行。
-  adoption: S01 v0.4與S02、S03 v0.2已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
+  adoption: S01 v0.4與S02–S04 v0.2已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
 protagonist:
   id: me
   status: 確定
@@ -742,7 +742,7 @@ prototype_items:
     ownership: 始終阿蘅，S12收自有固定繩再帶回
     limits: 常規飯盒，不為碰霧設計；與壺比較刻年但不判末日因果或年代驗真
 S04_work_spec:
-  status: 待審閱原型，未入遊戲
+  status: S04 v0.2原型已由偉銓通過；核准語感樣本，未入遊戲
   scene_version: S04 v0.2
   full_card: prose/S04_v0.2_review.md
   delta: 收到36一次，96→132；四份布繩屬韓九，專用量0；香菇僅暫交包貨，原貨主未具名。
@@ -800,8 +800,8 @@ S12_work_spec:
 style_revision:
   decision: U20261003-05
   rules: STYLE_LOCK.md
-  approved_sample: S01 v0.4與S02、S03 v0.2；正文不動
-  current_prose: S02、S03 v0.2已通過；S04–S12 v0.2仍待偉銓審閱
+  approved_sample: S01 v0.4與S02–S04 v0.2；正文不動
+  current_prose: S02–S04 v0.2已通過；S05–S12 v0.2仍待偉銓審閱
   historical_prose: v0.1事件保留，語感不作樣本
   invariants: 貨種、數量、收付、歸屬、知識層級、來源ID、刻文、承諾與行動格不改
   place_display: 新版正文稱店裡／許衡的店；許記是舊版對照標籤，正式店名未定

@@ -27,9 +27,9 @@ npcs:
     legacy_display_name: 錢不語
     legacy_role: 錢記掌櫃
     working_display_name: 老錢
-    working_name_status: 建議，S01 v0.2稱呼；正式姓名未核准
+    working_name_status: 建議，S01 v0.3稱呼；正式姓名未核准
     function_to_retain: 鄰店競爭、人情議價與資源網
-    rewrite_note: S01 v0.2稱老錢／錢老闆；自然臺灣店家口吻，不沿用古風綽號。
+    rewrite_note: S01 v0.3稱老錢／錢老闆；自然臺灣店家口吻，不沿用古風綽號。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
     adopted_scene: S01草稿
   yao:
@@ -313,9 +313,9 @@ items:
     status: 現況
     legacy_display_name: 寒鐵
     working_display_name: 礦料
-    working_name_status: 建議，S01 v0.2功能稱呼未核准
+    working_name_status: 建議，S01 v0.3功能稱呼未核准
     function_to_retain: 常規礦材、來源與配額
-    rewrite_note: S01 v0.2稱礦料；原 ID 與斤單位保留，印記及舊帳待後續同步。
+    rewrite_note: S01 v0.3稱礦料；原 ID 保留；新敘事採公斤，資料單位遷移待W04，印記及舊帳待後續同步。
     ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
     adopted_scene: S01草稿
   liaoshang:
@@ -481,8 +481,8 @@ items:
     ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
     adopted_scene: null
 S01_work_spec:
-  status: 建議；只固定v0.2草稿一致性，偉銓未核準，未寫入遊戲
-  scene_version: S01 v0.2
+  status: 建議；v0.2文風獲大致認可，v0.3依公制回饋修正；世界機制未定，未寫入遊戲
+  scene_version: S01 v0.3
   speakers:
   - me
   - qian
@@ -490,13 +490,13 @@ S01_work_spec:
   weather: 正文未指明，無新氣候線索
   prop_hantie:
     stable_item_id: hantie
-    lot_ref: 開局原有10斤
+    lot_ref: 原引擎開局數量10；稿內6公斤，正式單位遷移待W04
     owner_before: 許衡
     owner_after: 許衡
     display: 礦料
     appearance: 礦料置於鐵箱，磅秤點貨，邊角可翻看；沿舊常規礦材功能，不新增異能
     source: 開局原有貨；本文不另造來歷
-    observed: 被點秤、翻看，仍10斤
+    observed: 被點秤、翻看，仍6公斤（原引擎數量10）
     claimed: qian稱需備貨，非旁白驗證需求
     capability: 不展示新功能，沒有生物／探測／歷史能力
   paper_news:
@@ -508,15 +508,15 @@ S01_work_spec:
     exact_boundary: 只有聽說礦新開；沒有地點、產能、出貨日證實
     relationship_to_qian: 同源傳播可能；不是獨立雙佐證
   quote:
-    unit: 靈石／斤
-    first: 6
-    after_silence: 6.5
-    after_decline_offer: 7
-    ten_jin_totals:
+    unit: 整批靈石；重量公斤
+    first: 60
+    after_silence: 65
+    after_decline_offer: 70
+    batch_totals:
     - 60
     - 65
     - 70
-    note: 沿d01基準報價示例；正文非數值實裝，engine依境界氣息可調開價。
+    note: 整批總價維持60／65／70；起價每公斤10；正文非數值實裝，engine依境界氣息可調開價。
   selected_choice: 今天拒絕出售，未約定保留價／訂貨／查證服務
   unknown:
   - 礦是否真開

@@ -10,7 +10,7 @@ status_legend:
 id_policy:
   stable: 下列25NPC／23item既有ID維持；新顯示名不等於新ID。
   migration: 確需改ID先列alias與存檔/YAML/JS引用遷移，未執行。
-  adoption: S01 v0.4與S02 v0.2已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
+  adoption: S01 v0.4與S02、S03 v0.2已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
 protagonist:
   id: me
   status: 確定
@@ -67,11 +67,11 @@ npcs:
     legacy_display_name: 鐵老蔫
     legacy_role: 市集器修攤主
     working_display_name: 鐵師傅
-    working_name_status: 建議：S03 v0.2工作稱呼，原型待審閱
+    working_name_status: 確定：鐵師傅稱呼已隨S03 v0.2通過；正式角色卡與未出場設定未擴大核准
     function_to_retain: 修理、驗貨、工藝與學徒
     rewrite_note: 本稿保留修理手藝，攤上縫工具袋並供這批普通包裹布；職務延伸為P03-01，不推成全能供應商。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: S03 v0.2工作原型
+    adopted_scene: S03 v0.2核准原型
   mang:
     status: 現況
     legacy_display_name: 盲婆婆
@@ -551,7 +551,7 @@ opportunity_candidates:
     - 訊息取得觸發
     - 失敗結果規則
     prototype_goods: S03四份塗蠟厚布包裹布與棉繩，普通非異能材料；工作提案非避水符換皮
-    source_supplier: tie鐵師傅，現場檢四份及報價；職務延伸待核准，旗標／期限待W04
+    source_supplier: tie鐵師傅，現場檢四份及報價；本幕職務呈現已通過，旗標／期限待W04
     prototype_status: S03投入24／S04收到36／S06韓九說四包未濕正常收貨，服務及回報結清；無額外回報款，不證明全部雨訊。
   O201:
     status: 建議
@@ -641,7 +641,7 @@ S02_work_spec:
   delta: 無金錢、所有權、欠項或代找承諾變化；只記各自需求；行程與正常供貨未確認
   next: S03需實際詢問出發日期/路段/乾貨用途及正常來源，不自動取得完整線頭B
 S03_work_spec:
-  status: 待審閱原型；未入遊戲
+  status: S03 v0.2原型已由偉銓通過；核准語感樣本，未入遊戲
   scene_version: S03 v0.2
   full_card: prose/S03_v0.2_review.md
   speakers:
@@ -656,7 +656,7 @@ S03_work_spec:
   next: S04實際交付及付款，M1D6才可能回報；未備貨／未成交無成功回流。
 prototype_items:
   wax_wrap_set:
-    status: 建議：W03工作物件ID，正式引擎掛接待W04，非既有bishui別名
+    status: 本幕普通布繩及局部規格已隨S03通過；工作物件ID正式掛接待W04，非既有bishui別名
     name: 塗蠟厚布包裹布與棉繩
     first_scene: S03 v0.2
     origin: 鐵師傅攤上這批四份常規材料
@@ -800,8 +800,8 @@ S12_work_spec:
 style_revision:
   decision: U20261003-05
   rules: STYLE_LOCK.md
-  approved_sample: S01 v0.4與S02 v0.2；正文不動
-  current_prose: S02 v0.2已通過；S03–S12 v0.2仍待偉銓審閱
+  approved_sample: S01 v0.4與S02、S03 v0.2；正文不動
+  current_prose: S02、S03 v0.2已通過；S04–S12 v0.2仍待偉銓審閱
   historical_prose: v0.1事件保留，語感不作樣本
   invariants: 貨種、數量、收付、歸屬、知識層級、來源ID、刻文、承諾與行動格不改
   place_display: 新版正文稱店裡／許衡的店；許記是舊版對照標籤，正式店名未定

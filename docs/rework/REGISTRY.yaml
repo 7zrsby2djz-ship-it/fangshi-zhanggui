@@ -66,12 +66,12 @@ npcs:
     status: 現況
     legacy_display_name: 鐵老蔫
     legacy_role: 市集器修攤主
-    working_display_name: null
-    working_name_status: 待定；未更名
+    working_display_name: 鐵師傅
+    working_name_status: 建議：S03 v0.1工作稱呼，原型待審閱
     function_to_retain: 修理、驗貨、工藝與學徒
-    rewrite_note: 鐵師傅為稱呼候選，未採用。
+    rewrite_note: 本稿保留修理手藝，攤上縫工具袋並供這批普通包裹布；職務延伸為P03-01，不推成全能供應商。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: null
+    adopted_scene: S03 v0.1工作原型
   mang:
     status: 現況
     legacy_display_name: 盲婆婆
@@ -536,7 +536,7 @@ opportunity_candidates:
     status: 建議，未寫入
     function: 短程運送防潮
     source_A: n_rain；i_opp_rain為主企劃建議新intel，未建立
-    source_B: han的M1D3出發對話候選，消息ID待W04
+    source_B: S03韓九自述M1D4四包乾香菇短程運送及S02離店後石壁滴水範圍；正式消息ID待W04
     source_check: opp101_source_checked為候選旗標；取得入口與期限待W04
     replaces: d13
     cash_example:
@@ -550,6 +550,8 @@ opportunity_candidates:
     - 顧客窗口與舊客展延
     - 訊息取得觸發
     - 失敗結果規則
+    prototype_goods: S03四份塗蠟厚布包裹布與棉繩，普通非異能材料；工作提案非避水符換皮
+    source_supplier: tie鐵師傅，現場檢四份及報價；職務延伸待核准，旗標／期限待W04
   O201:
     status: 建議
     function: 礦區維修規格與交期
@@ -611,3 +613,45 @@ S02_work_spec:
   props: 老葛自有空木箱／箱蓋帶進再帶走；家中乾藥草只談到；皆未進玩家庫存、未定新品ID
   delta: 無金錢、所有權、欠項或代找承諾變化；只記各自需求；行程與正常供貨未確認
   next: S03需實際詢問出發日期/路段/乾貨用途及正常來源，不自動取得完整線頭B
+S03_work_spec:
+  status: 待審閱原型；未入遊戲
+  scene_version: S03 v0.1
+  full_card: prose/S03_v0.1_review.md
+  speakers:
+  - me
+  - han
+  - tie
+  source_boundary: n_rain仍傳聞；韓九自述S02離店後走到石壁看到滴水，並說M1D4短程送貨安排。本人自述與報紙不是同源重述，但不驗證全城雨災或沒走路段。
+  stock: 四份塗蠟厚布包裹布＋各兩段棉繩；每份約一公尺見方，試包本次一公斤乾貨；普通材料無異能。
+  observed: 翻看無可見破洞、逐張少量清水停留十下未透背面；不推長時防水／浸水性能。
+  delta: 投入24，明寫現金120→96；專用備貨4，普通鐵礦石6公斤/定神香1束不動；韓九香菇是承運貨，不屬玩家。
+  promises: 許衡幫整理包貨，韓九M1D4開門後到店，報價36尚未收；無安全保證。
+  next: S04實際交付及付款，M1D6才可能回報；未備貨／未成交無成功回流。
+prototype_items:
+  wax_wrap_set:
+    status: 建議：W03工作物件ID，正式引擎掛接待W04，非既有bishui別名
+    name: 塗蠟厚布包裹布與棉繩
+    first_scene: S03 v0.1
+    origin: 鐵師傅攤上這批四份常規材料
+    appearance: 每份約一公尺見方厚布塗蠟，配兩段棉繩
+    observed: 每張少量水停留十下未透背面；只此短時結果
+    limits: 非異能，不供浸水／長時暴雨，不使濕貨變乾；折角要覆住
+    ownership: S03付24後四份屬許衡專案備貨；S04收36後四份屬韓九，專案量清零
+    claims: 鐵師傅描述用途；韓九貨需包外層，結果待實際回報
+    source_links:
+    - S03 v0.1 review
+    - S04 v0.1 review
+    player_visible: 外觀、試水、供量、價格、包法與使用限制；沒有故事隱藏異能
+  dry_mint_leaf:
+    status: 建議：W03工作物件ID，正式ID／等級庫存／存檔掛接待W04，不是chiyan別名
+    name: 乾薄荷葉
+    first_scene: S05 v0.1
+    origin: 老葛稱自產，帶來這批300公克
+    appearance: 約200公克較完整葉、100公克碎葉，聞得到薄荷味，所翻看處乾燥無可見霉
+    observed: 眼前全袋稱量及碎整比例；不推所有批次品質或治療作用
+    limits: 正常香草用途、沒有異能或治療承諾
+    ownership: S05付8後300公克屬許衡，分兩紙袋；原袋老葛取回；尚未售出
+    claims: 多次移放弄碎、清貨騰桌為老葛自述
+    source_links:
+    - S05 v0.1 review
+    player_visible: 本批形態／重量／議價及付款；不沿用赤炎草年份真假能力

@@ -1,5 +1,5 @@
 # 工作登記，非遊戲資料；不包含完整隱藏交易答案。
-version: '0.1'
+version: '0.2'
 base_commit: c8a5bf6b3013e977879678e226e6aa158d2c0eee
 authority: sources/MASTER_PLAN_v1.0.txt
 status_legend:
@@ -10,7 +10,7 @@ status_legend:
 id_policy:
   stable: 下列25NPC／23item既有ID維持；新顯示名不等於新ID。
   migration: 確需改ID先列alias與存檔/YAML/JS引用遷移，未執行。
-  adoption: 所有未在S01使用的物品僅盤點，沒有安排新出場。
+  adoption: S01 v0.4已核准；其餘既有項目按W03必要場景逐批登記，工作候選不等於正式遊戲設定。
 protagonist:
   id: me
   status: 確定
@@ -18,7 +18,7 @@ protagonist:
   knowledge:
     local: 熟悉在地店務與計價，不用失憶解說
     trade: 會點貨、算價、詢問來源
-    S01_new: 見下方S01工作規格；均局部草稿事實
+    S01_new: 見S01_work_spec；v0.4原型已核准，未取得查證結果。
     unknown: 新礦是否開出、上游動機、世界大謎
   legacy_age: 現況31歲，S01不提；身世Q01待定
 npcs:
@@ -27,11 +27,11 @@ npcs:
     legacy_display_name: 錢不語
     legacy_role: 錢記掌櫃
     working_display_name: 老錢
-    working_name_status: 建議，S01 v0.4稱呼；正式姓名未核准
+    working_name_status: 確定：S01 v0.4採老錢稱呼已隨本幕通過；正式全名未定
     function_to_retain: 鄰店競爭、人情議價與資源網
     rewrite_note: S01 v0.4稱老錢／錢老闆；自然臺灣店家口吻，不沿用古風綽號。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: S01草稿
+    adopted_scene: S01 v0.4核准原型
   yao:
     status: 現況
     legacy_display_name: 姚四
@@ -96,12 +96,12 @@ npcs:
     status: 現況
     legacy_display_name: 老葛
     legacy_role: 城外藥農
-    working_display_name: null
-    working_name_status: 待定；未更名
+    working_display_name: 老葛
+    working_name_status: 建議：S02 v0.1工作原型稱呼；未經使用者逐項核准
     function_to_retain: 生產供應、家庭與議價
-    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    rewrite_note: 本稿為藥農，談乾貨占吃飯桌、箱蓋難合的生活困擾；知道太早裝箱會悶壞，未把專業人寫笨。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: null
+    adopted_scene: S02 v0.1工作原型
   zhou:
     status: 現況
     legacy_display_name: 周正
@@ -176,12 +176,12 @@ npcs:
     status: 現況
     legacy_display_name: 韓九
     legacy_role: 駝隊管事
-    working_display_name: null
-    working_name_status: 待定；未更名
+    working_display_name: 韓九
+    working_name_status: 建議：S02 v0.1工作原型稱呼；未經使用者逐項核准
     function_to_retain: 區域運輸、外地需求
-    rewrite_note: 山路運送功能候選，重審駝隊，不預設新增角色。
+    rewrite_note: 本稿為幫人走山路送貨者，少說完整解釋、以負重及回家時間談需求；駱駝及北方口音不入稿。沒有固定新住址、家庭或已成功行程。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
-    adopted_scene: null
+    adopted_scene: S02 v0.1工作原型
   xiaoman:
     status: 現況
     legacy_display_name: 葛小滿
@@ -313,11 +313,11 @@ items:
     status: 現況
     legacy_display_name: 寒鐵
     working_display_name: 鐵礦石
-    working_name_status: 建議，S01 v0.4功能稱呼未核准
+    working_name_status: 確定：S01 v0.4採鐵礦石稱呼已隨本幕通過；單位資料遷移待W04
     function_to_retain: 常規礦材、來源與配額
     rewrite_note: S01 v0.4稱鐵礦石；原 ID 保留；新敘事採公斤，資料單位遷移待W04，印記及舊帳待後續同步。
     ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
-    adopted_scene: S01草稿
+    adopted_scene: S01 v0.4核准原型
   liaoshang:
     status: 現況
     legacy_display_name: 療傷丹
@@ -481,7 +481,7 @@ items:
     ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
     adopted_scene: null
 S01_work_spec:
-  status: 建議；文風大致認可，v0.4依日常口語回饋局部修訂；世界機制未定，未寫入遊戲
+  status: S01 v0.4原型已通過，文風樣本；未入遊戲，未決世界機制不在核准範圍
   scene_version: S01 v0.4
   speakers:
   - me
@@ -500,7 +500,7 @@ S01_work_spec:
     claimed: qian稱需備貨，非旁白驗證需求
     capability: 不展示新功能，沒有生物／探測／歷史能力
   paper_news:
-    status: 建議的在地晨報紙本呈現，居民稱報紙，不是新交易物品／付費消息單
+    status: S01已核准紙本呈現：晨報口頭稱報紙，非新庫存／付費消息商品
     source_id: n_vein
     already_read: true
     kind: 傳聞
@@ -596,3 +596,18 @@ supplement_A_event:
   ownership_rule: 原約正常結清；另帶物品未同意不入玩家庫存
   new_promises_in_S01: 0
   third_month_schedule: null
+S02_work_spec:
+  status: 待審閱原型；稿內局部事實固定，未入遊戲
+  scene_version: S02 v0.1
+  full_card: prose/S02_v0.1_review.md
+  speakers:
+  - me
+  - ge
+  - han
+  location: 許記店內／同一門口
+  source_ids:
+  - n_rain
+  source_boundary: 實際讀報紙上的坊間傳聞；韓九同源轉述，老葛未去，不形成第二份城東雨災查證
+  props: 老葛自有空木箱／箱蓋帶進再帶走；家中乾藥草只談到；皆未進玩家庫存、未定新品ID
+  delta: 無金錢、所有權、欠項或代找承諾變化；只記各自需求；行程與正常供貨未確認
+  next: S03需實際詢問出發日期/路段/乾貨用途及正常來源，不自動取得完整線頭B

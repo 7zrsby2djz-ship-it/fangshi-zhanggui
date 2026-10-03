@@ -1,0 +1,596 @@
+# 工作登記，非遊戲資料；不包含完整隱藏交易答案。
+version: '0.1'
+base_commit: c8a5bf6b3013e977879678e226e6aa158d2c0eee
+authority: sources/MASTER_PLAN_v1.0.txt
+status_legend:
+  確定: 使用者／主企劃確定規則
+  現況: 原版識別及名稱，非新世界鎖定
+  建議: 未核準工作候選
+  待定: 需要決策，不能自行升格
+id_policy:
+  stable: 下列25NPC／23item既有ID維持；新顯示名不等於新ID。
+  migration: 確需改ID先列alias與存檔/YAML/JS引用遷移，未執行。
+  adoption: 所有未在S01使用的物品僅盤點，沒有安排新出場。
+protagonist:
+  id: me
+  status: 確定
+  name: 許衡
+  knowledge:
+    local: 熟悉在地店務與計價，不用失憶解說
+    trade: 會點貨、算價、詢問來源
+    S01_new: 見下方S01工作規格；均局部草稿事實
+    unknown: 新礦是否開出、上游動機、世界大謎
+  legacy_age: 現況31歲，S01不提；身世Q01待定
+npcs:
+  qian:
+    status: 現況
+    legacy_display_name: 錢不語
+    legacy_role: 錢記掌櫃
+    working_display_name: 錢不語
+    working_name_status: 建議，S01工作名未核準
+    function_to_retain: 鄰店競爭、人情議價與資源網
+    rewrite_note: S01暫留錢不語；口吻裝熟但有可談交易，旁白不判動機。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: S01草稿
+  yao:
+    status: 現況
+    legacy_display_name: 姚四
+    legacy_role: 草藥販子
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 長輩、散貨來源與舊人情
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  bai:
+    status: 現況
+    legacy_display_name: 白七娘
+    legacy_role: 聽雨樓老闆娘
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 消息定價、保密與人際樞紐
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  aheng:
+    status: 現況
+    legacy_display_name: 阿蘅
+    legacy_role: 採藥散修
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 有技能的採集者、信任與家人壓力
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  tie:
+    status: 現況
+    legacy_display_name: 鐵老蔫
+    legacy_role: 市集器修攤主
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 修理、驗貨、工藝與學徒
+    rewrite_note: 鐵師傅為稱呼候選，未採用。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  mang:
+    status: 現況
+    legacy_display_name: 盲婆婆
+    legacy_role: 市集製燈老嫗
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 特殊物件與私人往事
+    rewrite_note: 普通燈與許衡特殊燈分開；不量產同能力。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  stone:
+    status: 現況
+    legacy_display_name: 小石頭
+    legacy_role: 撿石頭的少年
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 新手供貨、真誠與誤判
+    rewrite_note: 保留真貨→自己誤判關係；是否師徒按狀態。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  ge:
+    status: 現況
+    legacy_display_name: 老葛
+    legacy_role: 城外藥農
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 生產供應、家庭與議價
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  zhou:
+    status: 現況
+    legacy_display_name: 周正
+    legacy_role: 寒潭宗外事堂執事
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 地方秩序、收費與權力
+    rewrite_note: 派出所職責須Q02，未直接改成現代警職。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  zhang:
+    status: 現況
+    legacy_display_name: 張守拙
+    legacy_role: 回春堂掌事
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 藥行專業、配額與管理
+    rewrite_note: 藥行稱呼待Q02，不以不懂常見藥材製造故事。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  liu:
+    status: 現況
+    legacy_display_name: 柳郎中
+    legacy_role: 遊方郎中
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 流動藥品、來源風險
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  hu:
+    status: 現況
+    legacy_display_name: 戴鬼面的人
+    legacy_role: 不知是誰
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 灰色交易渠道與信用
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  daoren:
+    status: 現況
+    legacy_display_name: 清虛子
+    legacy_role: 遊方道人
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 推銷故事及查證
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  tao:
+    status: 現況
+    legacy_display_name: 陶老符
+    legacy_role: 製符師
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 工藝、保存事故與補償
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  scar:
+    status: 現況
+    legacy_display_name: 疤臉
+    legacy_role: 外地刀客
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 威嚇、物品歸屬及追查
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  han:
+    status: 現況
+    legacy_display_name: 韓九
+    legacy_role: 駝隊管事
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 區域運輸、外地需求
+    rewrite_note: 山路運送功能候選，重審駝隊，不預設新增角色。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  xiaoman:
+    status: 現況
+    legacy_display_name: 葛小滿
+    legacy_role: 回春堂學徒
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 專業採購、學習與家庭
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  xiaoqi:
+    status: 現況
+    legacy_display_name: 余小七
+    legacy_role: 找哥哥的少女
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 物件承載的親情
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  dianzhu:
+    status: 現況
+    legacy_display_name: 長生典典主
+    legacy_role: 長生典
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 期限與生命交易
+    rewrite_note: Q01定案前不改機制或身世。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  afu:
+    status: 現況
+    legacy_display_name: 阿福
+    legacy_role: 執事堂雜役
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 組織採購、跑腿、口碑
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  xiaoliu:
+    status: 現況
+    legacy_display_name: 瘦小的年輕人
+    legacy_role: 右手纏著布
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 危險經歷、證詞與親屬
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  lu:
+    status: 現況
+    legacy_display_name: 陸執法
+    legacy_role: 寒潭宗執法堂弟子
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 外來調查與權責層級
+    rewrite_note: Q02定權責後改稱，不與周正合併。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  meng:
+    status: 現況
+    legacy_display_name: 孟三娘
+    legacy_role: 穿素服的婦人
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 遺物價值、家庭需求與面子
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  xiangke:
+    status: 現況
+    legacy_display_name: 北地香商
+    legacy_role: 外地商人
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 外地供應、品質與推銷
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+  kuang:
+    status: 現況
+    legacy_display_name: 礦工
+    legacy_role: 北面礦上下山的人
+    working_display_name: null
+    working_name_status: 待定；未更名
+    function_to_retain: 礦區需求與工作限制
+    rewrite_note: 按場景改口吻與外觀，知識與動機不得漂移。
+    appearance: 現況look在content/npcs.yaml；未移植新外觀
+    adopted_scene: null
+items:
+  chiyan:
+    status: 現況
+    legacy_display_name: 赤炎草
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 產地、年份、品質
+    rewrite_note: 若改金線／年份機制，話術、數字、鑑定、消息與退貨同步重寫。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  dingshen:
+    status: 現況
+    legacy_display_name: 定神香
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 修行／休息消耗品與品質
+    rewrite_note: 檢查從不漲價絕對句與晨報；不更動數值。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  bishui:
+    status: 現況
+    legacy_display_name: 避水符
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 防水需求與保存失效
+    rewrite_note: 防潮用品候選非正式名；不能普通袋沿用符的失效答案。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  langya:
+    status: 現況
+    legacy_display_name: 鐵背狼牙
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 生物材料與採取痕跡
+    rewrite_note: 可改異變動物；維持可查採取痕跡。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  hantie:
+    status: 現況
+    legacy_display_name: 寒鐵
+    working_display_name: 寒鐵
+    working_name_status: 建議，S01暫留俗名
+    function_to_retain: 常規礦材、來源與配額
+    rewrite_note: S01暫留俗名與斤；印記及舊帳往後一起更新。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: S01草稿
+  liaoshang:
+    status: 現況
+    legacy_display_name: 療傷丹
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 出行醫療需求
+    rewrite_note: 藥丸／製劑候選，限制須先定，不萬能急救。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  yangqi:
+    status: 現況
+    legacy_display_name: 養氣丹
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 成長消耗品
+    rewrite_note: 先不改數值，改寫身體適應用途。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  xuechan:
+    status: 現況
+    legacy_display_name: 雪蟾酥
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 受管制稀缺貨、保存期
+    rewrite_note: 不當常規商案材料；容器、保存與來源要一起改。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  lingsui:
+    status: 現況
+    legacy_display_name: 地火靈髓
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 不識貨、工藝需求、真假對照
+    rewrite_note: 外形名稱可重做；保留固定觀察規律和真假對照。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  duanshui:
+    status: 現況
+    legacy_display_name: 斷水刀（殘）
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 修補痕跡、人物歸屬
+    rewrite_note: 唯一故事物件，修補和握柄證據鏈不漏。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  duandao:
+    status: 現況
+    legacy_display_name: 寒鐵短刀
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 常規工具與委製
+    rewrite_note: 可量產山路工具候選，不等同唯一故事刀。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  yujian:
+    status: 現況
+    legacy_display_name: 無字玉簡
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 推銷與第三方查證
+    rewrite_note: 可改載體，舊科技不使所有人變笨。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  zhuji:
+    status: 現況
+    legacy_display_name: 築基丹
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 階級配額與高價資源
+    rewrite_note: 未核準前世暗示不得升格許衡設定。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  hudeng:
+    status: 現況
+    legacy_display_name: 狐尾燈
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 特殊觀察工具、人情
+    rewrite_note: 特殊單件不採購／複製／耗用；普通燈另列必要時才建。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  zhangce:
+    status: 現況
+    legacy_display_name: 缺頁帳冊
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 家庭舊帳
+    rewrite_note: Q01紀年與舊案要统一所有帳紙。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  zhangye:
+    status: 現況
+    legacy_display_name: 一頁帳紙（抄本）
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 資訊抄本與保存
+    rewrite_note: 抄本與知識分開，交出紙不強制忘記。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  jiansui:
+    status: 現況
+    legacy_display_name: 半截劍穗
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 手藝和私人記憶
+    rewrite_note: 繩結／修補件候選，先定物件再寫反應。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  yupai:
+    status: 現況
+    legacy_display_name: 霜紋玉牌
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 刻痕與信物
+    rewrite_note: 信物可改，圖示不可洩題。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  dangpiao:
+    status: 現況
+    legacy_display_name: 長生典當票
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 期限與契約
+    rewrite_note: Q01前不改成普通銀行借據／醫療證明。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  luopan:
+    status: 現況
+    legacy_display_name: 尋脈羅盤
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 探測與遺物價值
+    rewrite_note: 改探測器候選，不突然加通訊。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  yaopai:
+    status: 現況
+    legacy_display_name: 寒潭宗外門腰牌
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 身分物證
+    rewrite_note: 識別牌候選，組織及遺失處理一起改。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  sidai:
+    status: 現況
+    legacy_display_name: 舊儲物袋
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 歸屬痕跡／空間物件
+    rewrite_note: 空間／普通袋功能先決策，不能無限容量。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+  canye:
+    status: 現況
+    legacy_display_name: 帳冊缺頁
+    working_display_name: null
+    working_name_status: 待定，未出場不先定名
+    function_to_retain: 缺頁記錄與原帳比對
+    rewrite_note: 同一紀年、筆跡與裁口規格。
+    ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
+    adopted_scene: null
+S01_work_spec:
+  status: 建議；只固定v0.1草稿一致性，偉銓未核準，未寫入遊戲
+  scene_version: S01 v0.1
+  speakers:
+  - me
+  - qian
+  location: 許記與對街錢記；不命名聚落山體
+  weather: 正文未指明，無新氣候線索
+  prop_hantie:
+    stable_item_id: hantie
+    lot_ref: 開局原有10斤
+    owner_before: 許衡
+    owner_after: 許衡
+    display: 寒鐵
+    appearance: 鐵塊，包在布裡，邊角可翻看；沿舊常規礦材功能，不新增異能
+    source: 開局原有貨；本文不另造來歷
+    observed: 被點秤、翻看，仍10斤
+    claimed: qian稱需備貨，非旁白驗證需求
+    capability: 不展示新功能，沒有生物／探測／歷史能力
+  paper_news:
+    status: 建議的在地紙本晨報呈現，不是新交易物品／付費消息單
+    source_id: n_vein
+    already_read: true
+    kind: 傳聞
+    owner: 許衡；非庫存道具
+    exact_boundary: 只有聽說礦新開；沒有地點、產能、出貨日證實
+    relationship_to_qian: 同源傳播可能；不是獨立雙佐證
+  quote:
+    unit: 靈石／斤
+    first: 6
+    after_silence: 6.5
+    ten_jin_totals:
+    - 60
+    - 65
+    note: 沿d01基準報價示例；正文非數值實裝，engine依境界氣息可調開價。
+  selected_choice: 今天拒絕出售，未約定保留價／訂貨／查證服務
+  unknown:
+  - 礦是否真開
+  - 誰最先看過
+  - qian實際需求與真實意圖
+  source_ids:
+  - d01
+  - n_vein
+  - i_vein_claim
+  not_acquired:
+  - i_vein_false
+  - d01:verify:tie
+  - d01:verify:bai
+  cosmetic_details: 秤、布、凳子、紙、筆：不增加商品ID、人物或機制。
+opportunity_candidates:
+  O101:
+    status: 建議，未寫入
+    function: 短程運送防潮
+    source_A: n_rain；i_opp_rain為主企劃建議新intel，未建立
+    source_B: han的M1D3出發對話候選，消息ID待W04
+    source_check: opp101_source_checked為候選旗標；取得入口與期限待W04
+    replaces: d13
+    cash_example:
+      prepare: 24
+      sale: 36
+      status: 驗收試算，非正式售價
+    not_sold: 轉庫存估值16：現金-24／資產-8；不得轉貨又退錢
+    missing_decisions:
+    - 實物與供應人
+    - 日內供應有效期
+    - 顧客窗口與舊客展延
+    - 訊息取得觸發
+    - 失敗結果規則
+  O201:
+    status: 建議
+    function: 礦區維修規格與交期
+    reuse: m218／m213擇一
+  O202:
+    status: 建議
+    function: 有限預算與身體限制
+    reuse: m219需求功能，不直接等同原採購劇情
+  O203:
+    status: 建議
+    function: 返程運送、材料保存
+    reuse: han／修理
+  O204:
+    status: 建議
+    function: 淺層探索準備
+    reuse: 優先現有成年人，身份待定
+  O205:
+    status: 建議選配
+    function: 信任先得需求
+  O206:
+    status: 建議選配
+    function: 可查證假商機、有限損失
+supplement_A_candidates:
+- id: A
+  status: 未核準後續候選
+  direction: 同一個人第二次來，需求已不同
+  condition: 前兩月該路線相關人物確實回流
+  npc: null
+  month: null
+- id: B
+  status: 未核準後續候選
+  direction: 消息成立仍有適用邊界
+  condition: 先固定日期路段條件，且玩家事前可得
+  item: null
+- id: C
+  status: 未核準後續候選
+  direction: 舊物先有生活用途再看年代
+  condition: 故事需要才選載體
+  item: null
+supplement_A_event:
+  status: 候選骨架未啟動
+  name: 回來以後，還去不去
+  condition: 相關回流已完成，未重演前兩月矛盾
+  ownership_rule: 原約正常結清；另帶物品未同意不入玩家庫存
+  new_promises_in_S01: 0
+  third_month_schedule: null

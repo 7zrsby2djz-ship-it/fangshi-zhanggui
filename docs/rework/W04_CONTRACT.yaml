@@ -1,6 +1,7 @@
-# W04提案資料；不是當前引擎輸入，未實裝／未測。
+# W04施工提案快照，不是引擎輸入。O101實際掛接與測試見W06_O101.md；source改存批次/session記錄，未使用候選checkedFlag。
 contractVersion: 1
-status: proposal_unimplemented
+status: proposal_snapshot_O101_implemented_in_W06
+implementationReference: W06_O101.md
 storyVersion: taiwan-m1m2-v1
 storyApproval: U20261003-11
 engineeringApproval: W04-ROOT-20261004

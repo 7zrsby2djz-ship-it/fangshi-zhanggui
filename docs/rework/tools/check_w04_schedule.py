@@ -6,6 +6,9 @@ Uses public schedule fields only; does not inspect truth/verdict/tells.
 from pathlib import Path
 from collections import defaultdict
 import yaml
+import json
+import re
+import hashlib
 
 ROOT = Path(__file__).resolve().parents[3]
 
@@ -16,7 +19,10 @@ def abs_day(month, day):
 
 
 def source_baseline():
-    deals = {d["id"]: d for d in yaml.safe_load((ROOT / "content/deals.yaml").read_text())["deals"]}
+    frozen = (ROOT / "legacy/game-v1.html").read_bytes()
+    assert hashlib.sha256(frozen).hexdigest() == "3fbd82e029972fd8415af2627cd9ffc4fe4e03892f86ddf1f9636bf3206496d8"
+    old = json.loads(re.search(r"const D = (.+);\nconst M", frozen.decode()).group(1))
+    deals = {d["id"]: d for d in old["deals"]}
     for did in ("d11", "d12", "d13"):
         assert deals[did]["days"] == [4, 4], did
         assert deals[did]["where"] == "shop", did
@@ -27,14 +33,26 @@ def source_baseline():
     assert deals["d21"]["npc"] == "afu" and deals["d21"]["days"] == [3, 5]
     assert deals["m207"]["days"] == [3, 3]
     assert deals["m214"]["days"] == [5, 5]
-    meta = yaml.safe_load((ROOT / "content/meta.yaml").read_text())["meta"]
-    assert meta["days"] == 6 and meta["marketDay"] == 3 and meta["months"][2]["marketDay"] == 4
-    intel = yaml.safe_load((ROOT / "content/intel.yaml").read_text())["intel"]
+    meta = old["meta"]
+    assert meta["days"] == 6 and meta["marketDay"] == 3 and meta["months"]["2"]["marketDay"] == 4
+    intel = old["intel"]
     assert intel["i_pkg_seal"]["hot"] == [4, 4] and intel["i_pkg_seal"]["expire"] == 4
-    places = yaml.safe_load((ROOT / "content/places.yaml").read_text())["places"]
+    places = old["places"]
     assert "tie_workshop" not in places and "tao_workshop" not in places
     assert places["tea"]["hours"] == [1, 2]
-    assert places["herb"]["closed"][1] == [5]
+    assert places["herb"]["closed"]["1"] == [5]
+
+
+def implemented_window():
+    current = json.loads((ROOT / "dist/data.json").read_text())
+    deals = {d["id"]: d for d in current["deals"]}
+    assert deals["d11"]["days"] == [4, 4]
+    assert deals["d12"]["days"] == [4, 5]
+    assert deals["d12"]["opts"]["deal"]["fx"]["event"] == [{"id": "e_pkg", "at": 6}]
+    assert current["intel"]["i_pkg_seal"]["hot"] == [4, 5]
+    assert current["intel"]["i_pkg_seal"]["expire"] == 5
+    assert [o["id"] for o in current["opportunities"]] == ["O101"]
+    print("PASS: W06資料窗口；d12延至第五天，包裹事件仍第六天；只有O101。")
 
 
 # Proposal action tuples: month, day, start slot, duration, name, cash delta.
@@ -112,6 +130,7 @@ RETURNS = {
 
 def main():
     source_baseline()
+    implemented_window()
     assert validate(BASE, 14) == 14
     engineering = [a for a in BASE if a[4] != "d11_decline"] + [(1, 4, 1, 2, "d11_verify_bai_decline", -5)]
     assert validate(engineering, 9, True) == 9
@@ -130,8 +149,8 @@ def main():
     assert abs_day(1, 6) + 2 == abs_day(2, 2)
     # Show old four-action plan cannot fit; this is the defect we propose fixing.
     assert 1 + 1 + 1 + 1 > 3
-    print("PASS: source baseline; prototype 14; engineering verify5 9; O202 short6/long8; slots, day order, market and return windows.")
-    print("NOT TESTED: game runtime, source acquisition UI, queue implementation, save/load, economy balance, Q01/Q02 gates.")
+    print("PASS: frozen W04 source baseline; prototype 14; engineering verify5 9; O202 short6/long8; slots, day order, market and return windows.")
+    print("NOT TESTED: game runtime, source acquisition UI, queue implementation, save/load, economy balance, other future slices. Actual O101 runtime is separately tested by tools/test_o101.js.")
 
 
 if __name__ == "__main__":

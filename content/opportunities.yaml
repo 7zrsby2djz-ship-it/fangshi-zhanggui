@@ -1,0 +1,26 @@
+opportunities:
+  - id: O101
+    title: 明天那四包香菇
+    customer: han
+    supplier: tie
+    item: wax_wrap_set
+    quantity: 4
+    cost: 24
+    sale: 36
+    assetValue: 16
+    sourceDay: 3
+    saleDay: 4
+    returnDelay: 2
+    requiredIntel: [i_opp_rain, i_opp101_trip]
+    returnIntel: i_opp101_return
+    replaces: d13
+    batch: O101_tie_M1D3_batch1
+    predicates:
+      prepare: [intelHeld, sourceSnapshotValid, fundsAtLeast, stateIs, withinWindow, receiptAbsent]
+      sale: [stateIs, withinWindow, stockOwned, receiptAbsent]
+    trip: 韓九把貨單攤開：「明天四包乾香菇，每包一公斤。早上從溪邊石壁那段過，當天就回。昨天離開你店裡後，我去看過，石壁在滴水；後面那段我沒走。貨主怕包角吸水，我想多包一層。明天開門後，我先把貨送來。」
+    source: 鐵師傅拿出四張約一公尺見方的塗蠟厚布，每份配兩條棉繩。他逐張翻看，沒有看見破洞；倒少量清水，數到十下，背面沒有透水。「四份，一份六塊，共二十四。折角要蓋住；不能泡水，也不能淋一路。濕貨包了還是濕貨。」
+    service: 許衡想到一樁生意：報紙上的倉庫進水仍是傳聞；韓九確實有明天四包貨的需求，並說石壁在滴水。若包角合用，四份布繩加上整理服務報三十六。能不能成交，要等明天把貨實際放進來試。
+    fit: 韓九把四包香菇放上櫃台，袋口各寫一公斤。許衡翻開一角，所看的地方乾燥；兩人逐包試布，讓折角覆住袋底，韓九拉緊棉繩。「這樣合用。四份連整理，三十六。」香菇是韓九替貨主運的，沒賣給許衡。
+    sold: 韓九點出三十六塊，許衡收好。四份布繩和四包貨由韓九帶走。「月底最後一天早上，我來跟你說用了怎樣。」
+    report: 韓九先把貨單收進口袋：「四包收貨時都是乾的。石壁那段有滴水，後面沒淋一路，也沒泡水。」他攤開一張布，外角有泥點和折痕；許衡摸了摸背面，當下是乾的。韓九又把布捲好帶走。「貨沒事，倒是回家煮飯煮焦了。」這只是這趟的回報，不能證明報紙上倉庫進水的傳聞。

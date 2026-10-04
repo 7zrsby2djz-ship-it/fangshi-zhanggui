@@ -38,8 +38,11 @@ data = json.loads((ROOT / 'dist/data.json').read_text(encoding='utf-8'))
 if args.compare_baseline:
     assert digest(data) == baseline['data'], '完整 D 與 W05 基底必須等值'
 assert next(d for d in data['deals'] if d['id'] == 'd19')['opts']['special']['seal'] == '還刀'
-payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
-expected = (ROOT / 'template.html').read_text(encoding='utf-8').replace('/*__CSS__*/', (ROOT / 'style.css').read_text(encoding='utf-8')).replace('/*__JS__*/', (ROOT / 'game.js').read_text(encoding='utf-8').replace('__GAME_DATA__', payload))
+payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', chr(92) + 'u003c')
+legacy_html = (ROOT / 'legacy/game-v1.html').read_text(encoding='utf-8')
+legacy_payload = json.dumps(legacy_html, ensure_ascii=False).replace('<', chr(92) + 'u003c')
+js = (ROOT / 'game.js').read_text(encoding='utf-8').replace('/*__OPPORTUNITY_ENGINE__*/', (ROOT / 'opportunity.js').read_text(encoding='utf-8')).replace('__GAME_DATA__', payload).replace('__LEGACY_HTML__', legacy_payload)
+expected = (ROOT / 'template.html').read_text(encoding='utf-8').replace('/*__CSS__*/', (ROOT / 'style.css').read_text(encoding='utf-8')).replace('/*__JS__*/', js)
 assert (ROOT / 'dist/game.html').read_text(encoding='utf-8') == expected, 'dist HTML 須與資料／JS／CSS完全同步'
 if args.compare_baseline:
     print('通過：8份YAML解析等值，完整D與W05基底一致')
@@ -54,6 +57,8 @@ with tempfile.TemporaryDirectory(prefix='fangshi-w05-') as directory:
     shutil.copy(ROOT / 'build.py', temporary)
     (temporary / 'tools').mkdir()
     shutil.copy(ROOT / 'tools/check_content.py', temporary / 'tools')
+    for name in ['opportunity_schema.py', 'rework_profile.py']:
+        shutil.copy(ROOT / 'tools' / name, temporary / 'tools')
     shutil.copytree(ROOT / 'content', temporary / 'content')
     (temporary / 'dist').mkdir()
     for name in ['game.html', 'data.json']:

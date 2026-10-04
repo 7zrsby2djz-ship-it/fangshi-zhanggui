@@ -48,6 +48,14 @@ def check_content(root=ROOT):
     # 物品／NPC／消息／事件／場所的字典 key 就是 ID，已由 loader 驗唯一。
     for name, key in [('intel', 'intel'), ('events', 'events'), ('places', 'places')]:
         counts[key] = len(docs[name][key])
+    if 'opportunities' in docs:
+        if __package__:
+            from .opportunity_schema import validate_opportunities
+        else:
+            from opportunity_schema import validate_opportunities
+        rows = docs['opportunities']['opportunities']
+        counts['opportunities'] = check_ids(rows, 'opportunities')
+        validate_opportunities(rows, {'items': docs['items'], 'npcs': docs['npcs'], 'intel': docs['intel']['intel'], 'deals': docs['deals']['deals']})
     return len(docs), counts
 
 

@@ -16,6 +16,29 @@
 # leak.cases：賣出後隔天早上，當事人的反應（依序取第一個條件成立的）
 
 intel:
+  i_opp_rain:
+    kind: heard
+    short: 報紙說倉庫進水
+    text: 報紙提到東邊部分倉庫進水，是傳聞，不是許衡親眼見過。
+    from: ['news:seen:n_rain']
+    sourceGroup: news:n_rain
+    value: 0
+    expire: 3
+  i_opp101_trip:
+    kind: heard
+    short: 韓九明天要運四包貨
+    text: 韓九自述明天四包乾香菇、每包一公斤，當天回；他昨天看到溪邊石壁滴水，後段沒走。
+    from: ['scene:S03:han_trip_complete']
+    sourceGroup: han:M1D3:trip_M1D4
+    value: 0
+    expire: 4
+  i_opp101_return:
+    kind: heard
+    short: 韓九這趟的用後回報
+    text: 韓九說四包收時乾、途中只石壁滴水；許衡只在店裡摸到展示布背面當下是乾的，布仍由韓九帶走。
+    from: ['opp:O101:return_read']
+    sourceGroup: han:M1D6:report_O101
+    value: 0
 
   i_vein_claim:
     kind: heard
@@ -233,8 +256,8 @@ intel:
     from: [d12:appraise]
     value: 8
     exclusive: true
-    hot: [4, 4]
-    expire: 4
+    hot: [4, 5]
+    expire: 5
     expireFlag: [pkg_peeked]
     spread: 有人說，錢記的包裹上，封的是假火漆。
     leak:

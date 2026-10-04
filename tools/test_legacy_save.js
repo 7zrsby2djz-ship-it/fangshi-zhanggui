@@ -8,8 +8,9 @@ const vm = require('node:vm');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
 const fixtureDir = path.join(__dirname, 'fixtures');
-const data = JSON.parse(fs.readFileSync(path.join(root, 'dist/data.json'), 'utf8'));
-const source = fs.readFileSync(path.join(root, 'game.js'), 'utf8').replace('__GAME_DATA__', JSON.stringify(data));
+const legacy = fs.readFileSync(path.join(root, 'legacy/game-v1.html'), 'utf8');
+const source = legacy.match(/<script>\s*([\s\S]*?)\s*<\/script>/)[1];
+const data = JSON.parse(source.match(/const D = ([^\n]+);\nconst M/)[1]);
 const KEY = 'fangshi-p1-v1';
 const clone = value => JSON.parse(JSON.stringify(value));
 

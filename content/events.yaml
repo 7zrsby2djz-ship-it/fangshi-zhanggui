@@ -1,7 +1,7 @@
 events:
   e_intro:
     title: 長生典的字條
-    text: 天還沒亮，門縫裡塞進來一張字條。紙色暗黃，字跡很淡：「許先生，尚餘一年又六個月。」落款是長生典。
+    text: 天還沒亮，門縫裡塞進來一張字條。紙色暗黃，字跡很淡：「許先生，還剩一年又六個月。」落款是長生典。
   e_sting:
     title: 周正上門
     cases:
@@ -15,7 +15,7 @@ events:
     title: 有人舉報
     cases:
       - if: {}
-        text: 周正帶人進門：「有人告發許衡的店私藏私鐵。」包裹從櫃台下拖出來，火漆一挑開，是二十斤沒有印記的寒鐵。周正把包鐵的襯紙折起來，收進袖子裡，罰了你五十：「下不為例。」對門錢記的門，今天沒開。
+        text: 周正帶人進門：「有人告發許衡的店私藏私鐵。」包裹從櫃台下拖出來，火漆一挑開，是二十斤沒有印記的寒鐵。周正把包鐵的襯紙折起來，收進袖子裡，罰了你五十：「這次記下了。」對門老錢的店的門，今天沒開。
         fx: {stones: -50, rep: {sect: -1}, tag: {sect: 私藏寒鐵}, rel: {zhou: -1}, flag: [pkg_caught]}
   e_aheng_warn:
     title: 阿蘅託人帶話
@@ -44,46 +44,46 @@ events:
       - if: {}
         text: 陶師傅來了一趟，說他那批符受了潮，問你手上還有沒有。你說都出手了。他向你點頭，嘆著氣走了：「那是我對不住買符的人。」
   e_siti_raid:
-    title: 執事堂查鐵
+    title: 派出所查鐵
     cases:
       - if: {holdFlag: contraband}
-        text: 周執事帶著四個人進門，直奔庫房，把那批沒有印記的寒鐵一塊一塊搬出來，擺在街上給人看：「北面礦上丟的，就是這批。」他罰了你六十，鐵全數沒收。對門錢記今天沒開門。
+        text: 周正帶著四個人進門，直奔庫房，把那批沒有印記的寒鐵一塊一塊搬出來，擺在街上給人看：「北面礦上丟的，就是這批。」他罰了你六十，鐵全數沒收。對門老錢的店今天沒開門。
         fx: {confiscate: contraband, stones: -60, rep: {sect: -1, loose: -1}, tag: {sect: 收私鐵}, rel: {zhou: -2}, flag: [siti_caught]}
         face: shock
       - if: {}
-        text: 周執事帶人進門，翻遍了庫房，沒找到那批鐵。他問你賣去了哪裡，你答不上來。周執事罰了你六十：「收私鐵賺的錢，吐出來。」
+        text: 周正帶人進門，翻遍了庫房，沒找到那批鐵。他問你賣去了哪裡，你答不上來。周正罰了你六十：「收私鐵賺的錢，吐出來。」
         fx: {stones: -60, rep: {sect: -1}, tag: {sect: 收私鐵}, rel: {zhou: -1}, flag: [siti_caught]}
         face: sweat
   e_bigdeal_dirty:
     title: 礦上點貨
     cases:
       - if: {}
-        text: 阿福跑回來，臉是白的：「許掌櫃，礦上點貨，你給的寒鐵裡有沒印記的！」下午周執事親自來了，把那批鐵退回你的庫房，貨款收了回去，又罰了你八十：「拿私鐵充宗門的貨，許掌櫃好大的膽子。」
+        text: 阿福跑回來，臉是白的：「許老闆，礦上點貨，你給的寒鐵裡有沒印記的！」下午周正親自來了，把那批鐵退回你的庫房，貨款收了回去，又罰了你八十：「拿沒印記的貨來交，這筆不能算合格。」
         fx: {stones: -80, rel: {zhou: -3}, rep: {sect: -2}, tag: {sect: 拿私鐵充數}, flag: [siti_caught, lost_big_deal]}
         face: shock
   e_kuang_dirty:
     title: 礦工又來了
     cases:
       - if: {}
-        text: 礦工揹著簍子回來，把幾塊沒有印記的寒鐵摔在櫃上：「礦上點貨，差點把我當成賊！」他把鐵退了回來，把錢要了回去，在門口罵了半天，整條街都聽見了。
+        text: 礦工揹著背籃回來，把幾塊沒有印記的寒鐵摔在櫃上：「礦上點貨，差點把我當成賊！」他把鐵退了回來，把錢要了回去，在門口罵了半天，整條街都聽見了。
         fx: {rep: {sect: -1, loose: -1}, tag: {loose: 賣私鐵}, flag: [siti_spread]}
         face: sweat
   e_han_cut:
     title: 韓九回來了
     cases:
       - if: {}
-        text: 韓九牽著駱駝又回來了，把幾束香放在櫃上：「掌櫃的，這香一點就嗆，燒得比蠟燭還快。」他沒有吵，只是把香退了回來，把錢要了回去，臨走時說：「北邊的人，要的是能睡著的香。」
+        text: 韓九帶著背架又回來了，把幾束香放在櫃上：「老闆，這香一點就嗆，燒得比蠟燭還快。」他沒有吵，只是把香退了回來，把錢要了回去，臨走時說：「北邊的人，要的是能睡著的香。」
         fx: {rel: {han: -2}, rep: {loose: -1}, tag: {loose: 賣次貨}}
         face: sweat
   e_zhuji_audit:
     title: 陸執法來了
     cases:
       - if: {has: {zhuji: 1}}
-        text: 陸執法清點回春堂這一季的築基丹，帳上九枚，庫裡七枚。他順著鬼市的線，查到了許記。他把那枚築基丹收進袖子裡：「許掌櫃，宗門的東西，不是有錢就買得到的。」罰了你五十。
-        fx: {confiscateItem: zhuji, stones: -50, rel: {lu: -2}, rep: {sect: -1}, tag: {sect: 收宗門的丹}, flag: [zhuji_caught]}
+        text: 陸執法清點回春藥行這一季的築基丹，帳上九枚，庫裡七枚。他順著鬼市的線，查到了許衡的店。他把那枚築基丹收進袖子裡：「許老闆，資源組織的東西，不是有錢就買得到的。」罰了你五十。
+        fx: {confiscateItem: zhuji, stones: -50, rel: {lu: -2}, rep: {sect: -1}, tag: {sect: 收資源組織的丹}, flag: [zhuji_caught]}
         face: shock
       - if: {}
-        text: 陸執法清點回春堂這一季的築基丹，帳上九枚，庫裡七枚。他來許記問了一句：「鬼市那枚築基丹，許掌櫃轉給誰了？」你沒答。他看了你很久，走了。
+        text: 陸執法清點回春藥行這一季的築基丹，帳上九枚，庫裡七枚。他來許衡的店問了一句：「鬼市那枚築基丹，許老闆轉給誰了？」你沒答。他看了你很久，走了。
         fx: {rel: {lu: -2}, flag: [zhuji_traced]}
         face: sweat
   melt:
@@ -104,14 +104,14 @@ monthStart:
       face: smile
     - need: {flag: [aheng_taken], not: [aheng_leak]}
       title: 阿蘅放出來了
-      text: 聽說阿蘅被執事堂關了七天，昨天放出來了。她瘦了一圈，從許記門口經過的時候，沒有往裡看。
+      text: 聽說阿蘅被派出所關了七天，昨天放出來了。她瘦了一圈，從許衡的店門口經過的時候，沒有往裡看。
       face: sad
     - need: {flag: [aheng_leak]}
       title: 阿蘅放出來了
-      text: 阿蘅放出來了。她從許記門口經過，停了一下，看了你一眼，什麼都沒說。
+      text: 阿蘅放出來了。她從許衡的店門口經過，停了一下，看了你一眼，什麼都沒說。
       face: sweat
     - need: {flag: [ahe_taken], not: [aheng_taken]}
-      title: 洞府區
+      title: 住家區
       text: 阿蘅的屋子空了。聽說她一個人去了鬼市。
       face: sad
     - need: {flag: [yao_closed]}
@@ -121,19 +121,19 @@ monthStart:
       face: think
     - need: {flag: [xuechan_sold_qian]}
       title: 對門
-      text: 錢不語交完罰款回來那天，在許記門口站了很久，笑著跟你打了聲招呼。他的笑，跟以前一模一樣。
+      text: 老錢交完罰款回來那天，在許衡的店門口站了很久，笑著跟你打了聲招呼。他的笑，跟以前一模一樣。
       face: uneasy
     - need: {flag: [gave_knife]}
       title: 山棗
       text: 門縫裡塞著一小包曬乾的山棗。布包上的結，打得很細。
       face: smile
     - need: {flag: [daoren_caught]}
-      title: 執事堂的告示
-      text: 執事堂貼了告示：賣假玉簡的道士已經押送出境，他袖中的玉簡，查出同一個來處——坊市裡有人在批這種貨。
+      title: 派出所的告示
+      text: 派出所貼了告示：賣假玉簡的人已經被帶離聚落。他手上幾枚都來自同一處，這裡有人批貨給他。
       face: smug
     - need: {flag: [gave_tie_lingsui]}
-      title: 鐵老蔫的爐子
-      text: 鐵老蔫的爐子連著燒了好幾夜。小石頭蹲在爐子邊拉風箱，臉燻得黑黑的——鐵老蔫收他當學徒了。
+      title: 鐵師傅的爐子
+      text: 鐵師傅的爐子連著燒了好幾夜。小石頭蹲在爐子邊拉風箱，臉燻得黑黑的——鐵師傅收他當學徒了。
       fx: {flag: [stone_apprentice]}
       face: smile
     - need: {flag: [scar_grudge]}
@@ -141,10 +141,10 @@ monthStart:
       text: 門板上那道刀痕還在。昨夜有人在你門口站了一會兒，腳印到天亮才被掃掉。
       face: uneasy
     - need: {flag: [zhou_warned]}
-      title: 執事堂
-      text: 周執事從許記門口經過，沒有停，也沒有看你。他身後多跟了一個人。
+      title: 派出所
+      text: 周正從許衡的店門口經過，沒有停，也沒有看你。他身後多跟了一個人。
       face: uneasy
     - need: {}
-      title: 錢不語來串門
-      text: 錢不語一早就過來了，手裡提著一包點心：「許老弟，新的一個月，生意興隆！」他把點心放下，眼睛在你的庫房裡轉了一圈。
+      title: 老錢來串門
+      text: 老錢一早就過來了，手裡提著一包點心：「許老弟，新的一個月，生意興隆！」他把點心放下，眼睛在你的庫房裡轉了一圈。
       face: think

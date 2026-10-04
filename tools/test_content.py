@@ -41,7 +41,7 @@ assert next(d for d in data['deals'] if d['id'] == 'd19')['opts']['special']['se
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', chr(92) + 'u003c')
 legacy_html = (ROOT / 'legacy/game-v1.html').read_text(encoding='utf-8')
 legacy_payload = json.dumps(legacy_html, ensure_ascii=False).replace('<', chr(92) + 'u003c')
-js = (ROOT / 'game.js').read_text(encoding='utf-8').replace('/*__OPPORTUNITY_ENGINE__*/', (ROOT / 'opportunity.js').read_text(encoding='utf-8')).replace('__GAME_DATA__', payload).replace('__LEGACY_HTML__', legacy_payload)
+js = (ROOT / 'game.js').read_text(encoding='utf-8').replace('/*__OPPORTUNITY_ENGINE__*/', (ROOT / 'opportunity.js').read_text(encoding='utf-8') + '\n' + (ROOT / 'month2.js').read_text(encoding='utf-8')).replace('__GAME_DATA__', payload).replace('__LEGACY_HTML__', legacy_payload)
 expected = (ROOT / 'template.html').read_text(encoding='utf-8').replace('/*__CSS__*/', (ROOT / 'style.css').read_text(encoding='utf-8')).replace('/*__JS__*/', js)
 assert (ROOT / 'dist/game.html').read_text(encoding='utf-8') == expected, 'dist HTML 須與資料／JS／CSS完全同步'
 if args.compare_baseline:
@@ -57,7 +57,7 @@ with tempfile.TemporaryDirectory(prefix='fangshi-w05-') as directory:
     shutil.copy(ROOT / 'build.py', temporary)
     (temporary / 'tools').mkdir()
     shutil.copy(ROOT / 'tools/check_content.py', temporary / 'tools')
-    for name in ['opportunity_schema.py', 'rework_profile.py']:
+    for name in ['opportunity_schema.py', 'month2_schema.py', 'rework_profile.py']:
         shutil.copy(ROOT / 'tools' / name, temporary / 'tools')
     shutil.copytree(ROOT / 'content', temporary / 'content')
     (temporary / 'dist').mkdir()

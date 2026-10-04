@@ -12,7 +12,7 @@ const LAST_MONTH = Math.max(1, ...D.deals.map(d => typeof d.month === 'number' ?
 const MONTH_CN = ['', '一', '二', '三', '四', '五', '六'];
 const monthLabel = m => '第' + MONTH_CN[m || 1] + '個月';
 const dayLabel = (day, m) => ((m || 1) !== MON() ? '上個月' : '') + (M.dayNames[day - 1] || '');
-const countedIds = () => D.deals.filter(d => !['d13', 'd14'].includes(d.id) && !d.extra && (d.month === 'all' ? MON() === 1 : inMonth(d))).map(d => d.id);
+const countedIds = () => D.deals.filter(d => !['d13', 'd14', 'm218', 'm220'].includes(d.id) && !d.extra && (d.month === 'all' ? MON() === 1 : inMonth(d))).map(d => d.id);
 const SAVE_KEY = 'fangshi-rework-v2';
 const SLOT = ['上午', '中午', '下午'];
 const CN = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
@@ -23,6 +23,9 @@ const TEA = { 1: 3, 2: 4, 3: 6 };
 /* ================= ink icons (48×48, currentColor ink; accents use theme vars) ================= */
 const CIN = 'stroke="var(--cinnabar)"', JADE = 'stroke="var(--jade)"', GOLD = 'stroke="var(--gold)"';
 const ICON = {
+  cover_steel_buckle: `<path d="M13 12v20q11 10 22 0V12h-6v17q-5 4-10 0V12z"/><circle cx="16" cy="16" r="1"/><circle cx="32" cy="16" r="1"/>`,
+  jug_frame_sleeve: `<path d="M10 13h12v25H10zM27 13h12v25H27zM10 20h12M27 20h12M14 13v-4h4v4M31 13v-4h4v4"/>`,
+  sample_tool_set: `<path d="M8 10l9 29M12 9l9 29M27 15h14v25H27zM29 10h10v5M25 22h18M25 33h18"/>`,
   dry_mint_leaf: `<path d="M13 37c2-9 7-17 20-27 3 13-1 26-12 29-4 1-7 0-8-2z"/><path d="M13 37l18-23M19 30l-1-8M24 24l7 1" stroke-width="1.2"/>`,
   chiyan: `<path d="M24 41V13"/><path d="M24 23C17 21 13 16 12 9c6 1 11 5 12 14z"/><path d="M24 30c7-2 11-7 12-13-6 1-11 5-12 13z"/><path d="M24 13c-3-4-2-8 0-10 2 2 3 6 0 10z"/><path d="M24 41l-5 4M24 41v5M24 41l5 4"/><path d="M15 12l7 8M33 20l-7 6" ${GOLD} stroke-width="1.2"/>`,
   dingshen: `<path d="M12 34h24"/><path d="M14 34h20l-3 8H17z"/><path d="M24 34V15"/><circle cx="24" cy="14" r="1.6" fill="var(--cinnabar)" stroke="none"/><path d="M24 11c-3-3 3-5 0-8"/><path d="M28 12c3-3-1-5 2-8" stroke-width="1.2" opacity=".55"/>`,
@@ -142,7 +145,7 @@ const UI = { view: 'title', tab: 'main', sheet: null, toast: null, night: { inve
 function newGame(seed) {
   const bestScores = copyState(S && S.v === 2 && S.bestScores || {});
   const s = { bestScores,
-    monthOneVersion: 1, monthOne: { s02: 'pending', s05: 'pending' }, v: 2, storyVersion: 'taiwan-m1m2-v1', unitsVersion: 2, saveRevision: 0, opportunities: { O101: freshOpportunity() }, newsRead: {}, visitSeq: 0, seed, day: 1, slot: 0, phase: 'morning',
+    monthTwoVersion: 1, monthTwo: freshMonthTwo(), monthOneVersion: 1, monthOne: { s02: 'pending', s05: 'pending' }, v: 2, storyVersion: 'taiwan-m1m2-v1', unitsVersion: 2, saveRevision: 0, opportunities: { O101: freshOpportunity(), ...Object.fromEntries(M2_IDS.map(id => [id, freshM2Record(id)])) }, newsRead: {}, visitSeq: 0, seed, day: 1, slot: 0, phase: 'morning',
     stones: M.startStones, level: M.startLevel, xp: M.startXp, spirit: 0,
     stance: '收斂', stanceDays: { 收斂: 0, 外放: 0 }, wind: 0,
     lots: [], lotSeq: 0, flags: {}, rel: {}, met: {}, mem: {}, tags: {}, notes: {}, homes: {},
@@ -258,7 +261,7 @@ function beginDay() {
   S.spirit = M.spirit[S.level] || 2; S.dayStartStones = S.stones; S.cards = [];
   if (S.day === 1 && MON() === 1) S.cards.push({ title: D.events.e_intro.title, text: D.events.e_intro.text });
   if (S.day === 1 && MON() > 1) {
-    S.cards.push({ title: '長生典的字條', text: `天還沒亮，門縫裡又塞進來一張字條：「許公子，尚餘${monthsText(S.lifespan)}。」`, face: 'think' });
+    S.cards.push({ title: '長生典的字條', text: `天還沒亮，門縫裡又塞進來一張字條：「許先生，還剩${monthsText(S.lifespan)}。」`, face: 'think' });
     for (const c of ((D.events.monthStart || {})[MON()] || [])) if (needOk(c.need || {})) S.cards.push({ title: c.title, text: c.text, notes: applyFx(c.fx), face: c.face });
   }
   // perish
@@ -326,7 +329,7 @@ function endDay() {
   if (MON() === 1 && S.day === 6 && S.monthOne.s05 === 'pending') S.monthOne.s05 = 'unseen';
   S.stanceDays[S.stance] = (S.stanceDays[S.stance] || 0) + 1;
   for (const d of D.deals) {
-    if (['d13', 'd14'].includes(d.id) || S.done[d.id] || d.extra || !inMonth(d) || d.days[1] !== S.day) continue;
+    if (['d13', 'd14', 'm218', 'm220'].includes(d.id) || S.done[d.id] || d.extra || !inMonth(d) || d.days[1] !== S.day) continue;
     if (d.missed && needOk(d.need)) applyFx(d.missed);
     S.done[d.id] = needOk(d.need) ? 'missed' : 'na';
   }
@@ -376,11 +379,11 @@ function scoreRows() {
 const scoreTotal = () => scoreRows().reduce((a, r) => a + r.n * r.per, 0);
 
 /* ================= encounters ================= */
-function dealAvail(d) { return !['d13', 'd14'].includes(d.id) && inMonth(d) && !S.done[d.id] && S.day >= d.days[0] && S.day <= d.days[1] && needOk(d.need); }
+function dealAvail(d) { return !['d13', 'd14', 'm218', 'm220'].includes(d.id) && inMonth(d) && !S.done[d.id] && S.day >= d.days[0] && S.day <= d.days[1] && needOk(d.need); }
 function nextShopDeal() { return D.deals.filter(d => d.where === 'shop' && dealAvail(d)).sort((a, b) => a.days[1] - b.days[1] || (b.prio || 0) - (a.prio || 0) || a.id.localeCompare(b.id))[0] || null; }
 
 function startDeal(id, from) {
-  if (['d13', 'd14'].includes(id)) return null;
+  if (['d13', 'd14', 'm218', 'm220'].includes(id)) return null;
   const d = DEALS[id]; const npc = d.npc;
   if (id !== 'd18') S.met[npc] = true;
   if (S.stance === '外放') S.wind++;
@@ -722,6 +725,7 @@ function closeEnc() {
   const e = S.enc; if (!e || !e.done) return;
   const from = e.from;
   if (e.deal === 'd14' && S.monthOne.s05 === 'legacy_active') S.monthOne.s05 = 'legacy_completed';
+  if (M2_REPLACED.includes(e.deal) && S.monthTwo.legacy[e.deal] === 'active') S.monthTwo.legacy[e.deal] = 'completed';
   S.enc = null;
   if (from === 'shop') { S.phase = 'day'; advanceSlot(); }
   else if (from === 'dues') { S.phase = 'night'; }
@@ -732,6 +736,8 @@ function startDues() { S.dues = { paid: false }; startDeal('d18', 'dues'); }
 /* ================= places ================= */
 function placeOpen(id) {
   const p = PL[id]; if (!p) return false;
+  if (id === 'tie_workshop' && (MON() !== 2 || !S.monthTwo.tieAddress || S.day === 3 && (!D.month2.offers.O202.gate || !S.monthTwo.plan))) return false;
+  if (id === 'tao_workshop' && (MON() !== 2 || !S.monthTwo.taoAddress || S.monthTwo.s11 !== 'heard')) return false;
   if (p.days && !p.days.includes(S.day)) return false;
   if (closedDays(p).includes(S.day)) return 'closed';
   return p.hours.includes(S.slot);
@@ -841,7 +847,7 @@ function turnIn(kind, answer) {
   }
   UI.sheet = null;
 }
-function redeem() { if (S.stones < M.redeemCost) return; S.stones -= M.redeemCost; S.lifespan++; S.place.say = '「許公子贖回一個月。」典主在當票上添了一筆。'; }
+function redeem() { if (S.stones < M.redeemCost) return; S.stones -= M.redeemCost; S.lifespan++; S.place.say = '「許先生，已換回一個月。」典主在當票上添了一筆。'; }
 function visitHome(npc) { S.place.homeSeen = npc; S.place.acted = true; S.met[npc] = true; learnTrigger('home:' + npc);
   if (npc === 'yao') { S.flags.knows_yao_paints = true; addMem('yao', '家裡桌上有一碟金粉和一支極細的狼毫筆，筆尖是濕的。'); }
   if (npc === 'aheng') { S.flags.saw_aheng_home = true; addMem('aheng', '門口有一雙男人的鞋，鞋底是鬼市巷子的黑泥。'); }
@@ -1010,14 +1016,14 @@ function renderTitle() {
   const saved = S && S.phase !== 'end';
   return `<section class="title">
     <div class="stack">
-      <div class="ticket"><span class="label">長生典 · 當票</span><p class="q">${esc(D.intro.ticket)}</p><div class="left">尚餘${monthsText(M.lifespan)}</div>
+      <div class="ticket"><span class="label">長生典 · 當票</span><p class="q">${esc(D.intro.ticket)}</p><div class="left">還剩${monthsText(M.lifespan)}</div>
       <svg class="seal" viewBox="0 0 60 60" aria-hidden="true"><rect x="4" y="4" width="52" height="52" rx="4" fill="none" stroke="var(--cinnabar)" stroke-width="3"/><text x="30" y="27" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="17" fill="var(--cinnabar)">長生</text><text x="30" y="47" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="17" fill="var(--cinnabar)">典押</text></svg></div>
       <p class="lede">${esc(D.intro.lede)}</p>
     </div>
     <h1 class="title-v">坊市掌櫃<small>許衡的店 · ${saved ? monthLabel(S.month) : monthLabel(1)}</small></h1>
   </section>
   <section class="card stack"><p class="lede">${esc(D.intro.how)}</p><p class="lede small muted">${esc(D.intro.stance)}</p><p class="lede"><b>${esc(D.intro.goal)}</b></p></section>
-  <p class="small muted">目前第一月已移植；第二月保留上版內容，商機與場景等待W08移植。</p><div class="title-actions">${loadProblem ? `<p>這份新故事進度無法安全載入：${esc(loadProblem)}</p><button class="btn quiet" data-act="rawexport">匯出原檔保留</button>` : saved ? `<button class="btn primary wide" data-act="continue">繼續：${S.month > 1 ? monthLabel(S.month) + '・' : ''}${M.dayNames[Math.min(S.day, M.days) - 1]}</button><button class="btn quiet wide" data-act="askrestart">重新開始</button>` : `<button class="btn primary wide" data-act="new">新故事開張</button>`}</div>${legacyPanelHTML()}`;
+  <p class="small muted">前兩月的商機與外出相遇已接入；普通生意與拒絕路線都可以繼續。</p><div class="title-actions">${loadProblem ? `<p>這份新故事進度無法安全載入：${esc(loadProblem)}</p><button class="btn quiet" data-act="rawexport">匯出原檔保留</button>` : saved ? `<button class="btn primary wide" data-act="continue">繼續：${S.month > 1 ? monthLabel(S.month) + '・' : ''}${M.dayNames[Math.min(S.day, M.days) - 1]}</button><button class="btn quiet wide" data-act="askrestart">重新開始</button>` : `<button class="btn primary wide" data-act="new">新故事開張</button>`}</div>${legacyPanelHTML()}`;
 }
 
 function newsHTML(id, short) {
@@ -1035,7 +1041,7 @@ function renderMorning() {
 }
 
 function renderHub() {
-  let h = `<div class="ticket" style="margin-top:14px;padding:8px 12px"><span class="label">長生典</span>　<b class="cin">尚餘${monthsText(S.lifespan)}</b>${S.debt ? `　<span class="pill cin">欠錢記 ${fmt(S.debt)}</span>` : ''}</div>`;
+  let h = `<div class="ticket" style="margin-top:14px;padding:8px 12px"><span class="label">長生典</span>　<b class="cin">還剩${monthsText(S.lifespan)}</b>${S.debt ? `　<span class="pill cin">欠老錢 ${fmt(S.debt)}</span>` : ''}</div>`;
   const nn = S.todayNews.length + extraToday().length;
   if (nn) h += `<details class="card" style="margin-top:10px"><summary class="small muted">今天的消息（${nn}）</summary>${S.todayNews.map(id => `<button class="btn quiet wide" data-act="readnews" data-id="${id}">閱讀報紙：${esc(NEWS.find(n => n.id === id).source)}</button>`).join('')}${extraToday().map(extraHTML).join('')}</details>`;
   h += opportunityHTML();
@@ -1043,9 +1049,11 @@ function renderHub() {
     h += `<h2 class="sec-h">${SLOT[S.slot]}</h2><div class="choice">
       <button class="go" data-act="shop"><div><div class="gt">顧店</div><div class="gd">坐在櫃檯後面，等客人上門。${S.flags.lamp ? '狐尾燈亮著。' : ''}</div></div><span class="arrow">›</span></button></div>
       <h2 class="sec-h">出門</h2><div class="places">`;
-    for (const id of ['market', 'huichun', 'tea', 'office', 'herb', 'homes', 'pawn']) {
+    for (const id of ['market', 'tie_workshop', 'tao_workshop', 'huichun', 'tea', 'office', 'herb', 'homes', 'pawn']) {
       const p = PL[id]; const o = placeOpen(id);
       if (p.days && !p.days.includes(S.day)) continue;
+      if (id === 'tie_workshop' && (MON() !== 2 || !S.monthTwo.tieAddress || S.day === 3 && !D.month2.offers.O202.gate)) continue;
+      if (id === 'tao_workshop' && (MON() !== 2 || !S.monthTwo.taoAddress)) continue;
       let note = '';
       if (o === 'closed') note = '今天封路';
       else if (!o) note = '這個時段沒開（' + p.hours.map(x => SLOT[x][0]).join('、') + '）';
@@ -1087,6 +1095,7 @@ function goodsCard(e) {
     <div class="g-price">${price_}</div>${lots}${it && it.text ? `<button class="g-link" data-act="lore" data-id="${d.item}">物品文本</button>` : ''}${e.done ? sealSVG(e.done.seal || e.done.label) : ''}</div>`;
 }
 function renderEnc() {
+  if (S.enc && (S.enc.m2scene || S.enc.m2offer)) return m2EncounterHTML();
   if (S.enc && S.enc.scene) return renderMonthOneEncounter();
   if (S.enc && S.enc.opportunity) return renderOpportunityEncounter();
   const e = S.enc;
@@ -1101,13 +1110,14 @@ function renderEnc() {
     if (x.k === 'res') return `<div class="ln res"><span class="tx">${esc(x.t)}</span>${x.notes && x.notes.length ? `<span class="small muted">${esc(x.notes.join('　'))}</span>` : ''}</div>`;
     return `<div class="ln ${x.k}"><span class="tx">${esc(x.t)}</span></div>`;
   }).join('');
-  return `${e.deal === 'd14' ? '<p class="small muted">上版已開始的狼牙交易，按原貨、原條款結清；這局不補發薄荷相遇。</p>' : ''}${head}${goodsCard(e)}<div class="thread" id="thread">${th}</div>`;
+  return `${M2_REPLACED.includes(e.deal) ? '<p class="small muted">上版已開始的收購，保留原貨、報價與後續事件結清；不補新版試架或送壺回憶。</p>' : ''}${e.deal === 'd14' ? '<p class="small muted">上版已開始的狼牙交易，按原貨、原條款結清；這局不補發薄荷相遇。</p>' : ''}${head}${goodsCard(e)}<div class="thread" id="thread">${th}</div>`;
 }
 
 function renderPlace() {
   const id = S.place.id, p = PL[id];
   let h = `<div class="who"><div><div class="nm">${esc(p.name)}</div><div class="rl">${esc(SLOT[S.slot] || '')}</div></div></div><p class="serif" style="margin-top:8px;line-height:1.85">${esc(p.blurb)}${id === 'market' && S.day === MD().marketDay ? ' ' + esc(p.blurbMarketDay) : ''}</p>`;
   if (S.place.say) h += `<div class="ln" style="margin-top:12px">${S.place.sayWho || p.npc ? `<span class="sp">${esc(NP[S.place.sayWho || p.npc].name)}</span>` : ''}<span class="tx">${esc(S.place.say)}</span></div>`;
+  h += m2PlaceHTML();
   if (id === 'market') {
     h += opportunityMarketHTML();
     h += `<h2 class="sec-h">攤子</h2><div class="stack">`;
@@ -1169,7 +1179,7 @@ function renderPlace() {
     }
   }
   if (id === 'pawn') {
-    h += `<div class="ln" style="margin-top:12px"><span class="sp">${esc(NP.dianzhu.name)}</span><span class="tx">「許公子，尚餘${monthsText(S.lifespan)}。」</span></div>
+    h += `<div class="ln" style="margin-top:12px"><span class="sp">${esc(NP.dianzhu.name)}</span><span class="tx">「許先生，還剩${monthsText(S.lifespan)}。」</span></div>
       <div class="card" style="margin-top:12px"><div class="lore">${esc(IT.dangpiao.text)}</div></div>
       <button class="opt" data-act="redeem" ${S.stones < M.redeemCost ? 'disabled' : ''}><b>贖回一個月壽元</b><span>${M.redeemCost} 靈石。越贖越貴。</span></button>`;
   }
@@ -1206,7 +1216,7 @@ function renderNight() {
   const burnable = ordinaryHeld('dingshen') > 0, pillable = ordinaryHeld('yangqi') > 0;
   const burn = UI.night.burn && burnable, pill = UI.night.pill && pillable;
   const gain = nightGain(inv, burn, pill);
-  return `<section class="night stack"><h2>夜．打坐</h2><p class="serif muted">鋪子關了門。靈石可以拿去做明天的生意，也可以今晚吃成修為。</p>
+  return `<section class="night stack"><h2>夜．打坐</h2><p class="serif muted">店門關了。靈石可以拿去做明天的生意，也可以今晚吃成修為。</p>
     <div class="card stack"><div class="row"><span class="label" style="flex:1">投入靈石</span><b class="num gold" id="inv-val">${inv}</b></div>
     <input type="range" id="invest" min="0" max="${max}" step="1" value="${inv}" aria-label="投入靈石">
     <label class="check"><input type="checkbox" id="burn" ${burn ? 'checked' : ''} ${burnable ? '' : 'disabled'}><span>點一束定神香（修為加四成）<br><span class="small muted">你有 ${held('dingshen')} 束　·　今日市價 ${fmt(price('dingshen'))}</span></span></label>
@@ -1234,7 +1244,7 @@ function renderEnd() {
   const T = M.truthLabels;
   const truths = counted.map(id => { const d = DEALS[id]; const t = d.truth; return `<div class="truth"><b>${esc(d.title.includes(NP[d.npc].name) ? d.title : NP[d.npc].name + '：' + d.title)}</b><div class="t3"><span class="pill">${esc(T.goods[t.goods])}</span><span class="pill">${esc(T.origin[t.origin])}</span><span class="pill ${t.intent === 'plain' ? '' : 'cin'}">${esc(T.intent[t.intent])}</span></div><span class="small muted">你的處置：${esc(labelOf(id, S.done[id]))}${S.flags['won_' + id] ? '，後來到派出所告成了' : ''}</span>${d.lesson ? `<details class="lesson"><summary>線索在哪</summary><p>${esc(d.lesson)}</p></details>` : ''}</div>`; }).join('');
   return `<section class="stack" style="padding-top:18px">
-    <div class="row"><div><span class="label">${monthLabel(MON())}</span><div class="grade">${grade}等</div></div><div style="margin-left:auto;text-align:right"><span class="label">長生典</span><div class="serif cin" style="font-size:20px;font-weight:700">尚餘${monthsText(S.lifespan - 1)}</div></div></div>
+    <div class="row"><div><span class="label">${monthLabel(MON())}</span><div class="grade">${grade}等</div></div><div style="margin-left:auto;text-align:right"><span class="label">長生典</span><div class="serif cin" style="font-size:20px;font-weight:700">還剩${monthsText(S.lifespan - 1)}</div></div></div>
     ${S.cards.length ? `<div class="stack">${S.cards.map(c => `<div class="event"><h3>${esc(c.title)}</h3><p>${esc(c.text)}</p>${c.notes && c.notes.length ? `<div class="fxline">${esc(c.notes.join('　'))}</div>` : ''}</div>`).join('')}</div>` : ''}
     <p class="serif" style="line-height:1.95">${esc((grade === '上' ? EN.top : grade === '中' ? EN.mid : S.debt > 0 ? EN.low : EN.lowFooled).replace('{left}', monthsText(S.lifespan - 1)))}</p>
     <div class="card"><table class="tbl"><tbody>
@@ -1347,6 +1357,7 @@ function renderSheet() {
   const sh = UI.sheet; if (!sh) { $sheet.hidden = true; $sheet.innerHTML = ''; return; }
   let h = '';
   if (sh.type === 'news') h = `<h2>報紙</h2>${newsHTML(sh.id)}`;
+  else if (sh.type === 'm2return') h = m2ReturnHTML(sh.id);
   else if (sh.type === 'oppreturn') h = `<h2>韓九的回報</h2><p>${esc(OP.report)}</p>`;
   else if (sh.type === 'legacyfiles') h = `<h2>原版存檔</h2><p>把原版匯出的JSON貼在下面。先匯出目前原檔，再匯入其他進度；匯入不會改新故事進度。</p><textarea id="legacy-json" rows="8" style="width:100%">${esc(sh.raw)}</textarea><button class="btn quiet" data-act="legacyexport">匯出目前原版JSON</button><button class="btn primary" data-act="legacyimport">匯入貼上的原版JSON</button>`;
   else if (sh.type === 'lore') {
@@ -1391,7 +1402,8 @@ function renderBar() {
   else if (S.phase === 'morning') h = `<button class="btn primary wide" data-act="open">開門</button>` + nav();
   else if (S.phase === 'enc') {
     const e = S.enc;
-    if (e.scene) h = monthOneBarHTML();
+    if (e.m2scene || e.m2offer) h = m2BarHTML();
+    else if (e.scene) h = monthOneBarHTML();
     else if (e.opportunity) h = opportunityBarHTML();
     else if (e.done) h = `<button class="btn primary wide" data-act="close">繼續</button>`;
     else if (e.generic) {
@@ -1458,7 +1470,8 @@ function runAct(a, el) {
     case 'tab': UI.tab = el.dataset.v; if (UI.tab === 'intel') S.intelSeenN = Object.keys(S.intel).length; commit('top'); break;
     case 'stance': S.stance = el.dataset.v; commit(); break;
     case 'open': openShop(); commit('top'); break;
-    case 'shop': { if (S.phase !== 'day' || S.slot >= 3) break; if (!startOpportunityEncounter() && !startMonthOneEncounter()) { const d = nextShopDeal(); if (d) startDeal(d.id, 'shop'); else startWalkin(); } commit('top'); break; }
+    case 'shop': { if (S.phase !== 'day' || S.slot >= 3) break; if (!m2StartEncounter() && !startOpportunityEncounter() && !startMonthOneEncounter()) { const d = nextShopDeal(); if (d) startDeal(d.id, 'shop'); else startWalkin(); } commit('top'); break; }
+    case 'm2': m2Action(el.dataset.k, id); commit('thread'); break;
     case 'm1scene': monthOneAction(el.dataset.k); commit('thread'); break;
     case 'readnews': readNews(id); commit(); break;
     case 'opptrip': marketSourceAction('trip'); commit(); break;
@@ -1558,15 +1571,15 @@ window.addEventListener('resize', () => { if (!$bar.hidden) document.documentEle
 function start(data) {
   try {
     persistedRaw = localStorage.getItem(SAVE_KEY);
-    const saved = data && data.S ? data.S : persistedRaw ? JSON.parse(persistedRaw) : null;
-    if (saved) { migrateMonthOne(saved); validateSave(saved); S = saved; }
+    const saved = data && data.S ? copyState(data.S) : persistedRaw ? JSON.parse(persistedRaw) : null;
+    if (saved) { migrateMonthOne(saved); migrateMonthTwo(saved); validateSave(saved); S = saved; }
     else S = null;
     UI.view = data && data.S ? data.view || 'game' : 'title'; UI.tab = data && data.tab || 'main';
   } catch (error) { S = null; loadProblem = error.message; UI.view = 'title'; }
   render();
 }
 window.claude?.hot?.snapshot?.(() => ({ S, view: UI.view, tab: UI.tab }));
-window.__fs = { newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN, validateSave, tickOpportunities, quantityText, tradeQty, legacyHTML: LEGACY_HTML,
+window.__fs = { newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN, m2SourceValid, m2Offer, validateSave, tickOpportunities, quantityText, tradeQty, legacyHTML: LEGACY_HTML,
   get S() { return S; }, set S(v) { S = v; }, UI, D, DEALS, NP, IT };
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 })();

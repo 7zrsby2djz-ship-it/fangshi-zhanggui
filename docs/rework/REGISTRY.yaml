@@ -1,5 +1,5 @@
 # 工作登記，非遊戲資料；不包含完整隱藏交易答案。
-version: '0.6'
+version: '0.7'
 base_commit: c8a5bf6b3013e977879678e226e6aa158d2c0eee
 authority: sources/MASTER_PLAN_v1.0.txt
 status_legend:
@@ -552,7 +552,7 @@ opportunity_candidates:
     source_supplier: tie鐵師傅，市場現場檢四份及報價；M1D3當次session有效
     prototype_status: S03投入24／S04收到36／S06韓九說四包未濕正常收貨，服務及回報結清；無額外回報款，不證明全部雨訊。
   O201:
-    status: 建議
+    status: W08已實作完整循環，核心驗收通過；價格未平衡
     function: 礦區維修規格與交期
     reuse: W04提案選m218替代；m213組織大單保持獨立，受其既有前提及Q02門檻約束
     prototype_goods: 四只布罩U形鋼扣＋核對／試裝服務，原鐵礦石不變形
@@ -562,35 +562,35 @@ opportunity_candidates:
       prepare: 16
       sale: 24
       status: 工作試算未平衡，另售原礦2公斤收入20非商案利潤
-    prototype_status: S08成交／S09本人用後回報，該稿結清；W04提案替代m218，未建立正式遊戲旗標
+    prototype_status: S08實到工坊備貨16／回店試架收24、S09到期實讀回報0；新局替代m218，舊active／completed保留原約，不補新案。
   O202:
-    status: 建議
+    status: S09核准拒接已入遊戲；兩款可接工程受未核准候選門檻關閉
     function: 有限預算與身體限制
     reuse: 新O202資料承接S09；W04核對m219實為xiaoman收chiyan，主企劃槽位引用有誤，不直接替代m219
     prototype_customer: aheng阿蘅
-    prototype_status: S09比較當日／過夜的負擔，但許衡本次不接；沒有備貨收款。
+    prototype_status: S09按實讀比較／拒接，沒有備貨收款或出行共同回憶。
     alternative_card: prose/S09_v0.2_review.md的O202可接案候選卡；不是正文已做
     alternative_goods: wax_wrap_set一份約300公克短程／兩份約600公克過夜；兩包乾糧及保暖衣仍阿蘅自有
     alternative_source: M2D3同往已知鐵師傅工坊，需明寫新批兩份供量／實物／價與試水，不複製S03已售貨
     alternative_cash: 短程成本6／售10，或過夜成本12／售18；未合用不售，服務及交物後專用0
     alternative_return: M2D6晨間回報保存／返程，無額外款；過夜路不強制S11再做O204
-    unresolved_story: 替代卡也是待核准故事提案，正式來源旗標／窗口／過期及路由待W04，未實裝。
+    unresolved_story: 候選故事未核准；W08已寫來源／窗口／過期及路由工程，資料gate為false，僅隔離fixture驗證，不開產品開關。
   O203:
-    status: 建議
+    status: W08已實作完整循環，核心驗收通過；價格未平衡
     function: 返程運送、材料保存
     reuse: han／修理
     prototype_goods: 兩只木框布襯護套及配放／固定服務；兩只保溫壺不是玩家收購貨
     source_supplier: tao陶師傅M2D4市集現貨，當次付18、收28
-    prototype_status: S10成交；S12韓九說原貨主已收、柄未鬆／殼未撞壞，途中自行緊過繩；無額外款。
+    prototype_status: S10同次市場先試合、付18／收28；S12到期實讀本人回報0；新局替代m220，壺始終外部所有。
     cash_example: {prepare: 18, sale: 28, status: 工作試算未平衡}
     history_boundary: 一壺修補片刻2029.12／換內膽；只讀字與承運者說法，不驗證原刻日期或末日因果。
   O204:
-    status: 建議
+    status: W08已實作完整循環，核心驗收通過；價格未平衡
     function: 淺層探索準備
     reuse: aheng阿蘅；S09拒接仍成立，這次是具體的新需求
     prototype_goods: 普通40公分木夾＋250毫升帶木框玻璃罐，僅取樣／保存
     source_supplier: S10陶師傅本人告知入口，S11實際同往見一套現貨；不開市集或自動供貨
-    prototype_status: S11付20／收32；S12阿蘅說熟草坡當日返回、乾處取一片未碎，器具／新舊樣片仍她；無額外款。
+    prototype_status: S11需求1格及實到陶師傅1格，先試合再付20／收32；S12到期實讀回報0與便當盒刻文，原物仍她。
     cash_example: {prepare: 20, sale: 32, status: 工作試算未平衡}
     limits: 許衡未親見霧結殼或重現；不保進霧安全，不定異物用途／價格。
   O205:
@@ -682,7 +682,7 @@ prototype_items:
     - S05 v0.2 review
     player_visible: 本批形態／重量／議價及付款；不沿用赤炎草年份真假能力
   cover_steel_buckle:
-    status: 核准原型內的局部事實；W03工作物件ID，正式引擎掛接待W04，非hantie變形或別名
+    status: 核准原型局部事實；W08同ID商品與專案庫存已掛接，base0／轉售價及買家未定，非既有物別名
     name: 布罩U形鋼扣
     first_scene: S07展示阿岳舊件；S08取得新件
     appearance: 新件四只，內寬3公分、厚3公釐，依已記固定孔位置，內側磨平；原舊件有磨繩毛邊
@@ -697,7 +697,7 @@ prototype_items:
     - S09 v0.2 review
     player_visible: 尺寸、缺口、來源、試合、報價與使用範圍
   jug_frame_sleeve:
-    status: 核准原型內的局部事實；W03工作ID，正式引擎掛接待W04
+    status: 核准原型局部事實；W08同ID商品與專案庫存已掛接，base0／轉售價及買家未定，非既有物別名
     name: 木框布襯護套
     first_scene: S10 v0.2
     origin: 陶師傅本次市場現成兩只木框加乾布襯
@@ -714,7 +714,7 @@ prototype_items:
     ownership: 原貨主；韓九承運，S12自述交還原貨主；許衡僅配放，未持有入庫
     limits: 常規容器；不同物件現持有鏈不證明更早歷史來源獨立
   sample_tool_set:
-    status: 核准原型內的局部事實；W03工作ID，正式引擎掛接待W04
+    status: 核准原型局部事實；W08同ID商品與專案庫存已掛接，base0／轉售價及買家未定，非既有物別名
     name: 長木夾與帶框玻璃罐
     first_scene: S11 v0.2
     origin: S10本人告知入口，S11實到陶師傅平日供應點見一套現貨
@@ -758,38 +758,38 @@ S06_work_spec:
   delta: 回報無收款；韓九布展示後帶回，庫存不重加；實付普通費80，124→44。
   next: O101此原型服務／回報結清；下一趟未定，S07接44及原庫存
 S07_work_spec:
-  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
+  status: v0.2原型已通過（U20261003-11）；W08已接工程分支，核心驗收通過；核准正文原檔不改
   scene_version: S07 v0.2
   full_card: prose/S07_v0.2_review.md
   delta: 現金44與鐵礦石6公斤不變；阿岳舊扣帶回，約翌日先確認現貨再試裝。
   next: S08需實際去所述工坊、看四成品與適配，不先發貨或保證承重
 S08_work_spec:
-  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
+  status: v0.2原型已通過（U20261003-11）；W08已接工程分支，核心驗收通過；核准正文原檔不改
   scene_version: S08 v0.2
   full_card: prose/S08_v0.2_review.md
   delta: 自有原礦2公斤售20，購鋼扣4只付16，再交付阿岳收24；44→72，原礦餘4公斤；阿岳原架／原件仍自有。
   next: M2D3阿岳答應回報；外出1＋顧店1，本日2格，不吞免費成交
 S09_work_spec:
-  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
+  status: v0.2原型已通過（U20261003-11）；W08已接核准拒接與條件式O201回報；可接O202仍候選關閉
   scene_version: S09 v0.2
   full_card: prose/S09_v0.2_review.md
   delta: 阿岳依約講一次用後情況，O201本稿回報清；阿蘅談兩行程但不接配貨，現金72不動。
   next: S10才處理O203；O202可接案兩款另見S09 review候選卡，不改本稿拒接帳。
 
 S10_work_spec:
-  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
+  status: v0.2原型已通過（U20261003-11）；W08已接工程分支，核心驗收通過；核准正文原檔不改
   scene_version: S10 v0.2
   full_card: prose/S10_v0.2_review.md
   delta: 72－18＋28＝82；兩護套屬韓九，專用0；兩壺及修補片仍原貨主，韓九承運。
   next: 約M2D6回報壺柄／收貨；陶師傅當面告知平日供應入口，庫存仍需實到確認。
 S11_work_spec:
-  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
+  status: v0.2原型已通過（U20261003-11）；W08已接工程分支，核心驗收通過；核准正文原檔不改
   scene_version: S11 v0.2
   full_card: prose/S11_v0.2_review.md
   delta: 相遇1＋同往供應點1；82－20＋32＝94，器具交阿蘅，專用0；未售霧殼、未同行入霧。
   next: 約M2D6回報取樣／短程結果；空飯盒仍阿蘅，刻字許衡尚未讀。
 S12_work_spec:
-  status: v0.2原型已由偉銓通過（U20261003-11）；未入遊戲
+  status: v0.2原型已通過（U20261003-11）；W08已接工程分支，核心驗收通過；核准正文原檔不改
   scene_version: S12 v0.2
   full_card: prose/S12_v0.2_review.md
   delta: 兩案晨間本人回報無獎金；器具及新舊樣片／飯盒各歸原主；實付普通費80，94→14，薄荷未售。
@@ -821,4 +821,25 @@ W07_implementation:
     upgrade: 只補場景狀態；不補讀過的生活、購貨、共同記憶或金錢
     active_d14: 續原狼牙交易並明示；結清後不再補同一次新版薄荷來訪
     completed_d14: 保留原結案歷史，未推定已買薄荷；missed／na不作已完成相遇
-  future: 第二月正文與O201–O204仍留W08；未開始第三月
+  future: 第二月W08已交付三案循環及S09拒接，O202候選維持關閉；未開始第三月
+
+W08_implementation:
+  status: 第二月核心與靜態驗收通過；未替代真人試玩或Claude局部審稿
+  authority: sources/MASTER_PLAN_v1.0.txt與U20261004-03
+  data: content/month2.yaml，version1，四案精確schema由tools/month2_schema.py檢查
+  engine: month2.js；monthTwoVersion1與每案收付／來源／回報記錄，嚴格讀檔
+  normal: O201／O203／O204完整循環、S09拒接；一般局O202資料gate=false
+  candidate: 隔離VM fixture測短程6→10／過夜12→18，結果存檔一般版拒讀；不表示故事核准
+  source: 當日當次place.session現貨；工坊地址須實聽，不能從渲染或讀檔補見聞
+  slots: O201工坊1＋回店1；O203市場1；O204需求1＋陶工坊1；回報0
+  same_visit: O203／O204先試合再備貨並同訪交付；離場後不可接原單，未售日末轉普通庫存且退款0
+  last_slot: S11僅已知地址且尚有兩格才提前；最後一格未服務m214優先，S11不可承諾免費外出
+  ore: O201之外獨立普通原礦2000公克售20；不把原礦轉四扣，不當20利潤
+  unsold: 三個新商品base0／sell空代表售價與買家未定，保留實成本；O202布沿既有行情，不保回購
+  knowledge: 壺刻文與便當盒各自實見才記，兩份都知道才比較；不推定製造日期或末日因果
+  legacy_v2: 缺monthTwo整組才補預設；active m218／m220續原約、completed保舊歷史，不補新貨／回報／共同記憶
+  count: 新故事第二月排除m218／m220的新入口／錯過／評分，m213／m219獨立保留
+  normal_cash: 第一月含查證5與薄荷8及規費80後39；第二月如實處理m207、三案與原礦售20、規費80後9；非每局保證
+  tests: tools/test_w08.js、tools/test_month2_schema.py與既有W05–W07回歸；正常按鈕路線與人工fixture明確分開
+  handoff: W08_IMPLEMENTATION.md與W08_TECH_NOTES.md
+  remaining: 真實瀏覽器畫面／手機操作／經濟平衡及Claude局部審稿待W09–W10；第三月未施工

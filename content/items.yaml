@@ -296,3 +296,36 @@ wax_wrap_set:
   stat: 每份厚布一張、棉繩兩條；四份參考估值16，不是退款
   text: 包角要覆住。少量清水短試未透背面，不供浸水、長時暴雨，也不能讓濕貨變乾。
   sell: [walk]
+
+cover_steel_buckle:
+  name: 布罩用U形鋼扣
+  cat: tool
+  unit: 只
+  grade: 普通用品
+  base: 0
+  perish: null
+  stat: 內寬3公分、厚3公釐｜固定孔依本次量測｜不供主承重
+  text: 四個成品扣的孔位和擦繩面要逐一核對，再裝到實際空架試。只有眼前局部試繩，沒有全日保證。
+  sell: []
+
+jug_frame_sleeve:
+  name: 木框乾布壺護套
+  cat: tool
+  unit: 只
+  grade: 普通用品
+  base: 0
+  perish: null
+  stat: 木片外框、乾布內襯與隔片｜減少互撞｜不保溫、不抗重摔
+  text: 按這兩個壺的尺寸試放並固定。壺是韓九承運的貨，護套與壺分開記。
+  sell: []
+
+sample_tool_set:
+  name: 長木夾與木框玻璃罐
+  cat: tool
+  unit: 套
+  grade: 普通用品
+  base: 0
+  perish: null
+  stat: 木夾40公分、罐250毫升｜普通木框與木塞｜未測耐霧或氣密
+  text: 用阿蘅自己的布角試夾與放罐，只確認眼前操作及固定。不是抗霧或保命裝備。
+  sell: []

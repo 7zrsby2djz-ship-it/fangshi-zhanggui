@@ -176,7 +176,7 @@ daoren:
 
 tao:
   name: 陶師傅
-  role: 製符師
+  role: 符紙與普通器皿工藝者
   level: 6
   traits: {greed: 1, nerve: 2, pride: 2, trust: 3, patience: 2, backing: 1}
   call: {up: 老闆, eq: 老闆, down: 小兄弟}
@@ -318,14 +318,14 @@ xiangke:
   look: {head: round, hair: hat, mole: true, base: smile}
 
 kuang:
-  name: 礦工
-  role: 北面礦上下山的人
+  name: 阿岳
+  role: 礦區搬貨工
   level: 4
   traits: {greed: 1, nerve: 1, pride: 1, trust: 3, patience: 2, backing: 2}
-  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
-  surface: 滿手老繭，指甲縫裡是黑的，背著一個空簍子。
+  call: {up: 老闆, eq: 老闆, down: 老闆}
+  surface: 滿手老繭，指甲縫裡是黑的，肩膀留著背架印子。
   refuse: 礦上給的就這麼多。
-  cold: 掌櫃的，工頭等著呢。
+  cold: 老闆，工頭等著呢。
   circle: 散修
   oneoff: true
   look: {head: square, hair: scarf, beard: stubble, base: neutral}

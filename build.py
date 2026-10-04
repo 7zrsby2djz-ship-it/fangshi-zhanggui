@@ -19,12 +19,13 @@ data = {
 data['meta']['truthLabels'] = meta['truthLabels']
 data['opportunities'] = L('opportunities')['opportunities'] if (c / 'opportunities.yaml').exists() else []
 data['month1'] = L('month1')
+data['month2'] = L('month2')
 validate_opportunities(data['opportunities'], data)
 apply_rework_profile(data)
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', chr(92) + 'u003c')
 legacy_html = (root / 'legacy/game-v1.html').read_text(encoding='utf-8')
 legacy_payload = json.dumps(legacy_html, ensure_ascii=False).replace('<', chr(92) + 'u003c')
-js = (root / 'game.js').read_text(encoding='utf-8').replace('/*__OPPORTUNITY_ENGINE__*/', (root / 'opportunity.js').read_text(encoding='utf-8')).replace('__GAME_DATA__', payload).replace('__LEGACY_HTML__', legacy_payload)
+js = (root / 'game.js').read_text(encoding='utf-8').replace('/*__OPPORTUNITY_ENGINE__*/', (root / 'opportunity.js').read_text(encoding='utf-8') + '\n' + (root / 'month2.js').read_text(encoding='utf-8')).replace('__GAME_DATA__', payload).replace('__LEGACY_HTML__', legacy_payload)
 html = (root / 'template.html').read_text(encoding='utf-8').replace('/*__CSS__*/', (root / 'style.css').read_text(encoding='utf-8')).replace('/*__JS__*/', js)
 (root / 'dist' / 'data.json').write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding='utf-8')
 out = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else root / 'dist' / 'game.html'

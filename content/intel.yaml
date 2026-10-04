@@ -389,23 +389,23 @@ intel:
     month: 2
     kind: seen
     about: qian
-    short: 錢記的寒鐵沒有印記
-    text: 錢不語要賣你的二十斤寒鐵，每一塊都沒有礦脈的印記。
+    short: 老錢的店的寒鐵沒有印記
+    text: 老錢要賣你的二十斤寒鐵，每一塊都沒有礦脈的印記。
     from: [m201:appraise]
     value: 8
     hot: [1, 2]
     public: 2
-    spread: 錢記這兩天在找人接一批便宜寒鐵，聽說鐵上沒有印記。
+    spread: 老錢的店這兩天在找人接一批便宜寒鐵，聽說鐵上沒有印記。
 
   i2_lowball:
     month: 2
     kind: heard
     about: qian
-    short: 錢記壓孟三娘的價
-    text: 孟三娘說：錢記說她亡夫的羅盤只值五塊，叫她想通了再去找他。
+    short: 老錢的店壓孟三娘的價
+    text: 孟三娘說：老錢的店說她亡夫的羅盤只值五塊，叫她想通了再去找他。
     from: [m202:press0]
     value: 4
-    spread: 聽說錢記五塊錢想收一個尋脈羅盤，人家寡婦都快哭了。
+    spread: 聽說老錢的店五塊錢想收一個尋脈羅盤，人家寡婦都快哭了。
 
   i2_footprints:
     month: 2
@@ -435,16 +435,16 @@ intel:
     srcText: 余小六親口說的
     value: 26
     exclusive: true
-    spread: 有人說，北林那個外門弟子不是失足，是被人推下溪的。
+    spread: 有人說，北林那個外圍工作人員不是失足，是被人推下溪的。
     leak:
       cases:
         - if: {flag: [scar_caught]}
           title: 風聲
-          text: 坊間在傳北林那天的事。疤臉已經押在執事堂裡，傳不傳都一樣了。
+          text: 坊間在傳北林那天的事。疤臉已經押在派出所裡，傳不傳都一樣了。
           face: think
         - if: {}
           title: 余小六託人帶話
-          text: 一個小孩跑來塞給你一張紙條，字歪歪扭扭的：「掌櫃的，我信錯人了。」余小六換了地方躲。聽說疤臉昨夜也出城了。
+          text: 一個小孩跑來塞給你一張紙條，字歪歪扭扭的：「老闆，我信錯人了。」余小六換了地方躲。聽說疤臉昨夜也離開聚落了。
           fx: {rel: {xiaoliu: -5, xiaoqi: -2}, flag: [xiaoliu_hunted], tag: {loose: 嘴不嚴}, mem: {xiaoliu: 你把他說的北林真相賣給了聽雨樓。}}
 
   i2_raid:
@@ -452,7 +452,7 @@ intel:
     kind: heard
     about: qian
     short: 十二年前那天清早
-    text: 白七娘說：十二年前三月二十一，天沒亮，周正帶人進了許記的倉庫。那天清早，錢不語站在對街，一直站到天亮。那年秋天，錢記多了一門寒鐵生意。
+    text: 白七娘說：十二年前三月二十一，天沒亮，周正帶人進了許衡的店的倉庫。那天清早，老錢站在對街，一直站到天亮。那年秋天，老錢的店多了一門寒鐵生意。
     flag: [knows_raid]
     srcText: 白七娘
     fromBai: true
@@ -464,7 +464,7 @@ intel:
     kind: seen
     about: qian
     short: 你爹帳上缺的七頁
-    text: 你爹帳上缺的七頁：「錢兄薦寒鐵三百斤，價廉，無印。周執事言可入帳。霜華說，這批鐵不能收。」「霜華說，要是出事，帶衡兒去找她師姐。」
+    text: 你爹帳上缺的七頁：「錢兄薦寒鐵三百斤，價廉，無印。周正言可入帳。霜華說，這批鐵不能收。」「霜華說，要是出事，帶衡兒去找她師姐。」
     flag: [got_pages]
     srcText: 你爹的字
     evergreen: true
@@ -476,23 +476,23 @@ intel:
     kind: seen
     about: zhang
     short: 築基丹瓶底的「回」字
-    text: 鬼市那枚築基丹，瓶底刻著回春堂的「回」字。回春堂每一季，都有兩枚築基丹不入帳。
+    text: 鬼市那枚築基丹，瓶底刻著回春藥行的「回」字。回春藥行每一季，都有兩枚築基丹不入帳。
     flag: [knows_zhang_divert]
     srcText: 鬼面人的話
     value: 24
     exclusive: true
     sellFlag: sold_zhang_divert
-    spread: 聽雨樓傳出來的：回春堂每一季的築基丹，有兩枚是不入帳的。
+    spread: 聽雨樓傳出來的：回春藥行每一季的築基丹，有兩枚是不入帳的。
     leak:
       cases:
         - if: {flag: [zhang_exposed]}
-          title: 回春堂
-          text: 回春堂的事，坊間傳得更凶了。張掌事已經在執事堂，傳不傳都一樣。
+          title: 回春藥行
+          text: 回春藥行的事，坊間傳得更凶了。張老闆已經在派出所，傳不傳都一樣。
           face: think
         - if: {}
-          title: 回春堂的告示
-          text: 回春堂一早貼了告示：「本季築基丹九枚，帳目清楚，歡迎查驗。」張掌事站在告示旁邊，看著許記的方向，看了很久。
-          fx: {rel: {zhang: -4}, flag: [zhang_enemy], mem: {zhang: 知道是你把丹坊的事賣給了聽雨樓。}}
+          title: 回春藥行的告示
+          text: 回春藥行一早貼了告示：「本季築基丹九枚，帳目清楚，歡迎查驗。」張老闆站在告示旁邊，看著許衡的店的方向，看了很久。
+          fx: {rel: {zhang: -4}, flag: [zhang_enemy], mem: {zhang: 知道是你把藥行的事賣給了聽雨樓。}}
 
   i2_cut:
     month: 2
@@ -520,7 +520,7 @@ intel:
     month: 2
     kind: heard
     short: 還沒出手的那一枚
-    text: 在聽雨樓聽到隔壁桌說：「……丹坊這季的兩枚，有一枚還沒出手……」
+    text: 在聽雨樓聽到隔壁桌說：「……藥行這季的兩枚，有一枚還沒出手……」
     from: [oh:2:5]
     fromBai: true
     value: 0
@@ -540,7 +540,7 @@ intel:
     kind: seen
     about: scar
     short: 儲物袋上的名字
-    text: 疤臉賣的那個舊儲物袋，袋口的寒潭宗雲紋被挑掉了，袋底內側縫著兩個字：沈青。
+    text: 疤臉賣的那個舊儲物袋，袋口的寒潭組織雲紋被挑掉了，袋底內側縫著兩個字：沈青。
     from: [m212:appraise, m212:opt:expose]
     value: 14
     exclusive: true
@@ -559,23 +559,114 @@ intel:
     kind: heard
     about: lu
     short: 沈青在溪底
-    text: 陸執法說：上個月沒回宗門的外門弟子，在北林的溪底找到了。
+    text: 陸執法說：上個月沒回資源組織的外圍工作人員，在北林的溪底找到了。
     from: [m207:press0]
     value: 5
     public: 3
 
 # 坊市對你的注意（每賣一則加一，只有你知道的再加一）
+  i_opp201_spec:
+    short: 阿岳的四個布罩扣
+    text: 阿岳說舊扣磨繩，只固定布罩不吊貨；眼前量到內寬3公分、厚3公釐，並記固定孔位置。
+    from:
+    - scene:S07:spec_read
+    kind: observation_and_npc_claim
+    sourceGroup: scene:S07:spec_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_opp201_return:
+    short: 阿岳這次搬貨的回報
+    text: 阿岳本人說這次搬完原繩沒刮斷、布罩沒一直掀；只看他指的原繩，不能保整副架或礦道。
+    from:
+    - opp:O201:return_read
+    kind: observation_and_npc_claim
+    sourceGroup: opp:O201:return_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_opp202_constraints:
+    short: 阿蘅的行程與力氣
+    text: 阿蘅說熟草坡可當日回，往山坳要過夜；上次回家沒力氣晾貨洗衣。這次尚未選行程。
+    from:
+    - scene:S09:constraints_read
+    kind: observation_and_npc_claim
+    sourceGroup: scene:S09:constraints_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_opp202_return:
+    short: 阿蘅的包裹使用回報
+    text: 阿蘅依實際選的短程或過夜方案交代使用，只是該趟本人說法，沒有採集收入。
+    from:
+    - opp:O202:return_read
+    kind: observation_and_npc_claim
+    sourceGroup: opp:O202:return_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_opp203_jug_need:
+    short: 韓九返程送兩個壺
+    text: 韓九說兩個換好內膽的壺要還貨主，提把擠到一起、走路會互撞，想省下半路重新綁的麻煩。
+    from:
+    - scene:S10:need_read
+    kind: observation_and_npc_claim
+    sourceGroup: scene:S10:need_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_opp203_return:
+    short: 韓九送壺回報
+    text: 韓九說貨主收妥、提把沒鬆、外殼沒撞壞，途中仍需再綁緊一次。
+    from:
+    - opp:O203:return_read
+    kind: observation_and_npc_claim
+    sourceGroup: opp:O203:return_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_opp204_scope:
+    short: 阿蘅只從乾處取樣
+    text: 阿蘅自述棉布在霧邊結殼，這次不下去，站乾處用夾取，拿不到就回；許衡沒碰過霧。
+    from:
+    - scene:S11:scope_read
+    kind: observation_and_npc_claim
+    sourceGroup: scene:S11:scope_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_opp204_old_sample:
+    short: 阿蘅的舊布角
+    text: 親眼看到她布角約1公分淡藍邊硬殼；形成經歷只是她自述，布角仍她的。
+    from:
+    - scene:S11:scope_read
+    kind: observation_and_npc_claim
+    sourceGroup: scene:S11:scope_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_opp204_return:
+    short: 阿蘅的新樣片與便當盒
+    text: 親眼看罐內另片約2公分、飯盒刻2029/12/31及磨淡人名；送別用途是長輩經阿蘅轉述。兩片、飯盒與器具仍她的。
+    from:
+    - opp:O204:return_read
+    kind: observation_and_npc_claim
+    sourceGroup: opp:O204:return_read
+    scope: 只限本次所見／本人說法
+    value: 0
+  i_jug_literal:
+    short: 壺底的修補刻文
+    text: 親讀舊壺片「2029.12」「換內膽」，無日。送來就有及這次換膽是韓九說法，不是製造日期。
+    from:
+    - scene:S10:literal_read
+    kind: observation_and_npc_claim
+    sourceGroup: scene:S10:literal_read
+    scope: 只限本次所見／本人說法
+    value: 0
+
 heat:
   3:
     title: 有人在打聽
-    text: 早上開門，對門錢記的夥計多看了你兩眼。聽說這兩天，有人在問聽雨樓的消息是從哪裡來的。
+    text: 早上開門，對門老錢的店的夥計多看了你兩眼。聽說這兩天，有人在問聽雨樓的消息是從哪裡來的。
     fx: {wind: 1}
   5:
     title: 嘴不嚴
-    text: 散客進門，看了你一眼，問完價就走，一句閒話都不肯多說。坊市裡開始有人說，許記的掌櫃嘴不嚴。
+    text: 散客進門，看了你一眼，問完價就走，一句閒話都不肯多說。坊市裡開始有人說，許衡的店的掌櫃嘴不嚴。
     fx: {tag: {loose: 嘴不嚴}}
 
-# 執事堂：告發
+# 派出所：告發
 accuse:
   - id: a_daoren
     who: daoren
@@ -591,7 +682,7 @@ accuse:
       - if: {dayAfter: 3}
         text: 周正讓人去城門問了一聲。那個道士第四個可玩日一早就出了城，往西走了。「人走了。」周正說，「下回早點來。」
       - if: {strength: 3, has: {yujian: 1}}
-        text: 周正聽你把話說完，派了兩個人出去。下午前人就帶回來了，是在聽雨樓樓下逮著的，正拉著一個外門弟子說西漠的洞府。他袖子裡還有三枚一模一樣的玉簡。周正把你那枚扣下當證物，從道士的旅費裡數了靈石給你：「苦主是你，錢退你八成。另外兩成，是派出所辦案的辛苦錢。」
+        text: 周正聽你把話說完，派了兩個人出去。下午前人就帶回來了，是在聽雨樓樓下逮著的，正拉著一個外圍工作人員說西漠的洞府。他袖子裡還有三枚一模一樣的玉簡。周正把你那枚扣下當證物，從道士的旅費裡數了靈石給你：「苦主是你，錢退你八成。另外兩成，是派出所辦案的辛苦錢。」
         fx: {unfool: d06, refundLot: {item: yujian, ratio: 0.8}, rel: {zhou: 1}, rep: {sect: 1, loose: 1}, tag: {loose: 不好惹}, flag: [daoren_caught], spreadText: 聚落裡抓了一個賣假玉簡的道士，袖子裡還有三枚。, mem: {zhou: 你告了賣假玉簡的道士，證據齊全。}}
       - if: {strength: 1}
         text: 周正把玉簡翻過來看了看：「玉簡是你自己買的，他也沒說保證試得開。就憑這些，派出所抓不了人。」
@@ -639,12 +730,12 @@ accuse:
     label: 告老錢（包裹裡的帳頁）
     show: {has: {zhangye: 1}}
     evidence:
-      - {has: zhangye, text: 錢記包裹裡的帳頁，上面記著「周，二十」}
+      - {has: zhangye, text: 老錢的店包裹裡的帳頁，上面記著「周，二十」}
       - {intel: i_zhou_cut, text: 你爹的帳冊上，也有同一筆生意}
     cases:
       - if: {}
         text: 周正接過那頁紙，看了很久。然後他把紙湊到燈上，看著它燒完，才抬起頭：「小許，有些帳，翻了是要賠命的。你爹當年，就是帳翻得太勤。」他揮揮手，讓你走。
-        fx: {take: [{item: zhangye, qty: 1}], rel: {zhou: -3}, flag: [zhou_warned], mem: {zhou: 你拿著錢記的帳頁來告狀。他當著你的面燒了。}}
+        fx: {take: [{item: zhangye, qty: 1}], rel: {zhou: -3}, flag: [zhou_warned], mem: {zhou: 你拿著老錢的店的帳頁來告狀。他當著你的面燒了。}}
 
   # ═════ 第二個月 ═════
   - id: a_scar
@@ -652,22 +743,22 @@ accuse:
     label: 告疤臉（北林的事）
     show: {month: 2, anyOf: [{intel: [i2_xiaoliu]}, {intel: [i2_sidai]}]}
     evidence:
-      - {has: yaopai, text: 沈青的腰牌}
+      - {has: yaopai, text: 沈青的識別牌}
       - {intel: i2_xiaoliu, text: 余小六親口說的北林那天}
       - {intel: i2_sidai, text: 疤臉賣的儲物袋，袋底縫著沈青的名字}
-      - {intel: i_knife, text: 鐵老蔫說，斷水刀是一個瘦小的年輕人拿來補的}
+      - {intel: i_knife, text: 鐵師傅說，斷水刀是一個瘦小的年輕人拿來補的}
       - {flag: lu_knows_scar, text: 陸執法已經聽你說過這件事}
     cases:
       - if: {flag: [scar_fled], not: [scar_alerted]}
-        text: 周執事收下你的證據，看了很久：「疤臉上個月就出城了。海捕文書，我會發下去。」
+        text: 周正收下你的證據，看了很久：「疤臉上個月就離開聚落了。通報，我會發下去。」
         fx: {rel: {zhou: 1}, flag: [scar_wanted]}
       - if: {strength: 3}
-        text: 周執事看完證據，沒說話，叫了六個人出門。傍晚，疤臉被押進了執事堂，左臉那道疤旁邊多了一道新傷。陸執法親自審的。第二天，余小六的懸賞撤了，告示上換成了疤臉的名字。周執事把沈青的懸賞，一塊不少地給了你。
-        fx: {stones: 50, rel: {zhou: 1, lu: 2, xiaoliu: 3, xiaoqi: 2}, rep: {loose: 1, sect: 1}, tag: {loose: 不好惹}, flag: [scar_caught], spreadText: 執事堂在南嶺抓了一個疤臉刀客。北林的案子，有了下文。, mem: {zhou: 你帶著證據告了疤臉，北林的案子結了。}}
+        text: 周正看完證據，沒說話，叫了六個人出門。傍晚，疤臉被押進了派出所，左臉那道疤旁邊多了一道新傷。陸執法親自審的。第二天，余小六的懸賞撤了，告示上換成了疤臉的名字。周正把沈青的懸賞，一塊不少地給了你。
+        fx: {stones: 50, rel: {zhou: 1, lu: 2, xiaoliu: 3, xiaoqi: 2}, rep: {loose: 1, sect: 1}, tag: {loose: 不好惹}, flag: [scar_caught], spreadText: 派出所在南嶺抓了一個疤臉刀客。北林的案子，有了下文。, mem: {zhou: 你帶著證據告了疤臉，北林的案子結了。}}
       - if: {strength: 1}
-        text: 周執事翻了翻你帶來的東西：「就這些？疤臉在坊市進進出出十幾年，執事堂要抓他，得有讓宗門點頭的東西。」
+        text: 周正翻了翻你帶來的東西：「就這些？疤臉在坊市進進出出十幾年，派出所要抓他，得有能對得上的證據。」
       - if: {}
-        text: 周執事頭也沒抬：「證據呢？」
+        text: 周正頭也沒抬：「證據呢？」
 
   - id: a_xiangke
     who: xiangke
@@ -679,22 +770,22 @@ accuse:
       - {intel: i2_burnfast, text: 他點的那炷香燒得特別快}
     cases:
       - if: {dayAfter: 4}
-        text: 「北地香商？昨天就出城了。」周執事擺擺手。
+        text: 「北地香商？昨天就離開聚落了。」周正擺擺手。
       - if: {strength: 2}
-        text: 周執事派人去市集，香商正在收攤。執事堂的人當街掐斷了一炷香，罰他退你四成的錢。圍觀的散修都笑了。
+        text: 周正派人去市集，香商正在收攤。派出所的人當街掐斷了一炷香，罰他退你四成的錢。圍觀的散修都笑了。
         fx: {buyback: {flag: cut, ratio: 0.4}, unfool: m211, rep: {loose: 1}, rel: {zhou: 1}}
       - if: {}
-        text: 「摻了木屑的香？」周執事看了你一眼，「香是你自己買的。」
+        text: 「摻了木屑的香？」周正看了你一眼，「香是你自己買的。」
 
   - id: a_zhang
     who: zhang
-    label: 告張掌事（築基丹）
+    label: 告張老闆（築基丹）
     show: {month: 2, intel: [i2_zhang], not: [zhang_exposed]}
     evidence:
       - {intel: i2_zhang, text: 鬼市那枚築基丹，瓶底刻著「回」字}
-      - {intel: i_dan_two, text: 聽雨樓裡有人說「丹坊那兩枚，鬼市見」}
+      - {intel: i_dan_two, text: 聽雨樓裡有人說「藥行那兩枚，鬼市見」}
       - {intel: i2_dan_one, text: 聽雨樓裡有人說「有一枚還沒出手」}
     cases:
       - if: {}
-        text: 周執事把筆放下，看了你很久：「回春堂是宗門的丹坊，帳是宗門的人管。許掌櫃，這種話，別在執事堂說。」你走的時候，看見他讓人往回春堂送了一封信。
-        fx: {rel: {zhou: -1, zhang: -3}, flag: [zhang_warned], mem: {zhou: 你來執事堂告回春堂的帳。, zhang: 知道你去執事堂告了他。}}
+        text: 周正把筆放下，看了你很久：「回春藥行是資源組織的藥行，帳是資源組織的人管。許老闆，這種話，別在派出所說。」你走的時候，看見他讓人往回春藥行送了一封信。
+        fx: {rel: {zhou: -1, zhang: -3}, flag: [zhang_warned], mem: {zhou: 你來派出所告回春藥行的帳。, zhang: 知道你去派出所告了他。}}

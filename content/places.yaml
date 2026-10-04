@@ -11,7 +11,7 @@ places:
       - {npc: tie, special: smith, month: all, days: [1, 6], goods: 一張油膩的木台，台上擺著幾把不好看的刀，和一堆等著修的東西。}
       - {npc: tao, deal: d07, days: [3, 3], goods: 一疊一疊的黃紙符籙，用石頭壓著。}
       - {npc: scar, deal: d08, days: [3, 3], goods: 地上一塊破布，布上只有一把刀。}
-      - {npc: stone, deal: m204, month: 2, days: [2, 4], goods: 小石頭的攤子挪到了鐵師傅旁邊。布上的石頭少了，多了一塊帶紅紋的。}
+      - {npc: stone, deal: m204, month: 2, days: [2, 4], goods: 小石頭的攤子移到了鐵師傅旁邊。布上的石頭少了，多了一塊帶紅紋的。}
       - {npc: xiangke, deal: m211, month: 2, days: [4, 4], goods: 一車用麻繩捆好的定神香，香氣衝得人睜不開眼。}
       - {npc: scar, deal: m212, month: 2, days: [4, 4], goods: 地上一塊破布，布上放著一個舊儲物袋。}
 
@@ -78,6 +78,28 @@ places:
     npc: dianzhu
     blurb: 一扇黑漆門，門上沒有招牌。每月初一才開。
 
+  tie_workshop:
+    name: 鐵師傅工作的地方
+    hours:
+    - 0
+    - 1
+    - 2
+    days:
+    - 2
+    - 3
+    npc: tie
+    blurb: 市場入口旁，門上掛著工具袋。今天能不能交易，得看當場現貨。
+  tao_workshop:
+    name: 陶師傅工作的地方
+    hours:
+    - 0
+    - 1
+    - 2
+    days:
+    - 5
+    npc: tao
+    blurb: 市場入口另一邊，門邊掛著兩個空木框。普通器皿在工作台上，還沒有確認本次現貨。
+
 # 藥田的老葛：直接買。q 是實際品質（玩家看到的是老葛的說法）
 herbStock:
   - {days: [1, 3], item: chiyan, price: 8, q: 0.75, max: 6, say: 「種的，十五年上下。金線一道，不多不少。」}
@@ -85,6 +107,7 @@ herbStock:
   - {days: [4, 6], item: chiyan, price: 5, q: 0.55, max: 8, say: 「今年地火旺，草長得急，金線都齊了，可藥性虛。我跟你說實話，便宜給你。」}
 
 # 鐵師傅的攤子：收貨、訂製
+
 smith:
   buys:
     hantie: {mult: 0.95, useBase: true, say: 「寒鐵？礦脈的事是胡扯。照老價收。」}

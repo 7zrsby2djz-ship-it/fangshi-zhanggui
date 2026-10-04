@@ -6,7 +6,7 @@ const root = path.resolve(__dirname, '..'), KEY = 'fangshi-rework-v2', OLD = 'fa
 const html = fs.readFileSync(path.join(root, 'dist/game.html'), 'utf8');
 const source = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/)[1];
 const clone = value => JSON.parse(JSON.stringify(value));
-function boot(raw, old = '原版原文保留') {
+function boot(raw, old = '原版原文保留', fixture = {}) {
   const storage = new Map([[OLD, old]]); if (raw !== undefined) storage.set(KEY, raw);
   const writes = [], nodes = Object.fromEntries(['#app', '#bar', '#hud', '#sheet', 'legacy-frame', 'legacy-json'].map(id => [id, { innerHTML: '', hidden: false, offsetHeight: 60, value: '' }]));
   const faults = { set: false, render: false };
@@ -18,7 +18,9 @@ function boot(raw, old = '原版原文保留') {
   const math = Object.create(Math); math.random = () => 0.5;
   const context = vm.createContext({ window, document, Date: FixedDate, Math: math, console, requestAnimationFrame: callback => callback(), setTimeout: () => 0,
     localStorage: { getItem: key => storage.get(key) ?? null, setItem: (key, value) => { if (faults.set) throw new Error('模擬Quota寫入失敗'); storage.set(key, value); writes.push(key); }, removeItem: key => storage.delete(key) }, Blob, URL: { createObjectURL(blob) { exports.push(blob); return 'blob:test'; }, revokeObjectURL() {} } });
-  vm.runInContext(source, context, { filename: 'dist/game.html script', timeout: 5000 });
+  // Explicit candidate-only VM fixture. No UI switch or stored approval flag exists.
+  const executable = fixture.o202Candidate ? source.replace('const M = D.meta,', "D.month2.offers.O202.gate = true;\nconst M = D.meta,") : source;
+  vm.runInContext(executable, context, { filename: 'dist/game.html script', timeout: 5000 });
   assert.equal(writes.length, 0, '載入不得改寫檔案');
   const env = { T: window.__fs, storage, writes, nodes, faults, exports, appended, originalOld: old };
   assert.equal(env.T.legacyHTML, fs.readFileSync(path.join(root, 'legacy/game-v1.html'), 'utf8'), '嵌入legacy HTML須逐字還原，無unicode escape破壞');
@@ -41,6 +43,8 @@ function act(env, action, dataset = {}, ui = true) {
 const state = env => clone(env.T.S);
 function reload(env) { return boot(env.storage.get(KEY), env.originalOld); }
 function rejectCustomer(env) {
+  if (env.T.S.enc.m2scene) { act(env, 'm2', { k: 'scene_decline', id: env.T.S.enc.m2scene }); act(env, 'close'); return; }
+  if (env.T.S.enc.m2offer) { act(env, 'm2', { k: 'reject', id: env.T.S.enc.m2offer }); act(env, 'close'); return; }
   if (env.T.S.enc.scene) { act(env, 'm1scene', { k: 'decline' }); act(env, 'close'); return; }
   if (env.T.S.enc.opportunity) { act(env, 'oppreject'); act(env, 'close'); return; }
   do { if (!env.T.S.enc.generic) act(env, 'decidesheet'); act(env, 'decide', { k: env.T.S.enc.deal === 'd18' ? 'pay' : 'decline' }); } while (!env.T.S.enc.done);

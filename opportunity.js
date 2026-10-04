@@ -32,9 +32,10 @@ function freshOpportunity() {
     quote: { cost: 24, sale: 36, assetValue: 16 }, source: null,
     stock: { item: 'wax_wrap_set', qty: 0, cost: 0, owner: 'player', batch: OP.batch }, receipts: {}, inbox: { delivered: false, read: false }, fitConfirmed: false, revision: 0 };
 }
-function validateRecord(record) {
+function validateRecord(record, offer = OP) {
+  const OP = offer;
   exactKeys(record, RECORD_KEYS, '商案進度');
-  if (record.id !== 'O101' || !['unavailable', 'available', 'prepared', 'sold', 'return_due', 'settled', 'declined', 'expired', 'failed'].includes(record.state) || !integer(record.revision)) throw new Error('商案狀態無效');
+  if (record.id !== OP.id || !['unavailable', 'available', 'prepared', 'sold', 'return_due', 'settled', 'declined', 'expired', 'failed'].includes(record.state) || !integer(record.revision)) throw new Error('商案狀態無效');
   for (const key of ['discoveredAt', 'preparedAt', 'soldAt', 'dueAbs']) if (record[key] !== null && (!integer(record[key]) || record[key] < 1)) throw new Error('商案日期無效');
   exactKeys(record.quote, ['cost', 'sale', 'assetValue'], '報價');
   if (record.quote.cost !== OP.cost || record.quote.sale !== OP.sale || record.quote.assetValue !== OP.assetValue) throw new Error('已存報價不一致');
@@ -45,7 +46,7 @@ function validateRecord(record) {
   if (!plain(record.receipts) || Object.keys(record.receipts).some(k => !['prepare', 'sale', 'return_deliver', 'return_read', 'disposition', 'decline'].includes(k))) throw new Error('收據無效');
   for (const [kind, receipt] of Object.entries(record.receipts)) {
     exactKeys(receipt, ['id', 'at'], '收據');
-    if (receipt.id !== 'O101:' + kind || !integer(receipt.at) || receipt.at < 1) throw new Error('收據內容無效');
+    if (receipt.id !== OP.id + ":" + kind || !integer(receipt.at) || receipt.at < 1) throw new Error('收據內容無效');
   }
   if (record.source !== null) {
     exactKeys(record.source, ['batch', 'session', 'day', 'item', 'quantity', 'cost'], '供貨記錄');
@@ -77,7 +78,7 @@ function validateSave(candidate) {
     if (!plain(lot) || !integer(lot.id) || ids.has(lot.id) || !IT[lot.item] || !integer(lot.qty) || lot.qty < 1 || !Number.isFinite(lot.cost) || lot.cost < 0 || !Number.isFinite(lot.q) || !Array.isArray(lot.flags) || lot.flags.some(f => typeof f !== 'string') || candidate.lotSeq < lot.id) throw new Error('庫存記錄無效');
     ids.add(lot.id);
   }
-  exactKeys(candidate.opportunities, ['O101'], '商案集合');
+  exactKeys(candidate.opportunities, ['O101', ...M2_IDS], '商案集合');
   validateRecord(candidate.opportunities.O101);
   const record = candidate.opportunities.O101;
   if (record.receipts.prepare && !OP.requiredIntel.every(id => candidate.intel[id]) || record.inbox.read && !candidate.intel[OP.returnIntel]) throw new Error('商案階段與已讀消息不一致');
@@ -85,6 +86,7 @@ function validateSave(candidate) {
   if (fallback.length > 1 || fallback.length && (!record.receipts.disposition || record.receipts.sale) || record.state === 'prepared' && candidate.lots.some(l => l.item === OP.item && l.reservationOrigin === OP.batch)) throw new Error('貨物重複或轉貨收據缺失');
   if (candidate.enc && candidate.enc.deal === OP.replaces) throw new Error('這筆舊收購不屬於新故事');
   validateMonthOne(candidate);
+  validateMonthTwo(candidate);
 }
 
 // W06 v2不改貨量、不改done、不補讀過的生活段；首次成功action才保存補值。
@@ -174,6 +176,7 @@ function strictPersist() {
 function receipt(record, kind) { record.receipts[kind] = { id: 'O101:' + kind, at: absDay() }; record.revision++; }
 function opportunityRecord() { return S && S.opportunities && S.opportunities.O101; }
 function scanOpportunities() {
+  m2Scan();
   const record = opportunityRecord(); if (!record || record.state !== 'unavailable' || absDay() > OP.sourceDay || S.phase === 'end') return;
   if (OP.requiredIntel.every(i => S.intel[i])) { record.state = 'available'; record.discoveredAt = absDay(); record.revision++; }
 }
@@ -246,12 +249,14 @@ function rejectOpportunity() {
   disposeOpportunity(record, 'failed'); S.enc.done = true; toast('這次不成交；四份布繩轉回普通庫存，沒有現金退款。');
 }
 function tickOpportunities() {
+  m2Tick();
   const record = opportunityRecord(); if (!record || S.phase === 'end' || S.day > M.days) return;
   if (record.state === 'prepared' && absDay() > OP.saleDay) disposeOpportunity(record, 'expired');
   else if (['available', 'unavailable'].includes(record.state) && absDay() > OP.sourceDay) { record.state = 'expired'; record.revision++; }
   if (record.state === 'sold' && absDay() >= record.dueAbs && !record.receipts.return_deliver) { record.state = 'return_due'; record.inbox.delivered = true; receipt(record, 'return_deliver'); }
 }
 function closeOpportunityWindow() {
+  m2Tick(true);
   const record = opportunityRecord();
   if (MON() === 1 && S.day === OP.saleDay && record.state === 'prepared') disposeOpportunity(record, 'expired');
 }
@@ -261,12 +266,12 @@ function readOpportunityReturn() {
   record.inbox.read = true; record.state = 'settled'; receipt(record, 'return_read');
   UI.sheet = { type: 'oppreturn' }; learnTrigger('opp:O101:return_read');
 }
-function reservedStockValue() { const record = opportunityRecord(); return record && record.state === 'prepared' ? record.quote.assetValue : 0; }
+function reservedStockValue() { const record = opportunityRecord(); return (record && record.state === 'prepared' ? record.quote.assetValue : 0) + (S.monthTwo ? m2ReservedStockValue() : 0); }
 function opportunityHTML() {
   const record = opportunityRecord(); if (!record) return '';
   let html = '';
   if (record.inbox.delivered) html += `<section class="card stack opp"><h3>韓九的用後回報</h3><p class="small muted">第${Math.floor((record.receipts.return_deliver.at - 1) / M.days) + 1}個月第${(record.receipts.return_deliver.at - 1) % M.days + 1}天收到；保留的回報，沒有再走一趟。</p><button class="btn quiet" data-act="oppreturn">${record.inbox.read ? '再看回報' : '讀回報（不占時段）'}</button></section>`;
-  if (['unavailable', 'declined'].includes(record.state)) return html;
+  if (['unavailable', 'declined'].includes(record.state)) return html + m2HTML();
   let description = '', controls = '';
   if (record.state === 'available') {
     description = OP.service + ' 投入24，若合用成交收36。沒成交，四份布繩轉普通貨，參考估值16，退款0；後續要自己找買家。';
@@ -275,14 +280,14 @@ function opportunityHTML() {
   } else if (record.state === 'prepared') description = '已付24，已備妥韓九的四份布繩。第四天第一次顧店先接韓九；試包後確認付款36。若整天沒接，轉普通貨，退款0。';
   else if (record.state === 'sold') description = '已收36，貨由韓九帶走。已約回報；回報尚未到，沒有另外一筆獎金。';
   else if (['failed', 'expired'].includes(record.state)) description = record.receipts.prepare ? '四份未售布繩已轉普通庫存，退款0，參考估值16；不保證立即賣掉。' : '這次備貨期限已過；沒有扣錢，也沒有發貨。';
-  else return html;
-  return html + `<section class="card stack opp"><h3>韓九的四包香菇</h3><p>${esc(description)}</p><p class="small muted">消息來源：報紙倉庫傳聞＋韓九本人這趟需求；${record.source ? '已看鐵師傅當場短試；未證明長時防水。' : '供貨尚待現場確認。'}</p>${controls}</section>`;
+  else return html + m2HTML();
+  return html + m2HTML() + `<section class="card stack opp"><h3>韓九的四包香菇</h3><p>${esc(description)}</p><p class="small muted">消息來源：報紙倉庫傳聞＋韓九本人這趟需求；${record.source ? '已看鐵師傅當場短試；未證明長時防水。' : '供貨尚待現場確認。'}</p>${controls}</section>`;
 }
 function opportunitySummaryHTML() {
   const record = opportunityRecord();
   if (!record) return '';
   const summary = record.receipts.sale ? '已收36靈石，四份布繩交給韓九；' + (record.inbox.read ? '已讀用後回報。' : record.inbox.delivered ? '用後回報已到，尚未閱讀。' : '用後回報尚未到。') : record.receipts.disposition ? '未成交；四份布繩已轉普通貨，現金退款0。' : record.state === 'prepared' ? '已付24靈石備妥四份布繩，尚未成交。' : '這個月未承接，沒有備貨扣款或收入。';
-  return `<div class="truth"><b>韓九的四包香菇</b><p>${esc(summary)}</p></div>`;
+  return m2HTML(true) + `<div class="truth"><b>韓九的四包香菇</b><p>${esc(summary)}</p></div>`;
 }
 function opportunityMarketHTML() {
   if (MON() !== 1 || S.day !== OP.sourceDay) return opportunityHTML();

@@ -67,6 +67,13 @@ def check_content(root=ROOT):
                 raise ValueError(f'month1.{scene} 段落缺漏／未知欄位／非文字')
         if 'dry_mint_leaf' not in docs['items'] or 'i_opp_han_short_intent' not in docs['intel']['intel']:
             raise ValueError('month1 缺少薄荷品項或實讀生活消息')
+    if 'month2' in docs:
+        if __package__:
+            from .month2_schema import validate_month2
+        else:
+            from month2_schema import validate_month2
+        validate_month2(docs['month2'], {'items': docs['items'], 'npcs': docs['npcs'], 'intel': docs['intel']['intel'], 'deals': docs['deals']['deals'], 'places': docs['places']['places']})
+        counts['month2_offers'] = 4
     return len(docs), counts
 
 

@@ -25,7 +25,7 @@ function boot(raw, old = '原版原文保留') {
   return env;
 }
 function visible(env, action, dataset) {
-  const markup = ['#app', '#bar', '#sheet'].map(k => env.nodes[k].innerHTML).join('');
+  const markup = ['#app', '#bar', '#sheet', '#hud'].map(k => env.nodes[k].innerHTML).join('');
   return [...markup.matchAll(/<button\s+([^>]+)>/g)].some(([, attributes]) => {
     if (!new RegExp('data-act=["\']?' + action + '(?:["\'\\s]|$)').test(attributes) || /\bdisabled\b/.test(attributes)) return false;
     return Object.entries(dataset).every(([k, v]) => new RegExp('data-' + k + '=["\']?' + String(v) + '(?:["\'\\s]|$)').test(attributes));
@@ -41,9 +41,9 @@ function act(env, action, dataset = {}, ui = true) {
 const state = env => clone(env.T.S);
 function reload(env) { return boot(env.storage.get(KEY), env.originalOld); }
 function rejectCustomer(env) {
+  if (env.T.S.enc.scene) { act(env, 'm1scene', { k: 'decline' }); act(env, 'close'); return; }
   if (env.T.S.enc.opportunity) { act(env, 'oppreject'); act(env, 'close'); return; }
-  if (!env.T.S.enc.generic) act(env, 'decidesheet');
-  act(env, 'decide', { k: env.T.S.enc.deal === 'd18' ? 'pay' : 'decline' });
+  do { if (!env.T.S.enc.generic) act(env, 'decidesheet'); act(env, 'decide', { k: env.T.S.enc.deal === 'd18' ? 'pay' : 'decline' }); } while (!env.T.S.enc.done);
   act(env, 'close');
 }
 function finishDay(env) {
@@ -62,6 +62,7 @@ function market(rain = true, trip = true, sourceRead = true) {
   if (trip) act(env, 'opptrip'); if (sourceRead) act(env, 'oppsource');
   return env;
 }
+if (require.main === module) {
 let env = market();
 assert.equal(env.T.S.opportunities.O101.state, 'available');
 assert.equal(env.T.S.stones, 120); assert.equal(env.T.held('hantie'), 6000);
@@ -216,3 +217,6 @@ importEnv.T.onAct('legacyexport', { dataset: {} });
 importEnv.exports[0].text().then(raw => assert.equal(raw, oldRaw));
 console.log('通過：內附原版srcdoc逐字相同；v1代表性缺預設欄位樣本可匯入／原文匯出／備份原文，拒v2與新物品；new key不變');
 console.log('全部O101核心測試完成；Node VM＋HTML可用按鈕核對，未測真實Browser DOM/畫面/平衡。');
+
+}
+module.exports = { boot, visible, act, state, reload, rejectCustomer, finishDay, toDay, market, clone, KEY, OLD };

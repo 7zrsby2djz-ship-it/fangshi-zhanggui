@@ -1,5 +1,5 @@
 # 工作登記，非遊戲資料；不包含完整隱藏交易答案。
-version: '0.5'
+version: '0.6'
 base_commit: c8a5bf6b3013e977879678e226e6aa158d2c0eee
 authority: sources/MASTER_PLAN_v1.0.txt
 status_legend:
@@ -20,7 +20,7 @@ protagonist:
     trade: 會點貨、算價、詢問來源
     S01_new: 見S01_work_spec；v0.4原型已核准，未取得查證結果。
     unknown: 新礦是否開出、上游動機、世界大謎
-  legacy_age: 現況31歲，S01不提；身世Q01待定
+  legacy_age: 現況31歲，S01不提；Q01採生命交易，具體機理仍未知
 npcs:
   qian:
     status: 現況
@@ -108,8 +108,8 @@ npcs:
     legacy_role: 寒潭宗外事堂執事
     working_display_name: null
     working_name_status: 待定；未更名
-    function_to_retain: 地方秩序、收費與權力
-    rewrite_note: 派出所職責須Q02，未直接改成現代警職。
+    function_to_retain: 地方秩序、報案與權力關係
+    rewrite_note: Q02採職責分開；周正處理秩序與報案，規費另由聚落管理單位收，不新增完整警政制度。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
     adopted_scene: null
   zhang:
@@ -118,8 +118,8 @@ npcs:
     legacy_role: 回春堂掌事
     working_display_name: null
     working_name_status: 待定；未更名
-    function_to_retain: 藥行專業、配額與管理
-    rewrite_note: 藥行稱呼待Q02，不以不懂常見藥材製造故事。
+    function_to_retain: 藥行採購與專業驗收
+    rewrite_note: Q02採職責分開；藥行自行採購驗收，供貨配額由資源組織處理，不以不懂常見藥材製造故事。
     appearance: 現況look在content/npcs.yaml；未移植新外觀
     adopted_scene: null
   liu:
@@ -313,9 +313,9 @@ items:
     status: 現況
     legacy_display_name: 寒鐵
     working_display_name: 鐵礦石
-    working_name_status: 確定：S01 v0.4採鐵礦石稱呼已隨本幕通過；單位資料遷移待W04
+    working_name_status: 確定：S01 v0.4採鐵礦石稱呼；W06新故事已遷移公制，原版維持原資料
     function_to_retain: 常規礦材、來源與配額
-    rewrite_note: S01 v0.4稱鐵礦石；原 ID 保留；新敘事採公斤，資料單位遷移待W04，印記及舊帳待後續同步。
+    rewrite_note: 原ID保留；新故事實存公克、按600公克報價，重量介面採公克／公斤；歷史帳冊引文不擅改紀年與原記錄。
     ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
     adopted_scene: S01 v0.4核准原型
   liaoshang:
@@ -481,7 +481,7 @@ items:
     ability_policy: 現有功能僅改造依據；需場景核準才固定新功能；不自行增強。
     adopted_scene: null
 S01_work_spec:
-  status: S01 v0.4原型已通過，文風樣本；未入遊戲，未決世界機制不在核准範圍
+  status: S01 v0.4核准正文不改；W07已接d01議價／拒售／其他分支，未決世界機制不在核准範圍
   scene_version: S01 v0.4
   speakers:
   - me
@@ -490,7 +490,7 @@ S01_work_spec:
   weather: 正文未指明，無新氣候線索
   prop_hantie:
     stable_item_id: hantie
-    lot_ref: 原引擎開局數量10；稿內6公斤，正式單位遷移待W04
+    lot_ref: W06新故事開局6000公克；稿內6公斤，原版開局數量10
     owner_before: 許衡
     owner_after: 許衡
     display: 鐵礦石
@@ -516,7 +516,7 @@ S01_work_spec:
     - 60
     - 65
     - 70
-    note: 整批總價維持60／65／70；起價每公斤10；正文非數值實裝，engine依境界氣息可調開價。
+    note: W07固定d01整批60／65／70，不受境界氣息加減；只有當前選批確實6000公克才稱整批，不足按實量比例計價。核准正文仍是拒售路線。
   selected_choice: 今天拒絕出售，未約定保留價／訂貨／查證服務
   unknown:
   - 礦是否真開
@@ -624,7 +624,7 @@ supplement_A_event:
   new_promises_in_S01: 0
   third_month_schedule: null
 S02_work_spec:
-  status: S02 v0.2原型已由偉銓通過；核准語感樣本，未入遊戲
+  status: S02 v0.2核准正文不改；W07已接分段生活相遇，依實際閱讀記錄
   scene_version: S02 v0.2
   full_card: prose/S02_v0.2_review.md
   speakers:
@@ -634,7 +634,7 @@ S02_work_spec:
   location: 許記店內／同一門口
   source_ids:
   - n_rain
-  source_boundary: 實際讀報紙上的坊間傳聞；韓九同源轉述，老葛未去，不形成第二份城東雨災查證
+  source_boundary: 實際讀報紙上的地方傳聞；韓九同源轉述，老葛未去，不形成第二份東邊雨災查證
   props: 老葛自有空木箱／箱蓋帶進再帶走；家中乾藥草只談到；皆未進玩家庫存、未定新品ID
   delta: 無金錢、所有權、欠項或代找承諾變化；只記各自需求；行程與正常供貨未確認
   next: S03需實際詢問出發日期/路段/乾貨用途及正常來源，不自動取得完整線頭B
@@ -669,7 +669,7 @@ prototype_items:
     player_visible: 外觀、試水、供量、價格、包法與使用限制；沒有故事隱藏異能
     return_observation: S06韓九展示一張外角泥點／折痕，許衡當下摸乾背面；途中只石壁段滴水，四包收貨時乾為韓九第一手自述。展示後仍韓九帶回，沒有退款／借物／贈物。
   dry_mint_leaf:
-    status: 核准原型內的局部事實；W03工作物件ID，正式ID／等級庫存／存檔掛接待W04，不是chiyan別名
+    status: S05局部規格已核准；W07新增同ID普通商品與整碎兩批，非chiyan或langya別名；驗收狀態見W07交付
     name: 乾薄荷葉
     first_scene: S05 v0.2
     origin: 老葛稱自產，帶來這批300公克
@@ -803,4 +803,22 @@ style_revision:
   historical_prose: v0.1事件保留，語感不作樣本
   invariants: 貨種、數量、收付、歸屬、知識層級、來源ID、刻文、承諾與行動格不改
   place_display: 新版正文稱店裡／許衡的店；許記是舊版對照標籤，正式店名未定
-  news_display: 新版說東邊／傳聞／店；n_rain舊原文城東／坊間／鋪子不變，未升格查證
+  news_display: 新版n_rain使用東邊／傳聞／店，來源ID與傳聞層級不變；凍結原版文字不改，未升格查證
+W07_implementation:
+  status: W07核心驗收通過；尚未做真實瀏覽器與平衡試玩
+  authority: sources/MASTER_PLAN_v1.0.txt與U20261004-02
+  scenes:
+    S01: d01議價與實際選批重量／整批價款；拒售原型不代表每局選擇
+    S02: content/month1.yaml分段生活相遇；實際讀到才記生活消息，不給O101出行或供貨線頭
+    S03_S04: 沿用W06 O101實際市場來源、24備貨／36試包成交
+    S05: 同檔薄荷驗貨、議價、實付8全收或7只收完整葉、拒收；替代新局d14
+    S06: O101實售且到期後讀回報；管理單位規費沿原數值
+  mint_lots:
+    all: 200公克較完整葉成本7與100公克碎葉成本1，兩批普通庫存
+    whole: 只收200公克成本7，碎100公克及原袋仍老葛帶回
+    valuation: 售價與買家未定，base0為尚無估價，非免費貨；介面應顯未定價，不灌現金或利潤
+  legacy_v2:
+    upgrade: 只補場景狀態；不補讀過的生活、購貨、共同記憶或金錢
+    active_d14: 續原狼牙交易並明示；結清後不再補同一次新版薄荷來訪
+    completed_d14: 保留原結案歷史，未推定已買薄荷；missed／na不作已完成相遇
+  future: 第二月正文與O201–O204仍留W08；未開始第三月

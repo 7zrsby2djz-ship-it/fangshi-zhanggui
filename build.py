@@ -18,6 +18,7 @@ data = {
 }
 data['meta']['truthLabels'] = meta['truthLabels']
 data['opportunities'] = L('opportunities')['opportunities'] if (c / 'opportunities.yaml').exists() else []
+data['month1'] = L('month1')
 validate_opportunities(data['opportunities'], data)
 apply_rework_profile(data)
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', chr(92) + 'u003c')

@@ -2,17 +2,17 @@
 # traits 1–3（低、中、高），遊戲中永不顯示
 # call：依境界差稱呼你（up = 你高他三層以上；eq = 相當；down = 你低他三層以上）
 # refuse：境界差太大時，被殺價的回應；cold：茶涼透時的話
-# home：洞府區住處（解鎖後可拜訪）
+# home：住家區住處（解鎖後可拜訪）
 
 qian:
-  name: 錢不語
-  role: 錢記掌櫃
+  name: 老錢
+  role: 對面店家的老闆
   level: 8
   traits: {greed: 3, nerve: 2, pride: 1, trust: 1, patience: 3, backing: 2}
-  call: {up: 許掌櫃, eq: 許老弟, down: 許老弟}
-  surface: 對門錢記的掌櫃，逢人便笑，跟誰都稱兄道弟。
-  refuse: 許老弟，這價錢，是看在你爹的面子上。
-  cold: 許老弟，給句痛快話。
+  call: {up: 小許, eq: 小許, down: 小許}
+  surface: 對門錢記的老闆，看到人就笑，跟誰都能聊兩句。
+  refuse: 小許，這價錢，是看在你爹的面子上。
+  cold: 小許，你想好了嗎？
   circle: 坊市商人
   look: {head: square, hair: hat, beard: goatee, mole: true, base: smile}
 
@@ -21,15 +21,15 @@ yao:
   role: 草藥販子
   level: 7
   traits: {greed: 2, nerve: 1, pride: 1, trust: 1, patience: 3, backing: 1}
-  call: {up: 許掌櫃, eq: 小許, down: 小許}
+  call: {up: 小許, eq: 小許, down: 小許}
   surface: 老散修，愛講古，四十年前的坊市什麼都知道。
   refuse: 小許，我跟你說，四十年前這價錢買不到一根鬚。
   cold: 行了行了，要不要？
   circle: 散修
   home:
-    text: 姚四住在洞府區最舊的一排石屋。門沒鎖。桌上一碟金粉，一支極細的狼毫筆，筆尖還是濕的。牆角堆著幾株赤炎草，葉背的金線，有的三道，有的五道。
+    text: 姚四住在住家區最舊的一排石屋。門沒鎖。桌上一碟金粉，一支極細的狼毫筆，筆尖還是濕的。牆角堆著幾株赤炎草，葉背的金線，有的三道，有的五道。
     line: 「小許？你怎麼找到這兒來了。坐，坐。」他把那碟金粉往桌下推了推。
-  look: {head: thin, hair: topknot, beard: goatee, age: old, base: smile}
+  look: {head: thin, hair: messy, beard: goatee, age: old, base: smile}
 
 bai:
   name: 白七娘
@@ -37,10 +37,10 @@ bai:
   level: 9
   conceal: true
   traits: {greed: 2, nerve: 3, pride: 1, trust: 1, patience: 3, backing: 3}
-  call: {up: 許掌櫃, eq: 許掌櫃, down: 許掌櫃}
+  call: {up: 小許, eq: 小許, down: 小許}
   surface: 笑臉迎人，記得每個客人愛喝什麼茶。
-  refuse: 消息的價錢，從來不二價。
-  cold: 許掌櫃，茶涼了。
+  refuse: 消息的價錢，從來沒有議價。
+  cold: 小許，茶涼了。
   circle: 坊市商人
   look: {head: round, hair: bun, blush: true, base: smile}
 
@@ -49,39 +49,39 @@ aheng:
   role: 採藥散修
   level: 5
   traits: {greed: 1, nerve: 2, pride: 2, trust: 2, patience: 1, backing: 1}
-  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
+  call: {up: 老闆, eq: 老闆, down: 老闆}
   surface: 話少，穿得樸素，指甲縫裡總有草汁的顏色。
   refuse: 就這個價。
   cold: 要就要，不要我走。
   circle: 散修
   home:
-    text: 阿蘅住在洞府區邊上一間租來的小屋。門口兩雙鞋，一雙是她的，一雙是男人的，鞋底的泥是黑的。坊市裡只有一條巷子是這種黑泥，就是夜裡才開的那條。
-    line: 她開門看見你，愣了一下，回頭把裡屋的門帶上：「掌櫃的有事？」
+    text: 阿蘅住在住家區邊上一間租來的小屋。門口兩雙鞋，一雙是她的，一雙是男人的，鞋底的泥是黑的。坊市裡只有一條巷子是這種黑泥，就是夜裡才開的那條。
+    line: 她開門看見你，愣了一下，回頭把裡屋的門帶上：「老闆有事？」
   look: {head: thin, hair: scarf, base: cold}
 
 tie:
-  name: 鐵老蔫
+  name: 鐵師傅
   role: 市集器修攤主
   level: 6
   traits: {greed: 1, nerve: 2, pride: 3, trust: 3, patience: 1, backing: 1}
-  call: {up: 掌櫃, eq: 小子, down: 小子}
+  call: {up: 老闆, eq: 小子, down: 小子}
   surface: 寡言，修東西的手藝整條街最好，做出來的東西不好看。
   refuse: 不賣。
   cold: 嗯。
   circle: 散修
   home:
-    text: 鐵老蔫的石屋後面是個小鍛爐，爐火沒熄。牆上掛著一把沒開刃的刀胚，刀胚上刻著兩個字，被煙燻得看不清。角落裡有一張小板凳，凳腳纏著新布，是給孩子坐的。
+    text: 鐵師傅的石屋後面是個小鍛爐，爐火沒熄。牆上掛著一把沒開刃的刀胚，刀胚上刻著兩個字，被煙燻得看不清。角落裡有一張小板凳，凳腳纏著新布，是給孩子坐的。
     line: 「……來了就坐。」他沒抬頭，手裡的鎚子也沒停。
   look: {head: square, hair: messy, beard: stubble, age: old, base: cold}
 
 mang:
   name: 盲婆婆
-  role: 市集製燈老嫗
+  role: 市場做燈的婆婆
   level: 12
   conceal: true
   traits: {greed: 1, nerve: 3, pride: 2, trust: 3, patience: 3, backing: 1}
   call: {up: 孩子, eq: 孩子, down: 孩子}
-  surface: 市集東頭賣狐尾燈的瞎眼老太太。
+  surface: 市場東邊做普通燈的盲婆婆；那盞特殊狐尾燈另留著。
   refuse: 我的燈，不講價。
   cold: 去吧。
   circle: 散修
@@ -92,60 +92,60 @@ stone:
   role: 撿石頭的少年
   level: 2
   traits: {greed: 1, nerve: 1, pride: 1, trust: 3, patience: 3, backing: 1}
-  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
+  call: {up: 老闆, eq: 老闆, down: 老闆}
   surface: 十二歲，市集角落擺一攤石頭，什麼怪石頭都撿。
   refuse: 那、那就不賣了。
-  cold: 掌櫃的，你還要不要呀？
+  cold: 老闆，你還要不要呀？
   circle: 散修
   look: {head: round, hair: messy, blush: true, base: smile}
 
 ge:
   name: 老葛
-  role: 城外藥農
+  role: 聚落外的藥農
   level: 3
   traits: {greed: 1, nerve: 1, pride: 1, trust: 3, patience: 2, backing: 1}
-  call: {up: 許掌櫃, eq: 許掌櫃, down: 許掌櫃}
+  call: {up: 小許, eq: 小許, down: 小許}
   surface: 葛大有，老實巴交，說話直，手上全是繭。
   refuse: 這價錢，我真的不能再少了。
-  cold: 許掌櫃，我還要趕路。
+  cold: 小許，我還要趕路。
   circle: 散修
   look: {head: square, hair: scarf, beard: stubble, age: old, base: neutral}
 
 zhou:
   name: 周正
-  role: 寒潭宗外事堂執事
+  role: 派出所的秩序人員
   level: 11
   traits: {greed: 3, nerve: 3, pride: 3, trust: 1, patience: 2, backing: 3}
-  call: {up: 許道友, eq: 許掌櫃, down: 許掌櫃}
-  surface: 公事公辦，管坊市秩序、收供奉、查贓物。
-  refuse: 執事堂的規矩，不講價。
-  cold: 許掌櫃，我沒那個閒工夫。
+  call: {up: 小許, eq: 小許, down: 小許}
+  surface: 處理地方秩序、報案與贓物；不負責收店家規費或配供貨額。
+  refuse: 派出所的規定，不講價。
+  cold: 小許，我沒有那麼多時間。
   circle: 寒潭宗
   look: {head: long, hair: hat, beard: goatee, base: cold}
 
 zhang:
   name: 張守拙
-  role: 回春堂掌事
+  role: 回春藥行負責人
   level: 10
   traits: {greed: 2, nerve: 2, pride: 3, trust: 2, patience: 2, backing: 3}
-  call: {up: 許道友, eq: 許掌櫃, down: 許掌櫃}
-  surface: 寒潭宗外派的丹坊掌事，說話慢，規矩多。
+  call: {up: 小許, eq: 小許, down: 小許}
+  surface: 負責藥行採購和驗收，供貨配額另由資源組織處理。說話慢，規矩多。
   refuse: 規矩就是規矩。
-  cold: 許掌櫃請回吧。
+  cold: 小許請回吧。
   circle: 寒潭宗
-  look: {head: long, hair: crown, beard: full, age: old, base: cold}
+  look: {head: long, hair: messy, beard: full, age: old, base: cold}
 
 liu:
   name: 柳郎中
   role: 遊方郎中
   level: 7
   traits: {greed: 1, nerve: 3, pride: 1, trust: 1, patience: 3, backing: 2}
-  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
+  call: {up: 老闆, eq: 老闆, down: 老闆}
   surface: 背著藥箱走街串巷，賣些來路模糊的好東西，價錢公道得過分。
-  refuse: 掌櫃的真會做生意。
-  cold: 掌櫃的慢慢想，我不急。
+  refuse: 老闆真會做生意。
+  cold: 老闆慢慢想，我不急。
   circle: 散修
-  look: {head: thin, hair: topknot, beard: goatee, base: smile}
+  look: {head: thin, hair: messy, beard: goatee, base: smile}
 
 hu:
   name: 戴鬼面的人
@@ -153,35 +153,35 @@ hu:
   level: 9
   conceal: true
   traits: {greed: 3, nerve: 3, pride: 2, trust: 2, patience: 2, backing: 2}
-  call: {up: 許掌櫃, eq: 許掌櫃, down: 許掌櫃}
+  call: {up: 小許, eq: 小許, down: 小許}
   surface: 半張鬼面，聲音很低。
   refuse: 熟客九折，生客加三成。
-  cold: 許掌櫃想好了再來找我。
+  cold: 小許想好了再來找我。
   circle: 鬼市
-  look: {head: long, hair: topknot, mask: true, base: neutral}
+  look: {head: long, hair: messy, mask: true, base: neutral}
 
 # —— 只出現一次的人 ——
 daoren:
   name: 清虛子
-  role: 遊方道人
+  role: 帶著玉簡的外地販子
   level: 6
   traits: {greed: 3, nerve: 2, pride: 1, trust: 1, patience: 3, backing: 1}
-  call: {up: 施主, eq: 施主, down: 施主}
-  surface: 一身半舊道袍，袖口磨得發亮。
-  refuse: 施主，貧道只求盤纏。
-  cold: 施主無緣，貧道告辭。
+  call: {up: 老闆, eq: 老闆, down: 老闆}
+  surface: 穿著舊長外套，自稱清虛子，賣東西時很會講故事。
+  refuse: 我只想湊旅費。
+  cold: 那算了，我去別家問。
   circle: 散修
   oneoff: true
-  look: {head: thin, hair: crown, beard: goatee, base: smile}
+  look: {head: thin, hair: messy, beard: goatee, base: smile}
 
 tao:
-  name: 陶老符
+  name: 陶師傅
   role: 製符師
   level: 6
   traits: {greed: 1, nerve: 2, pride: 2, trust: 3, patience: 2, backing: 1}
-  call: {up: 掌櫃, eq: 掌櫃, down: 小兄弟}
+  call: {up: 老闆, eq: 老闆, down: 小兄弟}
   surface: 畫了四十年符的老人，手指上全是硃砂。
-  refuse: 陶某的符，就值這個價。
+  refuse: 我畫的符，就值這個價。
   cold: 你慢慢看，我招呼別人去。
   circle: 散修
   oneoff: true
@@ -192,7 +192,7 @@ scar:
   role: 外地刀客
   level: 6
   traits: {greed: 2, nerve: 3, pride: 3, trust: 1, patience: 1, backing: 1}
-  call: {up: 掌櫃, eq: 喂, down: 小子}
+  call: {up: 老闆, eq: 喂, down: 小子}
   surface: 左臉一道疤，從眉骨拉到嘴角。
   refuse: 愛買不買。
   cold: 不要拉倒。
@@ -202,26 +202,26 @@ scar:
 
 han:
   name: 韓九
-  role: 駝隊管事
+  role: 山路運送者
   level: 5
   traits: {greed: 2, nerve: 2, pride: 1, trust: 3, patience: 2, backing: 2}
-  call: {up: 掌櫃, eq: 掌櫃, down: 掌櫃}
-  surface: 北方口音，身上一股駱駝的味道。
-  refuse: 掌櫃的，我們趕路。
-  cold: 掌櫃的，駝隊等不得。
+  call: {up: 老闆, eq: 老闆, down: 老闆}
+  surface: 平常幫人走山路送貨，拿東西總會先試一下重量。
+  refuse: 老闆，我們趕路。
+  cold: 老闆，運送隊不能一直等。
   circle: 散修
   oneoff: true
   look: {head: square, hair: scarf, beard: full, base: neutral}
 
 xiaoman:
   name: 葛小滿
-  role: 回春堂學徒
+  role: 回春藥行學徒
   level: 3
   traits: {greed: 1, nerve: 1, pride: 1, trust: 3, patience: 2, backing: 2}
-  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
-  surface: 老葛的女兒，在回春堂當學徒，說話很小聲。
+  call: {up: 老闆, eq: 老闆, down: 老闆}
+  surface: 老葛的女兒，在回春藥行當學徒，說話很小聲。
   refuse: 師父給的就這麼多。
-  cold: 掌櫃的，師父等著我回去。
+  cold: 老闆，師父等著我回去。
   circle: 寒潭宗
   oneoff: true
   look: {head: round, hair: bun, blush: true, base: neutral}
@@ -231,8 +231,8 @@ xiaoqi:
   role: 找哥哥的少女
   level: 2
   traits: {greed: 1, nerve: 1, pride: 1, trust: 3, patience: 3, backing: 1}
-  call: {up: 掌櫃的, eq: 掌櫃的, down: 掌櫃的}
-  surface: 十五六歲，手裡攥著一個布袋。
+  call: {up: 老闆, eq: 老闆, down: 老闆}
+  surface: 十五六歲，手裡握著一個布袋。
   refuse: 我只有這麼多。
   cold: ……
   circle: 散修
@@ -245,24 +245,24 @@ dianzhu:
   level: 15
   conceal: true
   traits: {greed: 2, nerve: 3, pride: 2, trust: 2, patience: 3, backing: 3}
-  call: {up: 許公子, eq: 許公子, down: 許公子}
+  call: {up: 許先生, eq: 許先生, down: 許先生}
   surface: 沒有人見過他的臉。每月初一開門。
   refuse: 長生典不講價。
-  cold: 許公子請回。
+  cold: 許先生請回。
   circle: 長生典
   look: {head: long, hair: veil, mask: true, base: neutral}
 afu:
   name: 阿福
-  role: 執事堂雜役
+  role: 資源組織採購跑腿
   level: 3
   traits: {greed: 1, nerve: 1, pride: 1, trust: 3, patience: 2, backing: 3}
-  call: {up: 許掌櫃, eq: 許掌櫃, down: 許掌櫃}
-  surface: 執事堂跑腿的年輕人，袖口總沾著墨。
-  refuse: 執事堂的價，不講的。
-  cold: 許掌櫃，我還要回去覆命。
+  call: {up: 小許, eq: 小許, down: 小許}
+  surface: 替資源組織送採購單的年輕人，袖口常沾到墨。
+  refuse: 採購單上的價，不講的。
+  cold: 小許，我還要回去交代結果。
   circle: 寒潭宗
   oneoff: true
-  look: {head: round, hair: topknot, base: neutral}
+  look: {head: round, hair: messy, base: neutral}
 
 # —— 第二個月 ——
 xiaoliu:

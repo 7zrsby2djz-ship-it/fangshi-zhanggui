@@ -56,6 +56,17 @@ def check_content(root=ROOT):
         rows = docs['opportunities']['opportunities']
         counts['opportunities'] = check_ids(rows, 'opportunities')
         validate_opportunities(rows, {'items': docs['items'], 'npcs': docs['npcs'], 'intel': docs['intel']['intel'], 'deals': docs['deals']['deals']})
+    if 'month1' in docs:
+        scenes = docs['month1']
+        expected = {'s02': {'open', 'oreHeld', 'oreGone', 'life', 'drying', 'rainRead', 'end', 'stop'},
+                    's05': {'open', 'lifeKnown', 'lifeUnknown', 'inspect', 'haggle', 'all', 'whole', 'rejectUnopened', 'reject'}}
+        if not isinstance(scenes, dict) or set(scenes) != {'version', 's02', 's05'} or scenes['version'] != 1:
+            raise ValueError('month1 必須明確使用 version 1、s02、s05')
+        for scene, fields in expected.items():
+            if not isinstance(scenes[scene], dict) or set(scenes[scene]) != fields or any(not isinstance(v, str) or not v.strip() for v in scenes[scene].values()):
+                raise ValueError(f'month1.{scene} 段落缺漏／未知欄位／非文字')
+        if 'dry_mint_leaf' not in docs['items'] or 'i_opp_han_short_intent' not in docs['intel']['intel']:
+            raise ValueError('month1 缺少薄荷品項或實讀生活消息')
     return len(docs), counts
 
 

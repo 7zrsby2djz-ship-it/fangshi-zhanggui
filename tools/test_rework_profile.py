@@ -16,6 +16,7 @@ raw = {'meta': meta['meta'], 'intro': meta['intro'], 'kaozheng': meta['kaozheng'
        'events': {**L('events')['events'], 'monthStart': L('events').get('monthStart', {})},
        'intel': L('intel')['intel'], 'heat': L('intel')['heat'], 'accuse': L('intel')['accuse'],
        'opportunities': L('opportunities')['opportunities']}
+raw['month1'] = L('month1')
 raw['meta']['truthLabels'] = meta['truthLabels']
 converted = apply_rework_profile(copy.deepcopy(raw))
 assert json.loads(json.dumps(converted)) == json.loads((ROOT / 'dist/data.json').read_text()), '建置D須等於profile產物'

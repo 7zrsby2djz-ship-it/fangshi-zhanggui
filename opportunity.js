@@ -84,6 +84,83 @@ function validateSave(candidate) {
   const fallback = candidate.lots.filter(l => l.reservationOrigin === 'O101:disposition');
   if (fallback.length > 1 || fallback.length && (!record.receipts.disposition || record.receipts.sale) || record.state === 'prepared' && candidate.lots.some(l => l.item === OP.item && l.reservationOrigin === OP.batch)) throw new Error('貨物重複或轉貨收據缺失');
   if (candidate.enc && candidate.enc.deal === OP.replaces) throw new Error('這筆舊收購不屬於新故事');
+  validateMonthOne(candidate);
+}
+
+// W06 v2不改貨量、不改done、不補讀過的生活段；首次成功action才保存補值。
+function migrateMonthOne(candidate) {
+  if (candidate.monthOneVersion === undefined && candidate.monthOne === undefined) {
+    candidate.monthOneVersion = 1;
+    candidate.monthOne = {
+      s02: candidate.month > 1 || candidate.day > 2 ? 'unseen' : 'pending',
+      s05: candidate.enc && candidate.enc.deal === 'd14' ? 'legacy_active' : candidate.done.d14 && !['missed', 'na'].includes(candidate.done.d14) ? 'legacy_completed' : candidate.month > 1 || candidate.day > 6 ? 'unseen' : 'pending'
+    };
+  }
+  return candidate;
+}
+function validateMonthOne(candidate) {
+  if (candidate.monthOneVersion !== 1) throw new Error('第一月場景版本不支援');
+  exactKeys(candidate.monthOne, ['s02', 's05'], '第一月場景');
+  if (!['pending', 'heard', 'stopped', 'unseen'].includes(candidate.monthOne.s02) || !['pending', 'all', 'whole', 'declined', 'unseen', 'legacy_active', 'legacy_completed'].includes(candidate.monthOne.s05)) throw new Error('第一月場景狀態無效');
+  const e = candidate.enc;
+  if (e && e.deal === 'd14' && candidate.monthOne.s05 !== 'legacy_active') throw new Error('新故事不接受新的狼牙來訪');
+  if (e && e.scene) {
+    if (!['s02', 's05'].includes(e.scene) || e.from !== 'shop' || e.deal || !Array.isArray(e.th) || !integer(e.step) || e.step > (e.scene === 's02' ? 3 : 2)) throw new Error('第一月現場記錄無效');
+    if (!e.done && candidate.monthOne[e.scene] !== 'pending') throw new Error('第一月場景已結清');
+  }
+  if (candidate.intel.i_opp_han_short_intent && candidate.monthOne.s02 === 'unseen') throw new Error('未見生活對話卻有生活消息');
+}
+function startMonthOneEncounter() {
+  if (MON() !== 1) return false;
+  const m = S.monthOne, next = nextShopDeal();
+  let scene = S.day === 2 && m.s02 === 'pending' ? 's02' : S.day >= 5 && S.day <= 6 && m.s05 === 'pending' && (!next || next.days[1] >= 6) ? 's05' : null;
+  if (!scene) return false;
+  S.met.ge = true; if (scene === 's02') S.met.han = true;
+  if (S.stance === '外放') S.wind++;
+  S.enc = { scene, npc: 'ge', from: 'shop', th: [{ k: 'narr', t: D.month1[scene].open }], step: 0, done: null };
+  if (scene === 's02') S.enc.th.push({ k: 'narr', t: held('hantie') ? D.month1.s02.oreHeld : D.month1.s02.oreGone });
+  else S.enc.th.push({ k: 'narr', t: S.intel.i_opp_han_short_intent ? D.month1.s05.lifeKnown : D.month1.s05.lifeUnknown });
+  S.phase = 'enc'; return true;
+}
+function monthOneAction(command) {
+  const e = S.enc; if (!e || !e.scene || e.done) return;
+  const data = D.month1[e.scene];
+  if (e.scene === 's02') {
+    if (command === 'next') {
+      if (e.step === 0) { e.th.push({ k: 'narr', t: data.life }); learnTrigger('scene:S02:life_read'); }
+      if (e.step === 1) e.th.push({ k: 'narr', t: data.drying });
+      if (e.step === 2) { if (S.newsRead.n_rain) e.th.push({ k: 'narr', t: data.rainRead }); e.th.push({ k: 'narr', t: data.end }); S.monthOne.s02 = 'heard'; e.done = { key: 'heard', label: '聊完了' }; }
+      e.step = Math.min(3, e.step + 1);
+    } else if (command === 'decline') { e.th.push({ k: 'narr', t: data.stop }); S.monthOne.s02 = 'stopped'; e.done = { key: 'stopped', label: '先忙店裡' }; }
+    return;
+  }
+  if (command === 'inspect' && e.step === 0) { e.th.push({ k: 'narr', t: data.inspect }); e.step = 1; return; }
+  if (command === 'haggle' && e.step === 1) { e.th.push({ k: 'narr', t: data.haggle }); e.step = 2; return; }
+  if (command === 'decline') { e.th.push({ k: 'res', t: e.step === 0 ? data.rejectUnopened : data.reject }); S.monthOne.s05 = 'declined'; e.done = { key: 'declined', label: '不收' }; return; }
+  if (!['all', 'whole'].includes(command) || e.step !== 2 || S.monthOne.s05 !== 'pending') return;
+  const cost = command === 'all' ? 8 : 7;
+  if (S.stones < cost) { toast('錢不夠，這筆還沒成交。可以只收完整葉，或不收。'); return; }
+  if (!IT.dry_mint_leaf || S.lots.some(l => l.from === 'scene_s05_mint')) throw new Error('薄荷批次已存在，沒有重複扣款');
+  S.stones -= cost;
+  const whole = addLot({ item: 'dry_mint_leaf', qty: 200, cost: 7, q: 1, known: true, label: '乾薄荷葉（較完整，200公克）', from: 'scene_s05_mint' });
+  whole.gradeTag = 'whole_approx'; whole.totalCost = 7;
+  if (command === 'all') { const broken = addLot({ item: 'dry_mint_leaf', qty: 100, cost: 2, q: 1, known: true, label: '乾薄荷葉（碎葉，100公克）', from: 'scene_s05_mint' }); broken.gradeTag = 'broken'; broken.totalCost = 1; }
+  S.monthOne.s05 = command;
+  e.th.push({ k: 'res', t: data[command], notes: ['－' + cost + ' 靈石'] }); e.done = { key: command, label: command === 'all' ? '全收' : '只收完整葉' };
+  S.log.push({ day: S.day, t: '老葛的乾薄荷葉：' + e.done.label + '，付' + cost });
+}
+function renderMonthOneEncounter() {
+  const e = S.enc;
+  const mintStatus = e.done ? e.done.key === 'all' ? '已付8靈石，收到完整200公克／碎100公克。原袋由老葛帶回。' : e.done.key === 'whole' ? '已付7靈石，收到完整200公克。碎葉100公克由老葛帶回。' : '沒有收貨或付款，原袋由老葛帶走。' : e.step === 2 ? '已議：全收300公克8靈石，或只收完整200公克7靈石。' : e.step === 1 ? '已秤：完整200公克／碎100公克。還沒議定價格。' : '老葛要價10靈石，還沒倒完整袋驗貨。';
+  const warning = e.scene === 's05' ? `<div class="goods"><div class="g-name">${icon('dry_mint_leaf')}乾薄荷葉${e.done ? '｜本次結果' : ' 300公克'}</div><p>${mintStatus}${e.done && e.done.key === 'declined' ? '' : '後續售價與買家尚未確認。'}</p></div>` : '';
+  return `<div class="who">${portrait('ge', 'neutral', 'big')}<div><div class="nm">${e.scene === 's02' ? '老葛、韓九' : '老葛'}</div><div class="rl">${e.scene === 's02' ? '找箱子，聊兩句' : '不是叫你幫忙'}</div></div></div>${warning}<div class="thread">${e.th.map(x => `<div class="ln ${x.k}"><span class="tx">${esc(x.t)}</span></div>`).join('')}</div>`;
+}
+function monthOneBarHTML() {
+  const e = S.enc;
+  if (e.done) return '<button class="btn primary wide" data-act="close">繼續</button>';
+  const button = (command, text, disabled = false) => `<button class="btn quiet wide" data-act="m1scene" data-k="${command}" ${disabled ? 'disabled' : ''}>${text}</button>`;
+  if (e.scene === 's02') return button('next', e.step === 0 ? '問他們要裝什麼' : e.step === 1 ? '先看箱子，問乾了沒' : '說清楚沒有空箱子，聊完') + button('decline', '今天先不聊');
+  return (e.step === 0 ? button('inspect', '倒完整袋驗貨、分開秤重') : e.step === 1 ? button('haggle', '按完整葉／碎葉議價') : button('all', '全收300公克，付8靈石', S.stones < 8) + button('whole', '只收完整200公克，付7靈石', S.stones < 7)) + button('decline', '不收，原貨還老葛');
 }
 function strictPersist() {
   validateSave(S);

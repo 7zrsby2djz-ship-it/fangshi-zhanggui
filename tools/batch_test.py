@@ -64,6 +64,33 @@ JS = r"""
   fresh(); give('banpai'); window.__deathRoll = () => 0.99; T.S.burden = 0; T.S.phase = 'day'; T.enterPlace('ruin'); const sp = T.spotsAvail('ruin').filter(x => !x.strain && !x.repeat && !(x.fx && x.fx.death)).slice(0, 3);
   sp.forEach(x => T.explore(x.id)); out.push('steps notice: ' + JSON.stringify((T.S.place.found || {}).notes) + ' steps=' + T.S.place.steps);
   out.push('relicLog ' + JSON.stringify((T.S.relicLog || []).slice(-3)));
+  // ── 遺物：回程保護、拿出來用、當鑰匙、事件選項（失敗會進 err） ──
+  const ok = (c, m) => { out.push((c ? 'PASS ' : 'FAIL ') + m); if (!c) err.push(m); };
+  const ascRate = (pid, ids) => { let n = 0; for (let i = 0; i < 100; i++) { fresh(); ids.forEach(give); T.S.flags.ascent_grace = true; T.S.slot = 0; T.enterPlace(pid); T.S.place.steps = 1; T.S.burden = T.burdenLimit() + 2; window.__deathRoll = () => (i + 0.5) / 100; T.leavePlace(); if (T.S.dead) n++; } return n / 100; };
+  for (const [rid, pid] of [['lupai', 'ruin'], ['wuguan', 'reservoir'], ['piaogen', 'stair'], ['lengyu', 'north'], ['zhanwu', 'platform']]) { const a = ascRate(pid, []), b = ascRate(pid, [rid]); ok(b < a, `ascent ${rid}@${pid} ${a}->${b}`); }
+  fresh(); give('quepiao'); T.S.slot = 0; T.enterPlace('ruin'); T.S.place.steps = 1; T.S.burden = 30; const sl = T.S.slot; ok(T.relicUseState('quepiao').ok && T.useRelic('quepiao') && !T.S.dead && T.S.burden === 15 && !T.held('quepiao') && T.S.slot === sl + 1, 'use quepiao safe return');
+  fresh(); give('banpai'); T.S.slot = 0; T.enterPlace('ruin'); T.S.place.steps = 3; T.S.place.acted = true; ok(T.useRelic('banpai') && !T.S.place.acted && !T.relicUseState('banpai').ok, 'use banpai extra step, once a day');
+  fresh(); give('banbei'); T.S.burden = 5; ok(T.useRelic('banbei') && T.S.burden === 3 && T.held('banbei') === 1, 'use banbei');
+  fresh(); give('dengsui'); ok(T.useRelic('dengsui') && T.S.reveal, 'use dengsui reveal');
+  fresh(); give('xiangpi'); T.S.burden = 6; ok(T.useRelic('xiangpi') && T.S.burden === 4 && !T.held('xiangpi'), 'use xiangpi erase');
+  fresh(); give('naiya'); T.S.shop.staff = ['akai']; const g0 = T.shopStats().greed; T.S.place = null; ok(T.useRelic('naiya') && T.shopStats().greed < g0, 'use naiya noSkim ' + g0);
+  fresh(); give('chachou'); const ik = Object.keys(T.IN).find(k => T.IN[k].kind === 'heard'); T.S.intel[ik] = { day: 1, m: 1, src: 'x' }; ok(T.useRelic('chachou') && T.S.truthKnown[ik] && !T.held('chachou'), 'use chachou truth ' + ik);
+  fresh(); give('qianbi'); T.S.heat = 3; let h = 0; for (let d = 0; d < 12; d++) { T.S.phase = 'day'; T.S.night = null; T.goNight(); T.S.day = (T.S.day % 6) + 1; } ok(T.S.heat < 3, 'qianbi lowers heat -> ' + T.S.heat);
+  fresh(); const t0 = T.shopDay('est', true).total; give('baihua'); give('xiaozhong'); give('fengling'); ok(T.shopDay('est', true).total > t0, 'shop relics visible ' + t0 + '->' + T.shopDay('est', true).total);
+  fresh(); T.S.flags.lin_dummy = 1; give('chanke'); const l0 = T.gearStats().limit; T.S.flags.studied_chanke = true; ok(T.gearStats().limit > l0, 'studied relic stronger');
+  fresh(); give('huangdeng'); ok(T.protectMult('cliff_jump') < 1, 'huangdeng protectAll');
+  // 鑰匙
+  for (const [pid, sid, rid, pre] of [['homes', 'hm_return', 'zhifu', ['hm_light', 'hm_fold']], ['lampst', 'ls_branch_pay', 'muxie', []], ['reservoir', 're_plate', 'cunpai', []], ['tunnel', 'tu_letter', 'laixin', []]]) {
+    fresh(); T.S.month = 2; pre.forEach(x => T.S.explored[x] = 1); ['ls_enter', 'ls_shop', 'ls_branch', 're_dive', 'tu_wall_hand'].forEach(x => T.S.explored[x] = 1); T.S.flags.branch_sign = 1; give(rid); T.S.place = null; T.S.slot = 0; window.__deathRoll = () => 0.99; T.enterPlace(pid);
+    const before = T.held(rid); T.explore(sid); ok(T.S.explored[sid] && T.held(rid) < before, 'key ' + rid + ' -> ' + sid);
+  }
+  // 事件裡持有遺物才出現的選項
+  for (const [eid, rid, extra] of [['se_night2', 'wenbi', {}], ['se_robbery', 'fengling', {}], ['se_breath_box', 'huishi', {}], ['se_amei_missing', 'dengsui', {}], ['dr_flowers_turn', 'zhifu', {}], ['dr_frost_night', 'lengyu', {}], ['dr_fapiao_draw', 'fapiao', {}], ['dr_youyou_beep', 'youyou', {}], ['dr_keben_hill', 'keben', {}], ['dr_patrol_roll', null, {}]]) {
+    fresh(); T.S.month = 3; T.S.dayCount = 6; if (rid) give(rid); const e = T.ALLEV[eid]; if (!e) { ok(false, 'no event ' + eid); continue; }
+    const opts = e.choices.filter(c => T.needOk(c.need || {})); const i = rid ? (e.need && e.need.has && e.need.has[rid] ? (T.needOk(e.need) ? 0 : -1) : opts.findIndex(c => c.need && c.need.has && c.need.has[rid])) : 0;
+    T.S.cards = [{ title: e.title, text: e.text, drift: eid, choices: opts.map(x => ({ label: x.label })) }]; window.__deathRoll = () => 0.01; T.driftChoose(0, i < 0 ? 0 : i);
+    ok(i >= 0 && !T.S.dead && T.S.cards[0].picked != null, 'event ' + eid + ' relic choice ' + (rid || '') + ' ' + (T.S.cards[0].notes || []).join('/'));
+  }
   return { out, err };
 })()
 """

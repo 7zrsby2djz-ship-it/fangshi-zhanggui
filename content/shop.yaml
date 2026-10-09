@@ -406,6 +406,12 @@ events:
       - label: 推回後院不管
         text: 第二天早上，箱子不見了。後院的地上有一排很小的腳印，往北。
         fx: {flag: [box_walked]}
+      - label: 用回聲石貼著箱子聽
+        desc: 不打開，只聽
+        need: {has: {huishi: 1}}
+        text: 你把回聲石貼在箱板上。石頭把箱子裡的聲音帶回來：不是呼吸，是很遠很遠的地方，有人在數數，數到十二就停一下，再從一開始。天亮以前，箱子不呼吸了。你打開來，裡面只有一層霜，霜上有一個小小的手印。
+        fx: {flag: [box_listened], xp: 10, note: 會呼吸的箱子裡，有人一直從一數到十二。}
+
   - id: se_robbery
     title: 半夜敲門的人
     need: {pol: {shady: true}, secMax: 1}
@@ -422,6 +428,12 @@ events:
       - label: 大喊「失火了」
         text: 你扯開喉嚨大喊。對門錢家店的燈先亮了，接著整條街的燈都亮了。三個人罵了一聲，跑了。錢不語披著外套出來，看了你一眼：「不問來路的貨，少收。」
         fx: {rel: {qian: 1}, heat: 1}
+      - label: 讓風鈴先響
+        desc: 門上那串鐵管風鈴，一直沒有風也會響
+        need: {has: {fengling: 1}}
+        text: 他們還沒踏進門，門上的鐵管風鈴就自己響了，響得像有一整隊人從後面走過來。帶頭的回頭看了一眼霧，臉色變了，三個人往後退，一句話都沒說就跑了。第二天，風鈴的其中一根鐵管彎了一點。
+        fx: {rep: {loose: 1}, tag: {loose: 有人顧}}
+
   - id: se_bad_pill
     title: 沒有標籤的藥丸
     need: {anyOf: [{pol: {shady: true}}, {pol: {buy: generous}}]}
@@ -537,6 +549,12 @@ events:
       - label: 請溫伯說老闆不在
         text: 溫伯去門口說了。客人點點頭，說他會再來。他沒有再來。
         fx: {}
+      - label: 把溫的硬幣找給他
+        desc: 那是他們那邊的錢
+        need: {has: {wenbi: 1}}
+        text: 你把那枚一直溫溫的硬幣放在他手心。他低頭看了很久，把硬幣收進西裝內袋：「這是我們那邊的錢。許先生，帳我替你記上了。」他走之前，在門口留了一句話，話是對溫伯說的：「你老闆的媽媽，還在等車。」
+        fx: {take: [{item: wenbi, qty: 1}], flag: [night_guest_coin], xp: 12, note: 沒有影子的客人收了溫的硬幣，說「帳我替你記上了」，又說你媽媽「還在等車」。}
+
   # ── 阿妹 ──
   - id: se_amei_map
     title: 阿妹的地圖
@@ -564,6 +582,12 @@ events:
         need: {has: {hudeng: 1}}
         text: 燈一進隧道，回聲就安靜了。你在水牆前面找到她，她看到燈，像看到老朋友。回程她送你一顆「下面撿的」玻璃珠，說謝謝。
         fx: {flag: [amei_safe], give: [{item: hongzhu, qty: 1, cost: 0}]}
+      - label: 帶著還燙的燈泡碎片去
+        desc: 霧會讓開一點
+        need: {has: {dengsui: 1}}
+        text: 你握著燈泡碎片走進隧道，霧在你面前讓開一條縫，一路讓到水牆前面。阿妹坐在地上發呆，看到碎片的光才回過神來：「燈街那個小孩說，拿著燈的人會來接我。」
+        fx: {flag: [amei_safe, amei_lamp_kid], xp: 8, burden: 1}
+
       - label: 等她自己回來
         text: 你等了三天。第四天早上，店門口放著一個小布包，裡面是她撿到的所有東西，排得整整齊齊。布包上用粉筆寫著：「老闆，我先下去了。」
         fx: {flag: [amei_lost], fire: amei, giveRelic: deep}

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build the single-file game: merge content YAML into data, inline CSS/JS into the template."""
-import json, pathlib, sys, yaml
+import json, pathlib, re, sys, yaml
 root = pathlib.Path(__file__).parent
 c = root / 'content'
 L = lambda n: yaml.safe_load((c / f'{n}.yaml').read_text(encoding='utf-8'))
@@ -42,6 +42,26 @@ for rid, e in rfx.items():
 _noeff = [k for k, v in data['items'].items() if v.get('cat') == 'relic' and 'eff' not in v]
 assert not _noeff, 'relics without effect: ' + ','.join(_noeff)
 print('relics with effects', sum(1 for v in data['items'].values() if v.get('eff')))
+# 遺物防呆：每件都要「真的有作用」、保護的死法要真的會發生、要拿得到
+_txt0 = json.dumps({k: v for k, v in data.items() if k != 'items'}, ensure_ascii=False)
+_deathIds = set(re.findall(r'"death": ?\{"id": ?"(\w+)"', _txt0)) | set(re.findall(r'"death": ?"(\w+)"', _txt0)) | set(v['ascent'] for v in data['placeFx'].values())
+_needHas = set(re.findall(r'"has": ?\{"(\w+)"', _txt0))
+_given = set(re.findall(r'"item": ?"(\w+)"', _txt0)) | set(b.get('give') for b in data['shop']['bonuses'].values() if isinstance(b, dict))
+_SPECIAL = {'extraStep', 'safeReturn', 'reveal', 'lessStep', 'erase', 'truth', 'noSkim', None}
+_onlyRandom = []
+for rid, it in data['items'].items():
+    e = it.get('eff')
+    if not e: continue
+    mech = any(e.get(k) for k in ('passive', 'carry', 'warn', 'night', 'use')) or rid in _needHas
+    assert mech, 'relic has no mechanical effect: ' + rid
+    for d in (e.get('carry') or {}).get('protect', {}): assert d in _deathIds, 'relic %s protects death that never happens: %s' % (rid, d)
+    u = e.get('use')
+    if u:
+        assert u.get('special') in _SPECIAL, 'bad use.special ' + rid
+        assert u.get('where', 'any') in ('any', 'out', 'shop') and u.get('once') in ('day', 'consume'), 'bad use ' + rid
+        assert u.get('label') and u.get('desc'), 'use needs label/desc ' + rid
+    if rid not in _given: _onlyRandom.append(rid)
+print('relics: usable', sum(1 for v in data['items'].values() if (v.get('eff') or {}).get('use')), 'unlock something', len([k for k in data['items'] if k in _needHas and data['items'][k].get('eff')]), 'only random source', _onlyRandom)
 _sp = [sp['id'] for pl in data['places'].values() if isinstance(pl, dict) for sp in pl.get('spots', [])]
 assert len(_sp) == len(set(_sp)), 'duplicate spot id'
 # 檢查：所有 death id 都有定義

@@ -135,6 +135,17 @@ drift:
       - label: 全部送去舊物室
         text: 林老師把花一朵一朵放進玻璃瓶，排在架上。花轉向你，轉向北，最後轉向她，安靜下來。「它們會在這裡待好，」她說，「我每天會跟它們講話。」
         fx: {take: [{item: shenhua, qty: 3}], rel: {lin: 2}, flag: [donated]}
+      - label: 用舊制服把花包起來
+        desc: 制服上的樟腦味，蓋得過白花的香
+        need: {has: {zhifu: 1}}
+        text: 你把那件摺好的制服攤開——它第一次攤得開——把花盆整個包起來。花安靜下來，不轉了。隔天早上打開，花全部閉起來，像睡著了。制服的口袋裡多了一張紙條：「謝謝你幫我顧弟弟。」
+        fx: {flag: [flowers_wrapped], xp: 8}
+      - label: 把蓋住的白花插進花盆
+        desc: 它不再看人
+        need: {has: {baihua: 1}}
+        text: 你把那朵壓平的白花插進花盆中間。其他的花一朵一朵轉過去看它，看了很久，然後一起低下頭。土裡往下長的東西停了。
+        fx: {flag: [flowers_bowed], xp: 8}
+
     face: shock
   # ── 結霜那晚 ──
   - id: dr_frost_night
@@ -151,6 +162,12 @@ drift:
       - label: 關窗，早點睡
         text: 你把窗關上，拉上窗簾。半夜，你聽到霜在玻璃上爬的聲音，沙沙的，像有人在外面寫字。
         fx: {flag: [frost_closed]}
+      - label: 把冷羽毛掛在窗邊，看它長
+        desc: 霜會先往羽毛爬
+        need: {has: {lengyu: 1}}
+        text: 你把冷羽毛用棉線掛在窗框上，搬了椅子坐著看。霜一路長進來，長到羽毛那裡就轉彎，全部爬到羽毛上，結成一根很長、很漂亮的冰。天亮的時候，冰上的紋路是一張地圖，箭頭指著北礦的通風口。
+        fx: {flag: [frost_closed, frost_feather], xp: 15, note: 結霜那晚，冷羽毛上的霜結成一張地圖，箭頭指著北礦的通風口。}
+
     face: uneasy
   # ── 好笑、奇怪、溫柔的事 ──
   - id: dr_vending

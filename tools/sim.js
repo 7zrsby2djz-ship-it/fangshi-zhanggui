@@ -36,7 +36,7 @@
     if (style === 'greedy') return Math.random() < 0.3 ? Math.floor(Math.random() * c.choices.length) : pick(safe.length ? safe : [0]);
     return safe.length ? safe[safe.length > 1 && style === 'explorer' ? 1 : 0] : 0;
   }
-  const HIRE = { careful: ['xiaoye', 'ayue', 'caijie', 'wenbo', 'ahua'], lamp: ['ayue', 'xiaoye', 'caijie', 'laofu'], ledger: ['caijie', 'xiaoye', 'ayue', 'ahua'], explorer: ['laofu', 'ayue', 'amei', 'xiaoye', 'heigou'], greedy: ['akai', 'heigou', 'ayue', 'shuqi', 'amei', 'xiaoye'], reckless: ['akai', 'heigou', 'amei'], random: [] };
+  const HIRE = { careful: ['xiaoye', 'ayue', 'caijie', 'chunjiao', 'wenbo', 'ahua'], lamp: ['ayue', 'xiaohe', 'xiaoye', 'caijie', 'laofu', 'momo'], ledger: ['caijie', 'amai', 'xiaoye', 'ayue', 'ahua'], explorer: ['laofu', 'tishu', 'ayue', 'amei', 'xiaoye', 'heigou'], greedy: ['akai', 'aque', 'heigou', 'ayue', 'shuqi', 'amei', 'xiaoye'], reckless: ['akai', 'heigou', 'amei'], random: [] };
   const UPGS = ['sign', 'shelf', 'teadesk', 'irongate', 'lamp', 'coldbox', 'quiet', 'backyard', 'cart', 'annex'];
   const GEAR = { explorer: ['stick', 'rope', 'headlamp', 'oxygen', 'harness', 'bag', 'charm', 'coat'], careful: ['rope', 'headlamp', 'stick', 'oxygen', 'charm'], lamp: ['rope', 'stick', 'headlamp', 'coat'], ledger: ['rope'], greedy: ['bag', 'stick', 'oxygen'], reckless: ['bag'], random: [] };
   function manage(style) {
@@ -83,8 +83,9 @@
     const S = T.S, L = T.burdenLimit();
     const order = [...T.EXPLORE].filter(id => T.D.places[id] && T.placeOpen(id) === true && (!T.D.places[id].reveal || [].concat(T.D.places[id].reveal).some(f => S.flags[f])));
     const deep = style === 'careful' || style === 'ledger' ? order : [...order].reverse();
-    const cand = deep.filter(id => T.spotsAvail(id).some(sp => !sp.repeat && T.needOk(sp.need)) || (style === 'greedy' && T.spotsAvail(id).length));
+    const cand = deep.filter(id => T.spotsAvail(id).some(sp => !sp.repeat && T.needOk(sp.need) && (!deadly(sp.fx) || style === 'reckless' || style === 'random' || style === 'greedy')) || (style === 'greedy' && T.spotsAvail(id).length));
     const fit = cand.filter(id => style === 'reckless' || style === 'random' || S.burden + ((T.PFX[id] || {}).burden || 0) <= L);
+    const nNew = id => T.spotsAvail(id).filter(sp => !sp.repeat && T.needOk(sp.need) && !deadly(sp.fx)).length;
     const id = fit[0]; if (!id) return false;
     T.enterPlace(id);
     for (let k = 0; k < 4 && T.S.place && !T.S.place.acted && !T.S.dead; k++) { const sp = spotPick(style, id); if (!sp) break; T.explore(sp.id); }
@@ -104,6 +105,19 @@
       if (T.held('xuechan')) T.turnIn('xuechan', 'entrust');
       if (T.S.phase === 'place') T.leavePlace(); return true;
     }
+    // 聚落裡的怪事（第一批外稿）：追故事、探索、謹慎的人會順路看
+    if (style !== 'reckless' && style !== 'greedy') for (const id of ['school', 'tea', 'office', 'homes']) {
+      if (T.placeOpen(id) !== true || !T.spotsAvail(id).some(sp => !sp.repeat && T.needOk(sp.need) && !deadly(sp.fx))) continue;
+      if (style !== 'lamp' && style !== 'explorer' && Math.random() < 0.5) continue;
+      T.enterPlace(id);
+      for (let k = 0; k < 3 && T.S.place && !T.S.place.acted && !T.S.dead; k++) { const sp = spotPick(style, id); if (!sp) break; T.explore(sp.id); }
+      if (T.S.phase === 'place') T.leavePlace(); return true;
+    }
+    if (style === 'random' && Math.random() < 0.4) for (const id of ['school', 'tea', 'office', 'homes']) {
+      if (T.placeOpen(id) !== true || !T.spotsAvail(id).length) continue;
+      T.enterPlace(id); for (let k = 0; k < 3 && T.S.place && !T.S.place.acted && !T.S.dead; k++) { const sp = spotPick(style, id); if (!sp) break; T.explore(sp.id); }
+      if (T.S.phase === 'place') T.leavePlace(); return true;
+    }
     if (M() === 3 && S.stones > 400 && T.placeOpen('pawn') === true && style !== 'reckless' && !S.redeemedSim) { S.redeemedSim = 1; T.enterPlace('pawn'); T.redeem(); if (T.S.phase === 'place') T.leavePlace(); return true; }
     return false;
   }
@@ -114,7 +128,7 @@
     if (exploreFirst ? (goExplore(style) || town(style)) : (town(style) || goExplore(style))) return;
     T.goNight();
   }
-  function snap(S) { return { day: S.dayCount, stones: Math.round(S.stones), lv: S.level, shop: S.shop.total, best: S.shop.best, staff: S.shop.staff.length, upg: Object.keys(S.shop.upg).length, spots: Object.keys(S.explored).length, relics: Object.keys(S.codex).filter(k => T.IT[k].cat === 'relic').length, fin: ['lamp', 'ledger', 'pawn'].find(k => S.flags['finale_' + k]) || '-', deepest: ['platform', 'lampst', 'stair', 'north', 'cliff', 'reservoir', 'tunnel', 'ruin'].find(id => T.spotList(id).some(sp => S.explored[sp.id])) || '-' }; }
+  function snap(S) { return { b1: ['sc_roll_seen', 'tea_seat_seen', 'office_overtime', 'homes_house', 'stair_echo', 'lab_plate', 'lamp_kid', 'lab_barefoot', 'pf_reverse', 'branch_sign', 'saw_shell'].filter(f => S.flags[f]).length, b1done: ['lamp_kid', 'lab_barefoot', 'pf_reverse'].filter(f => S.flags[f]).length, b1f: ['sc_roll_seen', 'tea_seat_seen', 'office_overtime', 'homes_house', 'stair_echo', 'lab_plate', 'stop_card', 'lamp_kid', 'lab_barefoot', 'pf_reverse', 'branch_sign', 'lampst_branch', 'saw_shell'].filter(f => S.flags[f]), day: S.dayCount, stones: Math.round(S.stones), lv: S.level, shop: S.shop.total, best: S.shop.best, staff: S.shop.staff.length, upg: Object.keys(S.shop.upg).length, spots: Object.keys(S.explored).length, relics: Object.keys(S.codex).filter(k => T.IT[k].cat === 'relic').length, fin: ['lamp', 'ledger', 'pawn'].find(k => S.flags['finale_' + k]) || '-', deepest: ['platform', 'lampst', 'stair', 'north', 'cliff', 'reservoir', 'tunnel', 'ruin'].find(id => T.spotList(id).some(sp => S.explored[sp.id])) || '-' }; }
   function play(seed, style) {
     T.S = T.newGame(seed, window.__BONUS || []);
     let guard = 0, rewinds = 0, actions = 0;
@@ -140,8 +154,8 @@
     for (let i = 0; i < N; i++) { try { rs.push(play(1000 + i * 7, style)); } catch (e) { errors.push(style + ': ' + e.message + ' ' + (e.stack || '').split('\n').slice(1, 3).join(' | ')); } }
     const n = rs.length || 1, avg = k => Math.round(rs.reduce((a, x) => a + (x[k] || 0), 0) / n * 10) / 10, pct = f => Math.round(rs.filter(f).length / n * 100) + '%';
     const dd = {}; rs.filter(x => x.dead).forEach(x => { dd[x.dead] = (dd[x.dead] || 0) + 1; deathsAll[x.dead] = (deathsAll[x.dead] || 0) + 1; });
-    const deep = {}; rs.forEach(x => { deep[x.deepest] = (deep[x.deepest] || 0) + 1; });
-    out[style] = { n: rs.length, died: pct(x => x.dead), finale: ['lamp', 'ledger', 'pawn'].map(k => k + ':' + pct(x => !x.dead && x.fin === k)).join(' '), days: avg('day'), stones: avg('stones'), lv: avg('lv'), shopTotal: avg('shop'), best: avg('best'), staff: avg('staff'), upg: avg('upg'), spots: avg('spots'), relics: avg('relics'), actions: avg('actions'), rewinds: avg('rewinds'), deaths: dd, deepest: deep };
+    const deep = {}; rs.forEach(x => { deep[x.deepest] = (deep[x.deepest] || 0) + 1; }); const b1f = {}; rs.forEach(x => (x.b1f || []).forEach(f => { b1f[f] = (b1f[f] || 0) + 1; }));
+    out[style] = { n: rs.length, b1: avg('b1'), b1done: avg('b1done'), b1f, died: pct(x => x.dead), finale: ['lamp', 'ledger', 'pawn'].map(k => k + ':' + pct(x => !x.dead && x.fin === k)).join(' '), days: avg('day'), stones: avg('stones'), lv: avg('lv'), shopTotal: avg('shop'), best: avg('best'), staff: avg('staff'), upg: avg('upg'), spots: avg('spots'), relics: avg('relics'), actions: avg('actions'), rewinds: avg('rewinds'), deaths: dd, deepest: deep };
   }
   out.deathIdsSeen = Object.keys(deathsAll).length;
   out.errors = [...new Set(errors)].slice(0, 20);

@@ -290,6 +290,7 @@ function applyFx(fx, ctx = {}) {
   if (fx.confiscate) S.lots = S.lots.filter(l => !l.flags.includes(fx.confiscate));
   if (fx.confiscateItem) S.lots = S.lots.filter(l => l.item !== fx.confiscateItem);
   if (fx.wind) S.wind += fx.wind;
+  if (fx.burden) { const b0 = S.burden; S.burden = Math.max(0, S.burden + fx.burden); if (S.burden !== b0) notes.push((S.burden > b0 ? '負擔＋' : '負擔－') + Math.abs(S.burden - b0)); }
   if (fx.xp) { const before = S.level; S.xp += fx.xp; let nd = M.xpNeed[S.level]; while (S.level < 9 && S.xp >= nd) { S.xp -= nd; S.level++; nd = M.xpNeed[S.level]; } notes.push('身體適應＋' + fx.xp + (S.level > before ? '（到了' + lvName(S.level) + '）' : '')); }
   if (fx.lifespan) { S.lifespan += fx.lifespan; notes.push((fx.lifespan > 0 ? '壽命＋' : '壽命－') + monthsText(Math.abs(fx.lifespan))); }
   if (fx.removeEvent) S.events = S.events.filter(e => e.id !== fx.removeEvent);
@@ -1120,6 +1121,7 @@ function shopStats() {
   const add = fx => { for (const [k, v] of Object.entries(fx || {})) if (typeof v === 'number') st[k] = (st[k] || 0) + v; };
   for (const id of Object.keys(S.shop.upg)) add((UP()[id] || {}).fx);
   for (const id of S.shop.staff) add((ST()[id] || {}).traits);
+  for (const [id, it] of Object.entries(IT)) if (it.passive && held(id)) add(it.passive);
   if (S.flags.ayue_loyal && S.shop.staff.includes('ayue')) st.sales += 1;
   if (S.flags.akai_reformed) st.greed = Math.max(0, st.greed - 1);
   if (st.audit) st.greed = Math.max(0, st.greed - st.audit);
@@ -1127,7 +1129,10 @@ function shopStats() {
 }
 function gearStats() {
   const g = { limit: 0, steps: 0, loot: 0, ascent: 1, protect: {} };
-  for (const id of Object.keys(S.shop.gear || {})) { const fx = (GE()[id] || {}).fx || {}; g.limit += fx.limit || 0; g.steps += fx.steps || 0; g.loot += fx.loot || 0; if (fx.ascent) g.ascent *= fx.ascent; for (const [k, v] of Object.entries(fx.protect || {})) g.protect[k] = (g.protect[k] || 1) * v; }
+  const srcs = Object.keys(S.shop.gear || {}).map(id => (GE()[id] || {}).fx || {});
+  for (const [id, it] of Object.entries(IT)) if (it.carry && held(id)) srcs.push(it.carry);
+  for (const id of S.shop.staff) if ((ST()[id] || {}).gear) srcs.push(ST()[id].gear);
+  for (const fx of srcs) { g.limit += fx.limit || 0; g.steps += fx.steps || 0; g.loot += fx.loot || 0; if (fx.ascent) g.ascent *= fx.ascent; for (const [k, v] of Object.entries(fx.protect || {})) g.protect[k] = (g.protect[k] || 1) * v; }
   return g;
 }
 const tierOf = () => { const n = Object.keys(S.shop.upg).length; return (SH.tiers || []).filter(t => n >= t.at).pop() || { name: '店' }; };
@@ -1512,7 +1517,8 @@ function renderHub() {
       else if (id === 'tea') note = '買消息、賣消息';
       else if (id === 'office') note = '告發、交東西';
       else if (id === 'pawn') note = '贖回壽命';
-      h += `<button class="place" data-act="enter" data-id="${id}" ${o === true ? '' : 'disabled'}><b>${esc(p.name)}</b><span>${esc(note)}</span></button>`;
+      const tn = o === true ? spotsNew(id) : 0; if (tn) note += `　·　有 ${tn} 處怪事可以看`;
+      h += `<button class="place${tn ? ' hot' : ''}" data-act="enter" data-id="${id}" ${o === true ? '' : 'disabled'}><b>${esc(p.name)}${tn ? '<em>新</em>' : ''}</b><span>${esc(note)}</span></button>`;
     }
     h += `</div>`;
   }

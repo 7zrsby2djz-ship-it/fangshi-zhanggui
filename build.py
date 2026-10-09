@@ -20,6 +20,21 @@ for pid, sps in more['spots'].items():
     data['places'][pid]['spots'] = data['places'][pid].get('spots', []) + sps
 data['places'].update(more['places'])
 data['events']['drift'] = data['events']['drift'] + L('events_more')['drift']
+# 第一批外稿（改寫後）
+b1 = L('batch1')
+for pid, sps in b1['spots'].items():
+    data['places'][pid]['spots'] = data['places'][pid].get('spots', []) + sps
+data['events']['drift'] += b1['drift']
+for k in ('staff',):
+    assert not set(b1[k]) & set(data['shop'][k]), 'dup ' + k
+    data['shop'][k].update(b1[k])
+assert not set(b1['items']) & set(data['items']); data['items'].update(b1['items'])
+assert not set(b1['deaths']) & set(data['deaths']); data['deaths'].update(b1['deaths'])
+data['threads'] += b1['threads']
+data['shop']['achievements'] += b1['achievements']
+data['shop']['bonuses'].update(b1['bonuses'])
+_sp = [sp['id'] for pl in data['places'].values() if isinstance(pl, dict) for sp in pl.get('spots', [])]
+assert len(_sp) == len(set(_sp)), 'duplicate spot id'
 # 檢查：所有 death id 都有定義
 import re as _re
 _txt = json.dumps(data, ensure_ascii=False)

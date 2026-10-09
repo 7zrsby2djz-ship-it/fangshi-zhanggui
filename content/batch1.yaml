@@ -1,0 +1,507 @@
+# ═════════════ 第一批外稿（改寫後）：點名簿、B2-17、分號 ═════════════
+# spots：併進既有地點；drift：早上的散事；staff／items／deaths／threads／achievements／bonuses：併進各自的表
+spots:
+  school:
+    - id: sc_roll
+      title: 廣播室的點名簿
+      hint: 舊國小廣播室，桌上攤著一本簿子
+      text: 廣播室的桌上攤著一本點名簿，封面寫著「三年二班」。前面幾頁的名字都打了勾，最後一頁只有一行，名字被水暈開了，日期寫的是今天。你把簿子合起來的時候，有一顆很小的乳牙從書背裡掉出來，還有一點溫。
+      fx: {flag: [sc_roll_seen], give: [{item: naiya, qty: 1, cost: 0}], xp: 6}
+      note: 舊國小的點名簿，最後一頁寫著今天的日期。
+    - id: sc_answer
+      title: 對著點名簿答「到」
+      hint: 最後一行的名字，你好像念得出來
+      danger: 點名只能聽，不要回答。
+      after: sc_roll
+      text: 你清了清喉嚨，對著空教室念出最後一行的名字，然後自己答了一聲「到」。走廊盡頭的廣播喇叭「啪」地響了一下。
+      fx:
+        death: {id: roll_called, chance: 0.7, unless: {has: {naiya: 1}}, saved: 口袋裡那顆乳牙忽然變得很燙。廣播喇叭沉默了很久，最後只說：「名字還沒長大的，不算。」你在簿子最後一行旁邊，看見一個鉛筆寫的勾，慢慢淡掉。}
+        flag: [roll_answered]
+        xp: 18
+    - id: sc_tape
+      title: 卡帶櫃最底層
+      hint: 一捲標著「朝會」的卡帶
+      after: sc_roll
+      text: 林老師搖了很久的手搖發電機，你把那捲「朝會」放進廣播室的錄音機。升旗、校長講話、點名。點到最後，有一個小孩答「到」答得特別大聲，然後是很長的雜音。林老師在門口聽完，說：「這捲我放過很多次。那個『到』，每次都在不一樣的地方。」
+      fx: {flag: [sc_tape], rel: {lin: 1}, xp: 8}
+  tea:
+    - id: tea_seat
+      title: 多出來的那個位子
+      hint: 靠窗那張桌子，永遠多擺一副杯子
+      text: 靠窗那張桌子永遠多擺一副杯子。白姐說，那是幫人留的，每年都有人來坐一下，喝半杯就走。杯子裡的茶是冷的，可是一直沒有灰。杯墊底下壓著一張舊國小的作業紙，寫著一個你在哪裡看過的名字。
+      fx: {flag: [tea_seat_seen], xp: 4}
+    - id: tea_half
+      title: 替那個人喝半杯
+      hint: 白姐看了你一眼，沒有阻止
+      after: tea_seat
+      text: 你坐下來喝了半杯。茶很冷，冷到牙齒發酸，可是喉嚨裡有一股很久以前的甜。白姐走過來把杯子收走，把剩下的半杯倒進一個小玻璃瓶，蓋好，塞給你：「剩下的，不要喝完。帶著它，晚上會比較好睡。」
+      fx: {give: [{item: banbei, qty: 1, cost: 0}], flag: [tea_half_drunk], rel: {bai: 1}}
+    - id: tea_all
+      title: 把那杯喝完
+      hint: 只剩半杯了
+      danger: 白姐說過，不要喝完。
+      after: tea_half
+      text: 你趁白姐在後面燒水，把那個小玻璃瓶裡剩下的冷茶，一口喝完。
+      fx:
+        death: {id: tea_finish, chance: 0.75, saved: 茶到喉嚨就停住了，怎麼吞都吞不下去。你咳了出來，地上是一灘清水，裡面有一片很小的、別人的指甲。白姐什麼都沒說，拿拖把把它擦掉了。}
+        take: [{item: banbei, qty: 1}]
+        flag: [tea_all_tried]
+    - id: tea_story
+      title: 說書人漏掉的那一句
+      hint: 下午場，說書人講到一半會停一下
+      text: 下午場的說書人講「末班車」的段子，講到「車門打開，裡面坐著——」就停了，喝一口茶，跳到下一句。每一場都在同一個地方停。散場後你問他，他想了很久：「那一句，我小時候聽我師父講過。後來每次要講，嘴巴就自己跳過去。」他看著你：「你要是聽到了，不要講給我聽。」
+      fx: {flag: [tea_story_heard], xp: 4}
+      note: 說書人講末班車，每次都跳過車裡坐著誰。
+  office:
+    - id: of_overtime
+      title: 一疊沒人簽收的加班單
+      hint: 管理處櫃台後面，有一疊泛黃的單子
+      text: 櫃台後面壓著一疊泛黃的加班單，事由那一欄全部寫著同一句：「夜間作業：把霧送回去。」負責人簽名被咖啡漬蓋住了，只看得出一個「十七」。值班的員警說那是以前留下來的，沒人知道在講什麼，「你要的話，最上面那張是空白的。」
+      fx: {flag: [office_overtime], xp: 4}
+      note: 管理處的舊加班單：「夜間作業：把霧送回去。」負責人簽名只剩「十七」。
+    - id: of_sign
+      title: 在空白的加班單上簽名
+      hint: 欄位旁邊寫著：「時數照算」
+      after: of_overtime
+      text: 你在最上面那張空白的單子簽了名。員警看了一眼，把一包靈石推給你：「預支的。」他沒有問你要去哪裡加班。那天晚上，店門口的霧比平常濃一點，好像在等人。
+      fx: {stones: 60, flag: [overtime_signed]}
+  homes:
+    - id: hm_light
+      title: 後山那間空屋
+      hint: 門上貼著「已售」，可是燈每天晚上都亮
+      text: 後山最上面那間空屋，門上貼著紅紙「已售」，可是每天晚上都有燈。你從窗戶看進去，客廳很乾淨，衣服疊得整整齊齊放在沙發上，像有人剛搬來，又像有人剛搬走。紅紙的背面印著一行小字：「許記分號，誠徵夥計。」
+      fx: {flag: [homes_house], xp: 4}
+      note: 後山空屋的「已售」紅紙背面，印著「許記分號，誠徵夥計」。
+    - id: hm_fold
+      title: 幫忙把衣服摺完
+      hint: 沙發上還有一件沒摺好
+      after: hm_light
+      text: 門沒鎖。沙發上還有一件舊國小的制服沒摺好，你順手把它摺成四方形。摺好的那一刻，屋裡的燈暗了一格，像有人點了點頭。你走的時候，那件制服在你的袋子裡。
+      fx: {give: [{item: zhifu, qty: 1, cost: 0}], xp: 8}
+    - id: hm_stay
+      title: 在空屋裡躺一下
+      hint: 床鋪好了，很像在等人
+      danger: 已經賣掉的房子，不要住進去。
+      after: hm_light
+      text: 你太累了。臥室的床鋪好了，被子是曬過太陽的味道。你想，躺五分鐘就好。
+      fx:
+        death: {id: house_sold, chance: 0.8, saved: 你剛躺下，樓下有人敲門，敲了三下，很有禮貌。你跳起來衝出去，門口沒有人，只有地上一雙擺好的拖鞋，鞋尖朝內。你一路跑回店裡，才發現紅紙上的「已售」，被人用鉛筆補了你的名字，又劃掉了。}
+        flag: [house_stayed]
+  stair:
+    - id: st_echo
+      title: 維修梯的回音
+      hint: 往下喊一聲，回來的不是你的聲音
+      after: st_b1
+      text: 你在維修梯中段往下喊了一聲。回來的聲音慢了半拍，而且是別人的：「還沒到站。」停了一下，又補一句：「十七號的人，換鞋了沒？」底下有拖鞋踩在鐵梯上的聲音，越走越遠。
+      fx: {flag: [stair_echo], xp: 10}
+      note: 維修梯的回音問：「十七號的人，換鞋了沒？」
+    - id: st_light_step
+      title: 變輕的那一階
+      hint: 有一階踩上去，整個人輕了一半
+      danger: 輕下來的重量，總要從別的地方扣。
+      after: st_b1
+      burden: 0
+      text: 往上爬到一半，有一階踩上去，背上的重量忽然輕了一半。你停在那一階，喘了很久。梯子旁邊的牆上，有人用指甲刻了很多道橫線，每一道旁邊都寫著一個數字，最小的是「一個月」。
+      fx: {burden: -4, lifespan: -1, flag: [light_step]}
+    - id: st_plate
+      title: B2-17 門口的名牌
+      hint: 實驗室門邊掛著一塊名牌
+      after: st_lab
+      text: B2-17 門邊掛著一塊壓克力名牌，寫著「負責人」，名字那一格是空的。名牌底下擺著一雙拖鞋，鞋尖朝內，鞋底一點灰都沒有。你把名牌翻過來，背面用奇異筆寫著你家的店名，字跡很新。
+      fx: {flag: [lab_plate], give: [{item: tuoxie, qty: 1, cost: 0}], xp: 12}
+      note: B2-17 名牌背面，寫著你家的店名。
+    - id: st_inner
+      title: 實驗室後面那扇小門
+      hint: 門上貼著「請換室內鞋」
+      after: st_plate
+      need: {has: {tuoxie: 1}}
+      strain: true
+      text: 讀卡機後面還有一扇小門，門上貼著：「請換室內鞋。」你把負責人的拖鞋放在門口，光著腳走進去。地板是溫的。桌上一本實驗日誌，最後一筆寫著：「今天的負責人還是沒來。霧送回去了一半。」日期那一格，跟你在國小點名簿上看到的是同一天。你沒有穿那雙拖鞋，它在門口等你，鞋尖朝外。
+      fx: {flag: [lab_barefoot], xp: 30, codex: [tuoxie]}
+    - id: st_slipper
+      title: 穿著拖鞋走進去
+      hint: 拖鞋剛好是你的尺寸
+      danger: 那不是你的鞋。
+      after: st_plate
+      need: {has: {tuoxie: 1}}
+      text: 拖鞋剛好是你的尺寸，軟得像有人穿了很多年。你穿著它，推開讀卡機後面那扇小門。
+      fx:
+        death: {id: slipper_end, chance: 0.8, saved: 走到一半，拖鞋自己掉了一隻，你差點跌倒。回頭看，那隻拖鞋已經轉過去，鞋尖朝外，好像在說「不是你」。你把另一隻也脫了，光著腳退出來。}
+        flag: [slipper_tried]
+    - id: st_card
+      title: 站牌長椅底下
+      hint: 有一張被風吹進去的卡片
+      after: st_stop
+      need: {flag: [sc_roll_seen]}
+      text: 長椅底下卡著一張護貝的學生證，三年二班。照片被曬白了，名字還看得到，就是點名簿最後一行那個。背面用鉛筆寫著：「我先坐車，幫我答到。」
+      fx: {flag: [stop_card], xp: 10}
+  lampst:
+    - id: ls_flicker
+      title: 不照時間亮的那盞燈
+      hint: 整條街只有一盞燈不準時
+      after: ls_enter
+      text: 整條燈街的燈都在23:58準時亮，只有一盞晚了一點，一閃一閃的。燈下蹲著一個穿制服的小孩，在地上數碎玻璃。他抬頭看你：「點名了嗎？」你蹲下來幫他撿，撿到一片還燙的燈泡碎片。他說：「那片給你。帶著它，霧裡比較看得到路。」
+      fx: {flag: [lamp_kid], give: [{item: dengsui, qty: 1, cost: 0}], xp: 20}
+    - id: ls_return
+      title: 把碎片放回燈座
+      hint: 那盞燈缺了一片
+      danger: 燈街的光，不是你的。
+      after: ls_flicker
+      text: 你把那片燈泡碎片拿出來，踮起腳，想把它放回燈座的缺口。
+      fx:
+        death: {id: lamp_return, chance: 0.65, saved: 碎片還沒碰到燈座就燙得你鬆手。它掉在地上，碎得更小。蹲著的小孩嘆了一口氣：「放回去的人，要留下來當燈。你還要回家吧？」他把最小的那片撿起來，又塞回你手裡。}
+        flag: [lamp_returned]
+    - id: ls_branch
+      title: 許記五金的帳本
+      hint: 街尾那間店的招牌，好像多了兩個字
+      after: ls_shop
+      need: {flag: [branch_sign]}
+      text: 你又走到街尾那間「許記五金」。招牌底下多了一行小字：「本店」。這次櫃台後面沒有人，帳本攤開著，是你的字，記的是你還沒做過的生意。最後一筆寫著：「分號開張，賀。」那張椅子是溫的。
+      fx: {flag: [lampst_branch], xp: 18}
+      note: 燈街上有一間「許記本店」，帳本是你的字。
+  platform:
+    - id: pf_announce
+      title: 月台廣播
+      hint: 廣播的聲音，聽起來像管理處的值班員警
+      after: pf_arrive
+      text: 廣播響了：「本班列車不載活人，請活人退到黃線後面。」重複三次，聲音越來越近，最後一次好像就在你耳朵旁邊。你退了一步。月台的黃線，原來是用很多張打過洞的票根貼出來的。
+      fx: {flag: [pf_announce_heard], xp: 12}
+    - id: pf_yellow
+      title: 踩過黃線
+      hint: 廣播說的是活人
+      danger: 廣播問你的時候，不要回答。
+      after: pf_announce
+      text: 你踩過黃線。廣播停了一下：「請問，你是活人嗎？」
+      fx:
+        death: {id: not_alive, chance: 0.7, saved: 你張開嘴，還沒回答，有人從後面拉住你的衣領，把你拖回黃線後面。你回頭，沒有人，只有地上一張票根，打洞的地方剛好是你的生日。}
+        flag: [crossed_yellow]
+    - id: pf_ticket
+      title: 售票口的反向票
+      hint: 售票口只賣往上的票
+      after: pf_arrive
+      need: {flag: [homes_house]}
+      text: 月台另一頭有一個售票口，窗口裡沒有人，只有一張票放在托盤上：「上行・許記分號 → 地面」，票的一角缺了一塊，像被咬掉。你拿起來，背上的東西好像有一半已經先上去了。
+      fx: {flag: [pf_reverse], give: [{item: quepiao, qty: 1, cost: 0}], burden: -5, xp: 20}
+  north:
+    - id: no_shell
+      title: 礦坑口坐著的殼
+      hint: 盤腿坐著的人形，裡面是空的
+      text: 礦坑口坐著一個盤腿的人形，皮膚像曬乾的蟬殼，背上裂了一條縫，裡面是空的。看地脈的人說，那是「結了嬰」的前輩留下來的，人走了，殼還在等。你敲了敲它的膝蓋，空空的，回聲慢了半拍才回來。那半拍掉在你手心，是一片很薄的殼。
+      fx: {give: [{item: banpai, qty: 1, cost: 0}], flag: [saw_shell], xp: 12}
+    - id: no_shell_sit
+      months: [2, 3]
+      title: 坐進殼裡
+      hint: 裂縫剛好夠一個人鑽進去
+      danger: 殼在等的不是你。
+      after: no_shell
+      text: 裂縫剛好夠一個人鑽進去。裡面很暖，很安靜，像小時候躲在棉被裡。
+      fx:
+        death: {id: shell_sit, chance: 0.6, saved: 你才把一隻腳伸進去，殼就自己合起來一點，把你擠了出去。你跌坐在地上，聽見殼裡有人很輕地說：「位子有人了。」}
+        flag: [shell_tried]
+
+drift:
+  - id: dr_branch_sign
+    month: [1, 2, 3]
+    days: [2, 6]
+    chance: 0.5
+    prio: 3
+    need: {minDays: 4}
+    title: 隔壁多了一塊招牌
+    text: 早上開門，你家招牌旁邊多掛了一塊，木頭很新，寫著「許記・分號」。字是你爸的字。隔壁說昨天晚上沒聽到釘釘子的聲音。
+    face: uneasy
+    choices:
+      - label: 拆下來
+        desc: 你家沒有分號
+        text: 你把它拆下來。招牌背面黏著很多木屑，一碰就掉進你的口袋。拆下來以後，原本掛招牌的地方留著一圈白印，像已經掛了很多年。
+        fx: {flag: [branch_sign], give: [{item: muxie, qty: 1, cost: 0}]}
+      - label: 先留著
+        desc: 說不定客人看得懂
+        text: 你決定先留著。中午有一個沒看過的客人走進來，問：「本店在哪裡？」你說這裡就是。他搖搖頭：「這裡是分號。本店在下面。」
+        fx: {flag: [branch_sign, branch_kept], rep: {loose: 1}}
+  - id: dr_overtime_due
+    month: [1, 2, 3]
+    chance: 1
+    prio: 6
+    need: {flag: [overtime_signed], not: [overtime_done]}
+    title: 加班單到期了
+    text: 天還沒亮，門縫裡塞進來一張加班單的副本，上面多了一欄：「今晚到班。」霧已經在店門口站好了，像在排隊。
+    face: uneasy
+    choices:
+      - label: 拿去管理處作廢
+        desc: 把預支的錢還回去
+        text: 你把副本和六十靈石拿去管理處。員警在單子上蓋了「作廢」，蓋了三次才蓋得上去。回來的時候，店門口的霧散了，只在玻璃上留了一個手印。
+        fx: {stones: -60, flag: [overtime_done, overtime_void]}
+      - label: 照單上寫的去加班
+        desc: 時數照算，再領一百二
+        text: 天一黑，你跟著店門口的霧走。它走得很慢，像怕你跟丟。
+        fx: {death: {id: overtime, chance: 0.75, saved: 走到斷崖邊，霧停下來，把你推了回去。你手裡多了一張蓋過章的加班單，事由那一欄被改成：「人送回去。」還有一包靈石。}, stones: 120, flag: [overtime_done]}
+  - id: dr_footprints
+    month: [2, 3]
+    chance: 0.45
+    prio: 3
+    need: {anyFlag: [heard_fog_name, met_fog_man, saw_shell]}
+    title: 霧裡的腳印
+    text: 一早出門，店門口的霧氣在地上結了一排腳印，從你家門口往斷崖的方向走。腳印的大小、走路外八的樣子，跟你一模一樣。最前面那一個，還是濕的。
+    face: uneasy
+    choices:
+      - label: 繞開走
+        desc: 今天走別條路
+        text: 你繞到市場那邊才出門。中午回來，腳印不見了，只有最前面那一個還在，變成了一灘水，映著一個背對你的人。
+        fx: {xp: 4}
+      - label: 踩進去看合不合
+        desc: 看起來真的是你的腳
+        text: 你把腳踩進第一個腳印。剛剛好。
+        fx: {death: {id: footprint_match, chance: 0.6, unless: {has: {zhibei: 1}}, saved: 口袋裡的指南針轉了一圈，指著你家。你低頭，發現腳印是往回走的——是你自己昨天晚上回來的路。你不記得昨天晚上出過門。}, flag: [footprint_stepped]}
+      - label: 叫店裡的人一起來看
+        desc: 多一個人看，就多一個人記得
+        text: 你把夥計叫出來。他看了很久，說：「老闆，這是你昨天晚上回來的腳印啊，你忘了？」你沒有忘，因為你昨天晚上沒有出門。這件事當天就傳遍了半條街。
+        fx: {spreadText: 許記門口一早有一排霧做的腳印，往斷崖那邊走。, flag: [footprint_told]}
+
+staff:
+  amai:
+    name: 阿麥
+    role: 帳房
+    hire: 70
+    wage: 6
+    traits: {audit: 1, traffic: -0.3}
+    tags: [算到睡不著, 會把客人算走]
+    desc: 以前在回春藥行對帳，帳差一塊錢會算到天亮。算得很準，只是客人在櫃台前站太久，他會開始幫人算這輩子還欠多少，有些人就不來了。
+    hello: 「我先把上個月的帳對一遍。……差七頁？那我晚上再算。」
+  xiaohe:
+    name: 小禾
+    role: 店員
+    hire: 60
+    wage: 5
+    traits: {sales: 1, gossip: 1, margin: -0.02}
+    tags: [記得每張臉, 心太軟]
+    desc: 茶館隔壁長大的，誰來過、買了什麼、家裡誰生病，她都記得。客人喜歡她，可是她太容易答應人家「下次再付」。
+    hello: 「你好！我記得你，你上禮拜有經過我們家門口。」
+  tishu:
+    name: 梯叔
+    role: 修繕
+    hire: 90
+    wage: 7
+    need: {flag: [stair_b1]}
+    traits: {security: 0.5}
+    gear: {ascent: 0.85}
+    tags: [知道哪一階會鬆, 話只講一半]
+    desc: 年輕時修過斷崖的維修梯，現在在聚落修門窗。哪一階會鬆、哪一段要抓繩子，他都記得。只是話永遠講一半，另一半要你自己下去才懂。
+    hello: 「第四十二階，不要踩中間。為什麼？……你下去就知道了。」
+  chunjiao:
+    name: 春嬌
+    role: 顧門
+    hire: 75
+    wage: 6
+    traits: {security: 1, traffic: -0.5}
+    tags: [以前守過巡守隊的門, 脾氣很大]
+    desc: 年輕時在巡守隊的舊會所幫忙顧門，名簿上的規矩背得比隊員還熟。盤查的人來，她三句話就打發走；只是她兇起來，連客人都不太敢進門。
+    hello: 「進出要登記。你是老闆也一樣。」
+  aque:
+    name: 阿缺
+    role: 跑腿
+    hire: 45
+    wage: 4
+    traits: {offers: 1, margin: -0.02}
+    tags: [腳很快, 每次少帶一樣]
+    desc: 聚落跑得最快的小孩，什麼貨都找得到人賣。只是每次出門，總會少帶回來一樣東西，問他，他說：「它不想來。」
+    hello: 「老闆要什麼？我跑一趟。……少一樣不要怪我喔。」
+  momo:
+    name: 末末
+    role: 夜班
+    hire: 50
+    wage: 4
+    need: {month: 2}
+    traits: {night: 1, security: 0.5}
+    tags: [不怕黑, 分不清夢跟帳]
+    desc: 白天睡覺、晚上醒著的女生。夜班交給她很放心，只是她早上交的帳本上，偶爾會多一筆你看不懂的：「賣出：一個夢。收：半拍。」
+    hello: 「我晚上都醒著。如果有人在招牌後面呼吸，我會跟它說我們打烊了。」
+
+items:
+  naiya:
+    name: 還有溫度的乳牙
+    cat: relic
+    unit: 顆
+    grade: 異物
+    base: 18
+    stat: 溫溫的
+    text: 從舊國小點名簿書背裡掉出來的乳牙，很小，一直有一點溫度，像剛從誰的嘴裡掉下來。帶著它的人，被點到名的時候，好像可以不算。
+    hidden:
+      - {label: 林老師研究過, need: {flag: studied_naiya}, text: 林老師說，三年二班的點名簿，舊物室有一本一模一樣的，最後一行是空的。「這顆牙大概是那一行的主人。名字還沒長大，就被點走了。」}
+    sell: [walk, lin]
+  chachou:
+    name: 沒有字的茶籌
+    cat: relic
+    unit: 支
+    grade: 異物
+    base: 22
+    stat: 竹片
+    text: 聽雨茶館以前用來記帳的竹片茶籌，正面應該寫桌號，這支是空白的。
+    sell: [walk, lin]
+  banbei:
+    name: 半杯冷茶
+    cat: relic
+    unit: 瓶
+    grade: 異物
+    base: 30
+    stat: 不會變溫
+    passive: {rest: 1}
+    text: 白姐倒進小玻璃瓶裡的半杯冷茶，放多久都是冷的。放在枕頭邊，晚上睡得特別沉，起來身體比較輕（每晚多退一點負擔）。白姐說：「不要喝完。」
+    hidden:
+      - {label: 林老師研究過, need: {flag: studied_banbei}, text: 林老師把瓶子對著光看了很久：「裡面有兩個人的倒影。一個是你。」}
+    sell: [walk, lin]
+  dengsui:
+    name: 還燙的燈泡碎片
+    cat: relic
+    unit: 片
+    grade: 異物
+    base: 35
+    stat: 一直是燙的
+    carry: {protect: {fog_lamp: 0.5}}
+    text: 燈街那盞不準時的燈掉下來的碎片，一直是燙的。帶著它走進霧裡，霧會讓開一點（霧裡的燈比較不會把你帶走）。
+    sell: [walk, lin]
+  tuoxie:
+    name: 負責人的拖鞋
+    cat: relic
+    unit: 雙
+    grade: 異物
+    base: 28
+    stat: 鞋尖朝內
+    text: B2-17 門口那雙拖鞋，鞋底沒有灰，不管怎麼擺，第二天鞋尖都會朝內。剛好是你的尺寸。
+    hidden:
+      - {label: 林老師研究過, need: {flag: studied_tuoxie}, text: 「負責人是誰不重要，」林老師說，「重要的是它一直在等人換上。不要換。」}
+    sell: [walk, lin]
+  quepiao:
+    name: 缺角的上行票
+    cat: relic
+    unit: 張
+    grade: 異物
+    base: 40
+    stat: 缺了一角
+    text: 第七層售票口拿的票：「上行・許記分號 → 地面」。缺掉的那一角，跟你家門口那塊分號招牌的缺口，形狀一樣。
+    sell: [walk, lin]
+  zhifu:
+    name: 摺好的舊制服
+    cat: relic
+    unit: 件
+    grade: 異物
+    base: 24
+    stat: 摺成四方形
+    carry: {protect: {flower_eat: 0.5}}
+    text: 後山空屋裡那件舊國小制服，摺好之後就攤不開了。帶在身上，白花的香味好像聞不太到（比較不會想吃白花）。
+    sell: [walk, lin]
+  banpai:
+    name: 借來的半拍
+    cat: relic
+    unit: 片
+    grade: 異物
+    base: 60
+    stat: 很薄的殼
+    carry: {steps: 1}
+    text: 礦坑口那層殼掉下來的一小片，敲它，回聲會慢半拍才回來。帶著它出門，好像每一趟都多出一點時間（每趟探索可以多看一處）。
+    hidden:
+      - {label: 林老師研究過, need: {flag: studied_banpai}, text: 林老師說這不是殼，是時間結的痂。「借來的，總要還。只是不知道還給誰。」}
+    sell: [walk, lin]
+  muxie:
+    name: 分號招牌的木屑
+    cat: relic
+    unit: 撮
+    grade: 異物
+    base: 15
+    stat: 很新
+    passive: {traffic: 0.5}
+    text: 那塊「許記・分號」招牌背面的木屑，一直是剛刨下來的香味。放在櫃台，客人好像比較多（客流＋0.5），有些人會問：「本店在哪裡？」
+    sell: [walk, lin]
+
+deaths:
+  roll_called:
+    cat: 探索
+    title: 被點名點走
+    seal: 點名
+    text: 喇叭響了，有人在走廊另一頭說：「好，到齊了。」你想說你不是這班的，可是你已經站在隊伍裡了，前後都是穿制服的小孩，大家都很安靜。升旗台上沒有旗子。後來舊物室的點名簿多了一個勾，最後一行的名字，是你的。
+    hint: 舊國小的點名簿只能看、不能答。真的要答，身上最好帶著從簿子裡掉出來的東西。
+  tea_finish:
+    cat: 遺物
+    title: 喝完整杯冷茶
+    seal: 冷茶
+    text: 最後一口冷茶滑下去的時候，你終於嚐到那股甜是什麼味道——是別人小時候的味道。靠窗那張桌子，從此多擺兩副杯子。白姐每天會幫你換茶，換的是冷的。
+    hint: 白姐說「不要喝完」，就是不要喝完。半杯冷茶帶在身上，比喝下去有用。
+  overtime:
+    cat: 店裡
+    title: 去加了那個班
+    seal: 加班
+    text: 霧帶你走到斷崖邊，遞給你一把很舊的掃把，要你把霧掃回崖下。你掃了一整個晚上，霧一點都沒少。天亮的時候，你發現自己掃的是自己。管理處的加班單上，負責人那一格多了你的名字，時數照算。
+    hint: 預支的錢，要記得還。加班單到期那天，拿去管理處作廢。
+  house_sold:
+    cat: 探索
+    title: 住進已經賣掉的房子
+    seal: 已售
+    text: 被子很暖，你睡得很好。醒來的時候，衣服已經幫你摺好了，門口的紅紙換了一張新的，上面寫著「已售」，買主那一格寫著你的名字，賣主那一格，也是你。後山那間空屋，每天晚上都有燈。
+    hint: 已經賣掉的房子，不管床多軟都不要躺。摺衣服可以，躺下來不行。
+  slipper_end:
+    cat: 遺物
+    title: 穿著別人的拖鞋走到最後
+    seal: 換鞋
+    text: 小門後面是一間更小的房間，桌上的名牌換成了你的名字。椅子很舒服，日誌攤開著，最新一行寫著：「今天的負責人來了。」從那天起，B2-17 的燈每天準時亮，門口沒有拖鞋了，因為你穿著。
+    hint: 實驗室後面那扇小門要「換鞋」，換的是你自己。把那雙拖鞋留在門口，光著腳進去。
+  lamp_return:
+    cat: 探索
+    title: 把光還給燈街
+    seal: 守燈
+    text: 碎片一碰到燈座就亮了，亮得你睜不開眼。等你能看的時候，你已經在燈座上了，往下看得到整條街，看得到那個小孩，他終於不用再數碎玻璃，跑走了。燈街從此每一盞燈都準時，23:58，一秒都不差。
+    hint: 燈街的碎片可以帶走，不要放回去。放回去的人，要留下來當燈。
+  not_alive:
+    cat: 探索
+    title: 回答了月台的廣播
+    seal: 乘車
+    text: 你說：「我是。」廣播說：「好的，請退到黃線後面。」你退了一步，發現黃線在你背後。車進站了，門打開，裡面的人都在對你點頭，好像早就認識你。月台上的廣播換了一句：「本班列車，乘客已到齊。」
+    hint: 月台的黃線不要踩過去；廣播問你什麼，都不要回答。
+  footprint_match:
+    cat: 探索
+    title: 跟霧裡的腳印重疊
+    seal: 腳印
+    text: 你的腳一放進去，就拔不出來了。後面那一個腳印自己往前走了一步，你的身體也跟著走。一步一步，你一直走到斷崖邊，最後一個腳印在半空中。第二天早上，店門口的腳印往回走了一排，大小剛好是你的。
+    hint: 霧結出來的腳印，不管多像你的，都不要踩。繞路，或者帶著只指向家的東西。
+  shell_sit:
+    cat: 探索
+    title: 坐回那層殼
+    seal: 結殼
+    text: 殼合起來的時候，一點都不痛。裡面很暖，你聽得到外面的風，聽得到看地脈的人在念紀念碑上的名字。你想出去，可是腳已經盤起來了。北礦的礦坑口，從此坐著兩個人形，敲起來，一個空，一個不空。
+    hint: 礦坑口那層殼可以敲、可以撿殼片，不要坐進去。殼在等的，是它原本的主人。
+
+threads:
+  - id: rollcall
+    title: 點名簿的最後一頁
+    desc: 三年二班的點名簿，最後一行的日期是今天。
+    steps:
+      - {flag: sc_roll_seen, text: 舊國小廣播室的點名簿，最後一行寫著今天的日期。, hint: 舊國小的廣播室裡，桌上攤著一本簿子。}
+      - {anyFlag: [tea_seat_seen, tea_story_heard], text: 聽雨茶館靠窗的位子，一直在等那個名字的主人。, hint: 聽雨茶館靠窗那張桌子，永遠多擺一副杯子。}
+      - {flag: stop_card, text: 維修梯的站牌底下，有那個小孩的學生證：「我先坐車，幫我答到。」, hint: 斷崖下那根沒有終點站的站牌，長椅底下卡著什麼。}
+      - {flag: lamp_kid, text: 你在燈街找到他了。他在數碎玻璃，問你點名了沒。, hint: 第六層的燈街，有一盞燈不照時間亮。}
+  - id: b217
+    title: B2-17 的負責人
+    desc: 實驗室的名牌是空的，拖鞋鞋尖朝內。
+    steps:
+      - {flag: stair_echo, text: 維修梯的回音問：「十七號的人，換鞋了沒？」, hint: 下了維修梯，往下喊一聲。}
+      - {flag: lab_plate, text: B2-17 的名牌背面寫著你家的店名，門口擺著一雙拖鞋。, hint: 維修梯第二個平台的 B2-17，門邊掛著名牌。}
+      - {flag: office_overtime, text: 管理處的舊加班單，負責人簽名只剩「十七」。, hint: 管理處櫃台後面，有一疊沒人簽收的單子。}
+      - {flag: lab_barefoot, text: 你沒有換鞋。小門後面的日誌說，霧送回去了一半。, hint: 帶著那雙拖鞋，推開實驗室後面那扇小門。進門之前想清楚要不要換。}
+  - id: branch
+    title: 分號先開張了
+    desc: 你家還沒有本店，分號就先開張了。
+    steps:
+      - {flag: branch_sign, text: 你家招牌旁邊，多了一塊「許記・分號」。, hint: 開店幾天以後，早上留意一下招牌。}
+      - {flag: lampst_branch, text: 燈街上有一間「許記本店」，帳本是你的字。, hint: 燈街街尾那間很像你家的店，再進去一次。}
+      - {flag: homes_house, text: 後山空屋的紅紙背面印著「許記分號，誠徵夥計」。, hint: 後山最上面那間空屋，每天晚上都有燈。}
+      - {flag: pf_reverse, text: 你在第七層拿到一張上行票：「許記分號 → 地面」。, hint: 第七層月台的另一頭，有一個售票口。}
+
+achievements:
+  - {id: a_rollcall, title: 幫他答到, desc: 在燈街找到點名簿最後一行的那個小孩。, cond: {flag: lamp_kid}, bonus: b_naiya}
+  - {id: a_b217, title: 不換鞋, desc: 光著腳走進 B2-17 後面那扇小門。, cond: {flag: lab_barefoot}, bonus: b_tishu}
+  - {id: a_branch, title: 上行票, desc: 拿到「許記分號 → 地面」的票。, cond: {flag: pf_reverse}, bonus: b_muxie}
+  - {id: a_shell, title: 位子有人了, desc: 坐進礦坑口那層殼。, cond: {death: shell_sit}, bonus: b_banpai}
+
+bonuses:
+  b_naiya: {name: 一顆乳牙, desc: 開張就帶著那顆還有溫度的乳牙。點名的時候不算你。, give: naiya}
+  b_tishu: {name: 梯叔, desc: 開張就有梯叔幫忙（回程的危險少一些）。, staff: tishu}
+  b_muxie: {name: 分號的木屑, desc: 開張就有一撮招牌木屑放在櫃台（客流＋0.5）。, give: muxie}
+  b_banpai: {name: 借來的半拍, desc: 開張就帶著那片殼（每趟探索多看一處）。, give: banpai}

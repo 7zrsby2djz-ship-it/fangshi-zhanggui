@@ -1377,6 +1377,47 @@ function autoTalk(e) {
 
 /* ================= rendering ================= */
 const $app = $('#app'), $bar = $('#bar'), $hud = $('#hud'), $sheet = $('#sheet');
+/* ----- 線條圖示（內嵌 SVG，跟著文字顏色） ----- */
+const ICONS = {
+  main: '<path d="M3.5 9.5 5 4h14l1.5 5.5M4.5 9.5V20h15V9.5M3.5 9.5h17M9.5 20v-5.5h5V20"/>',
+  shop: '<path d="M6 3.5h11.5a1.5 1.5 0 0 1 1.5 1.5v15.5H7.5A1.5 1.5 0 0 1 6 19zM6 18a1.5 1.5 0 0 1 1.5-1.5H19M9.5 7.5h6M9.5 11h6"/>',
+  threads: '<path d="M12 2.5v2.5M8.5 5h7M8 7.5h8a1 1 0 0 1 1 1v7.5a5 5 0 0 1-10 0V8.5a1 1 0 0 1 1-1zM10 21.5h4M12 19.5v2"/><path d="M12 10.5c1.2 1.3 1.6 2.3 1.6 3.2a1.6 1.6 0 0 1-3.2 0c0-.9.4-1.9 1.6-3.2z"/>',
+  store: '<path d="M3.5 7.5 12 3.5l8.5 4v9L12 20.5l-8.5-4zM3.5 7.5l8.5 4 8.5-4M12 11.5v9"/>',
+  intel: '<path d="M4 5h12.5v14.5H6A2 2 0 0 1 4 17.5zM16.5 9H20v8.5a2 2 0 0 1-2 2M7 9h6.5M7 12.5h6.5M7 16h4"/>',
+  people: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17.5 14.3A6 6 0 0 1 21 20"/>',
+  stone: '<path d="M7 4h10l3.5 5L12 20.5 3.5 9zM3.5 9h17M9.5 4 8 9l4 11.5M14.5 4 16 9l-4 11.5"/>',
+  breath: '<path d="M12 3c3.2 4.2 5.2 6.6 5.2 10.2a5.2 5.2 0 0 1-10.4 0c0-2.1 1-3.4 2.1-4.4 0 2 1 3.3 2.1 3.3 0-3.1-1.1-5.1 1-9.1z"/>',
+  pack: '<path d="M7 9a5 5 0 0 1 10 0v11.5H7zM9.5 4.2h5M7 13.5h10M10 13.5v2.5"/>',
+  life: '<path d="M7 3.5h10M7 20.5h10M8 3.5c0 5 8 6.5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 6.5-8 8.5s8 3.5 8 8.5"/>',
+  down: '<path d="M12 4v15M6.5 13.5 12 19l5.5-5.5"/>',
+  town: '<path d="M3 20.5h18M5 20.5v-8l4-3 4 3v8M13 20.5v-11l3.5-2.5 3.5 2.5v11M8 14.5h2M16 12.5h1.5"/>',
+  seal: '<rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9 9h6M9 12h6M12 9v7"/>',
+  lamp: '<path d="M12 2.5v3M9 5.5h6l1 3H8zM8.5 8.5h7l-1 8h-5zM10 16.5h4v2.5h-4zM12 19v2.5"/>'
+};
+const ic = (k, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k] || ''}</svg>`;
+const LAYER = { ruin: 1, tunnel: 2, reservoir: 2, cliff: 3, north: 4, stair: 5, lampst: 6, platform: 7 };
+const LAYER_NAME = ['聚落', '第一層', '第二層', '第三層', '第四層', '第五層', '第六層', '第七層'];
+function depthGauge(n) {
+  return `<div class="depth" aria-label="深度：${LAYER_NAME[n]}"><span class="depth-l">${ic('town')}</span><div class="depth-t">${LAYER_NAME.slice(1).map((_, i) => `<i class="${i + 1 < n ? 'past' : i + 1 === n ? 'now' : ''}"></i>`).join('')}</div><b>${LAYER_NAME[n]}</b></div>`;
+}
+const reduceMotion = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function countUp(root) {
+  const els = root.querySelectorAll('[data-count]'); if (!els.length || reduceMotion()) return;
+  els.forEach(el => {
+    const to = +el.dataset.count, signed = el.dataset.sign === '1', t0 = performance.now(), D = 420;
+    const show = v => { const r = Math.round(v); el.textContent = (signed ? (r >= 0 ? '＋' : '－') : '') + fmt(Math.abs(r)); };
+    const step = now => { const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3); show(to * e); if (k < 1) requestAnimationFrame(step); };
+    show(0); requestAnimationFrame(step);
+  });
+}
+function sceneOf() {
+  if (UI.view === 'title' || !S) return { scene: 'title', depth: 0, key: 'title' };
+  if (S.dead || S.phase === 'dead') return { scene: 'dead', depth: 0, key: 'dead' };
+  const pl = S.phase === 'place' && S.place && UI.tab === 'main' ? S.place.id : null;
+  const depth = pl && LAYER[pl] || 0;
+  const scene = UI.tab !== 'main' ? 'tab' : depth ? 'explore' : S.phase;
+  return { scene, depth, key: [UI.tab, S.phase, pl, S.enc && S.enc.deal, MON(), S.day, S.phase === 'day' ? S.slot : ''].join('|') };
+}
 function sealSVG(word) {
   const w = String(word).slice(0, 2);
   return `<svg class="seal-stamp" viewBox="0 0 100 100" aria-hidden="true"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g filter="url(#rough)" fill="none" stroke="var(--cinnabar)" stroke-width="5"><rect x="8" y="8" width="84" height="84" rx="6"/></g><text x="50" y="${w.length > 1 ? 47 : 64}" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="${w.length > 1 ? 30 : 44}" fill="var(--cinnabar)" filter="url(#rough)">${esc(w[0])}</text>${w.length > 1 ? `<text x="50" y="80" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="30" fill="var(--cinnabar)" filter="url(#rough)">${esc(w[1])}</text>` : ''}</svg>`;
@@ -1400,15 +1441,16 @@ function renderHUD() {
   }).join('');
   const need = M.xpNeed[S.level] || 999, L = burdenLimit(), b = S.burden;
   const bcls = b > L ? 'cin' : b > L * 0.5 ? 'gold' : 'jade';
-  $hud.innerHTML = `<div class="hud-top"><div class="hud-day">${dn}${tag ? `<span class="tagline">${tag}</span>` : ''}</div><div class="track" aria-label="時段">${slots}</div></div>
-  <div class="hud-stats"><span class="stone">靈石 <b>${fmt(S.stones)}</b></span><span>${lvName(S.level)}<span class="xpbar" title="修行 ${S.xp}/${need}"><i style="width:${Math.min(100, S.xp / need * 100)}%"></i></span></span>
-  <span class="burden ${bcls}" title="負擔">負擔 <b>${b}</b>/${L}</span><span>壽 <b class="cin">${S.lifespan}</b>月</span></div>`;
+  $hud.innerHTML = `<div class="hud-top"><div class="hud-day"><span class="lampdot" aria-hidden="true"></span>${dn}${tag ? `<span class="tagline">${tag}</span>` : ''}</div><div class="track" aria-label="時段">${slots}</div></div>
+  <div class="hud-stats"><span class="stat stone" title="靈石">${ic('stone')}<b>${fmt(S.stones)}</b></span><span class="stat lv" title="修行 ${S.xp}/${need}">${ic('breath')}${lvName(S.level)}<span class="xpbar"><i style="width:${Math.min(100, S.xp / need * 100)}%"></i></span></span>
+  <span class="stat burden ${bcls}" title="負擔">${ic('pack')}<b>${b}</b><small>/${L}</small></span><span class="stat life" title="壽命">${ic('life')}<b>${S.lifespan}</b><small>月</small></span></div>`;
 }
 function renderTitle() {
   const saved = S && S.phase !== 'end';
   const dbook = store.get(DEATH_KEY) || {}, nd = Object.keys(dbook).filter(k => DEATHS[k]).length, ND = Object.keys(DEATHS).length;
   const na = Object.keys(achBook()).length, NA = (SH.achievements || []).length;
-  return `<section class="title">
+  return `<div class="skyline" aria-hidden="true"><svg viewBox="0 0 390 150" preserveAspectRatio="xMidYMax slice"><path class="r3" d="M0 150V96l38-22 30 14 44-40 36 26 30-18 52 40 40-30 46 34 34-20 40 24v46z"/><path class="r2" d="M0 150v-34l52-18 40 16 46-30 50 30 36-12 58 26 44-22 64 26v18z"/><path class="r1" d="M0 150v-16l70-10 60 8 70-14 80 14 50-6 60 10v14z"/><g class="town"><path d="M228 118v-10h8v10M240 118v-14h6v14M250 118v-8h10v8"/></g><circle class="glow" cx="243" cy="108" r="9"/><circle class="lit" cx="243" cy="108" r="1.8"/></svg></div>
+  <section class="title">
     <div class="stack">
       <div class="ticket"><span class="label">長生當鋪 · 當票</span><p class="q">${esc(D.intro.ticket)}</p><div class="left">尚餘${monthsText(M.lifespan)}</div>
       <svg class="seal" viewBox="0 0 60 60" aria-hidden="true"><rect x="4" y="4" width="52" height="52" rx="4" fill="none" stroke="var(--cinnabar)" stroke-width="3"/><text x="30" y="27" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="17" fill="var(--cinnabar)">長生</text><text x="30" y="47" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="17" fill="var(--cinnabar)">典押</text></svg></div>
@@ -1416,7 +1458,7 @@ function renderTitle() {
     </div>
     <h1 class="title-v">坊市掌櫃<small>許家店 · ${saved ? monthLabel(S.month) : monthLabel(1)}</small></h1>
   </section>
-  <section class="card stack"><p class="lede">${esc(D.intro.how)}</p><p class="lede"><b>${esc(D.intro.goal)}</b></p></section>
+  <details class="card howto"${saved ? '' : ' open'}><summary>怎麼玩</summary><div class="stack" style="margin-top:10px"><p class="lede">${esc(D.intro.how)}</p><p class="lede"><b>${esc(D.intro.goal)}</b></p></div></details>
   <div class="title-actions">${saved ? `<button class="btn primary wide" data-act="continue">${S.phase === 'dead' ? '回到死亡畫面' : '繼續：' + monthLabel(S.month) + (M.dayNames[Math.min(S.day, DAYS()) - 1] || '')}</button><button class="btn quiet wide" data-act="setup">重新開張</button>` : `<button class="btn primary wide" data-act="setup">開張</button>`}
   <div class="row2"><button class="btn quiet" data-act="achsheet">成就 ${na}/${NA}</button><button class="btn quiet" data-act="deathsheet">死法圖鑑 ${nd}/${ND}</button></div></div>`;
 }
@@ -1456,7 +1498,7 @@ function renderHub() {
       const dz = Math.min(3, Math.ceil((pb + spotList(id).filter(sp => sp.fx && sp.fx.death).length) / 2));
       note = '危險 ' + '●'.repeat(dz) + '○'.repeat(3 - dz) + '　·　' + note;
       if (o === true && pb && S.burden + pb > burdenLimit()) note += '　·　去了會超過負擔';
-      h += `<button class="place${n && o === true ? ' hot' : ''}" data-act="enter" data-id="${id}" ${o === true ? '' : 'disabled'}><b>${esc(p.name)}${n && o === true && seen ? '<em>新</em>' : ''}</b><span>${esc(note)}</span></button>`;
+      h += `<button class="place ex${n && o === true ? ' hot' : ''}" style="--l:${LAYER[id] || 0}" data-act="enter" data-id="${id}" ${o === true ? '' : 'disabled'}><b>${esc(p.name)}${n && o === true && seen ? '<em>新</em>' : ''}</b><span>${esc(note)}</span></button>`;
     }
     h += `</div><h2 class="sec-h">在聚落裡</h2><div class="places">`;
     for (const id of ['school', 'tea', 'office', 'homes', 'pawn']) {
@@ -1521,7 +1563,7 @@ function renderEnc() {
 }
 function renderPlace() {
   const id = S.place.id, p = PL[id];
-  let h = `<div class="who"><div><div class="nm">${esc(p.name)}</div><div class="rl">${esc((p.depth ? p.depth + '　·　' : '') + (SLOT[S.slot] || ''))}</div></div></div><p class="serif" style="margin-top:8px;line-height:1.85">${esc(p.blurb)}${p.blurbM && p.blurbM[MON()] ? ' ' + esc(p.blurbM[MON()]) : ''}${id === 'market' && S.day === MD().marketDay ? ' ' + esc(p.blurbMarketDay) : ''}</p>`;
+  let h = `${LAYER[id] ? depthGauge(LAYER[id]) : ''}<div class="who place-h"><div><div class="nm">${esc(p.name)}</div><div class="rl">${esc((p.depth ? p.depth + '　·　' : '') + (SLOT[S.slot] || ''))}</div></div></div><p class="serif blurb">${esc(p.blurb)}${p.blurbM && p.blurbM[MON()] ? ' ' + esc(p.blurbM[MON()]) : ''}${id === 'market' && S.day === MD().marketDay ? ' ' + esc(p.blurbMarketDay) : ''}</p>`;
   if (S.place.say) h += `<div class="ln" style="margin-top:12px">${S.place.sayWho || p.npc ? `<span class="sp">${esc(NP[S.place.sayWho || p.npc].name)}</span>` : ''}<span class="tx">${esc(S.place.say)}</span></div>`;
   if (p.type === 'explore') h += `<p class="small ${S.burden > burdenLimit() ? 'cin' : 'muted'}" style="margin-top:6px">負擔 ${S.burden}/${burdenLimit()}：${burdenWord()}${ascentRisk() > 0 ? `。回程約 ${Math.round(ascentRisk() * 100)}% 上不來。` : '。'}</p>`;
   if (S.place.found) { const f = S.place.found; h += `<div class="card" style="margin-top:12px"><b class="serif">${esc(f.title)}</b>${f.text.split('\n').map(t => `<p class="serif" style="line-height:1.9;margin-top:6px">${esc(t)}</p>`).join('')}${f.notes.length ? `<p class="small jade" style="margin-top:6px">${esc(f.notes.join('　'))}</p>` : ''}</div>`; }
@@ -1627,7 +1669,7 @@ function renderNight() {
   const row = (a, v, cls = '') => `<div class="row"><span class="label" style="flex:1">${a}</span><b class="num ${cls}">${v}</b></div>`;
   const sign = x => (x >= 0 ? '＋' : '－') + fmt(Math.abs(x));
   return `<section class="night stack"><h2>日報・${esc(monthLabel(MON()))}${esc(M.dayNames[S.day - 1] || '')}</h2>
-    <div class="card ledger"><div class="row"><span class="label" style="flex:1">店裡今天淨賺</span><b class="num big ${r.total >= 0 ? 'jade' : 'cin'}">${sign(r.total)}</b></div>
+    <div class="card ledger"><div class="row"><span class="label" style="flex:1">店裡今天淨賺</span><b class="num big ${r.total >= 0 ? 'jade' : 'cin'}" data-count="${r.total}" data-sign="1">${sign(r.total)}</b></div>
     <p class="small muted" style="margin:4px 0 6px">來客 ${r.traffic} 人・營業額 ${fmt(r.gross)}・收了 ${r.acc} 批貨${r.fakes ? `（其中 ${r.fakes} 批是假的，虧 ${r.fakeLoss}）` : ''}</p>
     ${r.lines.map(t => `<p class="serif small" style="line-height:1.8">・${esc(t)}</p>`).join('')}
     <details style="margin-top:6px"><summary class="small muted">細帳</summary>${row('賣貨毛利', sign(r.net))}${row('收購轉賣', sign(r.buyProfit))}${r.fakeLoss ? row('假貨', sign(-r.fakeLoss), 'cin') : ''}${r.shady ? row('不問來路的貨', sign(r.shady)) : ''}${r.night ? row('夜班', sign(r.night)) : ''}${r.skim ? row('抽屜少了', sign(-r.skim), 'cin') : ''}${row('薪水', sign(-r.wages))}</details>
@@ -1848,7 +1890,7 @@ function renderCodex() {
 function unlockedHidden(k) { return (IT[k].hidden || []).filter(h => (h.need.realm && S.level >= h.need.realm) || (h.need.flag && S.flags[h.need.flag])); }
 
 function renderSheet() {
-  const sh = UI.sheet; if (!sh) { $sheet.hidden = true; $sheet.innerHTML = ''; return; }
+  const sh = UI.sheet; if (!sh) { UI.sheetOpen = null; $sheet.hidden = true; $sheet.innerHTML = ''; return; }
   let h = '';
   if (sh.type === 'lore') {
     const it = IT[sh.id]; S.codex[sh.id] = true;
@@ -1880,7 +1922,7 @@ function renderSheet() {
   } else if (sh.type === 'deaths') {
     const book = store.get(DEATH_KEY) || {}; const cats = {};
     for (const [id, d] of Object.entries(DEATHS)) (cats[d.cat] = cats[d.cat] || []).push([id, d]);
-    h = `<h2>死法圖鑑 ${Object.keys(book).filter(k => DEATHS[k]).length}/${Object.keys(DEATHS).length}</h2><p class="small muted">死過一次，這裡就會記下來。換一局也不會忘。</p>` + Object.entries(cats).map(([c, list]) => `<h3 class="sec-h">${esc(c)}</h3>` + list.map(([id, d]) => book[id] ? `<div class="card" style="margin-top:6px"><b class="serif">${esc(d.title)}</b>${book[id].n > 1 ? `<span class="small muted">　×${book[id].n}</span>` : ''}<p class="small muted" style="margin-top:4px">${esc(d.hint || '')}</p></div>` : `<div class="card dim" style="margin-top:6px"><b class="serif muted">？？？</b></div>`).join('')).join('');
+    h = `<h2>死法圖鑑 ${Object.keys(book).filter(k => DEATHS[k]).length}/${Object.keys(DEATHS).length}</h2><p class="small muted">死過一次，這裡就會記下來。換一局也不會忘。</p>` + Object.entries(cats).map(([c, list]) => `<h3 class="sec-h">${esc(c)}</h3>` + list.filter(([id]) => book[id]).map(([id, d]) => `<div class="card" style="margin-top:6px"><b class="serif">${esc(d.title)}</b>${book[id].n > 1 ? `<span class="small muted">　×${book[id].n}</span>` : ''}<p class="small muted" style="margin-top:4px">${esc(d.hint || '')}</p></div>`).join('') + (list.some(([id]) => !book[id]) ? `<div class="locks">${list.filter(([id]) => !book[id]).map(() => '<span>？</span>').join('')}</div>` : '')).join('');
   } else if (sh.type === 'ach') {
     const book = achBook(), BN = SH.bonuses || {};
     h = `<h2>成就 ${Object.keys(book).length}/${(SH.achievements || []).length}</h2><p class="small muted">每個成就會解鎖一個開張加成。每局能帶 ${bonusPicks()} 個（成就越多，能帶越多，最多四個）。</p>` + (SH.achievements || []).map(a => `<div class="card${book[a.id] ? '' : ' dim'}" style="margin-top:6px"><b class="serif">${book[a.id] ? esc(a.title) : '？？？'}</b><p class="small ${book[a.id] ? '' : 'muted'}">${esc(book[a.id] ? a.desc : (a.hint || a.desc))}</p><p class="small jade">→ ${esc((BN[a.bonus] || {}).name || '')}</p></div>`).join('');
@@ -1891,12 +1933,13 @@ function renderSheet() {
     h = `<h2>選單</h2>${sh.confirm ? `<p class="small">重新開始會清掉這一局。確定嗎？</p><button class="opt danger" data-act="new"><b>確定，重新開始</b><span>這一局會消失</span></button>` : `<button class="opt" data-act="home"><b>回到封面</b><span>進度會保留</span></button><button class="opt" data-act="setup"><b>重新開張</b><span>清掉這一局，挑加成</span></button><button class="opt" data-act="achsheet"><b>成就</b><span>解鎖下一局的加成</span></button><button class="opt" data-act="deathsheet"><b>死法圖鑑</b><span>你死過的方式</span></button>`}`;
   }
   $sheet.hidden = false;
-  $sheet.innerHTML = `<div class="veil" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" data-stop="1">${h}<button class="btn ghost wide" style="margin-top:10px" data-act="closesheet">關上</button></div></div>`;
+  const fresh = UI.sheetOpen !== sh.type; UI.sheetOpen = sh.type;
+  $sheet.innerHTML = `<div class="veil${fresh ? ' fresh' : ''}" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" data-stop="1">${h}<button class="btn ghost wide" style="margin-top:10px" data-act="closesheet">關上</button></div></div>`;
 }
 
 function renderBar() {
   let h = '';
-  const nav = () => `<nav class="nav">${[['main', '店面', '今天'], ['shop', '店務', '方針'], ['threads', '謎題', newThread() ? '有新的' : '線索'], ['store', '庫房', '貨'], ['intel', '消息', newIntel() ? '有新的' : '簿'], ['people', '人脈', '名聲']].map(([k, a, b]) => `<button data-act="tab" data-v="${k}" class="${UI.tab === k ? 'on' : ''}${(k === 'intel' && newIntel()) || (k === 'threads' && newThread()) ? ' new' : ''}">${a}<em>${b}</em></button>`).join('')}</nav>`;
+  const nav = () => `<nav class="nav">${[['main', '店面', '今天'], ['shop', '店務', '方針'], ['threads', '謎題', newThread() ? '有新的' : '線索'], ['store', '庫房', '貨'], ['intel', '消息', newIntel() ? '有新的' : '簿'], ['people', '人脈', '名聲']].map(([k, a, b]) => `<button data-act="tab" data-v="${k}" class="${UI.tab === k ? 'on' : ''}${(k === 'intel' && newIntel()) || (k === 'threads' && newThread()) ? ' new' : ''}" aria-label="${a}・${b}">${ic(k)}<span>${a}</span></button>`).join('')}</nav>`;
   if (UI.view === 'title' || S.phase === 'dead') { $bar.hidden = true; return; }
   if (UI.tab !== 'main') h = nav();
   else if (S.phase === 'morning') { const pend = S.cards.some(c => c.choices); h = `<button class="btn primary wide" data-act="open" ${pend ? 'disabled' : ''}>${pend ? '先處理卡片上的事' : '開門'}</button>` + nav(); }
@@ -1934,10 +1977,15 @@ function render() {
   else if (S.phase === 'place') { if (S.place) h = renderPlace(); else { S.phase = 'day'; h = renderHub(); } }
   else if (S.phase === 'night') h = renderNight();
   else if (S.phase === 'end') h = renderEnd();
+  const sc = sceneOf(), B = document.body, changed = sc.key !== UI.sceneKey;
+  B.dataset.scene = sc.scene; B.dataset.depth = sc.depth;
   $app.innerHTML = h;
+  if (changed && !reduceMotion()) { $app.classList.remove('enter'); void $app.offsetWidth; $app.classList.add('enter'); }
+  if (changed && sc.scene === 'night') countUp($app);
+  UI.sceneKey = sc.key;
   renderBar(); renderSheet();
   if (UI.achToast) { if (!(S && S.dead)) UI.toast = '解鎖成就：' + UI.achToast.join('、') + (UI.toast ? '　' + UI.toast : ''); UI.achToast = null; }
-  if (UI.toast) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = UI.toast; document.body.appendChild(t); UI.toast = null; setTimeout(() => t.remove(), 1800); }
+  if (UI.toast) { const ach = UI.toast.startsWith('解鎖成就'); document.querySelectorAll('.toast').forEach(x => x.remove()); const t = document.createElement('div'); t.className = 'toast' + (ach ? ' ach' : ''); t.setAttribute('role', 'status'); if (ach) t.innerHTML = ic('seal') + `<span>${esc(UI.toast)}</span>`; else t.textContent = UI.toast; document.body.appendChild(t); UI.toast = null; const life = ach ? 2800 : 1900; setTimeout(() => t.classList.add('out'), life - 260); setTimeout(() => t.remove(), life); }
 }
 function toast(t) { UI.toast = t; }
 function save() { if (S) { if (S.phase !== 'end') scanLearn(); store.set(SAVE_KEY, S); } }

@@ -1,3 +1,10 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#141917">
+<meta name="color-scheme" content="dark">
 <title>坊市掌櫃</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -320,7 +327,234 @@ details summary{cursor:pointer}
 .chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
 .opt.confirm,.btn.confirm{outline:2px solid var(--cinnabar);outline-offset:1px;background:rgba(179,54,42,.08)}
 
+/* ======================================================================
+   美術：夜霧與燈
+   一個主題（偏暗）：霧灰、苔綠、鏽紅、燈的琥珀色。紙的顆粒用內嵌 SVG。
+   越往下越冷、越暗；燈街偏暖；死亡偏鏽。動畫只用 transform／opacity，150–420ms。
+   ====================================================================== */
+:root:not(#_){
+  --ground:#141917; --sheet:#1d2421; --sheet-2:#232b28;
+  --ink:#ECE6D8; --ink-2:#A9B1A7; --ink-3:#7C867E; --rule:#34403B; --rule-2:#2A3430;
+  --cinnabar:#E3805F; --jade:#93C4A4; --gold:#EBB453; --lamp:#F2B84B;
+  --wash:rgba(147,196,164,.10); --shade:rgba(236,230,216,.05);
+  --seal-blend:normal; color-scheme:dark;
+  --vig:.55; --tint:transparent;
+  --noise:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .93  0 0 0 0 .9  0 0 0 0 .84  0 0 0 .055 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Noto Sans CJK TC","Microsoft JhengHei",sans-serif;
+}
+/* 深度：顏色溫度與暗角 */
+body[data-depth="1"],body[data-depth="2"]{--ground:#121816;--sheet:#1a221f;--vig:.62}
+body[data-depth="3"],body[data-depth="4"]{--ground:#10161a;--sheet:#182025;--sheet-2:#1e272c;--rule:#2f3c42;--vig:.7;--tint:rgba(60,100,130,.08)}
+body[data-depth="5"]{--ground:#0d1317;--sheet:#151d22;--sheet-2:#1b242a;--rule:#2b3840;--vig:.78;--tint:rgba(50,90,130,.12)}
+body[data-depth="6"]{--ground:#15110d;--sheet:#1f1914;--sheet-2:#271f18;--rule:#3d3227;--vig:.75;--tint:rgba(242,184,75,.07)}
+body[data-depth="7"]{--ground:#0a0d10;--sheet:#12171c;--sheet-2:#171d23;--rule:#28323b;--vig:.88;--tint:rgba(30,50,80,.16)}
+body[data-scene="dead"]{--ground:#120d0c;--sheet:#1c1513;--rule:#3a2925;--vig:.85;--tint:rgba(160,50,30,.10)}
+body[data-scene="title"]{--vig:.5}
+
+html{background:var(--ground)}
+body{background:var(--ground);transition:background-color .4s ease;font-size:15.5px;line-height:1.7;-webkit-font-smoothing:antialiased;font-feature-settings:"palt" 0}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(120% 85% at 50% 35%,transparent 45%,rgba(0,0,0,var(--vig)) 100%),linear-gradient(var(--tint),var(--tint)),var(--noise);
+  transition:opacity .4s ease}
+.wrap{position:relative;z-index:1}
+::selection{background:rgba(242,184,75,.3)}
+
+/* 霧：只在探索時出現，慢慢飄 */
+#fog{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0;transition:opacity .6s ease;overflow:hidden}
+#fog i{position:absolute;left:-40%;width:180%;height:60%;border-radius:50%;filter:blur(30px);background:radial-gradient(closest-side,rgba(200,210,205,.10),transparent);will-change:transform}
+#fog i:first-child{top:18%;animation:fogdrift 46s linear infinite alternate}
+#fog i:last-child{top:55%;height:50%;animation:fogdrift 62s linear infinite alternate-reverse;opacity:.8}
+body[data-scene="explore"] #fog{opacity:1}
+body[data-depth="6"] #fog i{background:radial-gradient(closest-side,rgba(242,184,75,.07),transparent)}
+body[data-depth="7"] #fog i{background:radial-gradient(closest-side,rgba(140,170,200,.08),transparent)}
+@keyframes fogdrift{from{transform:translate3d(-8%,0,0)}to{transform:translate3d(8%,-3%,0)}}
+
+/* ---------- 字 ---------- */
+.sec-h{font-size:13px;letter-spacing:.22em;color:var(--ink-3);margin:30px 0 12px;font-weight:600}
+.sec-h::after{border-bottom-color:var(--rule-2)}
+.sec-h small{letter-spacing:.06em;font-family:var(--sans);font-weight:400}
+.label{color:var(--ink-3)}
+.small{font-size:13.5px}
+.muted{color:var(--ink-2)}
+.serif{font-family:var(--serif)}
+p.blurb{margin-top:10px;font-size:16px;line-height:1.95;color:var(--ink)}
+
+/* ---------- 紙 ---------- */
+.card,.person,.event,.go,.opt,.place,.ticket,.goods,.codex button,.check,.sheet{background-image:var(--noise);background-color:var(--sheet)}
+.card,.person{border:1px solid var(--rule-2);border-radius:14px;padding:16px;box-shadow:0 1px 0 rgba(255,255,255,.02) inset,0 6px 18px -12px rgba(0,0,0,.6)}
+.event{border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:12px;padding:14px 16px}
+.event h3{color:var(--gold);font-size:14.5px;letter-spacing:.14em}
+.event.pending{border-left-color:var(--cinnabar)}
+.event.pending h3{color:var(--cinnabar)}
+.event.finale{border:1px solid var(--rule);border-top:3px solid var(--cinnabar)}
+
+/* ---------- 按鈕 ---------- */
+.btn{min-height:48px;border-radius:12px;border:1px solid var(--rule);background:var(--sheet-2);color:var(--ink);font-weight:600;letter-spacing:.04em;transition:transform .12s var(--ease),background-color .2s ease,border-color .2s ease}
+.btn:active:not(:disabled),.go:active:not(:disabled),.opt:active:not(:disabled),.place:active:not(:disabled),.nav button:active{transform:scale(.98)}
+.btn.primary{background:var(--lamp);border-color:var(--lamp);color:#1E1608;box-shadow:0 0 0 1px rgba(242,184,75,.25),0 8px 22px -10px rgba(242,184,75,.55)}
+.btn.primary:disabled{box-shadow:none;background:var(--sheet-2);border-color:var(--rule);color:var(--ink-2);opacity:1}
+.btn.jade{background:var(--jade);border-color:var(--jade);color:#0F1A14}
+.btn.quiet{background:transparent;border-color:var(--rule);color:var(--ink)}
+.btn.ghost{color:var(--ink-2)}
+.btn.danger{background:#B4553B;border-color:#B4553B;color:#FFF3EC}
+.btn .sub{opacity:.75}
+.go{border:1px solid var(--rule);border-radius:14px;padding:14px;min-height:64px;transition:transform .12s var(--ease),border-color .2s ease}
+.go.hot{border-color:var(--rule);box-shadow:inset 3px 0 0 var(--lamp)}
+.go .gt{font-size:17px;letter-spacing:.04em}
+.go .arrow{color:var(--ink-3)}
+.opt{border:1px solid var(--rule);border-radius:14px;padding:14px 16px;min-height:56px;transition:transform .12s var(--ease),border-color .2s ease,background-color .2s ease}
+.opt b{font-size:16.5px;letter-spacing:.03em}
+.opt.danger{border-color:rgba(227,128,95,.45);box-shadow:inset 3px 0 0 var(--cinnabar)}
+.opt .warn{color:var(--cinnabar);font-weight:500}
+.opt.on{border-color:var(--jade);background-color:rgba(147,196,164,.08)}
+.opt.confirm,.btn.confirm{outline:none;border-color:var(--cinnabar);background-color:rgba(227,128,95,.12);animation:nudge .32s var(--ease)}
+@keyframes nudge{0%,100%{transform:translateX(0)}30%{transform:translateX(-3px)}60%{transform:translateX(2px)}}
+.pill{border-color:var(--rule);color:var(--ink-2);padding:1px 8px}
+.pill.jade{border-color:rgba(147,196,164,.5)}
+.pill.cin{border-color:rgba(227,128,95,.55)}
+
+/* ---------- 地點卡 ---------- */
+.places{gap:10px}
+.place{border:1px solid var(--rule-2);border-radius:12px;padding:12px;min-height:72px;transition:transform .12s var(--ease),border-color .2s ease}
+.place b{font-size:15.5px;letter-spacing:.04em}
+.place span{font-size:12.5px;color:var(--ink-2);line-height:1.55}
+.place.hot{border-color:rgba(147,196,164,.55)}
+.place.ex{background-image:linear-gradient(180deg,transparent 30%,rgba(10,20,30,calc(var(--l) * .09))),var(--noise);border-left:3px solid color-mix(in srgb,var(--jade) calc(100% - var(--l) * 12%),#4f7fa6)}
+.place:disabled{opacity:.42}
+
+/* ---------- 頂部 ---------- */
+#hud{background:color-mix(in srgb,var(--ground) 92%,transparent);border-bottom:1px solid var(--rule-2);padding:10px 16px 10px;transition:background-color .4s ease}
+.hud-day{font-size:19px;display:flex;align-items:baseline;gap:2px}
+.hud-day small.mon{color:var(--ink-3)}
+.hud-day .tagline{color:var(--gold)}
+.lampdot{width:7px;height:7px;border-radius:50%;background:var(--lamp);box-shadow:0 0 8px 2px rgba(242,184,75,.45);align-self:center;margin-right:8px;animation:flicker 5.5s steps(1,end) infinite}
+@keyframes flicker{0%,100%{opacity:1}41%{opacity:.82}42%{opacity:1}67%{opacity:.9}68%{opacity:.62}69%{opacity:1}88%{opacity:.86}}
+.track span{border-color:var(--rule-2);color:var(--ink-3);border-radius:6px;width:28px;height:24px;transition:background-color .3s ease,color .3s ease}
+.track span.now{border-color:var(--lamp);color:var(--lamp);background:rgba(242,184,75,.10)}
+.track span.past{background:transparent;color:var(--rule);text-decoration:none}
+.hud-stats{gap:6px 14px;margin-top:8px;font-size:12.5px;color:var(--ink-2)}
+.hud-stats .stat{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.hud-stats b{font-size:16px;color:var(--ink)}
+.hud-stats small{font-size:11.5px;color:var(--ink-3)}
+.hud-stats .ic{width:16px;height:16px;color:var(--ink-3)}
+.hud-stats .stone b{color:var(--gold)}
+.hud-stats .life b{color:var(--cinnabar)}
+.hud-stats .burden.cin .ic{color:var(--cinnabar)}
+.xpbar{width:38px;background:var(--rule-2)}
+.xpbar i{background:var(--jade);transition:width .4s var(--ease)}
+
+/* ---------- 底部 ---------- */
+#bar{background:color-mix(in srgb,var(--ground) 94%,transparent);border-top:1px solid var(--rule-2);transition:background-color .4s ease}
+.nav{gap:2px}
+.nav button{min-height:52px;padding:6px 0 4px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--sans);font-size:11.5px;letter-spacing:.06em;color:var(--ink-3);position:relative;transition:color .2s ease}
+.nav button .ic{width:22px;height:22px}
+.nav button.on{background:transparent;box-shadow:none;color:var(--lamp);font-weight:600}
+.nav button.on::after{content:"";position:absolute;bottom:0;left:30%;right:30%;height:2px;border-radius:2px;background:var(--lamp)}
+.nav button.new::before{content:"";position:absolute;top:6px;left:calc(50% + 9px);width:7px;height:7px;border-radius:50%;background:var(--cinnabar);box-shadow:0 0 0 2px var(--ground)}
+
+/* ---------- 標題畫面 ---------- */
+.skyline{margin:0 -16px -36px;height:150px;position:relative}
+.skyline svg{width:100%;height:100%;display:block}
+.skyline .r3{fill:#1a211e}.skyline .r2{fill:#171d1b}.skyline .r1{fill:var(--ground)}
+.skyline .town{stroke:var(--ink-3);stroke-width:1.2;fill:none;opacity:.6}
+.skyline .glow{fill:rgba(242,184,75,.22);filter:blur(4px);animation:glow 6s ease-in-out infinite}
+.skyline .lit{fill:var(--lamp)}
+@keyframes glow{0%,100%{opacity:.85}50%{opacity:.45}}
+.title{padding-top:8px}
+.title-v{color:var(--ink);text-shadow:0 2px 24px rgba(0,0,0,.5)}
+.title-v small{color:var(--ink-3)}
+.ticket{border:1px solid var(--rule);border-radius:6px;box-shadow:0 10px 30px -18px rgba(0,0,0,.8)}
+.ticket .left{color:var(--cinnabar)}
+.lede{color:var(--ink-2)}
+
+/* ---------- 對話 ---------- */
+.who .nm{font-size:25px}
+.face{color:var(--ink)}
+.ln .tx{font-size:17px;line-height:1.75}
+.ln .sp{color:var(--ink-3)}
+.ln.sys{border-color:rgba(147,196,164,.35);background:rgba(147,196,164,.06)}
+.ln.res{border-top-color:var(--rule)}
+.ln.note .tx{border-color:var(--rule);color:var(--ink-3)}
+.goods{border:1px solid var(--rule-2);border-radius:10px}
+.goods::before,.goods::after{border-top-color:var(--rule-2)}
+
+/* ---------- 深度尺 ---------- */
+.depth{display:flex;align-items:center;gap:10px;margin-top:14px;color:var(--ink-3);font-size:12px;letter-spacing:.14em}
+.depth .ic{width:16px;height:16px}
+.depth-t{display:flex;gap:3px;flex:1}
+.depth-t i{flex:1;height:4px;border-radius:2px;background:var(--rule-2)}
+.depth-t i.past{background:color-mix(in srgb,var(--jade) 45%,var(--rule))}
+.depth-t i.now{background:var(--lamp);box-shadow:0 0 8px rgba(242,184,75,.6)}
+.depth b{color:var(--ink-2);font-weight:600;white-space:nowrap}
+.place-h{padding-top:10px}
+
+/* ---------- 日報 ---------- */
+.night h2{font-size:23px;letter-spacing:.12em}
+.ledger .big{font-size:30px;font-family:var(--serif)}
+
+/* ---------- 死亡 ---------- */
+.dead-h{font-size:30px;color:var(--cinnabar);letter-spacing:.08em;text-shadow:0 0 30px rgba(227,128,95,.25)}
+.dead .event.finale{border-top-color:var(--cinnabar);background-color:rgba(28,20,18,.9)}
+body[data-scene="dead"] .wrap{padding-top:10px}
+#app.enter .dead{animation:deathin .42s ease both}
+@keyframes deathin{from{opacity:0}to{opacity:1}}
+
+/* ---------- 表 ---------- */
+.tbl th,.tbl td{border-bottom-color:var(--rule-2)}
+.seg{border-color:var(--rule);background:transparent;border-radius:12px}
+.seg button{border-right-color:var(--rule);min-height:44px;transition:background-color .2s ease,color .2s ease}
+.seg button.on{background:var(--ink);color:var(--ground)}
+.seg.wrap button{min-height:38px;background:transparent}
+.seg.wrap button.on{background:var(--jade);color:#0F1A14}
+.seg.wrap button.risky.on{background:#B4553B;color:#FFF3EC}
+.upg{border-bottom-color:var(--rule-2)}
+
+/* ---------- 底部抽屜 ---------- */
+.veil{background:rgba(5,8,8,.6)}
+.sheet{border-top:1px solid var(--rule);box-shadow:0 -20px 40px -20px rgba(0,0,0,.8);border-radius:18px 18px 0 0}
+.sheet::before{content:"";display:block;width:36px;height:4px;border-radius:2px;background:var(--rule);margin:-6px auto 12px}
+.veil.fresh{animation:fadein .22s ease both}
+.veil.fresh .sheet{animation:sheetup .3s var(--ease) both}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes sheetup{from{transform:translate3d(0,24px,0);opacity:.6}to{transform:none;opacity:1}}
+
+/* ---------- 提示 ---------- */
+.toast{background:var(--sheet-2);color:var(--ink);border:1px solid var(--rule);box-shadow:0 10px 30px -10px rgba(0,0,0,.7);animation:toastin .26s var(--ease) both;transition:opacity .25s ease,transform .25s ease}
+.toast.out{opacity:0;transform:translate(-50%,6px)}
+.toast.ach{display:flex;align-items:center;gap:8px;border-color:rgba(242,184,75,.6);color:var(--lamp);border-radius:14px;padding:10px 14px;text-align:left}
+.toast.ach .ic{width:20px;height:20px;flex:none}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* ---------- 換場 ---------- */
+#app.enter > *{animation:rise .3s var(--ease) both}
+#app.enter > *:nth-child(2){animation-delay:.03s}
+#app.enter > *:nth-child(3){animation-delay:.06s}
+#app.enter > *:nth-child(4){animation-delay:.09s}
+#app.enter > *:nth-child(5){animation-delay:.12s}
+#app.enter > *:nth-child(n+6){animation-delay:.15s}
+@keyframes rise{from{opacity:0;transform:translate3d(0,8px,0)}to{opacity:1;transform:none}}
+.seal-stamp{animation-duration:.36s}
+
+/* ---------- 少動一點 ---------- */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  #fog i{display:none}
+}
+body{min-height:100vh;min-height:100dvh}
+.toast{width:max-content;max-width:min(88vw,420px)}
+.locks{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;margin-top:8px}
+.locks span{height:44px;display:grid;place-items:center;border:1px dashed var(--rule);border-radius:10px;color:var(--ink-3);font-family:var(--serif)}
+.howto summary{font-family:var(--serif);font-weight:700;letter-spacing:.14em;color:var(--ink-2);list-style:none;display:flex;align-items:center;gap:8px}
+.howto summary::-webkit-details-marker{display:none}
+.howto summary::after{content:"";width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin-left:auto;transition:transform .2s ease}
+.howto[open] summary::after{transform:rotate(-135deg)}
+.skyline{height:132px;margin-bottom:-18px}
+
 </style>
+</head>
+<body>
+<div id="fog" aria-hidden="true"><i></i><i></i></div>
 <main class="wrap">
   <header id="hud" hidden></header>
   <div id="app" aria-live="polite"></div>
@@ -1707,6 +1941,47 @@ function autoTalk(e) {
 
 /* ================= rendering ================= */
 const $app = $('#app'), $bar = $('#bar'), $hud = $('#hud'), $sheet = $('#sheet');
+/* ----- 線條圖示（內嵌 SVG，跟著文字顏色） ----- */
+const ICONS = {
+  main: '<path d="M3.5 9.5 5 4h14l1.5 5.5M4.5 9.5V20h15V9.5M3.5 9.5h17M9.5 20v-5.5h5V20"/>',
+  shop: '<path d="M6 3.5h11.5a1.5 1.5 0 0 1 1.5 1.5v15.5H7.5A1.5 1.5 0 0 1 6 19zM6 18a1.5 1.5 0 0 1 1.5-1.5H19M9.5 7.5h6M9.5 11h6"/>',
+  threads: '<path d="M12 2.5v2.5M8.5 5h7M8 7.5h8a1 1 0 0 1 1 1v7.5a5 5 0 0 1-10 0V8.5a1 1 0 0 1 1-1zM10 21.5h4M12 19.5v2"/><path d="M12 10.5c1.2 1.3 1.6 2.3 1.6 3.2a1.6 1.6 0 0 1-3.2 0c0-.9.4-1.9 1.6-3.2z"/>',
+  store: '<path d="M3.5 7.5 12 3.5l8.5 4v9L12 20.5l-8.5-4zM3.5 7.5l8.5 4 8.5-4M12 11.5v9"/>',
+  intel: '<path d="M4 5h12.5v14.5H6A2 2 0 0 1 4 17.5zM16.5 9H20v8.5a2 2 0 0 1-2 2M7 9h6.5M7 12.5h6.5M7 16h4"/>',
+  people: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17.5 14.3A6 6 0 0 1 21 20"/>',
+  stone: '<path d="M7 4h10l3.5 5L12 20.5 3.5 9zM3.5 9h17M9.5 4 8 9l4 11.5M14.5 4 16 9l-4 11.5"/>',
+  breath: '<path d="M12 3c3.2 4.2 5.2 6.6 5.2 10.2a5.2 5.2 0 0 1-10.4 0c0-2.1 1-3.4 2.1-4.4 0 2 1 3.3 2.1 3.3 0-3.1-1.1-5.1 1-9.1z"/>',
+  pack: '<path d="M7 9a5 5 0 0 1 10 0v11.5H7zM9.5 4.2h5M7 13.5h10M10 13.5v2.5"/>',
+  life: '<path d="M7 3.5h10M7 20.5h10M8 3.5c0 5 8 6.5 8 8.5s-8 3.5-8 8.5M16 3.5c0 5-8 6.5-8 8.5s8 3.5 8 8.5"/>',
+  down: '<path d="M12 4v15M6.5 13.5 12 19l5.5-5.5"/>',
+  town: '<path d="M3 20.5h18M5 20.5v-8l4-3 4 3v8M13 20.5v-11l3.5-2.5 3.5 2.5v11M8 14.5h2M16 12.5h1.5"/>',
+  seal: '<rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9 9h6M9 12h6M12 9v7"/>',
+  lamp: '<path d="M12 2.5v3M9 5.5h6l1 3H8zM8.5 8.5h7l-1 8h-5zM10 16.5h4v2.5h-4zM12 19v2.5"/>'
+};
+const ic = (k, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k] || ''}</svg>`;
+const LAYER = { ruin: 1, tunnel: 2, reservoir: 2, cliff: 3, north: 4, stair: 5, lampst: 6, platform: 7 };
+const LAYER_NAME = ['聚落', '第一層', '第二層', '第三層', '第四層', '第五層', '第六層', '第七層'];
+function depthGauge(n) {
+  return `<div class="depth" aria-label="深度：${LAYER_NAME[n]}"><span class="depth-l">${ic('town')}</span><div class="depth-t">${LAYER_NAME.slice(1).map((_, i) => `<i class="${i + 1 < n ? 'past' : i + 1 === n ? 'now' : ''}"></i>`).join('')}</div><b>${LAYER_NAME[n]}</b></div>`;
+}
+const reduceMotion = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function countUp(root) {
+  const els = root.querySelectorAll('[data-count]'); if (!els.length || reduceMotion()) return;
+  els.forEach(el => {
+    const to = +el.dataset.count, signed = el.dataset.sign === '1', t0 = performance.now(), D = 420;
+    const show = v => { const r = Math.round(v); el.textContent = (signed ? (r >= 0 ? '＋' : '－') : '') + fmt(Math.abs(r)); };
+    const step = now => { const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3); show(to * e); if (k < 1) requestAnimationFrame(step); };
+    show(0); requestAnimationFrame(step);
+  });
+}
+function sceneOf() {
+  if (UI.view === 'title' || !S) return { scene: 'title', depth: 0, key: 'title' };
+  if (S.dead || S.phase === 'dead') return { scene: 'dead', depth: 0, key: 'dead' };
+  const pl = S.phase === 'place' && S.place && UI.tab === 'main' ? S.place.id : null;
+  const depth = pl && LAYER[pl] || 0;
+  const scene = UI.tab !== 'main' ? 'tab' : depth ? 'explore' : S.phase;
+  return { scene, depth, key: [UI.tab, S.phase, pl, S.enc && S.enc.deal, MON(), S.day, S.phase === 'day' ? S.slot : ''].join('|') };
+}
 function sealSVG(word) {
   const w = String(word).slice(0, 2);
   return `<svg class="seal-stamp" viewBox="0 0 100 100" aria-hidden="true"><defs><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter></defs><g filter="url(#rough)" fill="none" stroke="var(--cinnabar)" stroke-width="5"><rect x="8" y="8" width="84" height="84" rx="6"/></g><text x="50" y="${w.length > 1 ? 47 : 64}" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="${w.length > 1 ? 30 : 44}" fill="var(--cinnabar)" filter="url(#rough)">${esc(w[0])}</text>${w.length > 1 ? `<text x="50" y="80" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="30" fill="var(--cinnabar)" filter="url(#rough)">${esc(w[1])}</text>` : ''}</svg>`;
@@ -1730,15 +2005,16 @@ function renderHUD() {
   }).join('');
   const need = M.xpNeed[S.level] || 999, L = burdenLimit(), b = S.burden;
   const bcls = b > L ? 'cin' : b > L * 0.5 ? 'gold' : 'jade';
-  $hud.innerHTML = `<div class="hud-top"><div class="hud-day">${dn}${tag ? `<span class="tagline">${tag}</span>` : ''}</div><div class="track" aria-label="時段">${slots}</div></div>
-  <div class="hud-stats"><span class="stone">靈石 <b>${fmt(S.stones)}</b></span><span>${lvName(S.level)}<span class="xpbar" title="修行 ${S.xp}/${need}"><i style="width:${Math.min(100, S.xp / need * 100)}%"></i></span></span>
-  <span class="burden ${bcls}" title="負擔">負擔 <b>${b}</b>/${L}</span><span>壽 <b class="cin">${S.lifespan}</b>月</span></div>`;
+  $hud.innerHTML = `<div class="hud-top"><div class="hud-day"><span class="lampdot" aria-hidden="true"></span>${dn}${tag ? `<span class="tagline">${tag}</span>` : ''}</div><div class="track" aria-label="時段">${slots}</div></div>
+  <div class="hud-stats"><span class="stat stone" title="靈石">${ic('stone')}<b>${fmt(S.stones)}</b></span><span class="stat lv" title="修行 ${S.xp}/${need}">${ic('breath')}${lvName(S.level)}<span class="xpbar"><i style="width:${Math.min(100, S.xp / need * 100)}%"></i></span></span>
+  <span class="stat burden ${bcls}" title="負擔">${ic('pack')}<b>${b}</b><small>/${L}</small></span><span class="stat life" title="壽命">${ic('life')}<b>${S.lifespan}</b><small>月</small></span></div>`;
 }
 function renderTitle() {
   const saved = S && S.phase !== 'end';
   const dbook = store.get(DEATH_KEY) || {}, nd = Object.keys(dbook).filter(k => DEATHS[k]).length, ND = Object.keys(DEATHS).length;
   const na = Object.keys(achBook()).length, NA = (SH.achievements || []).length;
-  return `<section class="title">
+  return `<div class="skyline" aria-hidden="true"><svg viewBox="0 0 390 150" preserveAspectRatio="xMidYMax slice"><path class="r3" d="M0 150V96l38-22 30 14 44-40 36 26 30-18 52 40 40-30 46 34 34-20 40 24v46z"/><path class="r2" d="M0 150v-34l52-18 40 16 46-30 50 30 36-12 58 26 44-22 64 26v18z"/><path class="r1" d="M0 150v-16l70-10 60 8 70-14 80 14 50-6 60 10v14z"/><g class="town"><path d="M228 118v-10h8v10M240 118v-14h6v14M250 118v-8h10v8"/></g><circle class="glow" cx="243" cy="108" r="9"/><circle class="lit" cx="243" cy="108" r="1.8"/></svg></div>
+  <section class="title">
     <div class="stack">
       <div class="ticket"><span class="label">長生當鋪 · 當票</span><p class="q">${esc(D.intro.ticket)}</p><div class="left">尚餘${monthsText(M.lifespan)}</div>
       <svg class="seal" viewBox="0 0 60 60" aria-hidden="true"><rect x="4" y="4" width="52" height="52" rx="4" fill="none" stroke="var(--cinnabar)" stroke-width="3"/><text x="30" y="27" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="17" fill="var(--cinnabar)">長生</text><text x="30" y="47" text-anchor="middle" font-family="var(--serif)" font-weight="900" font-size="17" fill="var(--cinnabar)">典押</text></svg></div>
@@ -1746,7 +2022,7 @@ function renderTitle() {
     </div>
     <h1 class="title-v">坊市掌櫃<small>許家店 · ${saved ? monthLabel(S.month) : monthLabel(1)}</small></h1>
   </section>
-  <section class="card stack"><p class="lede">${esc(D.intro.how)}</p><p class="lede"><b>${esc(D.intro.goal)}</b></p></section>
+  <details class="card howto"${saved ? '' : ' open'}><summary>怎麼玩</summary><div class="stack" style="margin-top:10px"><p class="lede">${esc(D.intro.how)}</p><p class="lede"><b>${esc(D.intro.goal)}</b></p></div></details>
   <div class="title-actions">${saved ? `<button class="btn primary wide" data-act="continue">${S.phase === 'dead' ? '回到死亡畫面' : '繼續：' + monthLabel(S.month) + (M.dayNames[Math.min(S.day, DAYS()) - 1] || '')}</button><button class="btn quiet wide" data-act="setup">重新開張</button>` : `<button class="btn primary wide" data-act="setup">開張</button>`}
   <div class="row2"><button class="btn quiet" data-act="achsheet">成就 ${na}/${NA}</button><button class="btn quiet" data-act="deathsheet">死法圖鑑 ${nd}/${ND}</button></div></div>`;
 }
@@ -1786,7 +2062,7 @@ function renderHub() {
       const dz = Math.min(3, Math.ceil((pb + spotList(id).filter(sp => sp.fx && sp.fx.death).length) / 2));
       note = '危險 ' + '●'.repeat(dz) + '○'.repeat(3 - dz) + '　·　' + note;
       if (o === true && pb && S.burden + pb > burdenLimit()) note += '　·　去了會超過負擔';
-      h += `<button class="place${n && o === true ? ' hot' : ''}" data-act="enter" data-id="${id}" ${o === true ? '' : 'disabled'}><b>${esc(p.name)}${n && o === true && seen ? '<em>新</em>' : ''}</b><span>${esc(note)}</span></button>`;
+      h += `<button class="place ex${n && o === true ? ' hot' : ''}" style="--l:${LAYER[id] || 0}" data-act="enter" data-id="${id}" ${o === true ? '' : 'disabled'}><b>${esc(p.name)}${n && o === true && seen ? '<em>新</em>' : ''}</b><span>${esc(note)}</span></button>`;
     }
     h += `</div><h2 class="sec-h">在聚落裡</h2><div class="places">`;
     for (const id of ['school', 'tea', 'office', 'homes', 'pawn']) {
@@ -1851,7 +2127,7 @@ function renderEnc() {
 }
 function renderPlace() {
   const id = S.place.id, p = PL[id];
-  let h = `<div class="who"><div><div class="nm">${esc(p.name)}</div><div class="rl">${esc((p.depth ? p.depth + '　·　' : '') + (SLOT[S.slot] || ''))}</div></div></div><p class="serif" style="margin-top:8px;line-height:1.85">${esc(p.blurb)}${p.blurbM && p.blurbM[MON()] ? ' ' + esc(p.blurbM[MON()]) : ''}${id === 'market' && S.day === MD().marketDay ? ' ' + esc(p.blurbMarketDay) : ''}</p>`;
+  let h = `${LAYER[id] ? depthGauge(LAYER[id]) : ''}<div class="who place-h"><div><div class="nm">${esc(p.name)}</div><div class="rl">${esc((p.depth ? p.depth + '　·　' : '') + (SLOT[S.slot] || ''))}</div></div></div><p class="serif blurb">${esc(p.blurb)}${p.blurbM && p.blurbM[MON()] ? ' ' + esc(p.blurbM[MON()]) : ''}${id === 'market' && S.day === MD().marketDay ? ' ' + esc(p.blurbMarketDay) : ''}</p>`;
   if (S.place.say) h += `<div class="ln" style="margin-top:12px">${S.place.sayWho || p.npc ? `<span class="sp">${esc(NP[S.place.sayWho || p.npc].name)}</span>` : ''}<span class="tx">${esc(S.place.say)}</span></div>`;
   if (p.type === 'explore') h += `<p class="small ${S.burden > burdenLimit() ? 'cin' : 'muted'}" style="margin-top:6px">負擔 ${S.burden}/${burdenLimit()}：${burdenWord()}${ascentRisk() > 0 ? `。回程約 ${Math.round(ascentRisk() * 100)}% 上不來。` : '。'}</p>`;
   if (S.place.found) { const f = S.place.found; h += `<div class="card" style="margin-top:12px"><b class="serif">${esc(f.title)}</b>${f.text.split('\n').map(t => `<p class="serif" style="line-height:1.9;margin-top:6px">${esc(t)}</p>`).join('')}${f.notes.length ? `<p class="small jade" style="margin-top:6px">${esc(f.notes.join('　'))}</p>` : ''}</div>`; }
@@ -1957,7 +2233,7 @@ function renderNight() {
   const row = (a, v, cls = '') => `<div class="row"><span class="label" style="flex:1">${a}</span><b class="num ${cls}">${v}</b></div>`;
   const sign = x => (x >= 0 ? '＋' : '－') + fmt(Math.abs(x));
   return `<section class="night stack"><h2>日報・${esc(monthLabel(MON()))}${esc(M.dayNames[S.day - 1] || '')}</h2>
-    <div class="card ledger"><div class="row"><span class="label" style="flex:1">店裡今天淨賺</span><b class="num big ${r.total >= 0 ? 'jade' : 'cin'}">${sign(r.total)}</b></div>
+    <div class="card ledger"><div class="row"><span class="label" style="flex:1">店裡今天淨賺</span><b class="num big ${r.total >= 0 ? 'jade' : 'cin'}" data-count="${r.total}" data-sign="1">${sign(r.total)}</b></div>
     <p class="small muted" style="margin:4px 0 6px">來客 ${r.traffic} 人・營業額 ${fmt(r.gross)}・收了 ${r.acc} 批貨${r.fakes ? `（其中 ${r.fakes} 批是假的，虧 ${r.fakeLoss}）` : ''}</p>
     ${r.lines.map(t => `<p class="serif small" style="line-height:1.8">・${esc(t)}</p>`).join('')}
     <details style="margin-top:6px"><summary class="small muted">細帳</summary>${row('賣貨毛利', sign(r.net))}${row('收購轉賣', sign(r.buyProfit))}${r.fakeLoss ? row('假貨', sign(-r.fakeLoss), 'cin') : ''}${r.shady ? row('不問來路的貨', sign(r.shady)) : ''}${r.night ? row('夜班', sign(r.night)) : ''}${r.skim ? row('抽屜少了', sign(-r.skim), 'cin') : ''}${row('薪水', sign(-r.wages))}</details>
@@ -2178,7 +2454,7 @@ function renderCodex() {
 function unlockedHidden(k) { return (IT[k].hidden || []).filter(h => (h.need.realm && S.level >= h.need.realm) || (h.need.flag && S.flags[h.need.flag])); }
 
 function renderSheet() {
-  const sh = UI.sheet; if (!sh) { $sheet.hidden = true; $sheet.innerHTML = ''; return; }
+  const sh = UI.sheet; if (!sh) { UI.sheetOpen = null; $sheet.hidden = true; $sheet.innerHTML = ''; return; }
   let h = '';
   if (sh.type === 'lore') {
     const it = IT[sh.id]; S.codex[sh.id] = true;
@@ -2210,7 +2486,7 @@ function renderSheet() {
   } else if (sh.type === 'deaths') {
     const book = store.get(DEATH_KEY) || {}; const cats = {};
     for (const [id, d] of Object.entries(DEATHS)) (cats[d.cat] = cats[d.cat] || []).push([id, d]);
-    h = `<h2>死法圖鑑 ${Object.keys(book).filter(k => DEATHS[k]).length}/${Object.keys(DEATHS).length}</h2><p class="small muted">死過一次，這裡就會記下來。換一局也不會忘。</p>` + Object.entries(cats).map(([c, list]) => `<h3 class="sec-h">${esc(c)}</h3>` + list.map(([id, d]) => book[id] ? `<div class="card" style="margin-top:6px"><b class="serif">${esc(d.title)}</b>${book[id].n > 1 ? `<span class="small muted">　×${book[id].n}</span>` : ''}<p class="small muted" style="margin-top:4px">${esc(d.hint || '')}</p></div>` : `<div class="card dim" style="margin-top:6px"><b class="serif muted">？？？</b></div>`).join('')).join('');
+    h = `<h2>死法圖鑑 ${Object.keys(book).filter(k => DEATHS[k]).length}/${Object.keys(DEATHS).length}</h2><p class="small muted">死過一次，這裡就會記下來。換一局也不會忘。</p>` + Object.entries(cats).map(([c, list]) => `<h3 class="sec-h">${esc(c)}</h3>` + list.filter(([id]) => book[id]).map(([id, d]) => `<div class="card" style="margin-top:6px"><b class="serif">${esc(d.title)}</b>${book[id].n > 1 ? `<span class="small muted">　×${book[id].n}</span>` : ''}<p class="small muted" style="margin-top:4px">${esc(d.hint || '')}</p></div>`).join('') + (list.some(([id]) => !book[id]) ? `<div class="locks">${list.filter(([id]) => !book[id]).map(() => '<span>？</span>').join('')}</div>` : '')).join('');
   } else if (sh.type === 'ach') {
     const book = achBook(), BN = SH.bonuses || {};
     h = `<h2>成就 ${Object.keys(book).length}/${(SH.achievements || []).length}</h2><p class="small muted">每個成就會解鎖一個開張加成。每局能帶 ${bonusPicks()} 個（成就越多，能帶越多，最多四個）。</p>` + (SH.achievements || []).map(a => `<div class="card${book[a.id] ? '' : ' dim'}" style="margin-top:6px"><b class="serif">${book[a.id] ? esc(a.title) : '？？？'}</b><p class="small ${book[a.id] ? '' : 'muted'}">${esc(book[a.id] ? a.desc : (a.hint || a.desc))}</p><p class="small jade">→ ${esc((BN[a.bonus] || {}).name || '')}</p></div>`).join('');
@@ -2221,12 +2497,13 @@ function renderSheet() {
     h = `<h2>選單</h2>${sh.confirm ? `<p class="small">重新開始會清掉這一局。確定嗎？</p><button class="opt danger" data-act="new"><b>確定，重新開始</b><span>這一局會消失</span></button>` : `<button class="opt" data-act="home"><b>回到封面</b><span>進度會保留</span></button><button class="opt" data-act="setup"><b>重新開張</b><span>清掉這一局，挑加成</span></button><button class="opt" data-act="achsheet"><b>成就</b><span>解鎖下一局的加成</span></button><button class="opt" data-act="deathsheet"><b>死法圖鑑</b><span>你死過的方式</span></button>`}`;
   }
   $sheet.hidden = false;
-  $sheet.innerHTML = `<div class="veil" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" data-stop="1">${h}<button class="btn ghost wide" style="margin-top:10px" data-act="closesheet">關上</button></div></div>`;
+  const fresh = UI.sheetOpen !== sh.type; UI.sheetOpen = sh.type;
+  $sheet.innerHTML = `<div class="veil${fresh ? ' fresh' : ''}" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" data-stop="1">${h}<button class="btn ghost wide" style="margin-top:10px" data-act="closesheet">關上</button></div></div>`;
 }
 
 function renderBar() {
   let h = '';
-  const nav = () => `<nav class="nav">${[['main', '店面', '今天'], ['shop', '店務', '方針'], ['threads', '謎題', newThread() ? '有新的' : '線索'], ['store', '庫房', '貨'], ['intel', '消息', newIntel() ? '有新的' : '簿'], ['people', '人脈', '名聲']].map(([k, a, b]) => `<button data-act="tab" data-v="${k}" class="${UI.tab === k ? 'on' : ''}${(k === 'intel' && newIntel()) || (k === 'threads' && newThread()) ? ' new' : ''}">${a}<em>${b}</em></button>`).join('')}</nav>`;
+  const nav = () => `<nav class="nav">${[['main', '店面', '今天'], ['shop', '店務', '方針'], ['threads', '謎題', newThread() ? '有新的' : '線索'], ['store', '庫房', '貨'], ['intel', '消息', newIntel() ? '有新的' : '簿'], ['people', '人脈', '名聲']].map(([k, a, b]) => `<button data-act="tab" data-v="${k}" class="${UI.tab === k ? 'on' : ''}${(k === 'intel' && newIntel()) || (k === 'threads' && newThread()) ? ' new' : ''}" aria-label="${a}・${b}">${ic(k)}<span>${a}</span></button>`).join('')}</nav>`;
   if (UI.view === 'title' || S.phase === 'dead') { $bar.hidden = true; return; }
   if (UI.tab !== 'main') h = nav();
   else if (S.phase === 'morning') { const pend = S.cards.some(c => c.choices); h = `<button class="btn primary wide" data-act="open" ${pend ? 'disabled' : ''}>${pend ? '先處理卡片上的事' : '開門'}</button>` + nav(); }
@@ -2264,10 +2541,15 @@ function render() {
   else if (S.phase === 'place') { if (S.place) h = renderPlace(); else { S.phase = 'day'; h = renderHub(); } }
   else if (S.phase === 'night') h = renderNight();
   else if (S.phase === 'end') h = renderEnd();
+  const sc = sceneOf(), B = document.body, changed = sc.key !== UI.sceneKey;
+  B.dataset.scene = sc.scene; B.dataset.depth = sc.depth;
   $app.innerHTML = h;
+  if (changed && !reduceMotion()) { $app.classList.remove('enter'); void $app.offsetWidth; $app.classList.add('enter'); }
+  if (changed && sc.scene === 'night') countUp($app);
+  UI.sceneKey = sc.key;
   renderBar(); renderSheet();
   if (UI.achToast) { if (!(S && S.dead)) UI.toast = '解鎖成就：' + UI.achToast.join('、') + (UI.toast ? '　' + UI.toast : ''); UI.achToast = null; }
-  if (UI.toast) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = UI.toast; document.body.appendChild(t); UI.toast = null; setTimeout(() => t.remove(), 1800); }
+  if (UI.toast) { const ach = UI.toast.startsWith('解鎖成就'); document.querySelectorAll('.toast').forEach(x => x.remove()); const t = document.createElement('div'); t.className = 'toast' + (ach ? ' ach' : ''); t.setAttribute('role', 'status'); if (ach) t.innerHTML = ic('seal') + `<span>${esc(UI.toast)}</span>`; else t.textContent = UI.toast; document.body.appendChild(t); UI.toast = null; const life = ach ? 2800 : 1900; setTimeout(() => t.classList.add('out'), life - 260); setTimeout(() => t.remove(), life); }
 }
 function toast(t) { UI.toast = t; }
 function save() { if (S) { if (S.phase !== 'end') scanLearn(); store.set(SAVE_KEY, S); } }
@@ -2408,3 +2690,5 @@ window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude
 })();
 
 </script>
+</body>
+</html>

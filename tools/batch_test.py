@@ -174,6 +174,9 @@ JS = r"""
   { fresh(); const base = T.redeemCost(); T.S.pawnShiftNext = 5; let hit = null, off = 0;
     for (let d = 5; d <= 14 && !hit; d++) { T.S.dayCount = d; T.S.month = 1 + Math.floor((d - 1) / 6); T.S.day = ((d - 1) % 6) + 1; T.beginDay(); if (T.pawnMult() !== 1) { if (T.pawnOpenToday()) { T.S.phase = 'day'; T.S.night = null; T.goNight(); hit = { d, cost: T.redeemCost(), m: T.S.pawnShift.m, line: !!T.S.night.pawnLine }; } else off++; } }
     ok(hit && hit.d === 7 && hit.line && hit.m === -0.1 && hit.cost === Math.round(base * 0.9) && !off, 'qianshi pawn shift on next pawn open day, 10% cheaper ' + JSON.stringify(hit) + ' base ' + base); }
+  // 圖示第二輪：三件遺物不再用通用圖示；全部遺物都有自己的圖示
+  ok(['baihua', 'qianbi', 'xiangpi'].every(k => T.iconKey(k) === k), 'round2 icons baihua/qianbi/xiangpi');
+  { const gen = Object.keys(T.IT).filter(k => T.IT[k].cat === 'relic' && T.iconKey(k) === '_relic'); ok(!gen.length, 'no relic falls back to _relic ' + gen.join(',')); }
   return { out, err };
 })()
 """

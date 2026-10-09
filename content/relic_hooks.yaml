@@ -108,7 +108,7 @@ spots:
       hint: 廣播稿上劃掉的那一句，紙都破了
       after: pf_announce
       need: {has: {guangbo: 1}}
-      text: 你對著月台的喇叭，把廣播稿上被劃掉的那句念出來：「請旅客回到地面。」喇叭沉默了很久，然後用管理處櫃台值班那個人的聲音重複了一次：「請旅客回到地面。」黃線上的票根，一張一張翻了過來。
+      text: 你對著月台的喇叭，把廣播稿上被劃掉的那句念出來：「請旅客回到地面。」喇叭沉默了很久，然後用管理處櫃檯值班那個人的聲音重複了一次：「請旅客回到地面。」黃線上的票根，一張一張翻了過來。
       fx: {take: [{item: guangbo, qty: 1}], flag: [broadcast_fixed], xp: 15}
   stair:
     - id: st_bus_back
@@ -121,9 +121,9 @@ spots:
       fx: {burden: -99, flag: [rode_back], xp: 10}
   pawn:
     - id: pw_slip
-      title: 當鋪櫃台的寄存單
-      hint: 櫃台玻璃下面壓著一張很舊的單子
-      text: 當鋪櫃台的玻璃下面壓著一張寄存單，寄存人那一欄寫著「B2-17 負責人」，寄存物寫著「一雙室內鞋」，領取期限是「換人的那天」。老闆的面紗動了一下：「那張不賣，也不給看。你看到了，就當作沒看到。」
+      title: 當鋪櫃檯的寄存單
+      hint: 櫃檯玻璃下面壓著一張很舊的單子
+      text: 當鋪櫃檯的玻璃下面壓著一張寄存單，寄存人那一欄寫著「B2-17 負責人」，寄存物寫著「一雙室內鞋」，領取期限是「換人的那天」。老闆的面紗動了一下：「那張不賣，也不給看。你看到了，就當作沒看到。」
       fx: {flag: [pawn_b217], xp: 4}
       note: 長生當鋪有一張寄存單：「B2-17 負責人，寄存一雙室內鞋，領取期限：換人的那天。」
 
@@ -163,6 +163,112 @@ drift:
         text: 他想了很久：「去答到。」然後就走了。
         fx: {xp: 3}
 
+  # ── 用過之後：有人記得（第五輪設計，改寫）──
+  - id: fu_chachou
+    month: [1, 2, 3]
+    chance: 0.9
+    prio: 5
+    need: {usedAgo: {chachou: 1}}
+    title: 灰還在櫃上
+    text: 一大早，白姐撐著傘來店裡，手裡捏著一小包紙，紙裡是茶籌燒剩的灰。「你問過的那一則旁邊，黏著這個，擦不掉。」她把灰放在櫃上，把筆轉過來，筆尖朝著你：「字是你求出來的。簿子不認灰，認手。」
+    face: think
+    choices:
+      - label: 把那個字再寫一次
+        desc: 讓它定下來
+        text: 筆尖一碰，灰自己聚成原來那個字，這次沒有散開。白姐看了你的字很久：「我記得你的筆跡了。」
+        fx: {rel: {bai: 1}, xp: 4, flag: [ash_rewritten], echo: 開張那天，消息簿第一頁旁邊有一點擦不掉的灰。白姐進門，先看了你的手。}
+      - label: 把灰吹掉
+        desc: 跟她說那只是一片竹子
+        text: 灰吹不乾淨，黏在你的袖口。白姐沒有生氣，只說：「空白也是我記的帳。」
+        fx: {flag: [sleeve_ash], xp: 3, note: 白姐說：茶籌本來就不該有字。}
+      - label: 問她以前的空白竹片是記誰的
+        desc: 她不一定會說
+        text: 白姐沒有回答，在簿子那一則底下補了一個空格，空格裡什麼都沒寫。她推了幾塊靈石給你：「找零。」
+        fx: {stones: 12, flag: [tea_blank], note: 白姐的簿子裡，有一個比真假更早的空格。}
+  - id: fu_banbei
+    month: [1, 2, 3]
+    chance: 0.9
+    prio: 5
+    need: {usedAgo: {banbei: 1}, has: {banbei: 1}}
+    title: 不要喝完的那口
+    text: 白姐路過店門口，看了一眼你櫃上的杯子。茶還是半杯，可是比昨天少了一點點。「你昨天忘掉的那個地方，」她說，「還留著位子。它要是還在，晚上會自己回來找你。」
+    face: think
+    choices:
+      - label: 把少掉的那口補回去
+        desc: 補了就不喝
+        text: 茶回到半杯。你想起昨天沒去的那個地名，可是想不起來那裡有什麼。
+        fx: {rel: {bai: 1}, xp: 4, flag: [banbei_kept]}
+      - label: 再喝一口
+        desc: 輕一點，代價你知道
+        text: 身體又輕了一點。白姐沒有攔你，只把杯子轉過去給你看，杯底寫著「許家店」。
+        fx: {burden: -2, lifespan: -1, flag: [banbei_second], echo: 新開張的第一天，白姐倒了半杯冷茶給你，先說：「這次別喝完。」}
+      - label: 把杯子還給她
+        desc: 請她以後別再倒給你
+        text: 白姐點點頭，把杯子收走。走到門口，她回頭留下半句話：「杯底那句，還有下半句。」後面她就沒說了。
+        fx: {take: [{item: banbei, qty: 1}], rel: {bai: 2}, flag: [bai_stop_cup], note: 白姐說，杯底那句話還有下半句。}
+  - id: fu_quepiao
+    month: [1, 2, 3]
+    chance: 0.9
+    prio: 5
+    need: {usedAgo: {quepiao: 1}}
+    title: 分號先蓋了章
+    text: 早上翻開帳本，最後一頁多了一枚印。印泥是乾的，形狀剛好補上那張票的缺角，像半個「分」字從另一頭蓋回來。旁邊多記了一筆錢，註記寫著「上行已收」。門口沒有腳印。印的邊緣摸起來，有月台那種冷。
+    face: think
+    choices:
+      - label: 把印拓下來，收進帳本
+        desc: 錢對得起來
+        text: 那筆錢對得起來，可以花。你把拓下來的印夾進帳本，帳本闔起來的時候，比平常重了一點。
+        fx: {stones: 40, flag: [branch_acknowledged], echo: 新帳本的第一行寫著「上行已收」，金額是零，印還在。}
+      - label: 把那一頁撕掉
+        desc: 你沒收過這筆錢
+        text: 印跟那筆錢一起不見了。你一直覺得，有人在分號那邊替你結過一次帳。
+        fx: {xp: 5, flag: [tore_upline], note: 好像有人在許記分號，替你結過一次帳。}
+      - label: 對著空店問是誰蓋的
+        desc: 店裡只有你
+        text: 沒有人回答。晚上靜坐的時候，你看見缺角的地方自己長出一小段路名，那不是聚落裡的路。
+        fx: {xp: 6, flag: [asked_empty_shop], note: 上行的終點，好像不只一個。}
+  - id: fu_banpai
+    month: [1, 2, 3]
+    chance: 0.9
+    prio: 5
+    need: {usedAgo: {banpai: 2}, has: {banpai: 1}}
+    title: 慢半拍的人還坐著
+    text: 你夢見礦坑口那層殼。殼旁邊那個盤腿坐著的人還在，姿勢一點都沒變，呼吸比你慢半拍，慢的剛好是你拿走的那一拍。他膝蓋上的灰裡多了一個手印，大小跟你的手一樣。他沒有抬頭：「看完了就還。沒看完，也可以還。」
+    face: sad
+    choices:
+      - label: 把那一拍還給他
+        desc: 你本來就是借的
+        text: 他點了一下頭，膝蓋上的手印不見了。你醒來的時候，心跳很整齊，整齊到有點陌生。
+        fx: {burden: -1, xp: 4, flag: [beat_returned]}
+      - label: 再跟他借一拍
+        desc: 你還想看完
+        text: 他沒有拒絕。你看見他盤腿的影子裡，還坐著另一個人，臉看不清楚。醒來的時候，你少了一點什麼，說不上來。
+        fx: {xp: 8, lifespan: -1, flag: [beat_second], echo: 開張第一天晚上靜坐，你的心跳漏了半拍。礦坑口那個人，還坐著。}
+      - label: 把殼片留在他膝蓋上
+        desc: 讓他自己決定給誰
+        text: 你把殼片放下，自己走了。他沒有說謝謝，也沒有叫住你。
+        fx: {take: [{item: banpai, qty: 1}], xp: 5, flag: [shell_kept_by]}
+  - id: fu_xiangpi
+    month: [1, 2, 3]
+    chance: 0.9
+    prio: 5
+    need: {usedAgo: {xiangpi: 1}}
+    title: 擦掉的那天有人來上課
+    text: 林老師一早來店裡，說舊國小的黑板上多了一行字，被擦到只剩筆畫。她湊近看過了，是你昨天去過的地方。講台抽屜裡還多了一本點名簿：今天的日期在，你的名字不在，老師那一欄也是空的。「有人把板擦放回去了，」她說，「放得很正。」
+    face: think
+    choices:
+      - label: 把那個地名重新寫上
+        desc: 不想當作沒去過
+        text: 地名寫回去的時候，你覺得肩膀又沉了一點。林老師把它抄進小卡：「這樣就不算沒來過。」
+        fx: {burden: 2, rel: {lin: 1}, xp: 6, flag: [late_rewritten]}
+      - label: 把點名簿上的空欄也擦掉
+        desc: 擦乾淨一點
+        text: 你擦了。手上的粉筆灰，洗了很久都洗不掉。林老師看著你，什麼都沒說。
+        fx: {burden: -2, rel: {lin: -1}, flag: [erased_with_road], echo: 舊國小的點名簿上，你的名字比別人淡了一截。}
+      - label: 對著空掉的老師欄，喊一聲老師
+        desc: 也許有人會應
+        text: 沒有人應。黑板上自己補了半個姓，那不是你聽過的姓。
+        fx: {xp: 5, flag: [called_teacher], note: 上課那天，可能不是被擦掉，是一開始就沒被寫上。}
 addChoices:
   dr_branch_sign:
     - label: 戴安全帽爬上去拆

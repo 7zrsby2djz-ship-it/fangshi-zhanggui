@@ -154,6 +154,22 @@ JS = r"""
   T.S.phase = 'day'; T.goNight(); T.endDay(); ok(T.pawnMult() !== 1 && T.redeemCost() !== T.D.meta.redeemCost, 'pawn price shifted next day ' + T.redeemCost()); T.S.phase = 'day'; T.S.night = null; T.goNight(); ok(!!T.S.night.pawnLine, 'pawn line in report');
   // 第四十五件：沒見過空號鉛筆就用不提鉛筆的版本
   fresh(); delete T.S.codex.qianbi; Object.keys(T.IT).filter(k => T.IT[k].cat === 'relic' && k !== 'qianbi').forEach(k => T.S.codex[k] = true); T.S.flags.rth_15 = T.S.flags.rth_30 = 1; T.S.cards = []; T.relicReactions(); ok(T.S.cards.some(c => c.text.includes('像在等誰應')), 'rth_45 fallback without qianbi');
+  // 用過之後：五件可用遺物的後續
+  for (const [rid, eid, setup] of [['chachou', 'fu_chachou', () => { const ik = Object.keys(T.IN).find(k => T.IN[k].kind === 'heard'); T.S.intel[ik] = { day: 1, m: 1, src: 'x' }; T.S.place = null; }], ['banbei', 'fu_banbei', () => { T.S.burden = 5; T.S.place = null; }], ['quepiao', 'fu_quepiao', () => { T.S.slot = 0; T.S.phase = 'day'; T.enterPlace('ruin'); T.S.place.steps = 1; T.S.burden = 30; }], ['banpai', 'fu_banpai', () => { T.S.slot = 0; T.S.phase = 'day'; T.enterPlace('ruin'); T.S.place.steps = 3; T.S.place.acted = true; }], ['xiangpi', 'fu_xiangpi', () => { T.S.burden = 6; T.S.place = null; }]]) {
+    const e = T.ALLEV[eid]; if (!e) { ok(false, 'no followup ' + eid); continue; }
+    for (let i = 0; i < e.choices.length; i++) {
+      fresh(); T.S.month = 2; T.S.dayCount = 3; give(rid); setup(); const used = T.useRelic(rid); const before = T.needOk(e.need);
+      T.S.dayCount = 6; if (!T.held(rid) && e.need.has) give(rid);
+      const okNeed = T.needOk(e.need); T.S.phase = 'morning'; T.S.place = null;
+      const opts = e.choices.filter(c => T.needOk(c.need || {})); T.S.cards = [{ title: e.title, text: e.text, drift: eid, choices: opts.map(x => ({ label: x.label })) }]; window.__deathRoll = () => 0.99; T.driftChoose(0, i);
+      ok(used && !before && okNeed && !T.S.dead && T.S.cards[0].picked != null, 'followup ' + eid + '#' + i + ' ' + (T.S.cards[0].notes || []).join('/'));
+    }
+  }
+  { localStorage.removeItem('fangshi-echo-v1'); fresh(); T.applyFx({ echo: '測試回響' }); T.S = T.newGame(31337); ok(T.S.cards.some(c => c.text === '測試回響') && !(JSON.parse(localStorage.getItem('fangshi-echo-v1')) || []).length, 'echo shows next run once'); }
+  // 流水帳：不抽遺物、{who} 只取逗號前、沒夥計不出夥計句
+  fresh(); T.S.shop.staff = []; { let bad = 0, staffLine = 0, comma = 0; T.S.usedFl = {}; for (let i = 0; i < 60; i++) { T.S.usedFl = {}; T.S.day = (i % 6) + 1; T.S.month = 1 + (i % 3); const ls = T.shopFlavor({ acc: 1, caught: 1 }, 'x' + i); for (const l of ls) { { const rk = Object.keys(T.IT).find(k => T.IT[k].cat === 'relic' && l.replace(/戴舊安全帽/g, '').includes(T.IT[k].name)); if (rk) { bad++; out.push('  relic? ' + rk + ' ' + T.IT[rk].name + ' | ' + l); } } if (l.includes('夥計')) staffLine++; } } ok(!bad && !staffLine, 'flavor: no relic goods (' + bad + '), no staff lines without staff (' + staffLine + ')'); }
+  // 跳過日子：沒夥計只用 gapSolo，同一句不連著出現
+  fresh(); T.S.shop.staff = []; { const SHF = T.SH.flavor; const t1 = T.gapYield().text; ok(SHF.gapSolo.some(x => t1.startsWith(x)), 'gap solo line'); T.S.month = 2; const t2 = T.gapYield().text; ok(t1.slice(0, 10) !== t2.slice(0, 10), 'gap no repeat'); }
   return { out, err };
 })()
 """

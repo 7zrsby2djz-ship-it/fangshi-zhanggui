@@ -65,6 +65,7 @@ print('relics with effects', sum(1 for v in data['items'].values() if v.get('eff
 _txt0 = json.dumps({k: v for k, v in data.items() if k != 'items'}, ensure_ascii=False)
 _deathIds = set(re.findall(r'"death": ?\{"id": ?"(\w+)"', _txt0)) | set(re.findall(r'"death": ?"(\w+)"', _txt0)) | set(v['ascent'] for v in data['placeFx'].values())
 _needHas = set(k for blk in re.findall(r'"has": ?\{([^}]*)\}', _txt0) for k in re.findall(r'"(\w+)"', blk))
+_needHas |= set(k for blk in re.findall(r'"usedAgo": ?\{([^}]*)\}', _txt0) for k in re.findall(r'"(\w+)"', blk))
 _given = set(re.findall(r'"item": ?"(\w+)"', _txt0)) | set(b.get('give') for b in data['shop']['bonuses'].values() if isinstance(b, dict))
 _SPECIAL = {'extraStep', 'safeReturn', 'reveal', 'lessStep', 'erase', 'truth', 'noSkim', None}
 _onlyRandom = []

@@ -185,7 +185,7 @@ function mulberry32(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = 
 function mixHash(str) { let x = Math.floor(hash(str) * 4294967296); x ^= x >>> 16; x = Math.imul(x, 0x85ebca6b); x ^= x >>> 13; x = Math.imul(x, 0xc2b2ae35); x ^= x >>> 16; return (x >>> 0) / 4294967296; }
 function hash(str) { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) / 4294967296; }
 const rnd = key => hash(S.seed + '|' + key);
-const THR_KEY = 'fangshi-thr-v1', PAWN_KEY = 'fangshi-pawn-v1';
+const THR_KEY = 'fangshi-thr-v1', PAWN_KEY = 'fangshi-pawn-v1', ECHO_KEY = 'fangshi-echo-v1';
 const store = {
   get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
   set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
@@ -304,7 +304,7 @@ function useRelic(id) {
   if (u.special === 'noSkim') S.flags.naiya_buried = true;
   notes.push(...applyFx(u.fx));
   if (u.once === 'consume') takeQty(id, 1); else S.relicUsed = { ...(S.relicUsed || {}), [id]: dayKey() };
-  S.relicLog = (S.relicLog || []).concat([{ id, k: 'use' }]); S.relicUses = (S.relicUses || 0) + 1;
+  S.relicLog = (S.relicLog || []).concat([{ id, k: 'use' }]); S.relicUses = (S.relicUses || 0) + 1; if ((S.relicUsedAt || {})[id] == null) S.relicUsedAt = { ...(S.relicUsedAt || {}), [id]: S.dayCount || 0 };
   S.log.push({ day: S.day, t: '用了「' + it.name + '」' });
   if (u.special === 'safeReturn') { const b0 = S.burden; S.burden = Math.floor(S.burden / 2); if (b0 !== S.burden) notes.push('負擔－' + (b0 - S.burden)); S.place.strain = false; toast(text + (notes.length ? '　' + notes.join('　') : '')); advanceSlot(); return true; }
   if (S.place) { S.place.say = null; S.place.found = { title: '「' + it.name + '」', text, notes, icon: id }; }
@@ -365,6 +365,7 @@ function needOk(need, enc) {
   if (need.secMax != null && shopStats().security > need.secMax) return false;
   if (need.net != null && (S.lastNet || 0) < need.net) return false;
   if (need.minDays != null && S.dayCount < need.minDays) return false;
+  if (need.usedAgo && !Object.entries(need.usedAgo).every(([id, n]) => (S.relicUsedAt || {})[id] != null && (S.dayCount || 0) - S.relicUsedAt[id] >= n)) return false;
   if (need.burdenHigh && S.burden <= burdenLimit()) return false;
   if (need.relMax) for (const [k, v] of Object.entries(need.relMax)) if (rel(k) > v) return false;
   if (need.level && S.level < need.level) return false;
@@ -401,6 +402,7 @@ function applyFx(fx, ctx = {}) {
   (fx.give || []).forEach(g => { addLot({ item: g.item, qty: g.qty, cost: g.cost, q: g.q, flags: g.flags, label: g.label, perishDay: g.perishDay, known: true }); notes.push('得到「' + (g.label || IT[g.item].name) + '」'); });
   (fx.take || []).forEach(t => takeQty(t.item, t.qty));
   if (fx.rel) for (const [k, v] of Object.entries(fx.rel)) addRel(k, v);
+  if (fx.echo) { const ec = store.get(ECHO_KEY) || []; if (!ec.includes(fx.echo)) store.set(ECHO_KEY, [...ec, fx.echo].slice(-6)); }
   if (fx.relByPrice && ctx.price != null) { const r = fx.relByPrice; addRel(r.npc, ctx.price >= r.atLeast ? r.good : r.bad); }
   if (fx.rep) for (const [k, v] of Object.entries(fx.rep)) S.rep[k] = (S.rep[k] || 0) + v;
   if (fx.tag) Object.assign(S.repTag, fx.tag);
@@ -454,6 +456,7 @@ function beginDay() {
     const best = THREADS.map(t => [t, (S.thrMem[t.id] || []).filter(i => t.steps[i])]).filter(x => x[1].length).sort((a, b) => b[1].length - a[1].length)[0];
     if (best) { const st = best[0].steps[Math.max(...best[1])]; S.cards.push({ title: '櫃檯還摺著上次的東西', text: `櫃檯抽屜最裡面，有一張摺了好幾摺的紙。是你的字，可是你不記得寫過：「${st.text}」下面還有幾行，被水暈開了，看不清楚。` }); }
     const dep = store.get(PAWN_KEY); if (dep && IT[dep.item]) { S.pendingDep = dep; store.del(PAWN_KEY); }
+    const ec = store.get(ECHO_KEY) || []; if (ec.length) { S.cards.push({ title: '上一次留下來的', text: ec[0] }); store.set(ECHO_KEY, ec.slice(1)); }
   }
   relicReactions();
   if (S.pawnShiftNext != null && (S.dayCount || 0) >= S.pawnShiftNext) { S.pawnShiftNext = null; S.pawnShift = { k: dayKey(), m: rnd('pawnshift:' + dayKey()) < 0.5 ? 0.1 : -0.1 }; }
@@ -760,7 +763,7 @@ function encOptions() {
     const out = [];
     if (e.lot) {
       const l = lotById(e.lot);
-      out.push({ key: 'sell', label: '賣給他', desc: `收 ${fmt(e.price * e.qty)} 靈石`, primary: true });
+      out.push({ key: 'sell', label: '照價賣', desc: `收 ${fmt(e.price * e.qty)} 靈石`, primary: true });
       if (l && l.known && l.q < 0.9) out.push({ key: 'honest', label: '照實說', desc: `說清楚成色，照成色賣：${fmt(rp(e.price * l.q) * e.qty)} 靈石` });
     }
     out.push({ key: 'decline', label: e.lot ? '不賣' : '送客', desc: '' });
@@ -891,6 +894,7 @@ function decideDues(key) {
 function startWalkin() {
   const W = PL.walkins, k = 'w' + S.day + '-' + S.slot;
   const who = W.who[Math.floor(rnd(k + 'who') * W.who.length)];
+  const [wh, ...wt] = who.split('，'), whoIn = wh + '進了門' + (wt.length ? '，' + wt.join('，') : '');
   const dem = ((MON() > 1 ? W['demand' + MON()] : W.demand) || {})[S.day] || {};
   const sellable = S.lots.filter(l => (IT[l.item].sell || []).includes('walk') && !l.flags.some(f => ['sect', 'sting', 'contraband'].includes(f)));
   if (S.stance === '張揚') S.wind++;
@@ -904,11 +908,11 @@ function startWalkin() {
     enc.qty = Math.min(lot.qty, 1 + Math.floor(rnd(k + 'q') * (it.base >= 30 ? 1 : 3)));
     let p = price(lot.item) * (0.95 + rnd(k + 'p') * 0.14) * (S.stance === '張揚' ? 1.03 : 1);
     enc.price = rp(p);
-    enc.th.push({ k: 'narr', t: `${who}進了門。` });
+    enc.th.push({ k: 'narr', t: `${whoIn}。` });
     enc.th.push({ k: 'npc', t: `「老闆，${it.name}有嗎？${cnNum(enc.qty)}${it.unit}，${cnPrice(enc.price)}一${it.unit}。」` });
     S.codex[lot.item] = true;
   } else {
-    enc.th.push({ k: 'narr', t: `${who}進了門，看了一圈，什麼都沒買。` });
+    enc.th.push({ k: 'narr', t: `${whoIn}。看了一圈，什麼都沒買。` });
   }
   S.enc = enc; S.phase = 'enc';
 }
@@ -919,15 +923,15 @@ function actChat() {
   const give = S.stance === '低調' || rnd('g' + S.day + S.slot) < 0.3;
   S.gossipSeen = S.gossipSeen || {};
   const line = pool.find(g => !S.gossipSeen[g]);
-  if (S.heat >= 5) { e.th.push({ k: 'npc', t: '他看了你一眼：「跟你說了，明天全聚落都知道。」' }); return; }
+  if (S.heat >= 5) { e.th.push({ k: 'npc', t: '對方看了你一眼：「跟你說了，明天全聚落都知道。」' }); return; }
   if (give && line) { S.gossipSeen[line] = true; e.th.push({ k: 'npc', t: `「${line}」` }); noteGeneric('散客說：' + line, 'street'); }
-  else e.th.push({ k: 'npc', t: give ? '「沒什麼新鮮的。」' : '他打量了你一下，只點點頭，沒多說。' });
+  else e.th.push({ k: 'npc', t: give ? '「沒什麼新鮮的。」' : '對方打量了你一下，只點點頭，沒多說。' });
 }
 function actGenericHaggle() {
   const e = S.enc; e.haggled = true;
   e.th.push({ k: 'me', t: '這價錢低了，再加一點。' });
-  if (rnd('h' + S.day + S.slot) < 0.6) { e.price = rp(e.price * 1.07); e.th.push({ k: 'npc', t: `「行，${cnPrice(e.price)}。」` }); }
-  else { e.th.push({ k: 'npc', t: '「那算了。」他轉身走了。' }); e.done = { key: 'decline', label: '沒談成' }; }
+  if (rnd('h' + S.day + S.slot) < 0.6) { e.price = rp(e.price * 1.07); e.th.push({ k: 'npc', t: `「好啦，${cnPrice(e.price)}。」` }); }
+  else { e.th.push({ k: 'npc', t: '「那算了。」說完轉身就走了。' }); e.done = { key: 'decline', label: '沒談成' }; }
 }
 function decideGeneric(key) {
   const e = S.enc, l = lotById(e.lot);
@@ -936,11 +940,11 @@ function decideGeneric(key) {
     const unit = key === 'honest' ? rp(e.price * l.q) : e.price;
     const q = Math.min(e.qty, l.qty);
     takeQty(l.item, q, l.id); S.stones += unit * q;
-    if (key === 'honest') { S.rep.loose += 1; S.repTag.loose = '實在'; e.th.push({ k: 'res', t: `你把成色說清楚了。他想了想，照成色付了錢：「許老闆實在。」`, notes: ['＋' + fmt(unit * q) + ' 靈石'] }); }
-    else { e.th.push({ k: 'res', t: '他付了錢，把東西收好走了。', notes: ['＋' + fmt(unit * q) + ' 靈石'] }); if (l.q < 0.7) scheduleComplaint(l, q, unit); }
+    if (key === 'honest') { S.rep.loose += 1; S.repTag.loose = '實在'; e.th.push({ k: 'res', t: `你把成色說清楚了。對方想了想，照成色付了錢：「許老闆實在。」`, notes: ['＋' + fmt(unit * q) + ' 靈石'] }); }
+    else { e.th.push({ k: 'res', t: '對方付了錢，把東西收好走了。', notes: ['＋' + fmt(unit * q) + ' 靈石'] }); if (l.q < 0.7) scheduleComplaint(l, q, unit); }
     e.done = { key, label: key === 'honest' ? '照實' : '賣出' };
     S.log.push({ day: S.day, t: `散客買走${IT[l.item].name}×${q}` });
-  } else { e.done = { key, label: '送客' }; e.th.push({ k: 'res', t: '他走了。' }); }
+  } else { e.done = { key, label: '送客' }; e.th.push({ k: 'res', t: '客人走了。' }); }
 }
 function closeEnc() {
   const e = S.enc; if (!e) return;
@@ -1410,16 +1414,16 @@ function shopDay(tag, dry, noRelic) {
 }
 function shopFlavor(r, tag) {
   const F = SH.flavor || {}, who = PL.walkins.who, R = k => rnd('fl:' + MON() + ':' + S.day + ':' + tag + ':' + k);
-  const goods = Object.keys(IT).filter(k => IT[k].base && IT[k].base < 80 && IT[k].cat !== 'story' && !['zhuji', 'xuechan', 'hudeng'].includes(k));
+  const goods = Object.keys(IT).filter(k => IT[k].base && IT[k].base < 80 && IT[k].cat !== 'story' && IT[k].cat !== 'relic' && !['zhuji', 'xuechan', 'hudeng'].includes(k));
   const pick = (arr, k) => arr[Math.floor(R(k) * arr.length)];
   S.usedFl = S.usedFl || {};
   const pickT = (arr, k) => { const fresh = (arr || []).filter(t => !S.usedFl[t]); if (!fresh.length) return null; const t = pick(fresh, k); if (tag === 'd') S.usedFl[t] = 1; return t; };
-  const fill = (t, k) => !t ? null : t.replace('{who}', pick(who, k + 'w')).replace('{item}', IT[pick(goods, k + 'i')].name).replace('{staff}', S.shop.staff.length ? ST()[pick(S.shop.staff, k + 's')].name : '你');
+  const fill = (t, k) => !t ? null : t.replace('{who}', pick(who, k + 'w').split('，')[0]).replace('{item}', IT[pick(goods, k + 'i')].name).replace('{staff}', S.shop.staff.length ? ST()[pick(S.shop.staff, k + 's')].name : '你');
   const out = [fill(pickT(F.sale, 'a'), 'a')];
   if (r.acc) out.push(fill(pickT(F.buy, 'b'), 'b'));
   if (r.fakes) out.push(fill(pickT(F.fake, 'c'), 'c'));
   else if (r.caught) out.push(fill(pickT(F.caught, 'd'), 'd'));
-  if (R('q') < 0.35) out.push(pickT(F.quiet, 'e'));
+  if (R('q') < 0.35) out.push(pickT(S.shop.staff.length ? [...(F.quiet || []), ...(F.quietStaff || [])] : F.quiet, 'e'));
   return out.filter(Boolean);
 }
 function runShopDay() {
@@ -1443,8 +1447,11 @@ function gapYield() {
   for (let i = 0; i < 8; i++) { const r = shopDay('gap' + i); sum += r.total; }
   if (S.shop.pol.cats.old) { const it = pickRelic('shallow', 'gap' + MON()); if (it) { addLot({ item: it, qty: 1, cost: 0, known: true }); relics.push(IT[it].name); } }
   sum = Math.round(sum); S.stones += sum; S.shop.total += sum;
-  const F = SH.flavor || {}; const t = (F.gap || [''])[MON() % Math.max(1, (F.gap || []).length)];
-  return { title: '這段日子的帳', text: `${t}二十來天，店裡淨賺 ${fmt(sum)} 靈石。${relics.length ? '夥計還收到一件「' + relics.join('、') + '」，放在你的庫房。' : ''}`, notes: [(sum >= 0 ? '＋' : '－') + fmt(Math.abs(sum)) + ' 靈石'], face: 'smile' };
+  const F = SH.flavor || {}, sf = S.shop.staff;
+  const gp = !sf.length ? (F.gapSolo || []) : [...(F.gap || []), ...(sf.includes('caijie') ? (F.gapCaijie || []) : [])];
+  const pool = gp.length > 1 ? gp.filter(x => x !== S.lastGap) : gp;
+  const t = pool.length ? pool[Math.floor(rnd('gap:' + MON()) * pool.length)] : ''; S.lastGap = t;
+  return { title: '這段日子的帳', text: `${t}二十來天，店裡淨賺 ${fmt(sum)} 靈石。${relics.length ? '店裡還收到一件「' + relics.join('、') + '」，放在你的庫房。' : ''}`, notes: [(sum >= 0 ? '＋' : '－') + fmt(Math.abs(sum)) + ' 靈石'], face: 'smile' };
 }
 function shopEventRoll() {
   S.shop.evDay = S.shop.evDay || {};
@@ -1638,7 +1645,7 @@ function autoTalk(e) {
   const asks = Math.min(2, (st.gossip > 0 ? 1 : 0) + (S.shop.staff.includes('caijie') ? 1 : 0));
   if (asks && d.verify) for (const v of verifyList().slice(0, asks)) {
     e.verified.push(v.who); S.met[v.who] = true;
-    e.th.push({ k: 'note', t: `（夥計先跑去問了${NP[v.who].name}。）` });
+    e.th.push({ k: 'note', t: `（先託人去問了${NP[v.who].name}。）` });
     e.th.push({ k: 'npc', who: v.who, t: sub(v.a, v.who), f: v.f || baseFace(v.who) });
     if (!learnTrigger(`${e.deal}:verify:${v.who}`)) noteGeneric(`${NP[v.who].name}談「${d.title}」：${sub(v.a, v.who)}`, 'verify');
   }
@@ -1971,7 +1978,7 @@ function renderNight() {
     <p class="small muted" style="margin:4px 0 6px">來客 ${r.traffic} 人・營業額 ${fmt(r.gross)}・收了 ${r.acc} 批貨${r.fakes ? `（其中 ${r.fakes} 批是假的，虧 ${r.fakeLoss}）` : ''}</p>
     ${r.lines.map(t => `<p class="serif small" style="line-height:1.8">・${esc(t)}</p>`).join('')}
     <details style="margin-top:6px"><summary class="small muted">細帳</summary>${row('賣貨毛利', sign(r.net))}${row('收購轉賣', sign(r.buyProfit))}${r.fakeLoss ? row('假貨', sign(-r.fakeLoss), 'cin') : ''}${r.shady ? row('不問來路的貨', sign(r.shady)) : ''}${r.night ? row('夜班', sign(r.night)) : ''}${r.skim ? row('抽屜少了', sign(-r.skim), 'cin') : ''}${row('薪水', sign(-r.wages))}</details>
-    ${r.relic ? `<p class="small jade" style="margin-top:6px">夥計收到一件「${esc(IT[r.relic].name)}」，放進你的庫房了。</p>` : ''}
+    ${r.relic ? `<p class="small jade" style="margin-top:6px">店裡收到一件「${esc(IT[r.relic].name)}」，放進你的庫房了。</p>` : ''}
     ${r.gossip ? `<p class="small muted" style="margin-top:4px">客人閒聊：${esc(r.gossip)}</p>` : ''}</div>
     ${(n.autoDeals || []).length || n.pawnLine ? `<div class="card"><b class="serif">你不在的時候</b>${[...(n.autoDeals || []), ...(n.pawnLine ? [n.pawnLine] : [])].map(t => `<p class="small" style="margin-top:4px">${esc(t)}</p>`).join('')}</div>` : ''}
     ${(n.carryLines || []).length ? `<div class="card"><b class="serif">身上</b>${n.carryLines.map(x => `<p class="small" style="margin-top:4px">${icon(x.id, 'sm')} 「${esc(IT[x.id].name)}」<span class="${x.spoke ? 'jade' : 'muted'}">${x.spoke ? '今天出聲了。' : '今天沒出聲。'}</span></p>`).join('')}</div>` : ''}
@@ -2436,7 +2443,7 @@ function start(data) {
   render();
 }
 window.claude?.hot?.snapshot?.(() => ({ S, view: UI.view, tab: UI.tab }));
-window.__fs = { redeemCost, pawnMult, relicReactions, watchPlace, dropHeavy, dropCands, pickBack, toggleCarry, syncCarry, isCarryRelic, autoBiz, interruptsAll, lethalLeft, firstVisit, isLethal, spotOk, spotOk0, threadMemSave, deposit, isStoryDeal, shopFlavor, CARRY_N, useRelic, relicUseState, scaleEff, protectMult, deathChance, redeem, applyFx, heldRelics, relicEff, warnRelic, held, IT,  ALLEV, spotList, shopSellLot, shopSellable, die, goNight, shopDay, shopStats, hireStaff, fireStaff, buyUpg, buyGear, interruptsAvail, openInterrupt, ckptRestore, ckptInfo, ckptSave, burdenLimit, ascentRisk, achBook, unlockedBonuses, bonusPicks, threadState, checkAchieve, gearStats, spotBurden, DEATHS, THREADS, SH, PFX, explore, spotsAvail, linAct, EXPLORE, needOk, placeOpen, driftChoose, relicLots, newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN,
+window.__fs = { gapYield, redeemCost, pawnMult, relicReactions, watchPlace, dropHeavy, dropCands, pickBack, toggleCarry, syncCarry, isCarryRelic, autoBiz, interruptsAll, lethalLeft, firstVisit, isLethal, spotOk, spotOk0, threadMemSave, deposit, isStoryDeal, shopFlavor, CARRY_N, useRelic, relicUseState, scaleEff, protectMult, deathChance, redeem, applyFx, heldRelics, relicEff, warnRelic, held, IT,  ALLEV, spotList, shopSellLot, shopSellable, die, goNight, shopDay, shopStats, hireStaff, fireStaff, buyUpg, buyGear, interruptsAvail, openInterrupt, ckptRestore, ckptInfo, ckptSave, burdenLimit, ascentRisk, achBook, unlockedBonuses, bonusPicks, threadState, checkAchieve, gearStats, spotBurden, DEATHS, THREADS, SH, PFX, explore, spotsAvail, linAct, EXPLORE, needOk, placeOpen, driftChoose, relicLots, newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN,
   get S() { return S; }, set S(v) { S = v; }, UI, D, DEALS, NP, IT };
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 })();

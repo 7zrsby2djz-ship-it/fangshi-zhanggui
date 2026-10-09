@@ -257,7 +257,7 @@ he:
   level: 2
   traits: {greed: 2, nerve: 2, pride: 2, trust: 2, patience: 1, backing: 3}
   call: {up: 許老闆, eq: 許老闆, down: 許老闆}
-  surface: 管理處櫃台的收費員，背著一個印著舊銀行標誌的帆布包，收據本永遠夾在腋下。
+  surface: 管理處櫃檯的收費員，背著一個印著舊銀行標誌的帆布包，收據本永遠夾在腋下。
   refuse: 公告上寫多少就多少。
   cold: 許老闆，後面還有很多家。
   circle: 寒潭會

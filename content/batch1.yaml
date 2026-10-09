@@ -344,8 +344,7 @@ items:
     grade: 異物
     base: 30
     stat: 不會變溫
-    passive: {rest: 1}
-    text: 白姐倒進小玻璃瓶裡的半杯冷茶，放多久都是冷的。放在枕頭邊，晚上睡得特別沉，起來身體比較輕（每晚多退一點負擔）。白姐說：「不要喝完。」
+    text: 白姐倒進小玻璃瓶裡的半杯冷茶，放多久都是冷的。放在枕頭邊，晚上睡得特別沉，起來身體比較輕。白姐說：「不要喝完。」
     hidden:
       - {label: 林老師研究過, need: {flag: studied_banbei}, text: 林老師把瓶子對著光看了很久：「裡面有兩個人的倒影。一個是你。」}
     sell: [walk, lin]
@@ -356,8 +355,7 @@ items:
     grade: 異物
     base: 35
     stat: 一直是燙的
-    carry: {protect: {fog_lamp: 0.5}}
-    text: 燈街那盞不準時的燈掉下來的碎片，一直是燙的。帶著它走進霧裡，霧會讓開一點（霧裡的燈比較不會把你帶走）。
+    text: 燈街那盞不準時的燈掉下來的碎片，一直是燙的。帶著它走進霧裡，霧會讓開一點。
     sell: [walk, lin]
   tuoxie:
     name: 負責人的拖鞋
@@ -386,8 +384,7 @@ items:
     grade: 異物
     base: 24
     stat: 摺成四方形
-    carry: {protect: {flower_eat: 0.5}}
-    text: 後山空屋裡那件舊國小制服，摺好之後就攤不開了。帶在身上，白花的香味好像聞不太到（比較不會想吃白花）。
+    text: 後山空屋裡那件舊國小制服，摺好之後就攤不開了。帶在身上，白花的香味好像聞不太到。
     sell: [walk, lin]
   banpai:
     name: 借來的半拍
@@ -396,8 +393,7 @@ items:
     grade: 異物
     base: 60
     stat: 很薄的殼
-    carry: {steps: 1}
-    text: 礦坑口那層殼掉下來的一小片，敲它，回聲會慢半拍才回來。帶著它出門，好像每一趟都多出一點時間（每趟探索可以多看一處）。
+    text: 礦坑口那層殼掉下來的一小片，敲它，回聲會慢半拍才回來。帶著它出門，好像每一趟都多出一點時間。
     hidden:
       - {label: 林老師研究過, need: {flag: studied_banpai}, text: 林老師說這不是殼，是時間結的痂。「借來的，總要還。只是不知道還給誰。」}
     sell: [walk, lin]
@@ -408,8 +404,7 @@ items:
     grade: 異物
     base: 15
     stat: 很新
-    passive: {traffic: 0.5}
-    text: 那塊「許記・分號」招牌背面的木屑，一直是剛刨下來的香味。放在櫃台，客人好像比較多（客流＋0.5），有些人會問：「本店在哪裡？」
+    text: 那塊「許記・分號」招牌背面的木屑，一直是剛刨下來的香味。放在櫃台，客人好像比較多，有些人會問：「本店在哪裡？」
     sell: [walk, lin]
 
 deaths:
@@ -503,5 +498,5 @@ achievements:
 bonuses:
   b_naiya: {name: 一顆乳牙, desc: 開張就帶著那顆還有溫度的乳牙。點名的時候不算你。, give: naiya}
   b_tishu: {name: 梯叔, desc: 開張就有梯叔幫忙（回程的危險少一些）。, staff: tishu}
-  b_muxie: {name: 分號的木屑, desc: 開張就有一撮招牌木屑放在櫃台（客流＋0.5）。, give: muxie}
+  b_muxie: {name: 分號的木屑, desc: 開張就有一撮招牌木屑放在櫃台。, give: muxie}
   b_banpai: {name: 借來的半拍, desc: 開張就帶著那片殼（每趟探索多看一處）。, give: banpai}

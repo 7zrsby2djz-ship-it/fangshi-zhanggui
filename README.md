@@ -102,6 +102,7 @@
 | `content/deaths.yaml` | 37 種死法（標題、印、文字、怎麼避開）與 8 條謎題線 |
 | `content/places_more.yaml` | 各地點負擔與回程死法、新增的探索點、燈街與無底月台 |
 | `content/events_more.yaml` | 追加的散事（20 件，含遺物連鎖與死亡伏筆） |
+| `content/relic_fx.yaml` | 每一件遺物的效果（放在庫房就作用：店裡數值、出門保護、致命選擇前的警示、夜裡自己發生的事；少數有代價） |
 | `content/batch1.yaml` | 第一批外稿（改寫後）：聚落與深層的怪事地點、3 件散事、6 位夥計、9 件遺物、9 種死法、3 條謎題、4 個成就 |
 | `tools/sim.js`, `tools/harness.py` | 自動模擬（Playwright）：`python3 tools/harness.py sim light careful,lamp,ledger,explorer,greedy,reckless,random 60 [回溯次數]` |
 | `tools/batch_test.py` | 第一批外稿的定點測試（每個地點、死法、散事、夥計都跑一次） |

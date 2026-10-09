@@ -33,6 +33,15 @@ assert not set(b1['deaths']) & set(data['deaths']); data['deaths'].update(b1['de
 data['threads'] += b1['threads']
 data['shop']['achievements'] += b1['achievements']
 data['shop']['bonuses'].update(b1['bonuses'])
+# 遺物效果：每一件遺物都要有
+rfx = L('relic_fx')
+for rid, e in rfx.items():
+    assert rid in data['items'], 'relic_fx unknown ' + rid
+    for d in (e.get('carry') or {}).get('protect', {}): assert d in data['deaths'], 'relic protect unknown death ' + d
+    data['items'][rid]['eff'] = e
+_noeff = [k for k, v in data['items'].items() if v.get('cat') == 'relic' and 'eff' not in v]
+assert not _noeff, 'relics without effect: ' + ','.join(_noeff)
+print('relics with effects', sum(1 for v in data['items'].values() if v.get('eff')))
 _sp = [sp['id'] for pl in data['places'].values() if isinstance(pl, dict) for sp in pl.get('spots', [])]
 assert len(_sp) == len(set(_sp)), 'duplicate spot id'
 # 檢查：所有 death id 都有定義

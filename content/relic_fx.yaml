@@ -1,0 +1,56 @@
+# ═════════════ 遺物的效果：帶在身上（放在庫房）就會自己作用 ═════════════
+# desc：顯示在物品文本裡的「效果：…」
+# passive：店裡的數值（客流 traffic、會賣 sales、眼力 appraise、閒聊 gossip、守夜 security、夜班 night、每晚退負擔 rest、利潤 margin）
+# carry：出門的數值（負擔上限 limit、每趟多看幾處 steps、多撿 loot、回程危險倍率 ascent、對某種死法的保護 protect）
+# warn：任何會死的選擇，都要按兩次，而且它會先提醒你
+# night：每晚有機會自己發生一次（chance、need、fx、text）
+# curse：有代價的遺物
+# saved：保護真的救了你一次時顯示的話
+youyou: {desc: 回程上不來的機率少一成。, carry: {ascent: 0.9}, saved: 口袋裡的悠遊卡「嗶」了一聲，你好像搭上了什麼。}
+lupai: {desc: 在崩塌段不會迷路：崩塌段回程的危險減半。, carry: {protect: {asc_ruin: 0.5}}, saved: 你摸到口袋裡的路牌，「往埔里 32」。你照著它指的方向走，走出來了。}
+anquanmao: {desc: 挖東西、爬高的時候保護你（再挖深一點、半空中的船，危險減少）。, carry: {protect: {greed_dig: 0.5, ship_climb: 0.7}}, saved: 有東西砸在你頭上，「叩」的一聲。安全帽裂了一條縫，你沒事。}
+keben: {desc: 夜裡偶爾翻一翻那張地圖，身體適應＋5。, night: {chance: 0.25, fx: {xp: 5}, text: 你睡前又看了一次課本上那座很矮的山。}}
+shouji: {desc: 客人看到都會聊起以前（店裡會聽到客人閒聊）。, passive: {gossip: 1}}
+zhuban: {desc: 「那個時代的腦袋」：眼力＋1。, passive: {appraise: 1}}
+biao: {desc: 上緊發條之後，夜裡偶爾倒回一點累（負擔－1）。沒上緊之前，它在倒數。, night: {chance: 0.35, need: {flag: [watch_wound]}, fx: {burden: -1}, text: 錶倒走了一格，你身上的累也倒回去一點。}}
+huishi: {desc: 回聲會把別人的話帶回來（店裡會聽到閒聊）；在隧道裡比較不會被回聲帶走。, passive: {gossip: 1}, carry: {protect: {echo_answer: 0.6}}, saved: 口袋裡的回聲石先回答了。那個聲音停了一下，走了。}
+xianshui: {desc: 水面一直斜向西：在斷崖邊，你會先看到水往哪裡走（跟著海走的危險減半）。, carry: {protect: {cliff_jump: 0.5}}, saved: 瓶子裡的水面忽然倒向另一邊。你停在崖邊，退了一步。}
+wuguan: {desc: 罐子裡的光點會指路：寒潭水庫回程的危險減半。, carry: {protect: {asc_reservoir: 0.5}}, saved: 罐子裡的光點亮了一下，霧裡的岸就在那個方向。}
+boliye: {desc: 警示：碰到危險就會響。任何可能會死的選擇，都要按兩次。, warn: 口袋裡的玻璃蕨葉，自己響了一下。}
+xianbei: {desc: 有海的味道：在水底比較不會被留下（水底的村子，危險減少）。, carry: {protect: {dam_dive: 0.6}}, saved: 貝殼裡的鹹水灌進你嘴裡，你嗆了一口，浮了上來。}
+chanke: {desc: 空殼很輕，背著像多一個肺：負擔上限＋1。, carry: {limit: 1}}
+bijiben: {desc: 眼力＋1。代價：夜裡偶爾少寫一行，壽命－1個月。, passive: {appraise: 1}, curse: true, night: {chance: 0.1, fx: {lifespan: -1}, text: 早上你翻開筆記本，最後一行又少了一個數字。}}
+luyin: {desc: 夜裡的客人喜歡聽你講那捲帶子：夜班生意＋0.5。, passive: {night: 0.5}}
+qianshi: {desc: 警示：「回頭方見舊時燈」。任何可能會死的選擇，都要按兩次。, warn: 你想起籤詩上那句：「回頭方見舊時燈。」}
+hongzhu: {desc: 櫃上的珠子映著陽光，客流＋0.3。代價：夜裡偶爾盯著它太久，負擔＋1。, passive: {traffic: 0.3}, curse: true, night: {chance: 0.25, fx: {burden: 1}, text: 你盯著珠子裡的海看了一整晚，天亮時眼睛很痠。}}
+lengyu: {desc: 霜會先往羽毛爬：北礦的霜、結霜的夜晚，危險都減半。, carry: {protect: {frost_bare: 0.5, asc_north: 0.6, frost_window: 0.5}}, saved: 冷羽毛上結了一層厚霜，你身上沒有。}
+zhibei: {desc: 只指著你家：回程上不來的機率少一成。, carry: {ascent: 0.9}}
+fushi: {desc: 水不會留你：水底的村子、水牆裡的手，危險大減。, carry: {protect: {dam_dive: 0.3, wall_hand: 0.6}}, saved: 口袋裡的石頭往上浮，把你一起帶了上去。}
+fapiao: {desc: 夜裡偶爾對中獎，＋20 靈石。, night: {chance: 0.2, fx: {stones: 20}, text: 你對了一下那張2029年的發票，竟然中了兩百元。換成靈石，剛好二十。}}
+huangdeng: {desc: 警示：亮三秒，提醒你減速。任何可能會死的選擇，都要按兩次。, warn: 黃燈燈罩亮了三秒，很平靜的黃光。}
+jinianc: {desc: 團體照裡留了你的位子：被點名的時候比較不會被帶走。, carry: {protect: {roll_called: 0.5}}, saved: 你想起畢業紀念冊上那個空位。那不是你的位子。}
+fengling: {desc: 有人在門外，它會先響：守夜＋0.5。, passive: {security: 0.5}}
+daoyu: {desc: 罐子裡的雨往上落：夜裡偶爾帶走一點累，負擔－1。, night: {chance: 0.3, fx: {burden: -1}, text: 倒雨罐裡的水往上落了一整晚，你身上的累也輕了一點。}}
+xiaozhong: {desc: 井底的鐘聲把打水的人引到店門口：客流＋0.3。, passive: {traffic: 0.3}}
+piaogen: {desc: 只要還有票，總有車可以回來：維修梯回程的危險減少。, carry: {protect: {asc_stair: 0.7}}, saved: 你握著票根，腳步好像被什麼拉著往上。}
+shenhua: {desc: 聞過的人會夢見更下面：夜裡偶爾身體適應＋8。代價：睡不沉，每晚少退一點負擔。, passive: {rest: -1}, curse: true, night: {chance: 0.35, fx: {xp: 8}, text: 你夢見一排往下的路燈，醒來的時候，身體好像去過了。}}
+wenbi: {desc: 晚上的客人認得這種錢：夜班生意＋0.5，沒有影子的客人比較不會帶走你。, passive: {night: 0.5}, carry: {protect: {night_guest: 0.5}}}
+laixin: {desc: 水牆裡的手認得這封信：在水牆前危險減半。, carry: {protect: {wall_hand: 0.5}}, saved: 水牆裡的手摸到那封信，停了一下，縮回去了。}
+cunpai: {desc: 水底的村子認得門牌：水底與水庫回程的危險減少。, carry: {protect: {dam_dive: 0.5, asc_reservoir: 0.7}}, saved: 濕濕的門牌在你手裡變得很重，像有人在下面拉住它，不讓你往下。}
+budeng: {desc: 晚上來的客人認得這盞燈：夜班生意＋0.5（夜班的人看到它，生意會更好）。, passive: {night: 0.5}}
+wanchu: {desc: 船上的碗記得怎麼平衡：爬那艘船的危險減半。, carry: {protect: {ship_climb: 0.5}}, saved: 碗底的鹽灑了出來，你看見船往哪邊斜，抓住了另一邊。}
+ventpaper: {desc: 通風口的危險減半。代價：「下面在敲」，守夜－0.5。, carry: {protect: {vent_enter: 0.5}}, passive: {security: -0.5}, curse: true, saved: 你想起值班表上那行字：「不是我們的人。」你把手縮回來了。}
+wuzhen: {desc: 23:58會輕輕響一下，提醒你再一分鐘：在燈街過了時間的危險大減。, carry: {protect: {lampst_stay: 0.4}}, saved: 口袋裡沒有指針的鐘響了一下。再一分鐘。你轉身就跑。}
+zhanwu: {desc: 寄存的人有人等：月台回程、等車的危險減少。, carry: {protect: {asc_platform: 0.6, platform_wait: 0.6}}, saved: 日誌那一頁在你口袋裡發燙：「代子寄存。」你還沒有被領走。}
+chepiao: {desc: 坐過車又回來的人：回程上不來的機率少一成半。, carry: {ascent: 0.85}}
+tangzhi: {desc: 看到的人都覺得懷念：會賣＋0.5。, passive: {sales: 0.5}}
+guangbo: {desc: 往月台下看的危險減半。代價：「回不去的請在月台等候」，客流－0.5。, carry: {protect: {platform_look: 0.5}}, passive: {traffic: -0.5}, curse: true, saved: 你想起廣播稿上被劃掉的那句「請旅客回到地面」，往後退了一步。}
+naiya: {desc: 點名的時候不算你：回答點名不會被帶走。}
+chachou: {desc: 白姐那邊的帳：店裡會聽到客人閒聊。, passive: {gossip: 1}}
+banbei: {desc: 放在枕頭邊睡得沉：每晚多退 1 點負擔。, passive: {rest: 1}}
+dengsui: {desc: 帶著它走進霧裡，霧會讓開一點：霧裡的燈、燈街的燈，危險減半。, carry: {protect: {fog_lamp: 0.5, lamp_return: 0.7}}, saved: 碎片燙了你一下，你停住了。霧在你面前讓開一條縫。}
+tuoxie: {desc: 實驗室後面那扇小門要它。代價：鞋尖朝內，晚上一直覺得有人站在床邊，每晚少退 1 點負擔。, passive: {rest: -1}, curse: true}
+quepiao: {desc: 背上的東西有一半先上去了：負擔上限＋2。, carry: {limit: 2}}
+zhifu: {desc: 白花的香味聞不太到：吃白花、一屋子白花的危險減半。, carry: {protect: {flower_eat: 0.5, flower_keep: 0.5}}, saved: 制服上的樟腦味蓋過了白花的香。你把花放下了。}
+banpai: {desc: 每一趟都多出一點時間：每趟探索多看一處。, carry: {steps: 1}}
+muxie: {desc: 「本店在哪裡？」：客流＋0.3。, passive: {traffic: 0.3}}

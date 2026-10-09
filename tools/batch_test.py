@@ -49,6 +49,21 @@ JS = r"""
   for (const id of ['amai', 'xiaohe', 'tishu', 'chunjiao', 'aque', 'momo']) { T.S.shop.staff = []; const ok = T.hireStaff(id); out.push(id + ' hire ' + ok + ' ' + JSON.stringify(T.shopStats().security) + ' asc ' + T.gearStats().ascent); }
   // 成就
   T.checkAchieve(); out.push('ach ' + JSON.stringify(Object.keys(T.achBook()).filter(k => ['a_rollcall', 'a_b217', 'a_branch', 'a_shell'].includes(k))));
+  // ── 遺物效果 ──
+  const give = id => T.S.lots.push({ id: 'L' + Math.random(), item: id, qty: 1, cost: 0, q: 1, flags: [], label: T.IT[id].name, known: true });
+  fresh(); const tr0 = T.shopStats().traffic; give('muxie'); give('budeng'); out.push('passive traffic ' + tr0 + '->' + T.shopStats().traffic + ' night ' + T.shopStats().night);
+  fresh(); give('dengsui'); T.S.flags.saw_fog_lamp = 1;
+  { const r = (() => { window.__deathRoll = () => 0.4; const notes = []; return T.relicEff().length; })(); }
+  // 直接用 applyFx 模擬「霧裡的燈」：基礎 0.6，碎片減半 → 0.3；擲 0.4 → 被碎片救
+  window.__deathRoll = () => 0.4;
+  { const n = (window.__fs.applyFx || (() => ['no applyFx']))({ death: { id: 'fog_lamp', chance: 0.6 } }); out.push('protect notice: ' + JSON.stringify(n) + ' dead=' + !!T.S.dead); }
+  fresh(); give('huangdeng'); out.push('warn: ' + JSON.stringify(T.warnRelic({ death: { id: 'cliff_jump', chance: 0.2 } })));
+  fresh(); give('fapiao'); give('daoyu'); give('bijiben'); give('shenhua'); let lines = [], life0 = T.S.lifespan;
+  for (let d = 0; d < 14; d++) { T.S.phase = 'day'; T.S.night = null; T.S.burden = 3; T.goNight(); lines.push(...(T.S.night.relicLines || []).map(x => x.id + ':' + x.notes.join('/'))); T.S.day = (T.S.day % 6) + 1; }
+  out.push('night triggers: ' + lines.join(' | ')); out.push('relicOn ' + JSON.stringify(T.S.night.relicOn));
+  fresh(); give('banpai'); window.__deathRoll = () => 0.99; T.S.burden = 0; T.S.phase = 'day'; T.enterPlace('ruin'); const sp = T.spotsAvail('ruin').filter(x => !x.strain && !x.repeat && !(x.fx && x.fx.death)).slice(0, 3);
+  sp.forEach(x => T.explore(x.id)); out.push('steps notice: ' + JSON.stringify((T.S.place.found || {}).notes) + ' steps=' + T.S.place.steps);
+  out.push('relicLog ' + JSON.stringify((T.S.relicLog || []).slice(-3)));
   return { out, err };
 })()
 """

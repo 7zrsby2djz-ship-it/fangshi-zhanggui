@@ -16,7 +16,9 @@ with sync_playwright() as p:
     pg = ctx.new_page(); errs = []
     pg.on('pageerror', lambda e: errs.append(str(e)))
     pg.goto((ROOT / 'dist' / 'game.html').as_uri()); pg.wait_for_timeout(200)
-    pg.evaluate("localStorage.clear()") if seed % 5 == 0 else None
+    pg.evaluate("localStorage.clear()")
+    if seed % 5 != 0:  # 回鍋玩家：已經有幾個成就與死法
+        pg.evaluate("""(()=>{const now=Date.now();localStorage.setItem('fangshi-ach-v1',JSON.stringify({a_first_death:now,a_asc:now,a_tunnel:now,a_stair:now,a_relics8:now}));localStorage.setItem('fangshi-deaths-v1',JSON.stringify({asc_ruin:{n:1,first:now},cliff_jump:{n:1,first:now}}));})()""")
     pg.reload(); pg.wait_for_timeout(200)
     def S(expr): return pg.evaluate("(()=>{const T=window.__fs,S=T.S;return " + expr + "})()")
     def btns(sel):
@@ -145,6 +147,24 @@ with sync_playwright() as p:
                 if not l.count(): break
                 click(l.first)
             click(btns('[data-act=leave]').first); return True
+        if style in ('story', 'explorer', 'cautious'):
+            hot = pg.locator('.place.hot:not([disabled]):visible[data-id]')
+            tids = [hot.nth(i).get_attribute('data-id') for i in range(hot.count())]
+            tids = [t for t in tids if t in ('school', 'tea', 'office', 'homes', 'pawn')]
+            if tids and (style == 'story' or rng.random() < 0.6):
+                click(btns(f'[data-act=enter][data-id={tids[0]}]').first); log['townSpots'] = log.get('townSpots', 0)
+                for _ in range(3):
+                    sp = btns('[data-act=explore]'); pick = None
+                    for i in range(sp.count()):
+                        el = sp.nth(i)
+                        if el.locator('.warn').count() and not (style == 'explorer' and rng.random() < 0.2): continue
+                        pick = el; break
+                    if not pick: break
+                    click(pick); log['townSpots'] += 1
+                    if pg.locator('.confirm').count() and not confirm_if(False): break
+                    if S('S.dead') or S('S.phase') != 'place': break
+                if S('S.phase') == 'place': click(btns('[data-act=leave]').first)
+                return True
         if style == 'cautious' and btns('[data-act=enter][data-id=office]').count() and S('T.accuseList().length'):
             click(btns('[data-act=enter][data-id=office]').first)
             l = btns('[data-act=accusesheet]')

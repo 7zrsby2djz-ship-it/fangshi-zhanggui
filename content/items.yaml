@@ -648,3 +648,126 @@ shenhua:
   hidden:
     - {label: 林老師研究過, need: {flag: studied_shenhua}, text: 林老師說舊國小的植物圖鑑裡沒有這種花。她用放大鏡看了花心，裡面是一圈一圈很細的紋，像年輪，數不完。她說：「它比這座聚落還老。」}
   sell: [walk, lin]
+
+# ───── 擴充：深處的遺物 ─────
+wenbi:
+  name: 溫的硬幣
+  cat: relic
+  unit: 枚
+  grade: 異物
+  base: 14
+  stat: 一直是溫的
+  text: 一枚舊硬幣，正面的人像磨平了，背面寫著「伍拾圓」。不管放在哪裡，它都是溫的，像剛從誰的口袋裡拿出來。夜班的溫伯說，晚上來的客人，常常用這種錢。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_wenbi}, text: 林老師把硬幣放在冰塊上，冰沒有融。「它不是熱，」她說，「它是還被人握著。」}
+  sell: [walk, lin]
+laixin:
+  name: 水牆裡的信
+  cat: relic
+  unit: 封
+  grade: 舊物
+  base: 36
+  stat: 2029年寄出，沒有寄到
+  text: 塑膠套包著的信封，郵戳是2029年12月31日，收件地址是一個海邊的鄉鎮。信封是乾的。你沒有拆。信封背面寫著：「如果有人撿到，請幫我寄。」
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_laixin}, text: 林老師對著光看了很久：「裡面只有一句話。我不念給你聽，那不是寫給我們的。」她把信還給你：「可是，他寫的是『我們這邊很好』。」}
+  sell: [lin]
+cunpai:
+  name: 水底村子的門牌
+  cat: relic
+  unit: 塊
+  grade: 舊物
+  base: 30
+  stat: 一直是濕的
+  text: 藍底白字的門牌：「寒潭村　中正路　41號」。寒潭水庫蓋起來以前，底下的村子叫什麼，沒有人記得。門牌永遠是濕的，摸起來像剛從水裡撈起來。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_cunpai}, text: 林老師翻遍舊地圖，找不到這個地址。「41號。賣霧的阿伯說他數到第四十一盞燈。」她沒有再說下去。}
+  sell: [walk, lin]
+budeng:
+  name: 不熄的燈泡
+  cat: relic
+  unit: 個
+  grade: 異物
+  base: 34
+  stat: 沒有接電也亮
+  text: 一個舊式的鎢絲燈泡，玻璃很薄，裡面的燈絲一直亮著，很淡的黃光。拿在手裡是溫的。放在店裡，晚上客人會比較多——溫伯說，是因為晚上來的客人，認得這種光。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_budeng}, text: 林老師說，舊國小的禮堂以前也有一顆這種燈泡，災變那天晚上亮了起來，一直亮到現在。「它不是在發光，」她說，「是在等人。」}
+  sell: [walk, lin]
+wanchu:
+  name: 半空船上的碗
+  cat: relic
+  unit: 個
+  grade: 舊物
+  base: 24
+  stat: 碗底有鹽
+  text: 船上餐廳的白瓷碗，碗緣印著一圈藍色的船錨。碗底結著一層薄薄的鹽，洗掉，第二天又會長出來。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_wanchu}, text: 林老師查到碗底的船名：「是一艘渡輪。它本來的航線，終點是一座現在已經不存在的港口。」}
+  sell: [walk, lin]
+ventpaper:
+  name: 通風口吐出的紙
+  cat: relic
+  unit: 張
+  grade: 舊物
+  base: 28
+  stat: 礦場的值班表
+  text: 一張發黃的值班表，最後一欄是2029年12月31日的夜班，簽名欄寫著一個名字：孟家和。底下有一行很潦草的字：「下面在敲。不是我們的人。」
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_ventpaper}, text: 「孟家和。」林老師把名字抄在小卡上：「紀念碑上，是用油漆補寫的那一個。」}
+  sell: [lin]
+wuzhen:
+  name: 沒有指針的鐘
+  cat: relic
+  unit: 個
+  grade: 異物
+  base: 40
+  stat: 會響，不會走
+  text: 一個圓形的掛鐘，沒有指針，鐘面上只有數字。每天晚上十一點五十八分，它會輕輕響一下，像在提醒誰，再一分鐘。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_wuzhen}, text: 林老師說，鐘響的時候，舊物室裡所有從下面帶上來的東西，都會同時安靜一下。「像在數人。」}
+  sell: [walk, lin]
+zhanwu:
+  name: 站務日誌
+  cat: relic
+  unit: 本
+  grade: 舊物
+  base: 0
+  stat: 封面印著「寄存」
+  text: 從第七層月台站務室帶出來的簿子，只撕下了一頁——寫著你爸跟你的名字那一頁。字跡跟長生當鋪的當票一模一樣。「代子寄存。」你看了很多次，還是不懂「寄存」的是什麼。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_zhanwu}, text: 林老師看完，沉默了很久：「長生當鋪不是在借你命。是在替你們家，把什麼東西寄放在下面。」她說這只是她的猜測。}
+  sell: [lin]
+chepiao:
+  name: 末班車車票
+  cat: relic
+  unit: 張
+  grade: 異物
+  base: 20
+  stat: 打過洞的
+  text: 一張打過洞的車票，乘車時間23:59，下車站那一格寫著「月台」。票是溫的，有一點煞車皮的味道。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_chepiao}, text: 林老師說，舊物室裡的票根，都是沒有打洞的。「有打洞的，表示有人坐過，而且回來了。你是第一個。」}
+  sell: [walk, lin]
+tangzhi:
+  name: 倒影糖果紙
+  cat: relic
+  unit: 張
+  grade: 舊物
+  base: 8
+  stat: 印的人物沒人認得
+  text: 一張亮晶晶的糖果紙，印著一個戴帽子的卡通人物，你從來沒看過，可是一看到就覺得很懷念，懷念到喉嚨發緊。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_tangzhi}, text: 林老師問了好幾個老人。每一個都說小時候吃過這種糖，每一個都說不出名字。}
+  sell: [walk, lin]
+guangbo:
+  name: 月台廣播稿
+  cat: relic
+  unit: 張
+  grade: 舊物
+  base: 22
+  stat: 最後一句被劃掉
+  text: 「各位旅客您好，本站為終點站，請旅客回到地面——」後面被人用原子筆用力劃掉，劃到紙都破了。旁邊補了一行小字：「回不去的請在月台等候。」
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_guangbo}, text: 「劃掉的那個人，跟補字的那個人，筆跡一樣。」林老師說：「他先寫了希望，再自己劃掉。」}
+  sell: [walk, lin]

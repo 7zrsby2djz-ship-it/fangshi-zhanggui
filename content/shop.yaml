@@ -1,0 +1,671 @@
+# ═════════════ 甩手掌櫃：店自己會動 ═════════════
+# 店每天晚上自己結一次帳（日報）。玩家只管：方針、夥計、店面。
+# traits / fx 可用的鍵：
+#   traffic 客流  sales 會賣（客流＋客單）  ticket 客單價  margin 毛利  offers 上門賣貨的人
+#   appraise 眼力（擋假貨）  audit 對帳（擋偷錢）  greed 手腳不乾淨  gossip 聽八卦（消息）
+#   relic 撿到舊物的機率  security 守夜（擋麻煩）  night 夜班收入  rest 每晚退掉的負擔
+#   cap 每晚修行上限  slots 夥計名額  heat 嘴不牢（聚落注意）
+
+policy:
+  buy:
+    label: 收購方針
+    opts:
+      strict: {name: 嚴, desc: 只收看得懂的貨。收得少，很少吃虧。}
+      normal: {name: 普通, desc: 看得過去就收。}
+      generous: {name: 寬, desc: 有人拿來就收。貨多，假貨也多。}
+  price:
+    label: 定價
+    opts:
+      low: {name: 便宜, desc: 薄利多銷，客人多，名聲好。}
+      normal: {name: 公道, desc: 照市價。}
+      high: {name: 貴, desc: 一筆賺多一點，客人少一點。}
+  cult:
+    label: 晚上修行
+    opts:
+      none: {name: 不投, desc: 錢全部留著。}
+      half: {name: 一半, desc: 每晚拿一部分靈石靜坐。}
+      full: {name: 全力, desc: 能投多少投多少，留一點周轉。}
+  sign:
+    label: 招牌
+    opts:
+      低調: {name: 低調, desc: 不顯眼。規費照常，客人比較敢開口。}
+      張揚: {name: 張揚, desc: 客人多一點，管理處收規費也會多收一點。}
+  cats:
+    label: 收哪些貨
+    list:
+      herb: {name: 藥材, desc: 赤炎草、狼牙、療傷藥。穩。}
+      ore: {name: 礦材, desc: 寒鐵、雜礦。量大、利薄。}
+      old: {name: 舊物, desc: 外面撿回來的東西。偶爾會收到真的怪東西。}
+      daily: {name: 日用, desc: 香、防水貼、雜貨。客人最多。}
+      shady: {name: 來路不明, desc: 不問來路。利潤高，麻煩也會上門。}
+
+tiers:
+  - {at: 0, name: 巷口小店}
+  - {at: 3, name: 有點名氣的店}
+  - {at: 6, name: 老字號}
+  - {at: 9, name: 山城第一家}
+
+staff:
+  ayue:
+    name: 阿岳
+    role: 搬貨工
+    hire: 30
+    wage: 4
+    traits: {sales: 1, offers: 1}
+    tags: [老實, 力氣大]
+    desc: 背架把肩膀磨出繭的搬貨工，話不多，貨搬得又快又穩。有他在，店裡能多接幾個客人。
+    hello: 「老闆，貨放哪？……好，我知道了。」
+  xiaoye:
+    name: 小葉
+    role: 顧櫃
+    hire: 40
+    wage: 5
+    traits: {sales: 2, gossip: 1, heat: 1}
+    tags: [嘴甜, 愛聊天, 嘴不牢]
+    desc: 剛從舊國小高中部畢業的女生，跟誰都聊得起來。客人愛跟她買，街上的八卦也會自己跑進店裡——店裡的事，也會自己跑出去。
+    hello: 「老闆好！我跟你說，對面錢家店的貓昨天又跑來我們這邊睡了。」
+  caijie:
+    name: 蔡姐
+    role: 帳房
+    hire: 60
+    wage: 6
+    traits: {audit: 1, margin: 0.03}
+    tags: [精明, 不囉嗦]
+    desc: 回春藥行退下來的會計，算盤打得比你快。帳對得清清楚楚，誰想從抽屜摸錢，都摸不走。
+    hello: 「帳本給我。……你這本，我先從去年對起。」
+  laofu:
+    name: 老符
+    role: 鑑定
+    hire: 90
+    wage: 8
+    traits: {appraise: 3, traffic: -1}
+    tags: [眼睛利, 脾氣差]
+    desc: 退休的老鑑定師，眼睛利得像刀，畫上去的金線、泡過水的貼，一眼就看穿。客人常被他兇跑。
+    hello: 「你這櫃子上，有三樣是假的。我不說是哪三樣，你自己先猜。」
+  akai:
+    name: 阿凱
+    role: 推銷
+    hire: 20
+    wage: 3
+    traits: {sales: 3, greed: 1}
+    tags: [超會賣, 手腳不乾淨]
+    desc: 什麼都賣得出去，連你自己都想跟他買。只是抽屜裡的錢，偶爾會少一點。
+    hello: 「老闆，你這店擺法不對，客人進來眼睛不知道看哪。給我三天。」
+  amei:
+    name: 阿妹
+    role: 撿東西的
+    hire: 15
+    wage: 2
+    traits: {relic: 0.16}
+    tags: [膽子大, 往外跑]
+    desc: 十四歲，整天往崩塌段跑，口袋裡永遠有怪東西。她會替店裡撿回舊物——也常往太深的地方跑。
+    hello: 「我可以不要錢，可是我撿到的東西，你要先給我看一眼再收。」
+  ahua:
+    name: 阿花嬸
+    role: 煮飯兼顧店
+    hire: 25
+    wage: 3
+    traits: {rest: 1, traffic: 1}
+    tags: [手藝好, 囉嗦]
+    desc: 隔壁的阿花嬸，飯煮得好，客人坐下來就不想走。你從外面回來，桌上永遠有一碗熱湯，身上的累也退得比較快。
+    hello: 「你那臉色，又去外面亂跑了喔？湯先喝。」
+  heigou:
+    name: 黑狗
+    role: 守夜
+    hire: 70
+    wage: 6
+    need: {month: 2}
+    traits: {security: 2}
+    tags: [沉默, 前巡守隊員]
+    desc: 寒潭會巡守隊退下來的，肩膀很寬，一句話都不多說。來路不明的貨進門，他會先看一眼；半夜敲門的人，他會先開門。
+    hello: 「……嗯。」
+  wenbo:
+    name: 溫伯
+    role: 夜班
+    hire: 35
+    wage: 3
+    need: {month: 2}
+    traits: {night: 1}
+    tags: [睡不著, 看得到東西]
+    desc: 睡不著的老人，說願意幫你顧夜班，不要多少錢。夜裡的客人比較少，可是比較怪。他說他晚上會看到一些人，問他是誰，他只說「客人」。
+    hello: 「晚上我顧。你放心，晚上來的，大多是好人。」
+  shuqi:
+    name: 舒琪
+    role: 採購
+    hire: 110
+    wage: 9
+    need: {month: 2}
+    traits: {offers: 2, ticket: 3}
+    tags: [人脈廣, 寒潭會出身]
+    desc: 在寒潭會倉庫做過三年採購，山上山下哪裡有貨、哪裡缺貨，她都知道。店裡的貨會變得比較好、比較貴。
+    hello: 「許老闆，你這裡賣的東西，太便宜了。不是價錢，是貨。」
+
+  xiaoer:
+    name: 阿宏
+    role: 店小二
+    hire: 0
+    wage: 0
+    bonusOnly: true
+    traits: {sales: 2, offers: 1}
+    tags: [勤快, 不要薪水]
+    desc: 說是你爸以前收留過的孩子，現在長大了，回來報恩。不要薪水，只要一個睡覺的地方。
+    hello: 「老闆，我回來了。你不記得我沒關係，我記得這間店。」
+  wangbo:
+    name: 旺伯
+    role: 老店小二
+    hire: 0
+    wage: 0
+    bonusOnly: true
+    traits: {sales: 1, appraise: 1, audit: 1, traffic: 1}
+    tags: [什麼都會一點, 不偷錢]
+    desc: 在聚落每一間店都顧過櫃台的老人，最後說要在許家店退休。什麼都會一點，而且從來不偷錢。
+    hello: 「我顧過錢家店，顧過回春藥行，顧過聽雨茶館。你這間，是最後一間。」
+
+upgrades:
+  sign:
+    name: 招牌重新上漆
+    cost: 50
+    fx: {traffic: 1}
+    desc: 許家店三個字重新描過。從街頭就看得到。
+  teadesk:
+    name: 門口擺一張茶桌
+    cost: 60
+    fx: {traffic: 1, gossip: 1}
+    desc: 走累的人會坐下來喝杯茶，順便聊幾句、順便買點東西。
+  irongate:
+    name: 鐵捲門
+    cost: 70
+    fx: {security: 1}
+    desc: 晚上拉下來，聲音很大，整條街都聽得到。小偷也聽得到。
+  coldbox:
+    name: 保冷櫃
+    cost: 80
+    fx: {margin: 0.03}
+    desc: 赤炎草、藥丸不會悶壞，貨損少了，利潤就多了。
+  shelf:
+    name: 加釘貨架
+    cost: 90
+    fx: {traffic: 2, slots: 1}
+    desc: 牆上多了三層架子，店裡擺得下更多貨，也多一個夥計站得下的地方。
+  lamp:
+    name: 櫃台鑑定燈
+    cost: 100
+    fx: {appraise: 1}
+    desc: 一盞很亮的白燈，對著光看，金線是畫的還是長的，看得比較清楚。（不是狐尾燈。）
+  quiet:
+    name: 二樓靜室
+    cost: 150
+    fx: {cap: 15, rest: 1}
+    desc: 把二樓堆雜物的房間清出來，鋪上草蓆。晚上靜坐比較深，從外面帶回來的累也退得快。
+  backyard:
+    name: 後院倉庫
+    cost: 180
+    fx: {offers: 2, relic: 0.05}
+    desc: 收得下整車的貨。拿東西來賣的人多了，奇怪的東西也多了。
+  cart:
+    name: 韓九的貨運線
+    cost: 260
+    need: {month: 2}
+    fx: {ticket: 5, offers: 1}
+    desc: 跟韓九談好，每趟上山下山都替你帶貨。店裡開始有山下的東西，客人肯花的錢也多了。
+  annex:
+    name: 打通隔壁店面
+    cost: 360
+    need: {upg: shelf}
+    fx: {traffic: 3, slots: 1, ticket: 2}
+    desc: 隔壁空了十年的店面租下來，牆打掉。許家店變成這條街最大的一間。
+
+# 日報裡的小段落。{who} 會換成客人，{item} 換成貨名。
+flavor:
+  sale:
+    - "{who}買走了一批{item}，說下次還要來。"
+    - "{who}在櫃前站了很久，最後把{item}全包了。"
+    - "{who}殺價殺不過夥計，還是照價買了{item}。"
+    - "{who}說錢家店的{item}比較貴，所以來你這裡。"
+    - "{who}買了{item}，走之前多問了一句你今天去了哪裡。"
+    - "{who}付錢的時候，手一直在抖。他說是天氣冷。"
+  buy:
+    - "有人拿了一批{item}來賣，價錢談得很快。"
+    - "{who}把家裡的{item}拿來換現錢，說要給小孩繳學費。"
+    - "一個沒留名字的人放下一袋{item}，收了錢就走。"
+    - "{who}背來一整簍{item}，說是自己採的。"
+  fake:
+    - "收進來的{item}裡，有一批是假的，發現的時候人已經走了。"
+    - "有一批{item}泡過水，曬乾了拿來賣，晚上才看出來。"
+    - "一批{item}的金線是畫的。夥計摸了一手金粉。"
+  caught:
+    - "{staff}把一批假{item}擋在門外，賣家罵罵咧咧地走了。"
+    - "{staff}對著光看了一眼，說：「這批不收。」"
+  quiet:
+    - "今天下午店裡沒什麼人，夥計趴在櫃上睡著了。"
+    - "傍晚有一陣霧，街上空了一個小時，霧散了客人才又出來。"
+    - "對門錢家店今天提早打烊，客人都跑來你這裡。"
+    - "有小孩在店門口用粉筆畫格子跳，跳到天黑才被叫回家。"
+    - "一隻白色的鳥在招牌上站了一個下午，不叫，也不飛。"
+  gap:
+    - 這段日子，店照常開。夥計們輪班，帳本一頁一頁寫滿。
+    - 你不在的時候，店也沒停過。蔡姐說得好：「店是在賺錢，不是在等你。」
+    - 二十來天，客人來來去去。有幾個熟面孔，開始叫你的夥計「小老闆」。
+
+# ═════════════ 店裡出的事 ═════════════
+# 每晚結帳後擲一次：條件成立、機率過了，就在隔天早上出一張卡。每件只發生一次（repeat: true 可重複，間隔 gap 天）。
+# need 可以用：staff（請了誰）、noStaff、upg（有哪項店面）、pol（方針，例如 {shady: true} {buy: generous} {price: low} {sign: 張揚}）、
+#   minHired（請了幾天以上）、secMax（守夜不到多少）、net（今天淨賺至少多少）
+events:
+  - id: se_first_day
+    title: 第一天的帳
+    need: {}
+    chance: 1
+    prio: 9
+    text: 晚上你把帳本攤開，才發現今天你幾乎沒有站在櫃台後面——貨自己進來，自己出去，錢自己落進抽屜。這就是你爸說的「店會自己長大」。你只要決定它往哪裡長。
+    face: think
+  - id: se_record100
+    title: 一天一百
+    need: {net: 100}
+    chance: 1
+    prio: 8
+    text: 蔡姐（或者是你自己）把算盤推過來：今天淨賺超過一百。這條街上，一天賺一百的店，以前只有錢家店。錢不語今天晚上，在對門站了很久。
+    fx: {rep: {loose: 1}, tag: {loose: 生意好}}
+    face: laugh
+  - id: se_record250
+    title: 一天兩百五
+    need: {net: 250}
+    chance: 1
+    prio: 8
+    text: 帳本上的數字大到你算了兩次。阿花嬸說要煮一鍋麻油雞慶祝，小葉說要在門口貼紅紙。你只是坐在櫃台後面，想起長生當鋪的當票：三百靈石，換回一個月。
+    fx: {rep: {loose: 1}, xp: 5}
+    face: laugh
+  # ── 夥計 ──
+  - id: se_ayue_rack
+    title: 阿岳的背架
+    need: {staff: ayue, minHired: 2}
+    chance: 0.5
+    text: 阿岳搬貨的時候，背架的扣件斷了一個，整箱寒鐵差點砸到腳。他自己默默拿鐵絲綁起來，說沒事。你看了一眼，舊扣件磨得只剩一半。
+    choices:
+      - label: 幫他換四枚新鋼扣
+        desc: 二十塊
+        need: {stones: 20}
+        text: 你跟鐵師傅訂了四枚新鋼扣，替他裝好。阿岳試著背了一下，沒說謝謝，第二天比平常早一個小時來開門。
+        fx: {stones: -20, flag: [ayue_loyal], rep: {loose: 1}}
+      - label: 叫他小心一點
+        text: 阿岳點點頭，「嗯。」那天晚上，你聽到他在後院用鐵絲一圈一圈地綁。
+        fx: {}
+  - id: se_xiaoye_leak
+    title: 小葉的嘴
+    need: {staff: xiaoye, minHired: 1}
+    chance: 0.4
+    text: 你聽到小葉在門口跟客人說：「我們老闆喔，昨天又去外面了，去很深的地方喔，回來還流鼻血。」客人們聽得很認真，有一個還拿出本子在記。
+    choices:
+      - label: 叫她不要講
+        text: 小葉吐了吐舌頭：「好啦。」可是第二天，整條街還是都知道了。
+        fx: {heat: 1}
+      - label: 由她講
+        desc: 生意好，名聲也大
+        text: 你沒說什麼。第二天，有三個人專程來問你外面的事，順便買了很多東西。
+        fx: {stones: 30, heat: 1, rep: {loose: 1}}
+  - id: se_xiaoye_gossip
+    title: 小葉聽來的
+    need: {staff: xiaoye, minHired: 3}
+    chance: 0.5
+    text: 小葉一邊包貨一邊說：「我跟你說喔，聽雨茶館的白姐，十二年前那個三月，每天早上都在對街賣豆漿。她看到的東西比她說的多。」
+    fx: {note: 小葉說，十二年前的三月，聽雨茶館的白姐每天早上都在對街賣豆漿，看到的比她說的多。}
+  - id: se_laofu_vip
+    title: 被老符兇跑的客人
+    need: {staff: laofu}
+    chance: 0.35
+    text: 一個寒潭會的年輕會員拿了一塊霜晶來賣，老符看都沒看就說：「染的。」對方臉漲紅，說是他師父給的。老符說：「那你師父被騙了。」對方摔門走了。晚上你仔細看了那塊霜晶的照片——老符是對的。
+    choices:
+      - label: 送一份禮去寒潭會賠不是
+        desc: 二十塊
+        need: {stones: 20}
+        text: 你託人送了一包定神香過去，附了一張紙條。寒潭會那邊回了一句：「貴店的鑑定師，很準。」
+        fx: {stones: -20, rep: {sect: 1}}
+      - label: 由他
+        text: 老符哼了一聲：「寒潭會的人，都要先被罵一次才會長大。」
+        fx: {rep: {sect: -1}}
+  - id: se_akai_skim
+    title: 抽屜裡少了錢
+    need: {staff: akai, noStaff: [caijie], minHired: 2}
+    chance: 0.45
+    text: 你對帳的時候，發現這幾天的抽屜，每天都少一點點。不多，少到如果你不認真算，根本不會發現。阿凱今天穿了一雙新鞋。
+    choices:
+      - label: 請他走
+        text: 阿凱沒有辯解，把新鞋脫下來放在櫃上：「這雙算還你。」他光著腳走了。第二天，生意明顯少了一點。
+        fx: {fire: akai}
+      - label: 扣他薪水，留下來
+        text: 阿凱聳聳肩：「好啦。」接下來幾天，他賣得更賣力了，抽屜裡的錢，還是會少一點點。
+        fx: {stones: 15}
+      - label: 裝沒看到
+        text: 你把帳本闔上。有些錢，就當是他替你賣出去的辛苦費。
+        fx: {}
+  - id: se_akai_caught
+    title: 蔡姐的算盤
+    need: {staff: [akai, caijie]}
+    chance: 0.5
+    text: 蔡姐把算盤往阿凱面前一推：「三天，四十二塊。你自己說。」阿凱的臉白了。蔡姐轉頭跟你說：「錢我已經從他薪水扣回來了。要不要留他，你決定。他是真的很會賣。」
+    choices:
+      - label: 留下
+        text: 阿凱從那天起，每天下班前都自己把抽屜數一遍給蔡姐看。他賣得更好了。
+        fx: {stones: 42, flag: [akai_reformed]}
+      - label: 請他走
+        text: 阿凱走了。蔡姐說：「可惜了，那張嘴。」
+        fx: {stones: 42, fire: akai}
+  - id: se_ahua_traveler
+    title: 喝湯的過路客
+    need: {staff: ahua}
+    chance: 0.35
+    text: 中午，一個揹著很大背包的旅人坐下來喝阿花嬸的湯。他說他從南邊另一座高山來，那邊的海也是往下流的，流的方向跟這邊相反。他喝完三碗，在桌上留了三十塊和一句話：「你們這邊的霜，往北走。我們那邊的，往南。」
+    fx: {stones: 30, xp: 5, note: 一個從南邊高山來的旅人說，他們那邊的海也往下流，方向相反；那邊的霜往南走。}
+  - id: se_shuqi_order
+    title: 寒潭會的大訂單
+    need: {staff: shuqi, minHired: 1}
+    chance: 0.5
+    text: 舒琪拿著一張訂單回來：寒潭會倉庫要一大批療傷藥跟防水貼，指定要許家店的貨。「價錢我談好了，」她說，「只是要先墊貨款。」
+    choices:
+      - label: 接
+        desc: 先墊八十，三天後收兩百
+        need: {stones: 80}
+        text: 你墊了貨款。三天後，寒潭會的人推著車來取貨，錢一分不少。舒琪說：「下次他們會先找我們。」
+        fx: {stones: 120, rep: {sect: 1}, flag: [shuqi_deal]}
+      - label: 不接
+        text: 舒琪點點頭：「也好，量太大，出事就是大事。」
+        fx: {}
+  - id: se_caijie_page
+    title: 舊帳本的夾頁
+    need: {staff: caijie, minHired: 2}
+    chance: 0.5
+    text: 蔡姐從你爸那幾本舊帳本裡翻出一張夾頁，是一張寒鐵的收貨單，日期是十二年前的三月十七號，經手人那一欄寫著「錢」，旁邊還有一個很小的「周」字。「這種單子，」蔡姐說，「我在藥行做了二十年，只看過一種人會這樣寫。」她沒說是哪種人。
+    fx: {note: 蔡姐在你爸的舊帳本裡翻到一張十二年前三月十七號的寒鐵收貨單，經手人寫「錢」，旁邊有個小小的「周」字。}
+  - id: se_heigou_box
+    title: 黑狗擋下來的箱子
+    need: {staff: heigou, pol: {shady: true}}
+    chance: 0.4
+    text: 黑狗半夜把一個木箱拖到後院，用鐵鍊綁著。他只說：「這個在呼吸。」箱子一吸一吐，很規律。
+    choices:
+      - label: 交給黑狗處理
+        text: 黑狗把箱子扛到斷崖邊，丟了下去。回來的時候，他手裡多了一根冰的白羽毛：「箱子裡吐出來的。」
+        fx: {give: [{item: lengyu, qty: 1, cost: 0}], rep: {loose: 1}}
+      - label: 自己打開看看
+        desc: 黑狗搖頭
+        text: 你撬開箱子的那一刻，黑狗一把把你往後拉。
+        fx: {death: {id: breath_box, chance: 0.5, saved: 一股冷風從箱子裡衝出來，打在黑狗的背上。他悶哼一聲，把蓋子壓回去。「下次聽我的。」他背上的衣服，結了一層霜。}}
+  # ── 來路不明 ──
+  - id: se_breath_box
+    title: 會呼吸的箱子
+    need: {pol: {shady: true}, noStaff: [heigou]}
+    chance: 0.35
+    text: 昨天收進來的一個木箱，放在後院，到了晚上開始呼吸。一吸，一吐，很規律，箱板跟著鼓起來又塌下去。賣箱子的人沒有留名字。
+    choices:
+      - label: 撬開來看
+        desc: 箱子在呼吸
+        text: 你拿起鐵撬。
+        fx: {death: {id: breath_box, chance: 0.85, saved: 箱蓋一開，一股冷風撲到你臉上，你往後倒，剛好倒進阿岳——或者是誰——的懷裡。風停了，箱子是空的，箱底結著一層霜。你整整一天說不出話。}}
+      - label: 送去派出所
+        text: 周警員看了箱子很久，叫人抬走了。他給了你二十塊：「收據我不開。這東西，沒有來過。」
+        fx: {stones: 20, rel: {zhou: 1}}
+      - label: 推回後院不管
+        text: 第二天早上，箱子不見了。後院的地上有一排很小的腳印，往北。
+        fx: {flag: [box_walked]}
+  - id: se_robbery
+    title: 半夜敲門的人
+    need: {pol: {shady: true}, secMax: 1}
+    chance: 0.3
+    text: 半夜，三個蒙面的人敲開了店門，指名要前幾天收進來的那批「不問來路」的貨。帶頭的手上有刀，刀柄纏著紅布。
+    choices:
+      - label: 抓起秤錘跟他們拚
+        desc: 刀在他手上
+        text: 你抓起櫃上的秤錘。
+        fx: {death: {id: robbery, chance: 0.7, saved: 你一錘砸在門框上，聲音大到整條街的狗都叫了。三個人愣了一下，轉身就跑。你這才發現，你的手在發抖，秤錘的柄斷了。}}
+      - label: 把錢跟貨都給他們
+        text: 你把抽屜拉開。他們拿了錢、拿了貨，帶頭的臨走前說：「許老闆識相。」第二天你去裝了門閂。
+        fx: {stones: -60}
+      - label: 大喊「失火了」
+        text: 你扯開喉嚨大喊。對門錢家店的燈先亮了，接著整條街的燈都亮了。三個人罵了一聲，跑了。錢不語披著外套出來，看了你一眼：「不問來路的貨，少收。」
+        fx: {rel: {qian: 1}, heat: 1}
+  - id: se_bad_pill
+    title: 沒有標籤的藥丸
+    need: {anyOf: [{pol: {shady: true}}, {pol: {buy: generous}}]}
+    chance: 0.3
+    text: 收進來的一批藥丸沒有標籤，賣的人說是「築基散」，吃一顆抵一個月靜坐。藥丸黑得發亮，聞起來有鐵鏽味。
+    choices:
+      - label: 自己先試一顆
+        desc: 怕賣給客人出事
+        text: 你倒了一杯水。
+        fx: {death: {id: bad_pill, chance: 0.8, unless: {level: 7}, saved: 藥丸吞下去，你的經脈像被火燒了一遍。你在地上躺了一個晚上，醒來的時候，身體好像真的適應了一點——也好像少了一點什麼。}, xp: 40, lifespan: -1}
+      - label: 全部倒掉
+        text: 你把藥丸倒進後院的水溝。第二天，水溝邊的草長得比人還高。
+        fx: {stones: -15, rep: {loose: 1}}
+      - label: 照樣賣
+        text: 藥丸一天就賣光了。三天後，回春藥行的張主任親自來店裡，臉色很難看。
+        fx: {stones: 60, rep: {loose: -2}, heat: 2}
+  - id: se_police
+    title: 派出所來查貨
+    need: {pol: {shady: true}, noStaff: [heigou]}
+    chance: 0.3
+    text: 周警員帶著兩個人來店裡，說有人報案，許家店收贓。他們翻了後院，翻出兩樣說不清楚來路的東西。
+    fx: {stones: -40, rep: {loose: -1, sect: -1}, heat: 1}
+  - id: se_shady_relic
+    title: 不問來路的好東西
+    need: {pol: {shady: true}}
+    chance: 0.35
+    text: 一個斗笠壓得很低的人，放下一個布包就走了，連錢都沒拿。布包裡是一件你沒看過的東西，摸起來是溫的。
+    fx: {giveRelic: deep}
+  # ── 方針 ──
+  - id: se_price_war
+    title: 對門的臉色
+    need: {pol: {price: low}, minDays: 3}
+    chance: 0.4
+    text: 錢不語端著一杯茶走過來，站在你店門口：「許老弟，你這樣賣，這條街的人都要跟著餓死喔。」他笑著說的。他一直都是笑著說的。
+    choices:
+      - label: 調回公道價
+        text: 錢不語點點頭，滿意地回去了。你這幾天少了一些客人。
+        fx: {setPol: {price: normal}, rel: {qian: 1}}
+      - label: 照舊
+        text: 「好，好。」他笑著走回對門。那天下午，錢家店也掛出了「特價」的牌子。
+        fx: {rel: {qian: -1}, rep: {loose: 1}}
+  - id: se_sign_loud
+    title: 管理處的何小姐
+    need: {pol: {sign: 張揚}, minDays: 2}
+    chance: 0.4
+    text: 管理處的何小姐經過店門口，抬頭看了一眼新掛的招牌，在本子上寫了什麼。「許老闆生意很好嘛。」她說：「規費的事，到時候再說。」
+    fx: {wind: 1}
+  - id: se_strict_praise
+    title: 不收的東西
+    need: {pol: {buy: strict}, minDays: 3}
+    chance: 0.35
+    text: 一個獵人拿了一副狼牙來，你的夥計照方針沒收，說成色看不準。獵人罵了兩句走了。一個小時後，他又回來了，說錢家店收了他三副，結果其中兩副是別人塞給他的假貨，被錢家店退回來。「你們家，」他說，「是我看過唯一一家會說不收的。」
+    fx: {rep: {loose: 1}, tag: {loose: 實在}}
+  # ── 店面 ──
+  - id: se_backyard_knock
+    title: 後院在敲
+    need: {upg: backyard}
+    chance: 0.4
+    text: 半夜，後院倉庫裡有東西在敲，一下、一下，很有耐心。你拿著燈去看，聲音是從一箱收來的舊物裡傳出來的。你打開箱子——一個比拳頭還大的蟬殼，正在用殼的尖端，輕輕敲著箱板。看到你，它停了。
+    fx: {give: [{item: chanke, qty: 1, cost: 0}], xp: 3}
+  - id: se_quiet_vision
+    title: 靜室裡看到的
+    need: {upg: quiet}
+    chance: 0.45
+    text: 在二樓靜室坐到半夜，你閉著眼睛，卻看到一座很長的月台，兩頭都看不到底。有人坐在長椅上，朝你點頭。你睜開眼，草蓆上有一圈很淡的水漬，形狀像一張車票。
+    fx: {xp: 15, note: 在靜室裡靜坐，看見一座很長的月台。草蓆上的水漬像一張車票。}
+  - id: se_annex_room
+    title: 牆裡的房間
+    need: {upg: annex}
+    chance: 1
+    prio: 7
+    text: 打通隔壁的時候，工人在兩間店中間的牆裡，挖出一個很小的夾層。裡面有一盒你爸的筆記、一包用油紙包好的糖，和一張寫給你的字條：「阿衡，店交給你了。不要往北走太深。要走，帶燈。」糖紙亮晶晶的，印著一個你沒看過的卡通人物。
+    fx: {give: [{item: tangzhi, qty: 1, cost: 0}], flag: [annex_room], xp: 10, note: 你爸藏在牆裡的字條：「不要往北走太深。要走，帶燈。」}
+  - id: se_teadesk_elder
+    title: 茶桌講古
+    need: {upg: teadesk}
+    chance: 0.4
+    text: 門口的茶桌來了一個老人，一坐就是一個下午，講玄霜巡守隊以前的事。他說隊上每個人都有一盞燈，只有一盞是狐尾燈，提燈的人是隊上年紀最小的女生。「她會打一種結，三回結，」他說，「打了就解不開。」
+    fx: {note: 茶桌的老人說，玄霜巡守隊只有一盞狐尾燈，提燈的是隊上年紀最小的女生，她會打一種解不開的三回結。}
+  - id: se_coldbox_frost
+    title: 保冷櫃裡的箭頭
+    need: {upg: coldbox, month: 3}
+    chance: 0.6
+    text: 早上打開保冷櫃，裡面結的霜排成一個箭頭，指著北邊。你擦掉，關上門，再打開，箭頭又在。夥計們說，錢家店的保冷櫃也是這樣。
+    fx: {flag: [frost_arrows]}
+  # ── 夜班的客人（溫伯）──
+  - id: se_night1
+    title: 夜班帳本
+    need: {staff: wenbo, minHired: 1}
+    chance: 0.7
+    prio: 3
+    text: 溫伯的夜班帳本寫得很工整。昨晚十一點五十八分，一位客人，買定神香一束，付「伍拾圓」舊硬幣一枚。備註欄寫著：「客人沒有影子。人很客氣。」那枚硬幣放在櫃上，是溫的。
+    fx: {give: [{item: wenbi, qty: 1, cost: 0}], flag: [night_guest_seen], stones: 25}
+  - id: se_night2
+    title: 沒有影子的客人又來了
+    need: {flag: [night_guest_seen], staff: wenbo}
+    chance: 0.5
+    prio: 3
+    text: 溫伯把你叫起來：「老闆，那位客人說要找你。」店門口站著一個很高的人，穿著舊式的西裝，燈照過去，地上沒有影子。他說話很客氣：「許先生，有人託我帶一句話給你。可是這句話，要在外面講。」
+    choices:
+      - label: 跟他出去
+        desc: 他說是你媽託的
+        text: 你披上外套。
+        fx: {death: {id: night_guest}}
+      - label: 賣他一束定神香
+        desc: 什麼都可以賣他，就是不要跟他走
+        text: 他笑了，付了錢。他付的不是硬幣，是一張很薄的紙，上面寫著：「贖回：一個月。」紙上的字跡，跟長生當鋪的當票一模一樣。他走的時候說：「她說，你長大了。」
+        fx: {flag: [night_guest_paid], lifespan: 1}
+      - label: 用狐尾燈照他
+        need: {has: {hudeng: 1}}
+        text: 燈一照，你看清楚了——他不是沒有影子，他的影子在很下面很下面的地方，在一座月台上，坐在長椅上等車。他看著燈，愣了很久：「霜華的燈。」他朝你深深鞠了個躬，退進霧裡，留下一句話：「當鋪的帳，不是你們家欠的。」
+        fx: {flag: [night_guest_lamp], xp: 20, note: 沒有影子的客人說：「長生當鋪的帳，不是你們家欠的。」}
+      - label: 請溫伯說老闆不在
+        text: 溫伯去門口說了。客人點點頭，說他會再來。他沒有再來。
+        fx: {}
+  # ── 阿妹 ──
+  - id: se_amei_map
+    title: 阿妹的地圖
+    need: {staff: amei, minHired: 2}
+    chance: 0.6
+    prio: 3
+    text: 阿妹攤開一張畫在月曆背面的地圖，崩塌段、隧道、水庫、斷崖都畫了，畫得歪歪的，可是很準。斷崖下面她畫了一排路燈，路燈中間畫了一條街，街的盡頭寫著：「這裡有人在吃飯。」「我還沒下去，」她說，「快了。」
+    fx: {flag: [amei_map], note: 阿妹的地圖上，斷崖下面的路燈之間畫著一條街，寫著「這裡有人在吃飯」。}
+  - id: se_amei_missing
+    title: 阿妹沒有回來
+    need: {flag: [amei_map], staff: amei, month: [2, 3]}
+    chance: 0.5
+    prio: 4
+    text: 阿妹兩天沒來店裡了。她家的人說，她說要去「地圖上那條街」。隧道口的油漆字旁邊，多了一行很新的粉筆字：「阿妹到此一遊」，箭頭朝裡。
+    choices:
+      - label: 今晚一個人去隧道找她
+        desc: 等不到天亮了
+        text: 你抓了一支手電筒就出門。
+        fx: {death: {id: amei_search, chance: 0.6, unless: {anyOf: [{has: {hudeng: 1}}, {level: 7}]}, saved: 你在水牆前面找到她，她坐在地上發呆，影子在水裡晃。你一把把她拉起來，她才像醒過來一樣，哇的一聲哭出來。回程的路上，她一直抓著你的衣角。}, flag: [amei_safe], rep: {loose: 2}, tag: {loose: 肯為夥計拚命}}
+      - label: 請黑狗天亮帶人去
+        need: {staff: heigou}
+        text: 黑狗天一亮就帶著兩個巡守隊的老朋友進了隧道，中午就把阿妹揹回來了。她說她在水牆前面坐了兩天，一點都不餓。黑狗什麼都沒問，只把她的地圖撕了一半。
+        fx: {flag: [amei_safe]}
+      - label: 白天提著狐尾燈去
+        need: {has: {hudeng: 1}}
+        text: 燈一進隧道，回聲就安靜了。你在水牆前面找到她，她看到燈，像看到老朋友。回程她送你一顆「下面撿的」玻璃珠，說謝謝。
+        fx: {flag: [amei_safe], give: [{item: hongzhu, qty: 1, cost: 0}]}
+      - label: 等她自己回來
+        text: 你等了三天。第四天早上，店門口放著一個小布包，裡面是她撿到的所有東西，排得整整齊齊。布包上用粉筆寫著：「老闆，我先下去了。」
+        fx: {flag: [amei_lost], fire: amei, giveRelic: deep}
+
+# ═════════════ 探索裝備 ═════════════
+# fx：limit 負擔上限＋、steps 一趟多看幾處、loot 翻翻看多撿一次的機率、protect {死法 id: 機率倍數}、ascent 回程死亡機率倍數
+gear:
+  stick:
+    name: 登山杖
+    cost: 60
+    fx: {steps: 1}
+    desc: 鐵師傅用舊水管改的。一趟可以多看一處（會累的地方還是會讓你回頭）。
+  headlamp:
+    name: 頭燈
+    cost: 80
+    fx: {protect: {echo_answer: 0.5, fog_lamp: 0.5, amei_search: 0.5, bell_open: 0.6}}
+    desc: 舊時代的頭燈，換了新的蓄電石。黑的地方、霧裡，多一點光，就少一點被帶走的機會。（不是狐尾燈。）
+  rope:
+    name: 安全繩
+    cost: 110
+    fx: {protect: {ship_climb: 0.4, greed_dig: 0.4, platform_look: 0.6, cliff_jump: 1}, ascent: 0.8}
+    desc: 三回結打在腰上。爬上爬下、往下看的時候，有東西拉著你。
+  coat:
+    name: 寒潭會的保暖衣
+    cost: 100
+    fx: {protect: {frost_bare: 0.5, frost_window: 0.4, asc_north: 0.5, dam_dive: 0.7}}
+    desc: 舒琪說她倉庫還有一件。霜爬上來的時候，會先爬衣服。
+  bag:
+    name: 防水採集袋
+    cost: 70
+    fx: {loot: 0.5}
+    desc: 翻翻看的時候，有一半的機會多撿一樣東西回來。
+  oxygen:
+    name: 舊時代的呼吸袋
+    cost: 150
+    fx: {limit: 2}
+    desc: 林老師從舊物室借你的。往上爬的時候，多吸一口，就多撐一點。負擔上限＋2。
+  harness:
+    name: 下降吊帶
+    cost: 220
+    need: {flag: [stair_b1]}
+    fx: {limit: 2, ascent: 0.7}
+    desc: 維修梯專用。上來的時候，有一半的重量掛在繩子上。負擔上限再＋2，回程的危險也少一些。
+  charm:
+    name: 土地公的平安符
+    cost: 40
+    need: {done: [ru_shrine]}
+    fx: {ascent: 0.85}
+    desc: 崩塌段那間小廟求的。不知道有沒有用。「平安回來的人，記得來跟土地公說一聲。」
+
+# ═════════════ 成就與開店加成（跨局保留）═════════════
+# cond：death（死過某種）、deaths（死過幾種）、flag（某局達成的旗標）、ending、relics（一局內收過幾種遺物）、net（一天淨賺）、upgrades（一局店面）、staff（一局請過幾人）
+achievements:
+  - {id: a_first_death, title: 第一次, desc: 死了一次。, cond: {deaths: 1}, bonus: b_stones}
+  - {id: a_five_deaths, title: 熟門熟路, desc: 死過五種死法。, cond: {deaths: 5}, bonus: b_fushi}
+  - {id: a_ten_deaths, title: 死法收藏家, desc: 死過十種死法。, cond: {deaths: 10}, bonus: b_harness}
+  - {id: a_twenty_deaths, title: 長生當鋪的常客, desc: 死過二十種死法。, cond: {deaths: 20}, bonus: b_life}
+  - {id: a_asc, title: 上來要帶著命, desc: 死於上升負擔。, cond: {deathCat: 上升負擔}, bonus: b_oxygen}
+  - {id: a_fog, title: 應了三次, desc: 被霧帶走。, cond: {death: fog_third}, bonus: b_lengyu}
+  - {id: a_jump, title: 想知道水去哪裡, desc: 跟著海往下走了。, cond: {death: cliff_jump}, bonus: b_rope}
+  - {id: a_shop_death, title: 店也會殺人, desc: 死在自己的店裡。, cond: {deathCat: 店裡}, bonus: b_heigou}
+  - {id: a_relic_death, title: 東西也會看你, desc: 死於遺物的代價。, cond: {deathCat: 遺物}, bonus: b_huishi}
+  - {id: a_tunnel, title: 隧道的另一頭, desc: 走到隧道盡頭的水牆。, cond: {flag: saw_water_wall}, bonus: b_headlamp}
+  - {id: a_stair, title: 下去容易, desc: 下了斷崖的維修梯。, cond: {flag: stair_b1}, bonus: b_zhibei}
+  - {id: a_lampst, title: 燈街, desc: 走進第六層。, cond: {flag: lampst_in}, bonus: b_xiaoer}
+  - {id: a_platform, title: 月台, desc: 站上第七層。, cond: {flag: platform_in}, bonus: b_wangbo}
+  - {id: a_bus, title: 有票的乘客, desc: 拿著票搭上末班車，而且回來了。, cond: {flag: rode_bus}, bonus: b_piaogen}
+  - {id: a_ledger_book, title: 寄存, desc: 翻過站務室的簿子。, cond: {flag: pf_ledger}, bonus: b_life}
+  - {id: a_relics8, title: 撿破爛的, desc: 一局收過八種遺物。, cond: {relics: 8}, bonus: b_bag}
+  - {id: a_relics16, title: 舊物室的半面牆, desc: 一局收過十六種遺物。, cond: {relics: 16}, bonus: b_amei}
+  - {id: a_net100, title: 一天一百, desc: 一天淨賺一百。, cond: {net: 100}, bonus: b_sign}
+  - {id: a_net250, title: 做大做爽, desc: 一天淨賺兩百五。, cond: {net: 250}, bonus: b_shelf}
+  - {id: a_upg6, title: 老字號, desc: 一局買了六樣店面。, cond: {upgrades: 6}, bonus: b_capital}
+  - {id: a_staff5, title: 滿屋子的人, desc: 一局請過五個夥計。, cond: {staff: 5}, bonus: b_caijie}
+  - {id: a_end_lamp, title: 守燈, desc: 走到守燈的結局。, cond: {ending: lamp}, bonus: b_lampcharm}
+  - {id: a_end_ledger, title: 清帳, desc: 走到清帳的結局。, cond: {ending: ledger}, bonus: b_capital}
+  - {id: a_end_pawn, title: 典當, desc: 走到典當的結局。, cond: {ending: pawn}, bonus: b_life}
+  - {id: a_amei_safe, title: 帶她回家, desc: 把阿妹從隧道裡帶回來。, cond: {flag: amei_safe}, bonus: b_amei}
+  - {id: a_night_guest, title: 不要跟他走, desc: 跟沒有影子的客人做成一筆生意。, cond: {flag: night_guest_paid}, bonus: b_wenbi}
+  - {id: a_watch, title: 上緊發條, desc: 讓倒走的錶停在23:59。, cond: {flag: watch_wound}, bonus: b_biao}
+
+bonuses:
+  b_stones: {name: 你爸藏的私房錢, desc: 開張時多一百靈石。, stones: 100}
+  b_capital: {name: 老客人的周轉金, desc: 開張時多兩百五十靈石。, stones: 250}
+  b_life: {name: 當鋪的人情, desc: 開張時壽命多兩個月。, lifespan: 2}
+  b_fushi: {name: 不沉的石頭, desc: 開張就帶著一顆。水不會留你。, give: fushi}
+  b_lengyu: {name: 冷羽毛, desc: 開張就帶著一根。霜會先往羽毛爬。, give: lengyu}
+  b_huishi: {name: 回聲石, desc: 開張就帶著一顆。回聲會先找它講話。, give: huishi}
+  b_zhibei: {name: 指南針, desc: 開張就帶著一個。它只指著你家。, give: zhibei}
+  b_piaogen: {name: 一張票根, desc: 開張就帶著一張23:59的票根。, give: piaogen}
+  b_wenbi: {name: 溫的硬幣, desc: 開張就帶著一枚。夜裡的客人認得它。, give: wenbi}
+  b_biao: {name: 已經上緊的錶, desc: 開張就帶著那隻錶，已經上緊了。, give: biao, flag: watch_wound}
+  b_lampcharm: {name: 霜華的編繩, desc: 開張就知道盲婆婆認得三回結（謎題簿會先記下來）。, flag: lamp_hint, stones: 50}
+  b_oxygen: {name: 呼吸袋, desc: 開張就有舊時代的呼吸袋（負擔上限＋2）。, gear: oxygen}
+  b_harness: {name: 下降吊帶, desc: 開張就有下降吊帶。, gear: harness}
+  b_rope: {name: 安全繩, desc: 開張就有安全繩。, gear: rope}
+  b_headlamp: {name: 頭燈, desc: 開張就有頭燈。, gear: headlamp}
+  b_bag: {name: 防水採集袋, desc: 開張就有防水採集袋。, gear: bag}
+  b_sign: {name: 新招牌, desc: 開張時招牌已經重新上漆。, upg: sign}
+  b_shelf: {name: 加釘的貨架, desc: 開張時貨架已經加好（多一個夥計名額）。, upg: shelf}
+  b_xiaoer: {name: 店小二阿宏, desc: 開張就有一個不要薪水的店小二，很會賣。, staff: xiaoer}
+  b_wangbo: {name: 老店小二旺伯, desc: 開張就有旺伯顧店。他什麼都會一點，而且不偷錢。, staff: wangbo}
+  b_heigou: {name: 黑狗, desc: 開張就有黑狗守夜（不用等到五月）。, staff: heigou}
+  b_amei: {name: 阿妹, desc: 開張就有阿妹替你撿東西。, staff: amei}
+  b_caijie: {name: 蔡姐, desc: 開張就有蔡姐管帳。, staff: caijie}

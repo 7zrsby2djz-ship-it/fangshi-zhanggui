@@ -275,3 +275,42 @@ details summary{cursor:pointer}
 .event.finale h3{font-size:18px;margin-bottom:8px}
 .event.finale p+p{margin-top:10px}
 .event.finale .seal-stamp{position:static;display:block;width:64px;height:64px;margin:12px 0 0 auto;transform:rotate(-8deg)}
+
+/* ===== 甩手掌櫃 ===== */
+.nav{grid-template-columns:repeat(6,minmax(0,1fr))}
+.nav button{font-size:13.5px}
+.btn.sm{min-height:34px;padding:4px 12px;font-size:13.5px}
+.btn.danger{background:var(--cinnabar);border-color:var(--cinnabar);color:var(--sheet)}
+.btn .sub{display:block;font-size:11.5px;font-weight:400;opacity:.85}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pol .label{display:block;margin-bottom:4px}
+.seg{display:flex;border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--sheet)}
+.seg button{flex:1;border:0;background:transparent;min-height:40px;font-family:var(--serif);font-size:14.5px;color:var(--ink-2);border-right:1px solid var(--rule)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--ink);color:var(--sheet);font-weight:700}
+.seg.wrap{flex-wrap:wrap;border:0;gap:6px;background:transparent}
+.seg.wrap button{flex:0 0 auto;padding:0 14px;border:1px solid var(--rule);border-radius:999px;background:var(--sheet)}
+.seg.wrap button.on{background:var(--jade);border-color:var(--jade);color:var(--sheet)}
+.seg.wrap button.risky.on{background:var(--cinnabar);border-color:var(--cinnabar)}
+.pol p.small{margin-top:4px}
+.upg{gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--rule)}
+.opt .warn{display:block;margin-top:4px;color:var(--cinnabar);font-size:12.5px;font-weight:600}
+.opt.on{border-color:var(--jade);background:var(--wash)}
+.hud-stats .burden.cin b{color:var(--cinnabar)}
+.hud-stats .burden.gold b{color:var(--gold)}
+.hud-stats .burden.jade b{color:var(--jade)}
+.card.dim{opacity:.6}
+.thread-card .steps{margin:8px 0 0;padding-left:1.2em;font-size:13.5px;line-height:1.75}
+.thread-card .steps li.done{color:var(--ink)}
+.thread-card .steps li.next{list-style:none;margin-left:-1.2em;margin-top:4px}
+.dead-h{font-family:var(--serif);font-size:28px;font-weight:900;color:var(--cinnabar);letter-spacing:.04em}
+.dead .event.finale p{line-height:2;font-family:var(--serif)}
+.ledger .big{font-size:24px}
+.go.hot,.place.hot{border-color:var(--jade)}
+.event.pending{border-left:3px solid var(--cinnabar)}
+.ln.note .tx{color:var(--ink-2);font-size:13px}
+.go + .go{margin-top:8px}
+.go .tags{margin-top:4px;display:flex;gap:4px;flex-wrap:wrap}
+.go .tags .pill{font-size:11px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.opt.confirm,.btn.confirm{outline:2px solid var(--cinnabar);outline-offset:1px;background:rgba(179,54,42,.08)}

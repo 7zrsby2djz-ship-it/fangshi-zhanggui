@@ -1,0 +1,316 @@
+# ═════════════ 探索擴充：負擔、危險地點、第六層與第七層 ═════════════
+# placeFx：每個探索地點每看一處加多少「負擔」(burden)，回程超過上限時的死法 (ascent)
+# 負擔上限 = 4 + 2 ×（吐納層數 − 4）。會累的地方（strain）多加 1。每晚會退掉一些。
+placeFx:
+  ruin: {burden: 1, ascent: asc_ruin}
+  tunnel: {burden: 2, ascent: asc_tunnel}
+  reservoir: {burden: 2, ascent: asc_reservoir}
+  cliff: {burden: 2, ascent: asc_cliff}
+  north: {burden: 3, ascent: asc_north}
+  stair: {burden: 3, ascent: asc_stair}
+  lampst: {burden: 4, ascent: asc_lampst}
+  platform: {burden: 5, ascent: asc_platform}
+
+# 加到既有地點的新地方
+spots:
+  ruin:
+    - id: ru_ticket
+      title: 站牌下的票根
+      hint: 公車旁邊那根歪掉的站牌
+      after: ru_bus
+      text: 公車旁邊有一根歪掉的站牌，牌子底下的草裡卡著好幾張客運票根。你撿起一張，日期糊了，只有時間印得很清楚：23:59。你又撿起一張，也是23:59。每一張都是。
+      fx: {give: [{item: piaogen, qty: 1, cost: 0}], flag: [has_ticket_seen]}
+      note: 舊公路站牌下的票根，印的時間都是23:59。
+    - id: ru_dig_deep
+      title: 會往下躲的光
+      hint: 碎石底下有東西在發光
+      danger: 那個光，你挖一下，它就往下躲一下。
+      after: ru_edge
+      text: 碎石底下有一點光，橘色的，像小時候的夜燈。你蹲下去挖，挖了十公分，光往下退了十公分。你再挖，它又退。柏油牆在你頭頂發出很輕的、像骨頭在響的聲音。
+      fx:
+        death: {id: greed_dig, chance: 0.45, unless: {level: 6}, saved: 你挖到手肘都進去了，柏油牆忽然響了一聲。你本能地往後一滾——剛剛那個洞，被整片柏油蓋住了。你手裡握著一枚溫的硬幣，你不記得自己什麼時候抓到的。}
+        give: [{item: wenbi, qty: 1, cost: 0}]
+        stones: 40
+        xp: 6
+  tunnel:
+    - id: tu_watch
+      title: 燈下的錶
+      hint: 那盞還亮著的燈底下
+      after: tu_lights
+      text: 那盞沒有電也亮著的燈底下，掉著一隻男用手錶，錶帶斷了。你撿起來，秒針是倒著走的，很穩，一格一格往回。錶背刻著：「給爸爸　2029」。
+      fx: {give: [{item: biao, qty: 1, cost: 0}], flag: [got_watch], xp: 3}
+    - id: tu_echo_talk
+      title: 跟回聲聊天
+      hint: 回聲好像想跟你說話
+      danger: 洞口的油漆字：「不要跟回聲聊太久。」
+      after: tu_echo
+      strain: true
+      text: 你對著深處說：「你是誰？」回聲說：「你是誰？」你說：「我叫許衡。」回聲停了很久，說：「我叫許衡。」然後它開始問你問題——你家在哪、你媽叫什麼、你今天幾點出門。
+      fx:
+        death: {id: echo_answer, chance: 0.6, unless: {has: {huishi: 1}}, saved: 你口袋裡的回聲石忽然燙了起來。回聲轉過去，跟石頭講了一大段你聽不懂的話，然後安靜了。你趁機轉身走出隧道，一路都沒有回頭。}
+        flag: [echo_talked]
+        xp: 18
+      note: 隧道的回聲會問你問題。回聲石在身上，它會先找石頭講話。
+    - id: tu_wall_hand
+      title: 把手伸進水牆
+      hint: 這一次，不只是碰一下
+      danger: 碰一下手是乾的。伸進去，就不一定了。
+      after: tu_water
+      need: {level: 5}
+      strain: true
+      text: 你把手伸進水牆，一直伸到手肘。水是溫的。水裡有東西碰到你的手指——是一個信封，塑膠套包著，還是乾的。同時，有另一隻手輕輕握住了你的手腕。
+      fx:
+        death: {id: wall_hand, chance: 0.85, unless: {has: {fushi: 1}}, saved: 你另一隻手裡握著那顆不沉的石頭。握住你的那隻手停了一下，好像在想什麼，然後鬆開了。你把手抽回來，手是乾的，手裡多了一封信。}
+        give: [{item: laixin, qty: 1, cost: 0}]
+        flag: [wall_letter]
+        xp: 25
+  reservoir:
+    - id: re_dive
+      title: 潛到水底的村子
+      hint: 路燈底下好像有人
+      danger: 賣霧的阿伯說：「下面的人很好客。好客到不讓你走。」
+      after: re_village
+      strain: true
+      text: 你脫了鞋，吸一口氣，往下潛。水底的村子比你想的近，路燈亮著，雜貨店的鐵捲門拉了一半，裡面有人在看電視，電視在播晚間新聞，日期是2029年12月31日。
+      fx:
+        death: {id: dam_dive, chance: 0.7, unless: {anyOf: [{has: {lengyu: 1}}, {level: 7}]}, saved: 你懷裡那根冷羽毛忽然冰得像刀，你一下子清醒過來——你在水裡，你要呼吸。你蹬著水往上，回頭只看見雜貨店的門牌，被你抓下來了。}
+        give: [{item: cunpai, qty: 1, cost: 0}]
+        flag: [dove_village]
+        xp: 22
+      note: 寒潭水庫底下的村子，電視播的是2029年12月31日的晚間新聞。
+    - id: re_follow
+      title: 跟著霧裡的路燈
+      hint: 一盞，兩盞，三盞……
+      danger: 釣魚的阿伯說：「燈不要跟。我數燈，是為了知道它們有沒有變多。」
+      after: re_lights
+      text: 你跟著霧裡的路燈走。每走到一盞底下，下一盞就在前面亮起來。你數著，十、二十、三十。走到第四十一盞的時候，霧裡有人叫你：「阿衡。」
+      fx:
+        death: {id: fog_lamp, chance: 0.6, unless: {has: {zhibei: 1}}, saved: 你口袋裡的指南針在發抖，指針一直指著背後——指著你家的方向。你停下來，第四十二盞燈在你面前亮了一下，又熄了。你轉身，照著指針走回岸邊。手裡多了一顆燈泡，還是溫的。}
+        give: [{item: budeng, qty: 1, cost: 0}]
+        flag: [fog_named]
+        xp: 18
+  cliff:
+    - id: cl_jump
+      title: 跟著海往下
+      hint: 沒有回頭路
+      danger: 這一步踏出去，就沒有下一步了。
+      after: cl_view
+      text: 你站在斷崖邊。海從你腳下往下流，流進一片你看不到底的藍。風從下面往上吹，好像在扶著你。你往前走了一步。
+      fx: {death: {id: cliff_jump}}
+    - id: cl_ship_climb
+      title: 爬上半空中的船
+      hint: 有一條纜繩垂到步道邊
+      danger: 船上有人在揮手。這裡不該有人。
+      after: cl_ship
+      strain: true
+      text: 你抓著纜繩爬上那艘卡在崖壁上的船。甲板是斜的，船艙裡的餐桌擺著碗筷，碗裡的飯還在冒煙。牆上的時鐘停在23:59。
+      fx:
+        death: {id: ship_climb, chance: 0.6, unless: {level: 6}, saved: 你注意到纜繩是新的，打的是三回結——有人剛剛綁上去，等你上來。你沒有碰那碗飯，拿了桌上一個空碗，順著纜繩滑了下去。纜繩在你落地的那一刻，自己鬆開了。}
+        give: [{item: wanchu, qty: 1, cost: 0}]
+        flag: [climbed_ship]
+        xp: 18
+  north:
+    - id: no_vent_in
+      title: 鑽進通風口
+      hint: 它在呼吸
+      danger: 通風口吸氣的時候，連草都往裡倒。
+      after: no_vent
+      strain: true
+      text: 你等通風口吐完一口氣，把頭探進去。裡面很暗，很暖，聞起來像剛洗好的被子，像小時候你媽的外套。
+      fx:
+        death: {id: vent_enter, chance: 0.9, unless: {has: {hudeng: 1}}, saved: 狐尾燈的光照進去，你看見牆壁在動——通風口要吸氣了。你縮回頭的那一瞬間，它吸了一大口，又吐出來。吐出來的風裡，夾著一張紙。}
+        give: [{item: ventpaper, qty: 1, cost: 0}]
+        flag: [vent_paper]
+        xp: 25
+    - id: no_frost_touch
+      title: 空手摸霜的源頭
+      hint: 地裂裡的霜在發光
+      danger: 巡守隊的人都戴兩層手套。
+      after: no_frost
+      strain: true
+      text: 你脫掉手套，把手放在那道地裂上。霜從你的指尖開始往上爬，很慢，很漂亮，像一株白色的樹。
+      fx:
+        death: {id: frost_bare, chance: 0.75, unless: {has: {lengyu: 1}}, saved: 霜爬到手腕，忽然轉了方向，往你口袋裡那根冷羽毛爬過去。羽毛一下子結滿了霜，你趁機把手抽回來。地裂邊上，掉下兩塊乾淨的霜晶。}
+        give: [{item: shuangjing, qty: 2, cost: 0}]
+        flag: [touched_frost]
+        xp: 22
+  stair:
+    - id: st_lab_card
+      title: 把記憶卡插進讀卡機
+      hint: 讀卡機的燈，一直在閃
+      danger: 道士說：「要讀三天。」
+      after: st_lab
+      need: {has: {yujian: 1}}
+      strain: true
+      text: 你把那張空白記憶卡插進讀卡機。沒有電的機器亮了。螢幕上一行字：「讀取中，請勿拔除。」
+      fx:
+        death: {id: lab_card, chance: 0.5, unless: {level: 7}, saved: 螢幕跳了一下，出現一行字：「權限不足。」卡被吐了出來，燙的。你在螢幕暗掉之前，看到最後一行：「下一次抬升：已排程。」}
+        flag: [lab_read]
+        xp: 30
+      note: B2-17的讀卡機會自己亮。螢幕上寫著：「下一次抬升：已排程。」
+    - id: st_bus
+      title: 在站牌下等23:59
+      hint: 末班車
+      danger: 站牌上用粉筆寫著：「沒有票，不要上車。」
+      after: st_stop
+      strain: true
+      text: 你在站牌下的長椅坐到23:59。底下的路燈一盞一盞熄掉，一輛公車從崖壁裡開出來，停在你面前，門打開，司機戴著帽子，看不到臉。「票？」
+      fx:
+        death: {id: bus_board, unless: {has: {piaogen: 1}}, saved: 你把票根遞過去。司機在上面打了一個洞：「第七層，月台。回程要自己走。」車往下開了很久，窗外的燈一排一排往上飛。}
+        take: [{item: piaogen, qty: 1}]
+        give: [{item: chepiao, qty: 1, cost: 0}]
+        flag: [rode_bus, platform_found]
+        xp: 25
+    - id: st_eat
+      title: 吃一朵白花
+      hint: 花一直在看你
+      danger: 從斷崖下面上來的人說過：會看你的東西，不能吃。
+      after: st_flowers
+      need: {has: {shenhua: 1}}
+      text: 你把白花放進嘴裡。
+      fx: {death: {id: flower_eat}}
+
+places:
+  lampst:
+    name: 燈街
+    type: explore
+    depth: 第六層・路燈之間
+    hours: [0]
+    minLevel: 6
+    reveal: [saw_from_below, rode_bus]
+    levelText: 吐納六層以上才下得去
+    blurb: 從斷崖下面往上看時以為是路燈的東西，其實是窗。維修梯最底下的平台旁邊，有一條街從崖壁裡長出來——柏油路、騎樓、便利商店的招牌、機車停在白線裡。每一扇窗都亮著，每一扇窗裡都有人在過晚上。所有的鐘都停在23:58。
+    blurbM:
+      3: 燈街沒有結霜。這裡是暖的，暖到讓人想把外套脫掉。
+    spots:
+      - id: ls_enter
+        title: 走進燈街
+        hint: 第一次
+        text: 你踏上柏油路，腳底是溫的。騎樓下有一台腳踏車，鎖著，車籃裡放著一袋還沒退冰的飲料。遠遠有人在講電話：「對啦，今天跨年啊，明年見。」這裡的人好像都知道明天是2030年。只有你知道，那一年沒有來。
+        fx: {flag: [lampst_in], xp: 25}
+        note: 第六層的燈街，停在2029年12月31日23:58。
+      - id: ls_windows
+        title: 一扇一扇窗
+        hint: 窗裡的人在過晚上
+        after: ls_enter
+        text: 你沿著騎樓走，一扇一扇看。有人在煮火鍋，有人在幫小孩吹頭髮，有人坐在電腦前面加班，螢幕上是一張你看不懂的圖表，曲線一直往上。沒有人看你。你一直覺得，窗裡的人，比窗外的你還要像活著。
+        fx: {flag: [ls_windows], xp: 15}
+        note: 燈街的窗裡，人在過2029年最後一個晚上。他們看不到你——應該是。
+      - id: ls_knock
+        title: 敲一扇窗
+        hint: 那扇窗裡的人，好像認得你
+        danger: 窗只能看。不管裡面的人長得像誰。
+        after: ls_windows
+        text: 有一扇窗裡的人，你認得。他在吃飯，背對著你，背影是你爸。你舉起手，在玻璃上敲了兩下。
+        fx:
+          death: {id: window_knock, chance: 0.8, saved: 他轉過頭來，不是你爸，是一個你不認識的年輕人。他愣了一下，然後很慢很慢地，在起霧的玻璃上寫了兩個字：「回去」。你退後，窗戶熄了。你的口袋裡多了一張當票，上面寫著：「贖回：兩個月。」}
+          lifespan: 2
+          flag: [knocked_window]
+          xp: 20
+      - id: ls_bento
+        title: 有人塞給你便當
+        hint: 騎樓下的便當店
+        danger: 下面的東西不要吃。
+        after: ls_enter
+        text: 騎樓下的便當店老闆把一個便當塞到你手上：「趕快吃，吃完回家跨年。」飯上放著一顆滷蛋，香得讓你鼻子發酸。
+        fx:
+          death: {id: lampst_eat, chance: 0.7, saved: 你咬了一口，滷蛋是冷的，冷得像霜。你忽然很清楚地想起，這家店一百年前就不在了。你把便當放回櫃台，老闆對你笑了一下，那個笑你會記很久。}
+          flag: [ate_bento]
+          xp: 40
+      - id: ls_clock
+        title: 鐘錶行
+        hint: 每一個鐘都停在23:58
+        after: ls_windows
+        danger: 待太久，你也會停在這裡。
+        text: 街角的鐘錶行裡掛滿了鐘，每一個都停在23:58。老闆在櫃檯後面修一隻錶，頭也沒抬：「快好了。再一分鐘。」你在店裡等，等那一分鐘。
+        fx:
+          death: {id: lampst_stay, chance: 0.5, unless: {has: {biao: 1}}, saved: 你口袋裡那隻倒走的錶，忽然「喀」一聲往前走了一格。你嚇了一跳，轉身就走。走出店門的那一刻，你聽到身後所有的鐘同時響了一下。櫃檯上，放著一個沒有指針的鐘，好像本來就是要給你的。}
+          give: [{item: wuzhen, qty: 1, cost: 0}]
+          flag: [ls_clock]
+          xp: 20
+      - id: ls_shop
+        title: 一間很像許家店的店
+        hint: 街尾
+        after: ls_windows
+        text: 街尾有一間店，招牌寫著「許記五金」。店裡亮著燈，櫃台後面坐著一個年輕人在算帳，旁邊是一盞蓋著布的燈。你在門口站了很久。年輕人抬頭，朝門外點了點頭，像在跟一個熟客打招呼。門口的雨傘架上，插著一個燈泡，還亮著。
+        fx: {give: [{item: budeng, qty: 1, cost: 0}], flag: [saw_own_shop], xp: 15}
+        note: 燈街的街尾有一間「許記五金」。一百年前，許家就在這裡開店了——或者，在某一個這裡。
+      - id: ls_end
+        title: 街的盡頭
+        hint: 再往下，有一道樓梯
+        after: ls_shop
+        strain: true
+        text: 燈街的盡頭沒有牆，只有一道往下的樓梯，貼著磁磚，像捷運站的出入口。樓梯口的燈箱寫著：「往　月台」。風從下面往上吹，帶著鐵軌跟煞車皮的味道。你沒有下去——今天沒有力氣了。可是你記住了這道樓梯。
+        fx: {flag: [platform_found], xp: 15}
+        note: 燈街的盡頭有往月台的樓梯。
+      - id: ls_gather
+        title: 在騎樓下撿撿看
+        hint: 每天都可能有不一樣的
+        repeat: true
+        loot:
+          - {text: 騎樓的柱子邊上有一張糖果紙，上面印的人物你沒看過，可是你覺得很懷念。, fx: {give: [{item: tangzhi, qty: 1, cost: 0}], xp: 6}}
+          - {text: 一枚硬幣在地上滾，滾到你腳邊停下來。它是溫的，像剛從誰的口袋裡拿出來。, fx: {give: [{item: wenbi, qty: 1, cost: 0}], xp: 6}}
+          - {text: 機車座墊上放著一個還亮著的燈泡，沒有接電。, fx: {give: [{item: budeng, qty: 1, cost: 0}], xp: 6}}
+          - {text: 什麼都沒撿到。有一扇窗裡的小孩在對你揮手。你揮回去，他就躲起來了。, fx: {xp: 10}}
+          - {text: 一張被踩過的跨年晚會傳單，地點是一個你沒聽過的廣場。, fx: {give: [{item: fapiao, qty: 1, cost: 0, label: 跨年晚會傳單}], xp: 6}}
+  platform:
+    name: 無底月台
+    type: explore
+    depth: 第七層・月台
+    hours: [0]
+    minLevel: 6
+    reveal: [platform_found]
+    levelText: 吐納六層以上才下得去
+    blurb: 磁磚樓梯走到底，是一座月台。月台很長，兩頭都看不到底；鐵軌的那一邊沒有隧道，只有更多的月台，一層一層往下疊。每一層都有人坐在長椅上等車。廣播一直在響，聲音太遠，聽不清楚在說什麼。站名牌是空白的。
+    spots:
+      - id: pf_arrive
+        title: 站上月台
+        hint: 第一次
+        strain: true
+        text: 你站在月台上。很安靜，安靜到你聽得到自己的心跳，跟遠方的廣播對不上拍。長椅上坐著一個穿制服的學生、一個抱著嬰兒的女人、一個提著公事包的男人——第一天問你往台中客運的那個人。他對你點點頭，好像終於等到了一個認識的人。
+        fx: {flag: [platform_in], xp: 30}
+        note: 第七層的月台上，坐著很多在等車的人，有些你見過。
+      - id: pf_sign
+        title: 站名牌
+        hint: 空白的那塊
+        after: pf_arrive
+        strain: true
+        text: 站名牌是空白的，可是底下那排小字還在。左邊的箭頭寫著「上一站：2029」，右邊的箭頭寫著「下一站：地面」。你看了很久，才發現「地面」那兩個字，是後來有人用油漆補上去的，筆跡很像盲婆婆的燈攤上那種字。
+        fx: {flag: [pf_sign], xp: 20}
+        note: 月台的站名牌：「上一站：2029」，「下一站：地面」。
+      - id: pf_office
+        title: 站務室
+        hint: 月台盡頭亮著燈的小房間
+        after: pf_sign
+        strain: true
+        text: 站務室裡沒有人，桌上攤著一本很厚的簿子，封面印著「寄存」。你翻開，每一頁都是名字和數字：某某，寄存四十年。某某，寄存十二年。翻到很後面，你看到你爸的名字，後面寫著：「代子寄存。」再下一行，是你的名字。字跡跟長生當鋪的當票一模一樣。
+        fx: {give: [{item: zhanwu, qty: 1, cost: 0}], flag: [pf_ledger], lifespan: 3, xp: 25}
+        note: 第七層的站務室裡有一本「寄存」簿，字跡跟長生當鋪的當票一樣。你爸的名字後面寫著：「代子寄存。」
+      - id: pf_look
+        title: 往月台下看
+        hint: 底下是更多的月台
+        danger: 看一眼就好。
+        after: pf_arrive
+        strain: true
+        text: 你走到月台邊，往下看。底下是另一座月台，再底下又一座，一層一層，像兩面對照的鏡子。最下面那一層，有一個人抬起頭來。
+        fx:
+          death: {id: platform_look, chance: 0.5, unless: {level: 8}, saved: 你在對上眼之前，先閉上了眼睛。等你再睜開，你已經退回了長椅邊上，手心全是汗。你記得那個人的臉，記得很清楚——可是你說不出來那是誰。}
+          flag: [saw_layers]
+          xp: 40
+      - id: pf_wait
+        title: 等下一班
+        hint: 廣播說，下一班車即將進站
+        danger: 末班車只有一班。
+        after: pf_arrive
+        text: 你在長椅上坐下來。廣播說，下一班車，即將進站。
+        fx: {death: {id: platform_wait}}
+      - id: pf_gather
+        title: 在長椅底下撿撿看
+        hint: 每天都可能有不一樣的
+        repeat: true
+        strain: true
+        loot:
+          - {text: 長椅底下有一張廣播稿，最後一句被劃掉了：「請旅客回到地面——」, fx: {give: [{item: guangbo, qty: 1, cost: 0}], xp: 12}}
+          - {text: 一枚溫的硬幣。, fx: {give: [{item: wenbi, qty: 1, cost: 0}], xp: 10}}
+          - {text: 什麼都沒有。抱嬰兒的女人在哼歌，是你媽以前哼的那首。, fx: {xp: 18}}
+          - {text: 一張蓋過章的車票，乘車日：2029/12/31。, fx: {give: [{item: chepiao, qty: 1, cost: 0}], xp: 10}}

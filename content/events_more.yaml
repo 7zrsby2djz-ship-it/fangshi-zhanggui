@@ -1,0 +1,278 @@
+# ═════════════ 擴充散事：遺物的代價、連續的謎、怪事與好笑的事 ═════════════
+drift:
+  # ── 倒走的錶（連續）──
+  - id: dr_watch_count
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.6
+    prio: 4
+    need: {has: {biao: 1}, not: [watch_counted]}
+    title: 錶在倒數
+    text: 你算了一下：那隻錶每天倒走的格數，剛好讓它在某個晚上回到零。錶面的玻璃上，有人用指甲刻了一行很小的字：「歸零前，要上緊。」
+    fx: {flag: [watch_counted]}
+    face: think
+  - id: dr_watch_zero
+    month: [1, 2, 3]
+    days: [2, 6]
+    chance: 0.55
+    prio: 5
+    need: {flag: [watch_counted], has: {biao: 1}, not: [watch_wound, studied_biao]}
+    title: 錶快要歸零了
+    text: 晚上十一點多，錶上只剩最後一圈。秒針倒著走的聲音，大得整間店都聽得到。錶冠很緊，要很用力才轉得動。
+    choices:
+      - label: 用力把它上緊
+        desc: 照玻璃上那行字
+        text: 你咬著牙把錶冠轉了三圈。秒針停了一下，然後，第一次，往前走了一格。停在23:59。錶背面的手溫，好像換成你的了。
+        fx: {flag: [watch_wound], xp: 10}
+      - label: 看看零以後會怎樣
+        desc: 你很好奇
+        text: 你把錶放在櫃上，坐著等。
+        fx: {death: {id: watch_zero}}
+    face: uneasy
+  # ── 黑玻璃珠 ──
+  - id: dr_bead_two
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.6
+    prio: 4
+    need: {has: {hongzhu: 2}}
+    title: 兩顆珠子
+    text: 你把兩顆黑玻璃珠放在一起，發現它們映的是同一條街——一顆映著街頭，一顆映著街尾。中間好像少了一段。珠子貼得越近，裡面的陽光就越亮，亮到店裡的地板有一塊熱了。
+    choices:
+      - label: 排在一起，看久一點
+        desc: 少的那一段，好像快看到了
+        text: 你把兩顆珠子貼在一起，湊近。
+        fx: {death: {id: bead_street, chance: 0.5, saved: 街連起來的那一瞬間，你聞到海風，聽到有人叫賣冰棒。你猛地把頭抬起來——珠子分開了，滾到櫃子兩邊。你額頭上曬傷了一塊，三天才退。}, xp: 15, flag: [bead_seen]}
+      - label: 分開收好
+        text: 你把兩顆珠子分別包起來，放在店裡兩個角落。晚上，兩個角落都有一點點海浪的聲音。
+        fx: {flag: [bead_apart]}
+    face: shock
+  # ── 霧裡的聲音（第二次、第三次）──
+  - id: dr_fog_again
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.5
+    prio: 4
+    need: {flag: [answered_fog], not: [fog_two_done]}
+    title: 霧又來了
+    text: 又是傍晚，又起霧。門外那個聲音又叫了一次「阿衡」，比上次更近，近到像貼著門板。你想起上次應完以後，那個想不起來的空洞。
+    choices:
+      - label: 再應一聲
+        desc: 「媽？」
+        text: 你應了。霧裡傳來一聲很輕的笑。第二天早上，你發現自己想不起來你爸的聲音了。門口又多了一根冷羽毛。
+        fx: {flag: [answered_fog2, fog_two_done], lifespan: -1, give: [{item: lengyu, qty: 1, cost: 0}]}
+      - label: 不應
+        text: 你把耳朵摀起來。聲音叫了很久，最後變成一聲嘆氣。霧散了。
+        fx: {flag: [fog_two_done], xp: 3}
+    face: uneasy
+  - id: dr_fog_third
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.6
+    prio: 5
+    need: {flag: [answered_fog2], not: [fog_three_done]}
+    title: 第三次
+    text: 霧第三次來。這一次聲音不叫你的名字了，只是在門外，很溫柔地哼一首歌，你小時候每天晚上聽的那首。你知道，應了就是第三次。
+    choices:
+      - label: 應她
+        desc: 你很想她
+        text: 你打開門，走進霧裡。
+        fx: {death: {id: fog_third}}
+      - label: 跟著哼，但不開門
+        text: 你隔著門板跟著哼。哼到最後一句，外面的聲音停了，你一個人把歌哼完。霧散了，門口什麼都沒有。那天晚上你睡得很好，醒來時臉是濕的。
+        fx: {flag: [fog_three_done, fog_named], xp: 12}
+    face: sad
+  # ── 小銅鐘 ──
+  - id: dr_bell_night
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.45
+    prio: 3
+    need: {has: {xiaozhong: 1}}
+    title: 半夜的鐘聲
+    text: 半夜，櫃上的小銅鐘自己響了。一下、兩下、三下。門外有腳步聲，停在門口。有人在門外很有禮貌地等著。
+    choices:
+      - label: 去開門
+        desc: 也許是客人
+        text: 你下樓，手放在門閂上。
+        fx: {death: {id: bell_open, chance: 0.7, saved: 你的手剛碰到門閂，鐘響了第四下，聲音尖得像在喊你。你把手縮回來。門外的腳步聲等了很久，然後慢慢走遠了。}}
+      - label: 數到第七下
+        desc: 不要動
+        text: 你坐在樓梯上數。四、五、六、七。第七下響完，門外的腳步聲往北走遠了。第二天，門口的地上有一排很小的水漬，鞋尖朝外。
+        fx: {flag: [bell_seven], xp: 6}
+    face: uneasy
+  # ── 斜的海水 ──
+  - id: dr_sea_tilt
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.45
+    prio: 3
+    need: {has: {xianshui: 1}}
+    title: 海水斜得更厲害了
+    text: 瓶子裡的海水今天斜得特別厲害，斜到快要碰到瓶口。你把瓶子轉來轉去，水面永遠朝著西邊斜。聞起來，是很好聞的海。
+    choices:
+      - label: 喝一口
+        desc: 只是海水
+        text: 你打開瓶蓋。
+        fx: {death: {id: sea_drink}}
+      - label: 把瓶子立在西邊窗台
+        text: 你把瓶子放在西邊窗台。水面終於平了一點，像鬆了一口氣。那天晚上，你夢到海往上流。
+        fx: {flag: [sea_west], xp: 5}
+    face: think
+  # ── 深淵的花 ──
+  - id: dr_flowers_turn
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.7
+    prio: 5
+    need: {has: {shenhua: 3}}
+    title: 一屋子的白花
+    text: 你收的白花，今天早上全部一起轉過來看你。你走到哪，它們轉到哪。你站著不動，它們就慢慢轉向北。花盆裡的土，裂了一條縫，有東西在往下長。
+    choices:
+      - label: 留著，它們很漂亮
+        text: 你給花澆了水。
+        fx: {death: {id: flower_keep, chance: 0.6, saved: 晚上你發現自己站在花盆前面，腳趾頭陷進土裡。你嚇醒了，把腳拔出來，腳底有幾根很細的白鬚。第二天你把花全部送去了舊物室。}, take: [{item: shenhua, qty: 3}]}
+      - label: 全部送去舊物室
+        text: 林老師把花一朵一朵放進玻璃瓶，排在架上。花轉向你，轉向北，最後轉向她，安靜下來。「它們會在這裡待好，」她說，「我每天會跟它們講話。」
+        fx: {take: [{item: shenhua, qty: 3}], rel: {lin: 2}, flag: [donated]}
+    face: shock
+  # ── 結霜那晚 ──
+  - id: dr_frost_night
+    month: 3
+    days: [1, 3]
+    chance: 0.6
+    prio: 4
+    title: 結霜的第一個晚上
+    text: 晚上很冷。窗玻璃上的霜，一點一點往裡長，長得很慢，很漂亮，每一片都像一個朝北的箭頭。你很想看它到底會長成什麼。
+    choices:
+      - label: 開著窗，看它長
+        text: 你搬了一張椅子坐在窗邊。
+        fx: {death: {id: frost_window, chance: 0.75, unless: {staff: ahua}, saved: 半夜阿花嬸來敲門送湯，看到你坐在窗邊，一巴掌拍在你背上：「你瘋了喔！」她把窗戶關上。你這才發現，你的眉毛都白了。}}
+      - label: 關窗，早點睡
+        text: 你把窗關上，拉上窗簾。半夜，你聽到霜在玻璃上爬的聲音，沙沙的，像有人在外面寫字。
+        fx: {flag: [frost_closed]}
+    face: uneasy
+  # ── 好笑、奇怪、溫柔的事 ──
+  - id: dr_vending
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.3
+    title: 販賣機
+    text: 舊公路邊上，一夜之間多了一台自動販賣機，插頭沒有插，燈卻亮著。按鈕上的飲料你一半沒看過。投幣口旁邊貼著：「只收伍拾圓。」小孩們圍了一圈，沒有人敢投。
+    choices:
+      - label: 投一枚溫的硬幣
+        need: {has: {wenbi: 1}}
+        text: 硬幣掉下去，叮的一聲。掉出來一罐冰的烏龍茶，有效期限：2030年1月。你喝了一口，是真的很好喝的烏龍茶。小孩們一起鼓掌。販賣機的燈，滅了。
+        fx: {take: [{item: wenbi, qty: 1}], xp: 8, rep: {loose: 1}, flag: [vending_drink]}
+      - label: 用力拍它
+        text: 你拍了一下。販賣機掉出一枚硬幣——溫的。小孩們尖叫著跑掉了。
+        fx: {give: [{item: wenbi, qty: 1, cost: 0}]}
+      - label: 不理它
+        text: 第二天，販賣機不見了。地上留著四個很乾淨的方形印子。
+        fx: {}
+    face: think
+  - id: dr_newspaper
+    month: [1, 2]
+    days: [1, 6]
+    chance: 0.3
+    title: 送錯的報紙
+    text: 早上門口有一份報紙，紙是新的，油墨是濕的。日期：2029年12月31日。頭版標題：「跨年夜各地低溫特報　專家：不排除異常天候」。第二版是一整版的求職廣告，每一則都劃了紅線，像有人認真找過工作。
+    fx: {xp: 3, note: 門口出現一份2029年12月31日的報紙，第二版的求職廣告每一則都被劃過紅線。}
+    face: think
+  - id: dr_karaoke
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.25
+    title: 半夜的卡拉OK
+    text: 半夜，舊活動中心傳出卡拉OK的聲音，有人在唱一首很老很老的台語歌，唱得很爛，可是很投入。管理處的人去看，活動中心是鎖著的，裡面沒有電。唱到副歌，整條街的狗都跟著叫。第二天，很多人在哼那首歌，可是都說不出歌名。
+    fx: {rep: {loose: 1}}
+    face: laugh
+  - id: dr_one_bar
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.4
+    prio: 2
+    need: {has: {shouji: 1}}
+    title: 一格訊號
+    text: 那支碎螢幕手機忽然震了一下。螢幕裂成蜘蛛網，可是右上角亮著一格訊號。一則訊息跳出來，寄件人是「媽」：「你到家了嗎？外面好冷。」然後訊號消失了。
+    choices:
+      - label: 回「到了」
+        text: 你用裂開的螢幕，一個字一個字打：「到了。」按下傳送。轉圈圈轉了很久，最後顯示：「已送達」。那天晚上，你夢到很多人回到家，脫鞋，說「我回來了」。
+        fx: {flag: [replied_mom], xp: 8}
+      - label: 把手機關掉
+        text: 你按住電源鍵。手機關掉之前，又震了一下。
+        fx: {}
+    face: sad
+  - id: dr_kid_year
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.3
+    title: 從霧裡走出來的小孩
+    text: 一個穿制服的小學生從霧裡走出來，書包上掛著一個布偶，問你：「叔叔，今年是幾年？」你說了年份。他想了想，說：「那我遲到好久了。」他轉身走回霧裡，布偶掉在你店門口。布偶的標籤上寫著製造年份：2029。
+    fx: {give: [{item: tangzhi, qty: 1, cost: 0, label: 布偶上的糖果紙}], xp: 4}
+    face: sad
+  - id: dr_taxi
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.25
+    title: 計程車
+    text: 一台黃色的計程車停在你店門口，車頂的燈寫著「空車」。司機搖下車窗：「要去哪？」你說你不用。他點點頭：「下面的人都說不用。」車開走了，往斷崖的方向，沒有聲音。
+    fx: {flag: [saw_taxi]}
+    face: shock
+  - id: dr_lin_visit
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.35
+    prio: 2
+    need: {flag: [donated]}
+    title: 林老師來店裡
+    text: 林老師難得來店裡，買了一包定神香，付錢的時候說：「你捐的東西，晚上會發出很小的聲音。我把它們錄下來了，放慢十倍聽，是一個人在數數。數到二十九，就重來。」她走之前多付了二十塊：「研究經費。你出的。」
+    fx: {stones: 20, rel: {lin: 1}, xp: 4}
+    face: think
+  - id: dr_ladder_chalk
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.4
+    prio: 2
+    need: {flag: [stair_b1]}
+    title: 粉筆字
+    text: 阿妹（或某個小孩）在店門口的地上，用粉筆抄了一行字：「下去容易。」底下有人用另一種筆跡補了一行：「上來要帶著命。」你問是誰寫的，沒有人承認。
+    fx: {note: 維修梯口的粉筆字，下面其實還有一行：「上來要帶著命。」}
+    face: uneasy
+  - id: dr_burden_dream
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.5
+    prio: 6
+    need: {burdenHigh: true}
+    title: 身體在抗議
+    text: 早上起來，枕頭上有血，耳朵一直嗡嗡響，看東西有一點重影。阿花嬸說你臉白得像紙。你知道這是什麼——從下面帶上來的東西，還壓在身上。今天最好別再往外跑，或只去近的地方。
+    fx: {}
+    face: sweat
+  - id: dr_stair_rescue
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.3
+    prio: 2
+    need: {flag: [stair_b1]}
+    title: 從梯子上抬回來的人
+    text: 一個採集者被兩個人從維修梯抬回來，臉色青白，嘴裡一直唸：「才B3，才B3。」他身上沒有傷，只是上不來。他朋友說，他前一天已經下去過一次了。
+    choices:
+      - label: 給他一瓶療傷藥
+        need: {has: {liaoshang: 1}}
+        text: 他喝了藥，眼睛清楚了一點，抓著你的手說：「下面有一條街。不要吃他們給的東西。」
+        fx: {take: [{item: liaoshang, qty: 1}], rep: {loose: 1}, note: 從維修梯被抬上來的人說：下面有一條街，不要吃他們給的東西。}
+      - label: 只是看著
+        text: 他們把他抬走了。那天晚上，你特別注意自己耳朵裡的聲音。
+        fx: {note: 一天下兩次維修梯的人，被抬了上來。上不來，不是因為受傷。}
+    face: sweat
+  - id: dr_pawn_whisper
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.5
+    prio: 3
+    need: {flag: [pf_ledger]}
+    title: 當鋪的門
+    text: 長生當鋪的黑門今天半開著。你經過的時候，老闆在門內說了一句：「許先生，下面的簿子，你翻過了。」他沒有生氣，聽起來甚至有點高興：「那你就知道，你家不欠我。是我替你們保管。」門關上了。
+    fx: {note: 長生當鋪的老闆說：「你家不欠我。是我替你們保管。」}
+    face: shock

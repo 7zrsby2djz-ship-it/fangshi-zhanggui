@@ -224,6 +224,6 @@ with sync_playwright() as p:
             if 'night' not in shotDone: shot('night'); shotDone.add('night')
             click(btns('[data-act=sleep]').first); continue
         fr('卡在未知畫面 ' + ph); break
-    st = S("({fin:['lamp','ledger','pawn'].find(k=>S.flags['finale_'+k])||null, stones:Math.round(S.stones), lv:S.level, shop:S.shop.total, staff:S.shop.staff.length, upg:Object.keys(S.shop.upg).length, ach:Object.keys(T.achBook()).length, deathBook:Object.keys(JSON.parse(localStorage.getItem('fangshi-deaths-v1')||'{}')).length, threads:T.THREADS.map(t=>T.threadState(t).done).reduce((a,b)=>a+b,0)})")
+    st = S("({rlog:(S.relicLog||[]).reduce((m,x)=>(m[x.k]=(m[x.k]||0)+1,m),{}), held:T.heldRelics().length, b1:['sc_roll_seen','tea_seat_seen','office_overtime','homes_house','stair_echo','lab_plate','lamp_kid','lab_barefoot','pf_reverse','branch_sign','saw_shell'].filter(f=>S.flags[f]), fin:['lamp','ledger','pawn'].find(k=>S.flags['finale_'+k])||null, stones:Math.round(S.stones), lv:S.level, shop:S.shop.total, staff:S.shop.staff.length, upg:Object.keys(S.shop.upg).length, ach:Object.keys(T.achBook()).length, deathBook:Object.keys(JSON.parse(localStorage.getItem('fangshi-deaths-v1')||'{}')).length, threads:T.THREADS.map(t=>T.threadState(t).done).reduce((a,b)=>a+b,0)})")
     log.update(st); log['secs'] = round(time.time() - t0); log['errors'] = errs
     print(json.dumps(log, ensure_ascii=False))

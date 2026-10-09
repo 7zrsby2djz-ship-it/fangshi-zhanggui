@@ -201,8 +201,58 @@ function addLot(o) {
 const held = item => S.lots.filter(l => l.item === item).reduce((a, l) => a + l.qty, 0);
 /* 遺物效果：放在庫房（帶在身上）就會作用 */
 const heldRelics = () => [...new Set(S.lots.filter(l => l.qty > 0 && IT[l.item] && IT[l.item].eff).map(l => l.item))];
-const relicEff = () => heldRelics().map(id => [id, IT[id].eff]);
+/* 林老師研究過的遺物：好的那一面加強一半（代價不變） */
+const badFx = fx => !!fx && (fx.lifespan < 0 || fx.burden > 0 || fx.stones < 0);
+function scaleEff(id, e) {
+  if (!S.flags['studied_' + id]) return e;
+  const x = JSON.parse(JSON.stringify(e)); x.studied = true;
+  if (x.passive) for (const k of Object.keys(x.passive)) if (x.passive[k] > 0) x.passive[k] = Math.round(x.passive[k] * 15) / 10;
+  if (x.carry) { const c = x.carry; if (c.limit) c.limit += 1; if (c.ascent) c.ascent = Math.round((1 - (1 - c.ascent) * 1.5) * 100) / 100; if (c.protectAll) c.protectAll = Math.round((1 - (1 - c.protectAll) * 1.5) * 100) / 100; for (const k of Object.keys(c.protect || {})) c.protect[k] = Math.round(Math.pow(c.protect[k], 1.5) * 100) / 100; }
+  if (x.night && x.night.chance && !badFx(x.night.fx)) x.night.chance = Math.min(0.9, Math.round(x.night.chance * 150) / 100);
+  return x;
+}
+const relicEff = () => heldRelics().map(id => [id, scaleEff(id, IT[id].eff)]);
+const effLine = id => { const e = scaleEff(id, IT[id].eff); return `效果：${e.desc}${e.use ? '　可以用：' + e.use.desc : ''}${e.studied ? '（林老師研究過，好的那一面加強了）' : ''}`; };
+function useBtn(id) { const st = relicUseState(id); if (!st) return ''; const u = IT[id].eff.use; return `<button class="btn quiet" style="min-height:32px;font-size:13px" data-act="relicuse" data-id="${id}" ${st.ok ? '' : 'disabled'} title="${esc(u.desc)}">${esc(u.label)}${st.ok ? '' : (st.why ? '（' + esc(st.why) + '）' : '')}</button>`; }
+const chanceWord = p => p >= 0.95 ? '幾乎一定' : p < 0.05 ? '不到一成' : '大概' + cnNum(Math.max(1, Math.round(p * 10))) + '成';
+const deathChance = fx => { const d = fx && fx.death; if (!d) return 0; const dd = typeof d === 'string' ? { id: d } : d; if (dd.unless && needOk(dd.unless)) return 0; return (dd.chance == null ? 1 : dd.chance) * protectMult(dd.id); };
 function warnRelic(fx) { const d = fx && fx.death; if (!d) return null; const dd = typeof d === 'string' ? { id: d } : d; if (dd.unless && needOk(dd.unless)) return null; if ((dd.chance == null ? 1 : dd.chance) * protectMult(dd.id) <= 0) return null; const r = relicEff().find(([, e]) => e.warn); return r ? r : null; }
+const warnText = (wr, fx) => wr[1].warn + '（' + chanceWord(deathChance(fx)) + '會出事）';
+/* ----- 拿出來用的遺物 ----- */
+const relicUsed = id => (S.relicUsed || {})[id];
+const outside = () => !!(S.place && PL[S.place.id] && PL[S.place.id].type === 'explore');
+const truthPick = () => Object.keys(S.intel || {}).find(k => IN[k] && IN[k].kind === 'heard' && !(S.truthKnown || {})[k] && !(S.isold[k] || {}).burned);
+function relicUseState(id) {
+  const it = IT[id], u = it && it.eff && it.eff.use; if (!u || !held(id)) return null;
+  if (S.dead || S.phase === 'end' || S.phase === 'dead') return { ok: false, why: '' };
+  if (u.where === 'out' && !outside()) return { ok: false, why: '要在外面才能用' };
+  if (u.where === 'out' && !S.place.steps) return { ok: false, why: '先走一處再說' };
+  if (u.where === 'shop' && outside()) return { ok: false, why: '回到聚落才能用' };
+  if (u.once === 'day' && relicUsed(id) === dayKey()) return { ok: false, why: '今天用過了' };
+  if (u.special === 'extraStep' && !(S.place.acted && !S.place.strain)) return { ok: false, why: S.place.strain ? '這一趟太累了' : '還走得動，用不到' };
+  if (u.special === 'truth' && !truthPick()) return { ok: false, why: '消息簿裡沒有要問的' };
+  if (u.special === 'reveal' && S.reveal === dayKey()) return { ok: false, why: '今天已經看得很清楚了' };
+  return { ok: true, why: '' };
+}
+function useRelic(id) {
+  const st = relicUseState(id); if (!st || !st.ok) return false;
+  const it = IT[id], u = it.eff.use; let text = u.text || ''; const notes = [];
+  if (u.special === 'extraStep') { S.place.acted = false; S.place.steps = Math.max(0, (S.place.steps || 1) - 1); }
+  if (u.special === 'reveal') S.reveal = dayKey();
+  if (u.special === 'lessStep') S.lessStep = dayKey();
+  if (u.special === 'erase') { const bd = S.burdenDay && S.burdenDay.k === dayKey() ? S.burdenDay.n : 0; const n = Math.max(2, bd); const b0 = S.burden; S.burden = Math.max(0, S.burden - n); if (S.burden !== b0) notes.push('負擔－' + (b0 - S.burden)); }
+  if (u.special === 'truth') { const k = truthPick(); const t = IN[k].truth !== false; S.truthKnown = { ...(S.truthKnown || {}), [k]: t ? 'true' : 'false' }; text = text.replace('{word}', t ? '真' : '假').replace('{short}', IN[k].short || IN[k].text); }
+  if (u.special === 'noSkim') S.flags.naiya_buried = true;
+  notes.push(...applyFx(u.fx));
+  if (u.once === 'consume') takeQty(id, 1); else S.relicUsed = { ...(S.relicUsed || {}), [id]: dayKey() };
+  S.relicLog = (S.relicLog || []).concat([{ id, k: 'use' }]); S.relicUses = (S.relicUses || 0) + 1;
+  S.log.push({ day: S.day, t: '用了「' + it.name + '」' });
+  if (u.special === 'safeReturn') { const b0 = S.burden; S.burden = Math.floor(S.burden / 2); if (b0 !== S.burden) notes.push('負擔－' + (b0 - S.burden)); S.place.strain = false; toast(text + (notes.length ? '　' + notes.join('　') : '')); advanceSlot(); return true; }
+  if (S.place) { S.place.say = null; S.place.found = { title: '「' + it.name + '」', text, notes }; }
+  else S.useNote = { id, text, notes };
+  toast('「' + it.name + '」' + (notes.length ? '　' + notes.join('　') : ''));
+  return true;
+}
 const holdFlag = f => S.lots.some(l => l.flags.includes(f) && l.qty > 0);
 function takeQty(item, qty, lotId) {
   let need = qty;
@@ -259,6 +309,7 @@ function needOk(need, enc) {
   if (need.burdenHigh && S.burden <= burdenLimit()) return false;
   if (need.relMax) for (const [k, v] of Object.entries(need.relMax)) if (rel(k) > v) return false;
   if (need.level && S.level < need.level) return false;
+  if (need.heatMin != null && (S.heat || 0) < need.heatMin) return false;
   if (need.done && !need.done.every(x => S.explored && S.explored[x])) return false;
   return true;
 }
@@ -271,11 +322,11 @@ function applyFx(fx, ctx = {}) {
     const roll = (window.__deathRoll || Math.random)();
     const ch = (d.chance == null ? 1 : d.chance) * protectMult(d.id);
     if (!saved && roll < ch) { die(d.id); return notes; }
-    if (!saved && roll < (d.chance == null ? 1 : d.chance)) { const rid = gearStats().relic.by[d.id]; notes.push(rid ? `「${IT[rid].name}」救了你一次。${IT[rid].eff.saved || ''}` : '裝備救了你一次。'); if (rid) { S.relicSaves = (S.relicSaves || 0) + 1; S.relicLog = (S.relicLog || []).concat([{ id: rid, k: 'save', d: d.id }]); } }
+    if (!saved && roll < (d.chance == null ? 1 : d.chance)) { const rid = protectBy(d.id); notes.push(rid ? `「${IT[rid].name}」救了你一次。${IT[rid].eff.saved || ''}` : '裝備救了你一次。'); if (rid) { S.relicSaves = (S.relicSaves || 0) + 1; S.relicLog = (S.relicLog || []).concat([{ id: rid, k: 'save', d: d.id }]); } }
     if (d.saved) notes.push(d.saved);
   }
   if (fx.note) noteGeneric(fx.note, 'shop');
-  if (fx.heat) S.heat += fx.heat;
+  if (fx.heat) { const h0 = S.heat; S.heat = Math.max(0, S.heat + fx.heat); if (fx.heat < 0 && S.heat < h0) notes.push('注意度－' + (h0 - S.heat)); }
   if (fx.fire) fireStaff(fx.fire, true);
   if (fx.setPol) Object.assign(S.shop.pol, fx.setPol);
   if (fx.giveRelic) { const r = pickRelic(fx.giveRelic, 'fx' + S.day + S.slot); if (r) { addLot({ item: r, qty: 1, cost: 0, known: true }); notes.push('得到「' + IT[r].name + '」'); } }
@@ -830,8 +881,8 @@ function enterPlace(id) {
 function leavePlace() {
   const id = S.place && S.place.id, extra = S.place && S.place.strain;
   if (id && PL[id].type === 'explore' && S.place.steps) {
-    const risk = ascentRisk();
-    if (risk > 0) { if (!S.flags.ascent_grace) { S.flags.ascent_grace = true; S.burden += 1; S.log.push({ day: S.day, t: '負擔超過上限，你在半路上吐了，爬了很久才爬上來。' }); toast('你差一點就上不來了。下一次負擔超過上限，可能真的上不來。'); } else if ((window.__deathRoll || Math.random)() < risk) { die((PFX[id] || {}).ascent || 'asc_ruin'); return; } S.log.push({ day: S.day, t: '差一點就上不來了。' }); toast('差一點就上不來了。'); }
+    const risk = ascentRisk(), raw = ascentRisk(S.burden, id, true);
+    if (risk > 0) { if (!S.flags.ascent_grace) { S.flags.ascent_grace = true; S.burden += 1; S.log.push({ day: S.day, t: '負擔超過上限，你在半路上吐了，爬了很久才爬上來。' }); toast('你差一點就上不來了。下一次負擔超過上限，可能真的上不來。'); } else { const roll = (window.__deathRoll || Math.random)(); const aid = (PFX[id] || {}).ascent || 'asc_ruin'; if (roll < risk) { die(aid); return; } const gr = gearStats().relic; const rid = roll < raw ? (gr.by[aid] || gr.ascBy || gr.allBy) : null; if (rid) { S.relicSaves = (S.relicSaves || 0) + 1; S.relicLog = (S.relicLog || []).concat([{ id: rid, k: 'save', d: aid }]); S.log.push({ day: S.day, t: `回程差一點上不來，「${IT[rid].name}」救了你。` }); toast(`「${IT[rid].name}」救了你一次。${IT[rid].eff.saved || '你爬上來了。'}`); } else { S.log.push({ day: S.day, t: '差一點就上不來了。' }); toast('差一點就上不來了。'); } } }
   }
   advanceSlot(); if (extra && S.phase === 'day') { S.slot++; if (S.slot >= 3) goNight(); }
 }
@@ -856,6 +907,7 @@ function explore(spotId) {
   S.place.steps = (S.place.steps || 0) + 1;
   if (sp.cost) S.stones -= sp.cost;
   const bAdd = spotBurden(id, sp); S.burden += bAdd; S.place.burdenAdded = (S.place.burdenAdded || 0) + bAdd;
+  if (bAdd) S.burdenDay = { k: dayKey(), n: (S.burdenDay && S.burdenDay.k === dayKey() ? S.burdenDay.n : 0) + bAdd };
   let text = sp.text, fx = sp.fx;
   if (sp.repeat) {
     S.exploredDay[sp.id + ':' + MON() + ':' + S.day] = true;
@@ -874,7 +926,9 @@ function explore(spotId) {
   if (sp.strain) { S.place.strain = true; notes.push('回程會多花一個時段'); }
   // 一趟最多看兩處（登山杖多一處）；走到會累的地方，這一趟就到此為止
   const gs0 = gearStats();
-  if (S.place.strain || S.place.steps >= 2 + gs0.steps) S.place.acted = true;
+  const less = S.lessStep === dayKey() ? 1 : 0;
+  if (less && S.place.steps === 1 + gs0.steps && !S.place.strain) notes.push('「半杯冷茶」：你忘了還要去哪裡。');
+  if (S.place.strain || S.place.steps >= 2 + gs0.steps - less) S.place.acted = true;
   else { notes.push('體力還夠，可以再看一處'); if (gs0.relic.steps && S.place.steps >= 2 + gs0.steps - gs0.relic.steps) { notes.push(`「${IT[gs0.relic.stepBy].name}」：好像還多出一點時間。`); S.relicLog = (S.relicLog || []).concat([{ id: gs0.relic.stepBy, k: 'step' }]); } }
   if (sp.note) noteGeneric(sp.note, 'explore:' + id);
   S.place.say = null; S.place.found = { title: sp.title, text, notes };
@@ -1122,21 +1176,22 @@ function netWorth(trueQ = true) { return S.stones + S.lots.reduce((a, l) => a + 
 
 /* ================= 甩手掌櫃：店自己會動 ================= */
 const ST = () => SH.staff || {}, UP = () => SH.upgrades || {}, GE = () => SH.gear || {};
-function shopStats() {
+function shopStats(noRelic) {
   const st = { traffic: 4, sales: 0, ticket: 10, margin: 0, offers: 2, appraise: 0, audit: 0, greed: 0, gossip: 0, relic: 0.06, security: 0, night: 0, rest: 4, cap: M.nightCap, slots: 2, heat: 0 };
   const add = fx => { for (const [k, v] of Object.entries(fx || {})) if (typeof v === 'number') st[k] = (st[k] || 0) + v; };
   for (const id of Object.keys(S.shop.upg)) add((UP()[id] || {}).fx);
   for (const id of S.shop.staff) add((ST()[id] || {}).traits);
-  for (const [, e] of relicEff()) add(e.passive);
+  if (!noRelic) for (const [, e] of relicEff()) add(e.passive);
   if (S.flags.ayue_loyal && S.shop.staff.includes('ayue')) st.sales += 1;
   if (S.flags.akai_reformed) st.greed = Math.max(0, st.greed - 1);
+  if (S.flags.naiya_buried) st.greed = Math.max(0, st.greed - 1);
   if (st.audit) st.greed = Math.max(0, st.greed - st.audit);
   return st;
 }
 function gearStats() {
-  const g = { limit: 0, steps: 0, loot: 0, ascent: 1, protect: {}, relic: { limit: 0, steps: 0, ascent: 1, by: {} } };
+  const g = { limit: 0, steps: 0, loot: 0, ascent: 1, protect: {}, protectAll: 1, relic: { limit: 0, steps: 0, ascent: 1, by: {} } };
   const srcs = Object.keys(S.shop.gear || {}).map(id => (GE()[id] || {}).fx || {});
-  for (const [id, e] of relicEff()) if (e.carry) { const c = e.carry; srcs.push(c); g.relic.limit += c.limit || 0; g.relic.steps += c.steps || 0; if (c.ascent) g.relic.ascent *= c.ascent; for (const k of Object.keys(c.protect || {})) g.relic.by[k] = g.relic.by[k] || id; if (c.steps) g.relic.stepBy = id; }
+  for (const [id, e] of relicEff()) if (e.carry) { const c = e.carry; srcs.push(c); g.relic.limit += c.limit || 0; g.relic.steps += c.steps || 0; if (c.ascent) g.relic.ascent *= c.ascent; for (const k of Object.keys(c.protect || {})) g.relic.by[k] = g.relic.by[k] || id; if (c.steps) g.relic.stepBy = id; if (c.protectAll) { g.protectAll *= c.protectAll; g.relic.allBy = g.relic.allBy || id; } if (c.ascent) g.relic.ascBy = g.relic.ascBy || id; }
   for (const id of S.shop.staff) if ((ST()[id] || {}).gear) srcs.push(ST()[id].gear);
   for (const fx of srcs) { g.limit += fx.limit || 0; g.steps += fx.steps || 0; g.loot += fx.loot || 0; if (fx.ascent) g.ascent *= fx.ascent; for (const [k, v] of Object.entries(fx.protect || {})) g.protect[k] = (g.protect[k] || 1) * v; }
   return g;
@@ -1166,8 +1221,8 @@ function pickRelic(kind, key) {
   return pool[Math.floor(rnd('relic:' + key) * pool.length)];
 }
 // 一天的帳：dry 只估算，不動狀態
-function shopDay(tag, dry) {
-  const st = shopStats(), P = S.shop.pol, R = k => dry ? 0.5 : rnd('shop:' + MON() + ':' + S.day + ':' + tag + ':' + k);
+function shopDay(tag, dry, noRelic) {
+  const st = shopStats(noRelic), P = S.shop.pol, R = k => dry ? 0.5 : rnd('shop:' + MON() + ':' + S.day + ':' + tag + ':' + k);
   const PM = { low: { t: 1.35, m: 0.2 }, normal: { t: 1, m: 0.32 }, high: { t: 0.72, m: 0.5 } }[P.price] || { t: 1, m: 0.32 };
   const cats = ['herb', 'ore', 'old', 'daily'].filter(k => P.cats[k]).length;
   const repB = Math.max(-2, Math.min(6, (S.rep.loose || 0) * 0.6));
@@ -1189,8 +1244,11 @@ function shopDay(tag, dry) {
     else { buyProfit += Math.round(unitP * (0.7 + R('b' + i) * 0.6)); if (st.appraise && R('c' + i) < 0.15 * st.appraise) caught++; }
   }
   let shady = 0; if (P.cats.shady) shady = Math.round((14 + st.offers * 2) * (0.7 + R('s') * 0.6));
-  const night = st.night ? Math.round(st.night * (12 + (S.lots.some(l => l.item === 'budeng') ? 10 : 0)) * (0.8 + R('n') * 0.4)) : 0;
-  const skim = st.greed ? Math.round((net + buyProfit) * 0.07 * st.greed) : 0;
+  const night = st.night ? Math.round(st.night * (12 + (!noRelic && S.lots.some(l => l.item === 'budeng') ? 10 : 0)) * (0.8 + R('n') * 0.4)) : 0;
+  // 守夜：有人顧著，抽屜少拿一點、假貨也比較會被退回去
+  const guard = Math.max(0, st.security || 0);
+  if (guard) fakeLoss *= Math.max(0.4, 1 - 0.15 * guard);
+  const skim = st.greed ? Math.round((net + buyProfit) * 0.07 * st.greed * Math.max(0, 1 - 0.25 * guard)) : 0;
   const wages = S.shop.staff.reduce((a, id) => a + ((ST()[id] || {}).wage || 0), 0);
   const total = Math.round(net + buyProfit - fakeLoss + shady + night - skim - wages);
   return { traffic, gross, net, offers, acc, buyProfit: Math.round(buyProfit), fakes, fakeLoss: Math.round(fakeLoss), caught, shady, night, skim, wages, total };
@@ -1264,7 +1322,8 @@ function goNight() {
   const relicLines = [];
   for (const [id, e] of relicEff()) if (e.night && needOk(e.night.need || {}) && !(e.night.fx.burden < 0 && S.burden <= 0) && mixHash(S.seed + ':rn:' + id + ':' + MON() + ':' + S.day) < e.night.chance) { const nt = applyFx(e.night.fx); relicLines.push({ id, text: e.night.text, notes: nt, curse: !!e.curse }); S.relicLog = (S.relicLog || []).concat([{ id, k: 'night' }]); }
   const relicOn = relicEff().filter(([, e]) => e.passive || e.carry || e.warn).map(([id]) => id);
-  S.night = { ...S.night, rep, dues, invest, lvBefore, burden: [b0, S.burden], relicLines, relicOn };
+  const relicGain = relicEff().some(([, e]) => e.passive) ? shopDay('est', true).total - shopDay('est', true, true).total : 0;
+  S.night = { ...S.night, rep, dues, invest, lvBefore, burden: [b0, S.burden], relicLines, relicOn, relicGain };
   shopEventRoll();
   checkAchieve();
 }
@@ -1280,7 +1339,7 @@ function shopSellLot(id) {
 /* ----- 負擔與死亡 ----- */
 const burdenLimit = () => 5 + 2 * (S.level - 4) + gearStats().limit;
 function burdenWord(b = S.burden) { const L = burdenLimit(); return b <= 0 ? '身體很輕' : b <= L * 0.5 ? '還撐得住' : b <= L ? '耳鳴、手會抖' : b <= L + 3 ? '流鼻血、看東西有重影' : '身體在拒絕你'; }
-function ascentRisk(b = S.burden) { const over = b - burdenLimit(); return over > 0 ? Math.min(0.9, 0.22 * over * gearStats().ascent) : 0; }
+function ascentRisk(b = S.burden, pid = S.place && S.place.id, raw) { const over = b - burdenLimit(); if (over <= 0) return 0; const g = gearStats(); const a = (PFX[pid] || {}).ascent; return Math.min(0.9, 0.22 * over * (raw ? 1 : g.ascent * (a ? (g.protect[a] ?? 1) * g.protectAll : 1))); }
 function die(id) {
   if (S.dead) return;
   S.dead = { id, m: MON(), day: S.day, slot: S.slot }; S.phase = 'dead'; S.enc = null;
@@ -1288,7 +1347,8 @@ function die(id) {
   S.deathNew = rec.n === 1;
   checkAchieve();
 }
-function protectMult(id) { const g = gearStats(); return g.protect[id] ?? 1; }
+function protectMult(id) { const g = gearStats(); return (g.protect[id] ?? 1) * g.protectAll; }
+const protectBy = id => { const r = gearStats().relic; return r.by[id] || r.allBy || null; };
 /* ----- 存檔點：每天早上自動存，死了可以回去 ----- */
 const dayKey = () => MON() + '-' + S.day;
 function ckptSave() {
@@ -1576,18 +1636,27 @@ function renderEnc() {
   }
   return `${head}${goodsCard(e)}<div class="thread" id="thread">${th}</div>${opts}`;
 }
+function spotRelicHint(sp) {
+  const fx = sp && sp.fx; if (!fx || !fx.death || S.place.found && S.dead) return '';
+  const dd = typeof fx.death === 'string' ? { id: fx.death } : fx.death; const out = [];
+  const rid = protectBy(dd.id); if (rid && !(dd.unless && needOk(dd.unless))) out.push(`「${IT[rid].name}」：危險比較小`);
+  const see = S.reveal === dayKey() || relicEff().some(([, e]) => e.warn);
+  if (see) out.push(dd.unless && needOk(dd.unless) ? '看起來不會出事' : chanceWord(deathChance(fx)) + '會出事');
+  return out.length ? `<span class="small jade" style="display:block">${esc(out.join('　'))}</span>` : '';
+}
 function renderPlace() {
   const id = S.place.id, p = PL[id];
   let h = `${LAYER[id] ? depthGauge(LAYER[id]) : ''}<div class="who place-h"><div><div class="nm">${esc(p.name)}</div><div class="rl">${esc((p.depth ? p.depth + '　·　' : '') + (SLOT[S.slot] || ''))}</div></div></div><p class="serif blurb">${esc(p.blurb)}${p.blurbM && p.blurbM[MON()] ? ' ' + esc(p.blurbM[MON()]) : ''}${id === 'market' && S.day === MD().marketDay ? ' ' + esc(p.blurbMarketDay) : ''}</p>`;
   if (S.place.say) h += `<div class="ln" style="margin-top:12px">${S.place.sayWho || p.npc ? `<span class="sp">${esc(NP[S.place.sayWho || p.npc].name)}</span>` : ''}<span class="tx">${esc(S.place.say)}</span></div>`;
-  if (p.type === 'explore') { const gr = gearStats().relic; h += `<p class="small ${S.burden > burdenLimit() ? 'cin' : 'muted'}" style="margin-top:6px">負擔 ${S.burden}/${burdenLimit()}：${burdenWord()}${ascentRisk() > 0 ? `。回程約 ${Math.round(ascentRisk() * 100)}% 上不來。` : '。'}${gr.limit || gr.ascent < 1 || gr.steps ? `<span class="jade">（遺物：${[gr.limit ? '上限＋' + gr.limit : '', gr.ascent < 1 ? '回程危險－' + Math.round((1 - gr.ascent) * 100) + '%' : '', gr.steps ? '多看' + gr.steps + '處' : ''].filter(Boolean).join('、')}）</span>` : ''}</p>`; }
+  if (p.type === 'explore') { const gr = gearStats().relic; h += `<p class="small ${S.burden > burdenLimit() ? 'cin' : 'muted'}" style="margin-top:6px">負擔 ${S.burden}/${burdenLimit()}：${burdenWord()}${ascentRisk() > 0 ? `。回程約 ${Math.round(ascentRisk() * 100)}% 上不來。` : '。'}${gr.limit || gr.ascent < 1 || gr.steps || ((PFX[id] || {}).ascent && gr.by[PFX[id].ascent]) ? `<span class="jade">（遺物：${[gr.limit ? '上限＋' + gr.limit : '', gr.ascent < 1 ? '回程危險－' + Math.round((1 - gr.ascent) * 100) + '%' : '', (PFX[id] || {}).ascent && gr.by[PFX[id].ascent] ? '「' + IT[gr.by[PFX[id].ascent]].name + '」：這裡的回程比較安全' : '', gr.steps ? '多看' + gr.steps + '處' : ''].filter(Boolean).join('、')}）</span>` : ''}</p>`; }
   if (S.place.found) { const f = S.place.found; h += `<div class="card" style="margin-top:12px"><b class="serif">${esc(f.title)}</b>${f.text.split('\n').map(t => `<p class="serif" style="line-height:1.9;margin-top:6px">${esc(t)}</p>`).join('')}${f.notes.length ? `<p class="small jade" style="margin-top:6px">${esc(f.notes.join('　'))}</p>` : ''}</div>`; }
+  if (p.type === 'explore') { const us = heldRelics().filter(r => { const u = IT[r].eff.use; return u && u.where !== 'shop'; }); if (us.length) h += `<div class="row" style="flex-wrap:wrap;gap:6px;margin-top:10px"><span class="small muted">身上可以拿出來用的：</span>${us.map(r => useBtn(r)).join('')}</div>`; }
   if (p.spots) {
     const av = spotsAvail(id);
     if (S.place.acted) h += `<p class="small muted" style="margin-top:12px">${p.type === 'explore' ? (S.place.strain ? '天色不早了，回程會比較久。' : '在這裡的時間差不多了。') : '今天先這樣。'}</p>`;
     else if (av.length) {
       h += `<h2 class="sec-h">${p.type === 'explore' ? '要往哪裡走' : '看看'}</h2>`;
-      h += av.map(sp => { const ok = needOk(sp.need) && !(sp.cost && S.stones < sp.cost); const isNew = !sp.repeat && !S.explored[sp.id]; const bb = p.type === 'explore' ? spotBurden(id, sp) : 0, over = bb && S.burden + bb > burdenLimit(); return `<button class="opt${sp.strain || sp.danger ? ' danger' : ''}${UI.confirm === 'sp:' + sp.id ? ' confirm' : ''}" data-act="explore" data-id="${sp.id}" ${ok ? '' : 'disabled'}><b>${UI.confirm === 'sp:' + sp.id ? '再按一次：' : ''}${esc(sp.title)}${isNew ? '　<span class="jade small">沒去過</span>' : ''}</b><span>${esc(sp.hint || '')}${sp.cost ? `　·　${sp.cost} 靈石` : ''}${sp.strain ? '　·　回程多花一個時段' : ''}${bb ? `　·　負擔＋${bb}${over ? '（會超過上限）' : ''}` : ''}</span>${sp.danger ? `<span class="warn">${esc(sp.danger)}</span>` : ''}</button>`; }).join('');
+      h += av.map(sp => { const ok = needOk(sp.need) && !(sp.cost && S.stones < sp.cost); const isNew = !sp.repeat && !S.explored[sp.id]; const bb = p.type === 'explore' ? spotBurden(id, sp) : 0, over = bb && S.burden + bb > burdenLimit(); return `<button class="opt${sp.strain || sp.danger ? ' danger' : ''}${UI.confirm === 'sp:' + sp.id ? ' confirm' : ''}" data-act="explore" data-id="${sp.id}" ${ok ? '' : 'disabled'}><b>${UI.confirm === 'sp:' + sp.id ? '再按一次：' : ''}${esc(sp.title)}${isNew ? '　<span class="jade small">沒去過</span>' : ''}</b><span>${esc(sp.hint || '')}${sp.cost ? `　·　${sp.cost} 靈石` : ''}${sp.strain ? '　·　回程多花一個時段' : ''}${bb ? `　·　負擔＋${bb}${over ? '（會超過上限）' : ''}` : ''}</span>${sp.danger ? `<span class="warn">${esc(sp.danger)}</span>` : ''}${spotRelicHint(sp)}</button>`; }).join('');
     } else h += `<p class="small muted" style="margin-top:12px">這裡現在沒有別的可以看了。換個日子、換個季節再來，也許不一樣。</p>`;
   }
   if (p.type === 'archive') {
@@ -1690,7 +1759,7 @@ function renderNight() {
     <details style="margin-top:6px"><summary class="small muted">細帳</summary>${row('賣貨毛利', sign(r.net))}${row('收購轉賣', sign(r.buyProfit))}${r.fakeLoss ? row('假貨', sign(-r.fakeLoss), 'cin') : ''}${r.shady ? row('不問來路的貨', sign(r.shady)) : ''}${r.night ? row('夜班', sign(r.night)) : ''}${r.skim ? row('抽屜少了', sign(-r.skim), 'cin') : ''}${row('薪水', sign(-r.wages))}</details>
     ${r.relic ? `<p class="small jade" style="margin-top:6px">夥計收到一件「${esc(IT[r.relic].name)}」，放進你的庫房了。</p>` : ''}
     ${r.gossip ? `<p class="small muted" style="margin-top:4px">客人閒聊：${esc(r.gossip)}</p>` : ''}</div>
-    ${(n.relicLines || []).length || (n.relicOn || []).length ? `<div class="card"><b class="serif">身上的遺物</b>${(n.relicLines || []).map(x => `<p class="serif small" style="line-height:1.8;margin-top:4px">${icon(x.id, 'sm')} 「${esc(IT[x.id].name)}」${esc(x.text)}<span class="small ${x.curse ? 'cin' : 'jade'}">　${esc(x.notes.join('　'))}</span></p>`).join('')}${(n.relicOn || []).length ? `<p class="small muted" style="margin-top:4px">一直在作用：${n.relicOn.map(id => esc(IT[id].name)).join('、')}</p>` : ''}</div>` : ''}
+    ${(n.relicLines || []).length || (n.relicOn || []).length || n.relicGain ? `<div class="card"><b class="serif">身上的遺物</b>${(n.relicLines || []).map(x => `<p class="serif small" style="line-height:1.8;margin-top:4px">${icon(x.id, 'sm')} 「${esc(IT[x.id].name)}」${esc(x.text)}<span class="small ${x.curse ? 'cin' : 'jade'}">　${esc(x.notes.join('　'))}</span></p>`).join('')}${n.relicGain ? `<p class="small ${n.relicGain > 0 ? 'jade' : 'cin'}" style="margin-top:4px">店裡的遺物，今天大約${n.relicGain > 0 ? '多賺' : '少賺'} ${fmt(Math.abs(n.relicGain))} 靈石。</p>` : ''}${(n.relicOn || []).length ? `<p class="small muted" style="margin-top:4px">一直在作用：${n.relicOn.map(id => esc(IT[id].name)).join('、')}</p>` : ''}</div>` : ''}
     ${n.dues ? `<div class="card"><b class="serif">規費</b><p class="small" style="margin-top:4px">${esc(n.dues)}</p></div>` : ''}
     <div class="card">${row('晚上靜坐', n.invest ? `投 ${n.invest}，修行＋${n.gain}` : '沒有靜坐')}${row('修行', `${S.xp} / ${need}`)}${row('負擔', `${n.burden[0]} → ${n.burden[1]}（${burdenWord(n.burden[1])}）`)}
     ${S.level > n.lvBefore ? `<p class="jade serif" style="margin-top:6px"><b>身體又適應了一層。你現在是${lvName(S.level)}。負擔上限變成 ${burdenLimit()}，更深的地方撐得住了。</b></p>` : ''}</div>
@@ -1829,7 +1898,7 @@ function labelOf(id, key) {
 
 function renderStore() {
   const lots = S.lots.map(l => { const it = IT[l.item]; const v = it.base ? lotValue(l) : 0; const flags = l.known ? l.flags.map(f => ({ painted: '金線是畫的', damp: '受潮', stolen: '燙手', sting: '瓶底有印', sect: '寒潭會的東西', alive: '活取', entrusted: '阿蘅託付', contraband: '沒有印記', fake: '假的', cut: '摻了東西', evidence: '證物' })[f]).filter(Boolean) : [];
-    return `<tr><td><button class="g-link ilink" style="margin:0" data-act="lore" data-id="${l.item}">${icon(l.item, 'sm')}<span>${esc(l.label)}</span></button>${it.eff ? `<div class="small ${it.eff.curse ? 'cin' : 'jade'}">效果：${esc(it.eff.desc)}</div>` : ''}${flags.length ? `<div class="small cin">${esc(flags.join('、'))}${l.known && l.q < 0.9 ? '，成色' + Math.round(l.q * 10) + '成' : ''}</div>` : ''}${l.perishDay ? `<div class="small cin">${M.dayNames[l.perishDay - 1] || ''}化</div>` : ''}</td><td class="r">${l.qty}</td><td class="r">${fmt(l.cost)}</td><td class="r">${it.base ? fmt(v) : '—'}</td><td class="r">${!l.known && S.spirit > 0 ? `<button class="btn quiet" style="min-height:32px;font-size:13px" data-act="lotapp" data-id="${l.id}">鑑定</button>` : ''}${shopSellable(l) && S.phase !== 'end' ? `<button class="btn quiet" style="min-height:32px;font-size:13px" data-act="shopsell" data-id="${l.id}">賣掉</button>` : ''}</td></tr>`; }).join('');
+    return `<tr><td><button class="g-link ilink" style="margin:0" data-act="lore" data-id="${l.item}">${icon(l.item, 'sm')}<span>${esc(l.label)}</span></button>${it.eff ? `<div class="small ${it.eff.curse ? 'cin' : 'jade'}">${esc(effLine(l.item))}</div>` : ''}${flags.length ? `<div class="small cin">${esc(flags.join('、'))}${l.known && l.q < 0.9 ? '，成色' + Math.round(l.q * 10) + '成' : ''}</div>` : ''}${l.perishDay ? `<div class="small cin">${M.dayNames[l.perishDay - 1] || ''}化</div>` : ''}</td><td class="r">${l.qty}</td><td class="r">${fmt(l.cost)}</td><td class="r">${it.base ? fmt(v) : '—'}</td><td class="r">${it.eff && it.eff.use && S.lots.find(x => x.item === l.item) === l ? useBtn(l.item) : ''}${!l.known && S.spirit > 0 ? `<button class="btn quiet" style="min-height:32px;font-size:13px" data-act="lotapp" data-id="${l.id}">鑑定</button>` : ''}${shopSellable(l) && S.phase !== 'end' ? `<button class="btn quiet" style="min-height:32px;font-size:13px" data-act="shopsell" data-id="${l.id}">賣掉</button>` : ''}</td></tr>`; }).join('');
   const items = Object.keys(IT).filter(k => IT[k].base && IT[k].base < 100 && S.codex[k]);
   const board = items.map(k => { const p = price(k), y = S.day > 1 ? price(k, S.day - 1) : p; const ch = p > y ? `<span class="up">▲</span>` : p < y ? `<span class="down">▼</span>` : ''; return `<tr><td class="nm">${icon(k, 'sm')} ${esc(IT[k].name)}</td><td class="r">${fmt(p)} ${ch}</td><td class="r muted">${esc(IT[k].unit)}</td></tr>`; }).join('');
   return `<h2 class="sec-h">庫房</h2>${S.lots.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>貨</th><th class="r">數</th><th class="r">成本</th><th class="r">估值</th><th></th></tr></thead><tbody>${lots}</tbody></table></div><p class="small muted" style="margin-top:6px">估值照今日市價。成色你沒看過的，照賣家的說法算。「賣掉」是交給店裡照市價出清；舊物拿去學堂研究，常常比賣掉值得。</p>` : '<p class="muted">庫房空了。</p>'}
@@ -1881,6 +1950,7 @@ function intelRow(id) {
       if (intelSolo(I) && !intelDead(I) && !intelPublic(I)) pills.push('<span class="pill jade">只有你知道</span>');
     }
   }
+  const tk = (S.truthKnown || {})[id]; if (tk) pills.push(`<span class="pill ${tk === 'false' ? 'cin' : 'jade'}">茶籌：${tk === 'false' ? '假' : '真'}</span>`);
   const src = srcLabel(rec, I);
   return `<div class="intel"><div class="it">${esc(text)}</div><div class="im"><span class="small muted">${esc(dayLabel(rec.day, rec.m))}${src ? '　' + esc(src) : ''}</span>${pills.join('')}</div></div>`;
 }
@@ -1910,7 +1980,7 @@ function renderSheet() {
   let h = '';
   if (sh.type === 'lore') {
     const it = IT[sh.id]; S.codex[sh.id] = true;
-    h = `<span class="label">${esc(it.grade)}</span><h2 class="lore-h">${icon(sh.id, 'lg')}<span>${esc(it.name)}</span></h2><div class="lore-stat">${esc(it.stat)}${it.base && it.base < 100 ? `　·　今日市價 ${fmt(price(sh.id))}` : ''}</div><div class="lore">${esc(it.text)}</div>${it.eff ? `<p class="small ${it.eff.curse ? 'cin' : 'jade'}" style="margin-top:8px;line-height:1.7"><b>效果：</b>${esc(it.eff.desc)}${held(sh.id) ? '' : '（要放在庫房裡才會作用）'}</p>` : ''}${unlockedHidden(sh.id).map(x => `<div class="hidden-line"><span class="label">${esc(x.label)}</span>${esc(x.text)}</div>`).join('')}`;
+    h = `<span class="label">${esc(it.grade)}</span><h2 class="lore-h">${icon(sh.id, 'lg')}<span>${esc(it.name)}</span></h2><div class="lore-stat">${esc(it.stat)}${it.base && it.base < 100 ? `　·　今日市價 ${fmt(price(sh.id))}` : ''}</div><div class="lore">${esc(it.text)}</div>${it.eff ? `<p class="small ${it.eff.curse ? 'cin' : 'jade'}" style="margin-top:8px;line-height:1.7"><b>效果：</b>${esc(scaleEff(sh.id, it.eff).desc)}${it.eff.use ? `<br><b>可以用：</b>${esc(it.eff.use.desc)}` : ''}${scaleEff(sh.id, it.eff).studied ? '<br>林老師研究過：好的那一面加強了一半。' : ''}${held(sh.id) ? '' : '（要放在庫房裡才會作用）'}</p>${held(sh.id) && it.eff.use ? `<div style="margin-top:6px">${useBtn(sh.id)}</div>` : ''}` : ''}${unlockedHidden(sh.id).map(x => `<div class="hidden-line"><span class="label">${esc(x.label)}</span>${esc(x.text)}</div>`).join('')}`;
   } else if (sh.type === 'verify') {
     h = `<h2>查證</h2><p class="small muted">去找人問一問，會花掉兩個小時。對方會等你，但第三方也有自己的立場。</p>` + verifyList().map(v => `<button class="opt" data-act="verifyw" data-id="${v.who}" ${v.used || (v.cost && S.stones < v.cost) ? 'disabled' : ''}><b>${esc(NP[v.who].name)}</b><span>${esc(NP[v.who].role)}${v.cost ? `　·　${v.cost} 靈石` : '　·　不收錢'}${v.used ? '　·　問過了' : ''}</span></button>`).join('');
   } else if (sh.type === 'decide') {
@@ -2079,8 +2149,9 @@ function onAct(a, el) {
     case 'herb': buyHerb(); commit(); break;
     case 'mangyupai': { const o = DEALS.d10.opts.special2; applyFx(o.fx); S.place.say = o.text; S.place.sayWho = 'mang'; commit(); break; }
     case 'visit': visitHome(id); commit(); break;
-    case 'explore': { const sp = spotList(S.place.id).find(x => x.id === id); const wr = warnRelic(sp && sp.fx); if ((sureDeath(sp && sp.fx) || wr) && UI.confirm !== 'sp:' + id) { UI.confirm = 'sp:' + id; if (wr) S.relicLog = (S.relicLog || []).concat([{ id: wr[0], k: 'warn' }]); toast((wr ? wr[1].warn + ' ' : '你有一種很不好的預感。') + '再按一次，就真的去做。'); render(); break; } UI.confirm = null; explore(id); commit(); break; }
-    case 'dchoice': { const c = S.cards[+id], e = c && ALLEV[c.drift], o = e && (e.choices || []).filter(x => needOk(x.need || {}))[+el.dataset.v]; const key = 'dc:' + id + ':' + el.dataset.v; const wr = warnRelic(o && o.fx); if ((sureDeath(o && o.fx) || wr) && UI.confirm !== key) { UI.confirm = key; if (wr) S.relicLog = (S.relicLog || []).concat([{ id: wr[0], k: 'warn' }]); toast((wr ? wr[1].warn + ' ' : '你有一種很不好的預感。') + '再按一次，就真的去做。'); render(); break; } UI.confirm = null; driftChoose(+id, +el.dataset.v); commit(); break; }
+    case 'explore': { const sp = spotList(S.place.id).find(x => x.id === id); const wr = warnRelic(sp && sp.fx); if ((sureDeath(sp && sp.fx) || wr) && UI.confirm !== 'sp:' + id) { UI.confirm = 'sp:' + id; if (wr) S.relicLog = (S.relicLog || []).concat([{ id: wr[0], k: 'warn' }]); toast((wr ? warnText(wr, sp && sp.fx) + ' ' : '你有一種很不好的預感。') + '再按一次，就真的去做。'); render(); break; } UI.confirm = null; explore(id); commit(); break; }
+    case 'relicuse': { if (useRelic(id)) commit(); else render(); break; }
+    case 'dchoice': { const c = S.cards[+id], e = c && ALLEV[c.drift], o = e && (e.choices || []).filter(x => needOk(x.need || {}))[+el.dataset.v]; const key = 'dc:' + id + ':' + el.dataset.v; const wr = warnRelic(o && o.fx); if ((sureDeath(o && o.fx) || wr) && UI.confirm !== key) { UI.confirm = key; if (wr) S.relicLog = (S.relicLog || []).concat([{ id: wr[0], k: 'warn' }]); toast((wr ? warnText(wr, o && o.fx) + ' ' : '你有一種很不好的預感。') + '再按一次，就真的去做。'); render(); break; } UI.confirm = null; driftChoose(+id, +el.dataset.v); commit(); break; }
     case 'lin': linAct(el.dataset.k, +id); commit(); break;
     case 'redeem': redeem(); commit(); break;
     case 'stall': UI.stallPick = []; UI.sheet = { type: 'stall' }; render(); break;
@@ -2136,7 +2207,7 @@ function start(data) {
   render();
 }
 window.claude?.hot?.snapshot?.(() => ({ S, view: UI.view, tab: UI.tab }));
-window.__fs = { redeem, applyFx, heldRelics, relicEff, warnRelic, held, IT,  ALLEV, spotList, shopSellLot, shopSellable, die, goNight, shopDay, shopStats, hireStaff, fireStaff, buyUpg, buyGear, interruptsAvail, openInterrupt, ckptRestore, ckptInfo, ckptSave, burdenLimit, ascentRisk, achBook, unlockedBonuses, bonusPicks, threadState, checkAchieve, gearStats, spotBurden, DEATHS, THREADS, SH, PFX, explore, spotsAvail, linAct, EXPLORE, needOk, placeOpen, driftChoose, relicLots, newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN,
+window.__fs = { useRelic, relicUseState, scaleEff, protectMult, deathChance, redeem, applyFx, heldRelics, relicEff, warnRelic, held, IT,  ALLEV, spotList, shopSellLot, shopSellable, die, goNight, shopDay, shopStats, hireStaff, fireStaff, buyUpg, buyGear, interruptsAvail, openInterrupt, ckptRestore, ckptInfo, ckptSave, burdenLimit, ascentRisk, achBook, unlockedBonuses, bonusPicks, threadState, checkAchieve, gearStats, spotBurden, DEATHS, THREADS, SH, PFX, explore, spotsAvail, linAct, EXPLORE, needOk, placeOpen, driftChoose, relicLots, newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN,
   get S() { return S; }, set S(v) { S = v; }, UI, D, DEALS, NP, IT };
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 })();

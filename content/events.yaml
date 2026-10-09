@@ -1,64 +1,64 @@
 events:
   e_intro:
-    title: 長生典的字條
-    text: 天還沒亮，門縫裡塞進來一張字條。紙色暗黃，字跡很淡：「許公子，尚餘一年又六個月。」落款是長生典。
+    title: 長生當鋪的字條
+    text: 天還沒亮，門縫裡塞進來一張字條。紙色暗黃，字跡很淡：「許先生，尚餘一年又六個月。」落款是長生當鋪。
   e_sting:
-    title: 周執事上門
+    title: 周警員上門
     cases:
       - if: {holdFlag: sting}
-        text: 周執事帶著兩個人進門，直接走到庫房，把那三枚療傷丹翻了出來，瓶底的硃印對著光：「許掌櫃，收贓，是要罰的。」罰三十，丹藥沒收。
+        text: 周警員帶著兩個人進門，直接走到庫房，把那三瓶療傷藥翻了出來，瓶底的紅印對著光：「許老闆，收贓，是要罰的。」罰三十，藥沒收。
         fx: {confiscate: sting, stones: -30, rep: {sect: -1}, tag: {sect: 收贓的}, rel: {zhou: -1}, flag: [sting_caught]}
       - if: {}
-        text: 周執事帶著兩個人進門：「柳郎中賣給你的療傷丹呢？賣出去了？那就罰得更重。」罰四十五。
+        text: 周警員帶著兩個人進門：「柳醫師賣給你的療傷藥呢？賣出去了？那就罰得更重。」罰四十五。
         fx: {stones: -45, rep: {sect: -1}, tag: {sect: 收贓的}, rel: {zhou: -1}, flag: [sting_caught]}
   e_pkg:
     title: 有人舉報
     cases:
       - if: {}
-        text: 周執事帶人進門：「有人告發許記私藏私鐵。」包裹從櫃下拖出來，火漆一挑開，是二十斤沒有印記的寒鐵。周執事把包鐵的襯紙折起來，收進袖子裡，罰了你五十：「下不為例。」對門錢記的門，今天沒開。
+        text: 周警員帶人進門：「有人告發許家店私藏沒登記的寒鐵。」包裹從櫃下拖出來，封蠟一挑開，是二十公斤沒有印記的寒鐵。周警員把包鐵的襯紙折起來，收進口袋，罰了你五十：「下不為例。」對門錢家店的門，今天沒開。
         fx: {stones: -50, rep: {sect: -1}, tag: {sect: 私藏寒鐵}, rel: {zhou: -1}, flag: [pkg_caught]}
   e_aheng_warn:
     title: 阿蘅託人帶話
     text: 「林子北邊這幾天別去，狼的腳印越來越多。」
   e_xiaoman_back:
-    title: 回春堂退貨
+    title: 回春藥行退貨
     cases:
       - if: {backFlag: painted}
-        text: 葛小滿紅著眼睛回來了，把赤炎草放在櫃上：「師父說，金線是畫的。」張掌事要你退錢。
+        text: 葛小滿紅著眼睛回來了，把赤炎草放在櫃上：「師父說，金線是畫的。」張主任要你退錢。
         fx: {rel: {zhang: -2, xiaoman: -2}, rep: {sect: -1}, tag: {sect: 賣假草}, flag: [zhang_saw_fake]}
       - if: {}
-        text: 葛小滿紅著眼睛回來了，把赤炎草放在櫃上：「師父說，這草不到二十年，藥性也虛。」張掌事要你退錢。
+        text: 葛小滿紅著眼睛回來了，把赤炎草放在櫃上：「師父說，這草不到二十年，藥性也虛。」張主任要你退錢。
         fx: {rel: {zhang: -1, xiaoman: -1}, rep: {sect: -1}, tag: {sect: 以次充好}}
   e_tao_back:
-    title: 陶老符上門
+    title: 陶師傅上門
     cases:
       - if: {flag: [tao_reported], holdFlag: damp}
-        text: 陶老符來了，站在門外，沒有進門。他把一包靈石放在門檻上：「符是陶某的倉庫漏了，錢，我退你一些。可你去執事堂告我……陶某畫了四十年符，頭一回被人告。」他走了，背比上回駝。
-        fx: {buyback: {flag: damp, ratio: 0.4}, rel: {tao: -2}, mem: {tao: 你去執事堂告他。他還是來退了錢。}}
+        text: 陶師傅來了，站在門外，沒有進門。他把一包靈石放在門檻上：「貼是我的倉庫漏了，錢，我退你一些。可你去派出所告我……我做了四十年防水貼，第一次被人告。」他走了，背比上回駝。
+        fx: {buyback: {flag: damp, ratio: 0.4}, rel: {tao: -2}, mem: {tao: 你去派出所告他。他還是來退了錢。}}
       - if: {holdFlag: damp}
-        text: 天剛亮，陶老符就站在門口，手裡攥著一個布包。「這兩天好幾個人回來找我，說符一沾水就化。」他的聲音有點啞，「是倉庫漏了，陶某不知道。你那批，我收回來，錢退你四成。剩下的……陶某實在拿不出了。」
-        fx: {buyback: {flag: damp, ratio: 0.4}, rel: {tao: 1}, mem: {tao: 符受了潮，他自己上門收回去，退了四成的錢。}}
+        text: 天剛亮，陶師傅就站在門口，手裡抓著一個布包。「這兩天好幾個人回來找我，說貼一沾水就化。」他的聲音有點啞，「是倉庫漏了，我不知道。你那批，我收回來，錢退你四成。剩下的……我實在拿不出了。」
+        fx: {buyback: {flag: damp, ratio: 0.4}, rel: {tao: 1}, mem: {tao: 貼受了潮，他自己上門收回去，退了四成的錢。}}
       - if: {flag: [tao_reported]}
-        text: 陶老符從許記門口走過，沒有停下來。聽說他這兩天挨家挨戶，去找買過他符的人。
+        text: 陶師傅從許家店門口走過，沒有停下來。聽說他這兩天挨家挨戶，去找買過他貼的人。
         fx: {rel: {tao: -2}}
       - if: {}
-        text: 陶老符來了一趟，說他那批符受了潮，問你手上還有沒有。你說都出手了。他朝你作了個揖，嘆著氣走了：「那是陶某對不住買符的人。」
+        text: 陶師傅來了一趟，說他那批貼受了潮，問你手上還有沒有。你說都出手了。他朝你鞠了個躬，嘆著氣走了：「那是我對不住買貼的人。」
   e_siti_raid:
-    title: 執事堂查鐵
+    title: 管理處查鐵
     cases:
       - if: {holdFlag: contraband}
-        text: 周執事帶著四個人進門，直奔庫房，把那批沒有印記的寒鐵一塊一塊搬出來，擺在街上給人看：「北面礦上丟的，就是這批。」他罰了你六十，鐵全數沒收。對門錢記今天沒開門。
+        text: 周警員帶著四個人進門，直奔庫房，把那批沒有印記的寒鐵一塊一塊搬出來，擺在街上給人看：「北礦丟的，就是這批。」他罰了你六十，鐵全數沒收。對門錢家店今天沒開門。
         fx: {confiscate: contraband, stones: -60, rep: {sect: -1, loose: -1}, tag: {sect: 收私鐵}, rel: {zhou: -2}, flag: [siti_caught]}
         face: shock
       - if: {}
-        text: 周執事帶人進門，翻遍了庫房，沒找到那批鐵。他問你賣去了哪裡，你答不上來。周執事罰了你六十：「收私鐵賺的錢，吐出來。」
+        text: 周警員帶人進門，翻遍了庫房，沒找到那批鐵。他問你賣去了哪裡，你答不上來。周警員罰了你六十：「收私鐵賺的錢，吐出來。」
         fx: {stones: -60, rep: {sect: -1}, tag: {sect: 收私鐵}, rel: {zhou: -1}, flag: [siti_caught]}
         face: sweat
   e_bigdeal_dirty:
     title: 礦上點貨
     cases:
       - if: {}
-        text: 阿福跑回來，臉是白的：「許掌櫃，礦上點貨，你給的寒鐵裡有沒印記的！」下午周執事親自來了，把那批鐵退回你的庫房，貨款收了回去，又罰了你八十：「拿私鐵充宗門的貨，許掌櫃好大的膽子。」
+        text: 阿福跑回來，臉是白的：「許老闆，礦上點貨，你給的寒鐵裡有沒印記的！」下午周警員親自來了，把那批鐵退回你的庫房，貨款收了回去，又罰了你八十：「拿私鐵充寒潭會的貨，許老闆好大的膽子。」
         fx: {stones: -80, rel: {zhou: -3}, rep: {sect: -2}, tag: {sect: 拿私鐵充數}, flag: [siti_caught, lost_big_deal]}
         face: shock
   e_kuang_dirty:
@@ -72,29 +72,29 @@ events:
     title: 韓九回來了
     cases:
       - if: {}
-        text: 韓九牽著駱駝又回來了，把幾束香放在櫃上：「掌櫃的，這香一點就嗆，燒得比蠟燭還快。」他沒有吵，只是把香退了回來，把錢要了回去，臨走時說：「北邊的人，要的是能睡著的香。」
+        text: 韓九牽著騾子又回來了，把幾束香放在櫃上：「老闆，這香一點就嗆，燒得比蠟燭還快。」他沒有吵，只是把香退了回來，把錢要了回去，臨走時說：「北邊的人，要的是能睡著的香。」
         fx: {rel: {han: -2}, rep: {loose: -1}, tag: {loose: 賣次貨}}
         face: sweat
   e_zhuji_audit:
-    title: 陸執法來了
+    title: 陸調查員來了
     cases:
       - if: {has: {zhuji: 1}}
-        text: 陸執法清點回春堂這一季的築基丹，帳上九枚，庫裡七枚。他順著鬼市的線，查到了許記。他把那枚築基丹收進袖子裡：「許掌櫃，宗門的東西，不是有錢就買得到的。」罰了你五十。
-        fx: {confiscateItem: zhuji, stones: -50, rel: {lu: -2}, rep: {sect: -1}, tag: {sect: 收宗門的丹}, flag: [zhuji_caught]}
+        text: 陸調查員清點回春藥行這一季的築基藥，帳上九份，庫裡七份。他順著黑市的線，查到了許家店。他把那份築基藥收進證物袋：「許老闆，寒潭會的東西，不是有錢就買得到的。」罰了你五十。
+        fx: {confiscateItem: zhuji, stones: -50, rel: {lu: -2}, rep: {sect: -1}, tag: {sect: 收寒潭會的管制藥}, flag: [zhuji_caught]}
         face: shock
       - if: {}
-        text: 陸執法清點回春堂這一季的築基丹，帳上九枚，庫裡七枚。他來許記問了一句：「鬼市那枚築基丹，許掌櫃轉給誰了？」你沒答。他看了你很久，走了。
+        text: 陸調查員清點回春藥行這一季的築基藥，帳上九份，庫裡七份。他來許家店問了一句：「黑市那份築基藥，許老闆轉給誰了？」你沒答。他看了你很久，走了。
         fx: {rel: {lu: -2}, flag: [zhuji_traced]}
         face: sweat
   melt:
-    xuechan: 你打開玉匣。裡面只剩一汪清水，涼的。
+    xuechan: 你打開保冷盒。裡面只剩一灘清水，涼的。
     default: 「{name}」放壞了。
   complaint:
     painted: 金線是畫的！
-    damp: 符一沾水就化了！
+    damp: 貼一沾水就化了！
     default: 這是什麼次貨！
 
-# 每個月初一早上，依上個月的事情出現的卡片（全部符合的都會出現）
+# 每個月第一天早上，依上個月的事情出現的卡片（全部符合的都會出現）
 monthStart:
   2:
     - need: {flag: [aheng_paid], not: [betrayed_aheng, aheng_leak, ahe_taken]}
@@ -104,36 +104,36 @@ monthStart:
       face: smile
     - need: {flag: [aheng_taken], not: [aheng_leak]}
       title: 阿蘅放出來了
-      text: 聽說阿蘅被執事堂關了七天，昨天放出來了。她瘦了一圈，從許記門口經過的時候，沒有往裡看。
+      text: 聽說阿蘅被派出所拘留了七天，昨天放出來了。她瘦了一圈，從許家店門口經過的時候，沒有往裡看。
       face: sad
     - need: {flag: [aheng_leak]}
       title: 阿蘅放出來了
-      text: 阿蘅放出來了。她從許記門口經過，停了一下，看了你一眼，什麼都沒說。
+      text: 阿蘅放出來了。她從許家店門口經過，停了一下，看了你一眼，什麼都沒說。
       face: sweat
     - need: {flag: [ahe_taken], not: [aheng_taken]}
-      title: 洞府區
-      text: 阿蘅的屋子空了。聽說她一個人去了鬼市。
+      title: 後山住宅區
+      text: 阿蘅的屋子空了。聽說她一個人去了黑市。
       face: sad
     - need: {flag: [yao_closed]}
       title: 姚四走了
-      text: 姚四的石屋空了，門沒鎖，桌上那碟金粉也不見了。鄰居說，他走之前去過一趟聽雨樓，手裡拿著一個布包。
+      text: 姚四的鐵皮屋空了，門沒鎖，桌上那碟金粉也不見了。鄰居說，他走之前去過一趟聽雨茶館，手裡拿著一個布包。
       fx: {flag: [yao_left]}
       face: think
     - need: {flag: [xuechan_sold_qian]}
       title: 對門
-      text: 錢不語交完罰款回來那天，在許記門口站了很久，笑著跟你打了聲招呼。他的笑，跟以前一模一樣。
+      text: 錢不語交完罰款回來那天，在許家店門口站了很久，笑著跟你打了聲招呼。他的笑，跟以前一模一樣。
       face: uneasy
     - need: {flag: [gave_knife]}
       title: 山棗
       text: 門縫裡塞著一小包曬乾的山棗。布包上的結，打得很細。
       face: smile
     - need: {flag: [daoren_caught]}
-      title: 執事堂的告示
-      text: 執事堂貼了告示：賣假玉簡的道士已經押送出境，他袖中的玉簡，查出同一個來處——坊市裡有人在批這種貨。
+      title: 管理處的公告
+      text: 管理處貼了公告：賣假記憶卡的道士已經被送出聚落，他背包裡的記憶卡，查出同一個來源——聚落裡有人在批這種貨。
       face: smug
     - need: {flag: [gave_tie_lingsui]}
-      title: 鐵老蔫的爐子
-      text: 鐵老蔫的爐子連著燒了好幾夜。小石頭蹲在爐子邊拉風箱，臉燻得黑黑的——鐵老蔫收他當學徒了。
+      title: 鐵師傅的爐子
+      text: 鐵師傅的爐子連著燒了好幾夜。小石頭蹲在爐子邊拉風箱，臉燻得黑黑的——鐵師傅收他當學徒了。
       fx: {flag: [stone_apprentice]}
       face: smile
     - need: {flag: [scar_grudge]}
@@ -141,10 +141,573 @@ monthStart:
       text: 門板上那道刀痕還在。昨夜有人在你門口站了一會兒，腳印到天亮才被掃掉。
       face: uneasy
     - need: {flag: [zhou_warned]}
-      title: 執事堂
-      text: 周執事從許記門口經過，沒有停，也沒有看你。他身後多跟了一個人。
+      title: 管理處
+      text: 周警員從許家店門口經過，沒有停，也沒有看你。他身後多跟了一個人。
       face: uneasy
     - need: {}
       title: 錢不語來串門
       text: 錢不語一早就過來了，手裡提著一包點心：「許老弟，新的一個月，生意興隆！」他把點心放下，眼睛在你的庫房裡轉了一圈。
       face: think
+    - need: {}
+      chance: 0.5
+      title: 這些天
+      text: 這二十來天裡，聚落換了兩個攤主，北林的路封了又開。白姐的計算機沒停過，長生當鋪的門照舊只在第一天開。
+      face: think
+    - need: {flag: [cat_gift]}
+      title: 黃貓
+      text: 那隻黃貓這陣子沒再來。門檻上留著幾根狐狸毛，像是誰替牠打過招呼。
+      face: think
+  3:
+    - need: {flag: [heard_iron]}
+      title: 寒鐵
+      text: 庫房裡的寒鐵，這幾夜敲得比五月更急了。今天早上，它不敲了。
+      face: uneasy
+    - need: {flag: [met_peddler]}
+      title: 雪香
+      text: 你想起那個挑擔的老貨郎。他說香是北邊帶來的。北邊，現在是什麼樣子？
+      face: think
+    - need: {}
+      title: 六月的霜
+      text: 天亮的時候，井口結了一層冰。六月。對門錢家店的店員站在街上，對著自己呵出來的白氣發呆。北面礦上的天邊，有一道很細的白線，像一道裂縫，又像只是雲。
+      face: shock
+    # 消息是怎麼傳上山的（元嬰來訪的傳播路徑，只出一張）
+    - need: {anyFlag: [told_lu, lu_knows_scar, scar_caught, zhang_exposed]}
+      title: 消息走到了山上
+      text: 管理處值班的人悄悄跟你說，陸調查員上個月送上山的那份卷宗，寒潭會回了信——卷宗裡有三處寫著許家店。回信的人說，寒漪要親自下山看。山路三天，算日子，就是這幾天。
+      face: think
+    - need: {anyFlag: [mang_told_mother, mang_saw_jiansui, tie_xuanshuang, gave_tie_lingsui], not: [told_lu, lu_knows_scar, scar_caught, zhang_exposed]}
+      title: 消息走到了山上
+      text: 鐵師傅的爐子邊上，挑夫一邊喝水一邊說：盲婆婆託他帶的那封信，送到山口一間石屋，收信的是個穿薄襯衫的老人。老人看完信，當天就往南走了，連鞋都沒換。
+      face: think
+    - need: {anyFlag: [heard_vent, saw_miner_names, saw_frost_source, played_tape, saw_mine_office], not: [told_lu, lu_knows_scar, scar_caught, zhang_exposed, mang_told_mother, mang_saw_jiansui, tie_xuanshuang, gave_tie_lingsui]}
+      title: 消息走到了山上
+      text: 管理處的外出登記簿被影印了一份送上山——上個月，整個聚落只有你一個人簽名去過北礦圍籬。何小姐說，寒潭會回了一封很短的信，只問了一句：「這個姓許的，看到了什麼？」寄信的人，三天後就到。
+      face: think
+    - need: {not: [told_lu, lu_knows_scar, scar_caught, zhang_exposed, mang_told_mother, mang_saw_jiansui, tie_xuanshuang, gave_tie_lingsui, heard_vent, saw_miner_names, saw_frost_source, played_tape, saw_mine_office]}
+      title: 消息走到了山上
+      text: 結霜那天，礦上的信差往山上報霜情，管理處也照例附上了十二年前那次結霜的舊卷宗。卷宗裡，有你爸的名字。消息上山要三天，人下山也要三天。
+      face: uneasy
+    - need: {flag: [mang_told_mother]}
+      title: 盲婆婆託人帶話
+      text: 「北邊的霜來了。孩子，來燈攤找我。」
+      face: think
+    - need: {flag: [qian_confronted]}
+      title: 錢家店
+      text: 錢不語一早就開了門，比誰都早。他在門口擺了一張桌子，桌上寫著：「避寒霜晶，僅此一批。」
+      face: uneasy
+    - need: {flag: [zhang_exposed]}
+      title: 回春藥行換了人
+      text: 回春藥行換了新的主任，第一天就把療傷藥的價錢壓回了原價。門口排隊的人，排到了街尾。
+      face: smile
+    - need: {flag: [told_xiaoqi]}
+      title: 兩個人的腳印
+      text: 門口放著一包山棗。旁邊的泥地上，是兩個人的腳印，一大一小。
+      face: smile
+    - need: {flag: [debt]}
+      title: 借據
+      text: 錢不語的借據還在。這種時候，他倒是一句都沒提。
+      face: sweat
+    - need: {}
+      title: 聚落在慌
+      text: 管理處貼了公告：北礦封路，聚落照常開市。公告底下圍了一圈人，有人在收拾包袱，有人在搶購定神香和療傷藥。長生當鋪的字條旁邊，今天多了一張：「北邊的帳，快到期了。」沒有落款。
+      face: uneasy
+
+# ═════ 散事 ═════
+# 沒有固定日子的小事，讓時間不像一格一格的回合。每天早上最多一件：
+# 符合 month / days / need 的，依 seed 擲骰（chance，預設 0.4），同一件一輪只會發生一次。
+# 奇遇用 prio 高一點；這裡的東西都不決定結局，只給點甜頭、伏筆或人情。
+drift:
+  # —— 四月 ——
+  - id: dr_rain
+    month: 1
+    days: [2, 5]
+    chance: 0.35
+    title: 夜雨
+    text: 半夜下了一場急雨。你起來把門板頂住，順手把漏水那角的貨挪開。天亮時街上全是泥，對門錢家店的店員在掃水，罵罵咧咧。
+    fx: {}
+    face: think
+  - id: dr_cat
+    month: 1
+    days: [2, 6]
+    chance: 0.3
+    prio: 2
+    title: 奇遇・黃貓
+    text: 一隻瘦黃貓這幾天天天蹲在你門檻上。今早牠叼來一個髒兮兮的小布袋，放下就走。袋裡是三塊靈石，和一撮狐狸毛。
+    fx: {stones: 3, flag: [cat_gift]}
+    face: smile
+  - id: dr_kid
+    month: 1
+    days: [3, 6]
+    chance: 0.35
+    title: 問路的孩子
+    text: 一個背著採集簍的小孩問你回春藥行怎麼走。你指了路，他從簍子裡摸出一根曬乾的草根塞給你：「我師父說，問路要給錢。我沒有錢。」
+    fx: {give: [{item: chiyan, qty: 1, cost: 0, q: 0.9, label: 孩子給的草根}]}
+    face: smile
+  - id: dr_ink
+    month: 1
+    days: [2, 6]
+    chance: 0.3
+    title: 帳上的墨
+    text: 你翻你爸的舊帳，翻到一頁墨色特別新的。不是你爸的字，是你媽的——她只在那頁記了一句：「北邊今年冬天不冷。」
+    fx: {flag: [saw_mother_note]}
+    face: think
+  - id: dr_qian_tea
+    month: 1
+    days: [4, 6]
+    chance: 0.35
+    need: {not: [xuechan_sold_qian]}
+    title: 對門的茶
+    text: 錢不語端著兩杯茶過馬路來，一杯放在你櫃上：「許老弟，生意難做，喝口熱的。」他喝完自己那杯就走了，沒說別的。茶是好茶。
+    fx: {rel: {qian: 1}}
+    face: think
+  # —— 五月 ——
+  - id: dr_hum
+    month: 2
+    days: [1, 4]
+    chance: 0.35
+    title: 寒鐵在響
+    text: 半夜，你被一陣很細的聲音吵醒。是庫房裡那幾塊寒鐵——貼著耳朵聽，裡面有東西在敲，一下，一下。天一亮就停了。你跟誰都沒說。
+    need: {has: {hantie: 1}}
+    fx: {flag: [heard_iron]}
+    face: uneasy
+  - id: dr_peddler
+    month: 2
+    days: [2, 5]
+    chance: 0.3
+    prio: 2
+    title: 奇遇・挑擔的老貨郎
+    text: 一個挑擔的老貨郎在你門口歇腳，要了一杯水。走的時候，他從擔子底下抽出一束香：「北邊帶來的，賣不掉。你點著試試，睡得好。」香氣很淡，聞著像雪。
+    fx: {give: [{item: dingshen, qty: 1, cost: 0, q: 1.1, label: 老貨郎的雪香}], flag: [met_peddler]}
+    face: smile
+  - id: dr_well
+    month: 2
+    days: [3, 6]
+    chance: 0.4
+    title: 井水
+    text: 街口那口井，早上打上來的水，冰得扎手。打水的太太說，五月了，從沒這麼涼過。有人說是地火退了，有人說是井底通到北邊礦上。也有人說，就是今年天怪。
+    fx: {}
+    face: uneasy
+  - id: dr_stone_visit
+    month: 2
+    days: [2, 6]
+    chance: 0.35
+    need: {flag: [stone_apprentice]}
+    title: 小石頭
+    text: 小石頭跑來，手上全是燙出來的水泡，得意地給你看一根他自己打的鐵釘：「師父說，歪是歪了點，能用。」他硬要送你，說是許家店的第一根。
+    fx: {rel: {stone: 1, tie: 1}}
+    face: smile
+  - id: dr_debt_hint
+    month: 2
+    days: [1, 5]
+    chance: 0.3
+    title: 長生當鋪的店員
+    text: 長生當鋪的店員從門口經過，探頭看了一眼你的招牌，在本子上記了一筆。你問他記什麼，他說：「記天氣。」
+    fx: {}
+    face: sweat
+  - id: dr_lost_purse
+    month: 2
+    days: [2, 6]
+    chance: 0.25
+    prio: 1
+    title: 撿到的錢袋
+    text: 打烊時，櫃下滾出一個錢袋，二十塊靈石，袋口繡著寒潭會的會徽。你送去了管理處。值班的人愣了一下，記下了許家店的名字。
+    fx: {rep: {sect: 1}, rel: {lu: 1}}
+    face: smile
+  # —— 結霜 ——
+  - id: dr_frost_flower
+    month: 3
+    days: [2, 3]
+    chance: 0.45
+    title: 窗上的霜花
+    text: 窗玻璃上結了一層霜花，紋路一圈一圈，像有人用指甲刻上去的字。你湊近看，又什麼都不是了。
+    fx: {}
+    face: uneasy
+  - id: dr_refugee
+    month: 3
+    days: [2, 4]
+    chance: 0.4
+    title: 北邊來的人
+    text: 一家四口從北邊礦上逃下來，在你門口借了一夜屋簷。男人說，礦底下的霜是往上長的，不是往下落的。女人說他嚇糊塗了。天亮時他們走了，留下一塊沒印記的寒鐵當房錢。
+    fx: {give: [{item: hantie, qty: 1, cost: 0, q: 0.9, label: 礦工留下的寒鐵}]}
+    face: sad
+  - id: dr_lamp_flicker
+    month: 3
+    days: [2, 4]
+    chance: 0.5
+    need: {has: {hudeng: 1}}
+    title: 燈
+    text: 夜裡，狐尾燈自己亮了一下。很短，很淡，藍的。你坐起來等了很久，它沒有再亮。
+    fx: {flag: [lamp_stirred]}
+    face: shock
+
+  # ═════ 異象與遺物（不決定結局；有的會留下東西，有的只會留下一個問題）═════
+  - id: dr_dogs_north
+    month: [1, 2]
+    days: [1, 4]
+    chance: 0.3
+    title: 狗
+    text: 早上整條舊公路的狗都坐在路中間，臉朝北，一動也不動。沒有叫，尾巴也沒有搖。大約半小時後，牠們同時站起來，各自回家，像什麼事都沒發生。對門錢家店的店員說，他小時候也看過一次，那年冬天北礦結霜。
+    fx: {flag: [dogs_north]}
+    face: uneasy
+  - id: dr_mist_post
+    month: [1, 2]
+    days: [1, 4]
+    chance: 0.3
+    prio: 2
+    title: 霧裡的郵差
+    text: 天還沒亮，門口起了很濃的霧。一個穿綠色制服的郵差從霧裡走出來，制服是舊時代的樣式，肩上的郵袋濕透了。他遞給你一封信，郵戳是「2029.12.30」，收件地址寫的是這條路以前的門牌。「這一戶，」他說，「是這裡沒錯吧？」
+    choices:
+      - label: 收下信
+        desc: 簽收
+        text: 你在他的本子上簽了名。他鬆了一口氣，像終於把一件很重的事放下，轉身走回霧裡。信封裡沒有信，只有一張超商發票，熱感紙上的字黑得像剛印出來。霧散的時候，路上沒有腳印。
+        fx: {give: [{item: fapiao, qty: 1, cost: 0, label: 信封裡的發票}], flag: [got_mist_letter]}
+      - label: 「這裡一百年前就不是那一戶了。」
+        desc: 告訴他實話
+        text: 郵差看著你，看了很久，然後低頭看自己的郵袋，好像第一次發現它是濕的。「……這樣啊。」他把信收回去，說了聲謝謝，往北走進霧裡。你後來才想到，他問的那個門牌，就是你家。
+        fx: {flag: [told_mist_postman]}
+    face: think
+  - id: dr_well_bell
+    month: [1, 2]
+    days: [2, 6]
+    chance: 0.3
+    title: 井裡的鐘聲
+    text: 中午十二點，街口那口井裡傳上來一陣鐘聲，叮——咚——叮——咚，是學校的下課鐘。打水的太太把水桶丟在井邊就走了。鐘聲響完，井水的水面在沒有風的情況下轉了一圈。
+    fx: {flag: [heard_well_bell]}
+    face: uneasy
+  - id: dr_well_bell2
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.45
+    prio: 2
+    need: {anyFlag: [heard_well_bell, saw_drowned_school]}
+    title: 井繩上的東西
+    text: 早上有人打水，井繩拉上來的時候，桶把上掛著一個巴掌大的小銅鐘，鐘舌上刻著「仁愛國小」。打水的人不敢拿，放在井邊。整條街的人都繞著它走。
+    choices:
+      - label: 撿起來
+        desc: 拿回店裡
+        text: 你把鐘撿起來。它比看起來重，是冰的。你在店裡輕輕敲了一下，過了幾秒，街口的井裡回了一聲一模一樣的鐘響。
+        fx: {give: [{item: xiaozhong, qty: 1, cost: 0}]}
+      - label: 把它放回井裡
+        desc: 東西從哪裡來，就回哪裡去
+        text: 你把小鐘用井繩放回水裡。它沉下去的時候響了一聲，很輕，像在說謝謝。那天下午，井水比平常甜。
+        fx: {flag: [returned_bell], xp: 4}
+    face: think
+  - id: dr_rain_up
+    month: [1, 2]
+    days: [2, 6]
+    chance: 0.3
+    title: 往上下的雨
+    text: 傍晚下了一場很短的雨。雨是從地上往天上下的——一粒一粒水珠從柏油路面跳起來，往上落進雲裡。街上的人都站著看，沒有人說話。十分鐘後，一切恢復正常，地是乾的。
+    choices:
+      - label: 拿罐子去接
+        desc: 倒過來接
+        text: 你把一個玻璃罐倒過來舉在頭上。罐子很快就「滿」了，水積在罐底——也就是上面。你用保鮮膜封住罐口，水還是待在上面。
+        fx: {give: [{item: daoyu, qty: 1, cost: 0}]}
+      - label: 回店裡，關門
+        desc: 有些東西不要看太久比較好
+        text: 你回到店裡，把門關上。隔著門板，你聽得到水珠往上飛的聲音，很輕，像很多人同時在吸氣。
+        fx: {}
+    face: shock
+  - id: dr_other_lights
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.25
+    title: 別的聚落的燈
+    text: 半夜起來倒水，你看見南邊很遠的山頭上，有三盞燈排成一列，慢慢往南移動。南邊那一帶，管理處的地圖上寫著「無人」。第二天你問了好幾個人，都說沒看到。只有盲婆婆說：「那是有人在搬家。很久以前，大家都是這樣搬的。」
+    fx: {flag: [saw_south_lights]}
+    face: think
+  - id: dr_echo_reply
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.5
+    prio: 3
+    need: {has: {huishi: 1}}
+    title: 回聲石回話了
+    text: 早上回聲石回了一句話。你前幾天對它說的是「早安」。它回的是：「下面比較暖。」聲音是你自己的，可是你沒說過這句話。
+    fx: {flag: [echo_reply]}
+    face: uneasy
+  - id: dr_watch_rain
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.5
+    prio: 3
+    need: {has: {biao: 1}}
+    title: 錶
+    text: 昨晚下了一整夜的雨。那隻錶倒走了一整夜，早上你看它，停在 23:59，日期窗是「31」。錶背面貼著的手溫，好像不是你的。
+    fx: {flag: [watch_stopped]}
+    face: uneasy
+  - id: dr_mountain_grow
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.3
+    title: 山又長高了
+    text: 管理處的人去後山量三角點，回來的時候臉色不太好。公告只寫了一行：「本聚落海拔較去年同期增加四十公分。」底下有人用原子筆補了一句：「去年也是四十。」
+    fx: {}
+    face: think
+  - id: dr_bus_stranger
+    month: [1, 2]
+    days: [1, 6]
+    chance: 0.3
+    prio: 1
+    title: 問公車的人
+    text: 霧很重的早上，一個穿西裝的男人站在店門口，公事包抱在胸前，頭髮整整齊齊。「不好意思，」他說，「往台中的客運，是在這裡等嗎？我九點要開會。」他手上的錶，指著八點四十。
+    choices:
+      - label: 「已經沒有往台中的車了。」
+        desc: 說實話
+        text: 他愣了一下，笑了，像是聽到一個不好笑的笑話。「怎麼會。」他看了看錶，又看了看霧，表情慢慢變得很困惑。等你轉身拿東西再回頭，他已經不在了。地上掉著一張客運票根，訖站那一格是空的。
+        fx: {give: [{item: piaogen, qty: 1, cost: 0}], flag: [fog_bus_truth]}
+      - label: 指向舊公路的站牌
+        desc: 讓他去等
+        text: 他跟你道謝，走到那根歪掉的站牌下面，站得直直的。中午你出門的時候，他還在。傍晚，站牌底下只剩一灘水，和一雙皮鞋的印子。站牌上多了一張手寫的紙：「末班車　已過」。
+        fx: {flag: [fog_bus_wait]}
+    face: uneasy
+  - id: dr_white_bird
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.3
+    title: 鳥的影子
+    text: 下午，一個很大的鳥影從舊公路上滑過去，翅膀張開大概有一台貨車那麼寬。所有人都抬頭。天上什麼都沒有，雲也沒有。影子一路往北，滑過北礦的圍籬才不見。
+    fx: {flag: [saw_bird_shadow]}
+    face: shock
+  - id: dr_glass_fern
+    month: [1, 2]
+    days: [1, 6]
+    chance: 0.3
+    title: 牆角的蕨
+    text: 屋後牆角長出一叢蕨類，一夜之間。葉子是透明的，碰一下會發出很細的叮聲——是玻璃。根卻是真的根，抓著泥土。
+    choices:
+      - label: 摘一片
+        desc: 小心一點
+        text: 你折下一片。斷口是乾淨的玻璃，可是整片葉子摸起來是溫的，像還活著。
+        fx: {give: [{item: boliye, qty: 1, cost: 0}]}
+      - label: 不動它
+        desc: 看它會長成什麼
+        text: 你沒有動它。過了幾天，那叢蕨長到膝蓋那麼高，有一天早上全部碎了，碎片底下長出一株很普通的綠色蕨。
+        fx: {xp: 3, flag: [left_fern]}
+    face: think
+  - id: dr_shell_roof
+    month: 2
+    days: [1, 6]
+    chance: 0.3
+    title: 屋頂上的貝殼
+    text: 早上屋頂上、路上、田埂上，到處是貝殼。濕的，裡面還有海水，聞起來是鹹的。最近的海，在一百多公里外，而且是往下掉的那種。小孩子撿得很開心，大人叫他們不要撿。
+    fx: {give: [{item: xianbei, qty: 2, cost: 0, label: 屋頂上的貝殼}]}
+    face: shock
+  - id: dr_yellow_light
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.3
+    title: 黃燈
+    text: 路口那根倒了一半的紅綠燈，黃燈亮了。很平靜的黃光，亮了三秒，熄了。那根燈柱沒有電線已經八十年了。附近的狗在它亮之前，全部先抬起了頭。
+    choices:
+      - label: 爬上去拆燈罩
+        desc: 管理處應該不會管
+        text: 你把燈罩拆了下來。背後是空的，沒有燈泡。抱回店裡的路上，它又亮了一次，黃光從你指縫裡漏出來。
+        fx: {give: [{item: huangdeng, qty: 1, cost: 0}]}
+      - label: 留在那裡
+        desc: 它在提醒誰減速
+        text: 你沒有動它。之後幾天，每次它亮，你都會停一下腳步，好像真的有車要過。
+        fx: {flag: [respect_light]}
+    face: think
+  - id: dr_hopscotch
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.3
+    title: 跳房子
+    text: 幾個小孩在路上畫格子跳房子，邊跳邊數：「一百、九十九、九十八……」你問他們為什麼倒著數，他們說本來就是這樣數的，阿嬤教的。數到一的人，要站在最後一格閉上眼睛，等別人說「好了」才能睜開。
+    fx: {}
+    face: think
+  - id: dr_frog_choir
+    month: 2
+    days: [1, 6]
+    chance: 0.3
+    title: 青蛙
+    text: 半夜，田裡的青蛙一起停了。安靜了大概一分鐘，然後同時開始叫，每一隻都叫在同一個拍子上，像一支整齊的隊伍。叫了三十下，又全部停了，然後亂七八糟地恢復正常。
+    fx: {}
+    face: uneasy
+  - id: dr_wind_chime
+    month: [1, 2]
+    days: [1, 6]
+    chance: 0.3
+    title: 沒有風的風鈴
+    text: 後山的陳阿伯拿著一串鐵管風鈴走過來：「這個送你。掛在我家，沒有風也一直響，吵得我睡不著。我孫子說它在數數。」
+    choices:
+      - label: 收下
+        text: 你把風鈴掛在店裡最裡面的角落。門窗都關著，它輕輕響了一下，從北往南。
+        fx: {give: [{item: fengling, qty: 1, cost: 0}], rel: {}}
+      - label: 「阿伯，你拿去舊國小給林老師看看。」
+        desc: 不收
+        text: 陳阿伯點點頭，抱著風鈴往舊國小走了。下午你經過，看到風鈴掛在舊國小的走廊上，林老師拿著手機在錄音。
+        fx: {flag: [chime_to_lin], rel: {lin: 1}}
+    face: think
+  - id: dr_abyss_digger
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.35
+    prio: 3
+    title: 從斷崖下面上來的人
+    text: 一個全身是泥的採集者坐在你門口喘氣，鼻子下面有乾掉的血。「下去不難，」他說，「上來才難。每往上爬一段，頭就痛一次，像身體在抗議你把它帶回來。」他的背包裡有一朵很小的白花，花莖像細銀線，一直轉向你。「這個賣你。三十。下面多的是，可是我不想再下去了。」
+    choices:
+      - label: 買下白花（三十）
+        need: {stones: 30}
+        text: 你數了三十塊給他。他把花放在你手上，像放下一個很燙的東西。花轉了一下，對準你的臉。「它會一直看你，」他說，「習慣就好。」
+        fx: {stones: -30, give: [{item: shenhua, qty: 1, cost: 30}]}
+      - label: 問他下面有什麼
+        desc: 不買，聽他說
+        text: 他想了很久。「下面有路燈。一整排，亮著。可是沒有路。」他喝完你倒的水，站起來：「再往下，聽說燈是往上照的。我沒去。」
+        fx: {flag: [heard_digger], xp: 3}
+      - label: 給他一瓶療傷藥
+        need: {has: {liaoshang: 1}}
+        desc: 他看起來很需要
+        text: 他看著藥瓶，愣了一下，把白花塞給你：「那這個不算錢。」他走的時候腳步輕了一點。
+        fx: {take: [{item: liaoshang, qty: 1}], give: [{item: shenhua, qty: 1, cost: 0}], rep: {loose: 1}}
+    face: think
+  - id: dr_yearbook
+    month: [1, 2]
+    days: [1, 6]
+    chance: 0.3
+    title: 收廢紙的阿伯
+    text: 收廢紙的阿伯推著車經過，車上最上面是一本泡過水的畢業紀念冊。「三塊，」他說，「要不要？我看了裡面的照片，晚上睡不好。」
+    choices:
+      - label: 買下（三塊）
+        need: {stones: 3}
+        text: 你翻開紀念冊。六年二班的團體照，第二排中間有一個空位，旁邊的同學都微微側身，像在讓位子給誰。
+        fx: {stones: -3, give: [{item: jinianc, qty: 1, cost: 3}]}
+      - label: 不用了
+        text: 阿伯把紀念冊塞到一疊報紙底下，推著車走了。
+        fx: {}
+    face: think
+  - id: dr_radio
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.25
+    title: 收音機
+    text: 你把櫃台下那台舊收音機的電池換了，想聽聽看。轉到一個頻道，忽然很清楚：「……明天北部山區有雨，氣溫……」是一百年前的氣象報告，播報員的聲音很年輕，背景有人在笑。
+    choices:
+      - label: 繼續聽
+        text: 你聽了下去。氣象報告講完，是一段廣告，然後是新聞：「……專家表示，目前還無法確定……」聲音忽然斷了，變成很長的一段靜電，像下雨。關掉以後，你頭痛了一整個上午。
+        fx: {flag: [radio_heard], xp: 2}
+      - label: 關掉
+        text: 你把收音機關掉，把電池拔出來。屋子裡很安靜。過了一下，收音機自己「喀」了一聲。
+        fx: {}
+    face: uneasy
+  - id: dr_lin_card
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.4
+    need: {flag: [lin_met]}
+    title: 林老師的小卡
+    text: 一個小孩跑來塞給你一張卡片，是林老師的字：「許老闆：你如果再去外面，幫我看一件事——那些不會壞的東西，是不是都停在同一年的十二月？不用帶回來，看就好。謝謝。」
+    fx: {rel: {lin: 1}}
+    face: smile
+  - id: dr_tunnel_breath
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.4
+    need: {anyFlag: [tunnel_light, saw_wall_car]}
+    title: 隧道在呼氣
+    text: 早上一陣暖風從北邊吹過來，整條街都聞到柏油和輪胎的味道——舊時代的味道。老人家說，那是舊隧道在呼氣，一年一次。今年早了兩個月。
+    fx: {}
+    face: uneasy
+  - id: dr_sea_smell
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.45
+    need: {anyFlag: [saw_sea_fall, saw_hanging_ship]}
+    title: 海的味道
+    text: 半夜醒來，屋裡全是海的味道，鹹的，濕的。你點燈起來看，地板上有一行濕的腳印，從門口走到櫃台，停住，又走回門口。腳印很小，是小孩的。門是鎖著的。
+    fx: {}
+    face: shock
+  - id: dr_fog_voice
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.45
+    prio: 2
+    need: {anyFlag: [heard_fog_name, met_fog_man]}
+    title: 霧裡叫你的聲音
+    text: 傍晚起霧。霧裡有人叫你的名字，叫的是「阿衡」——只有你媽會這樣叫你。聲音很近，就在門外，很溫柔。
+    choices:
+      - label: 應一聲
+        desc: 「我在這裡。」
+        text: 你應了一聲。霧安靜了很久，然後慢慢散掉。門口的台階上放著一根白色的長羽毛，冰的，像剛從很冷的地方拿出來。那天晚上你睡得特別沉，醒來的時候，覺得自己好像少了一點什麼，說不出是什麼。
+        fx: {give: [{item: lengyu, qty: 1, cost: 0, label: 霧裡留下的羽毛}], lifespan: -1, flag: [answered_fog]}
+      - label: 不應
+        desc: 把門關好
+        text: 你沒有應。那個聲音又叫了兩次，第三次的時候，聲音變得有點像你自己的。然後霧散了，門外什麼都沒有。
+        fx: {flag: [ignored_fog], xp: 2}
+    face: uneasy
+  - id: dr_frost_arrow
+    month: 3
+    days: [1, 4]
+    chance: 0.5
+    prio: 2
+    need: {anyFlag: [saw_frost_source, frost_arrows]}
+    title: 箭頭
+    text: 早上窗玻璃上的霜花排成一個箭頭，指向北。你擦掉，過一個小時，它又長回來，還是指向北。對門錢家店的窗戶上什麼都沒有。
+    fx: {}
+    face: shock
+  - id: dr_toad_door
+    month: [2, 3]
+    days: [1, 6]
+    chance: 0.4
+    need: {flag: [saw_toads]}
+    title: 門口的蟾蜍
+    text: 一隻透明的蟾蜍坐在你的門口，看得見牠肚子裡的心臟在跳，很慢。牠看著你，看了一個上午，中午太陽出來的時候，往北跳走了。牠坐過的地方，石板涼了一整天。
+    fx: {}
+    face: think
+  - id: dr_lost_card
+    month: [1, 2, 3]
+    days: [1, 6]
+    chance: 0.3
+    title: 撿到的卡
+    text: 你在門口撿到一張舊悠遊卡，背面貼著一隻貓的貼紙，卡上用麥克筆寫著一個名字：「小芸」。聚落裡沒有人叫這個名字。可是這張卡是乾的、乾淨的，像是剛剛才掉的。
+    choices:
+      - label: 送去管理處失物招領
+        text: 何小姐收下卡，登記了。她看了一下名字，停了一秒：「上個月也有人送來一張，一模一樣。」
+        fx: {rep: {loose: 1}, flag: [card_turned_in]}
+      - label: 自己收著
+        text: 你把卡收進抽屜。晚上你夢到一個綁馬尾的女生站在公車上，刷卡的時候嗶了一聲。
+        fx: {give: [{item: youyou, qty: 1, cost: 0, label: 「小芸」的悠遊卡}]}
+    face: think
+  - id: dr_qian_north
+    month: 2
+    days: [2, 6]
+    chance: 0.3
+    title: 對門的人
+    text: 半夜起來，你看見錢不語一個人站在路中間，朝北看，手上拿著一盞沒點的燈。他站了很久，最後把燈放在地上，回店裡去了。早上燈不見了。你沒問，他也沒說。
+    fx: {}
+    face: think
+  - id: dr_ash_snow
+    month: 3
+    days: [1, 4]
+    chance: 0.4
+    title: 灰色的雪
+    text: 下了一場灰色的雪。落到手上不冰，一捏就碎，是紙灰。有幾片比較大，上面還看得到印刷的字：「……第……屆……」、「……請於……前……」、「……安全……」。灰從北邊來，下了半個小時就停了。
+    fx: {}
+    face: uneasy
+  - id: dr_slow_shadow
+    month: 3
+    days: [1, 4]
+    chance: 0.35
+    title: 影子
+    text: 早上你在店門口伸懶腰，發現你的影子慢了半拍才跟著伸。你再試一次，它跟上了。整條街好幾個人都在試自己的影子，有人笑，有人笑不出來。
+    fx: {}
+    face: shock
+  - id: dr_name_plate
+    month: 3
+    days: [1, 4]
+    chance: 0.5
+    prio: 2
+    need: {flag: [saw_miner_names]}
+    title: 名牌
+    text: 有人從北礦圍籬那邊回來說，那塊刻著礦工名字的紀念碑，最下面多了一行，刻到一半，只有一個姓，字還是新的。他不肯說是哪一個姓。
+    fx: {}
+    face: uneasy
+  - id: dr_moths
+    month: 3
+    days: [1, 4]
+    chance: 0.4
+    title: 白蛾
+    text: 傍晚很多白色的蛾從南邊飛過來，一整片，安安靜靜地往北飛，翅膀上有霜。一隻停在你的帳冊上，翅膀上的紋路像一個很小的數字，你還沒看清楚，牠就飛走了。
+    fx: {}
+    face: think

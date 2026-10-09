@@ -1,168 +1,169 @@
 # 物品：性能欄（stat）＋ 敘述欄（text）＋ 隱藏句（hidden）
-# cat: herb 靈草 / incense 香 / talisman 符 / beast 妖獸材料 / ore 礦材 / pill 丹藥 / spirit 靈物 / weapon 兵器 / story 雜物 / tool 器物
-# base: 一單位的基準市價（下品靈石）；perish: 靈性天數（null = 不壞）
-# sell: 誰會收（huichun 回春堂 / tie 鐵老蔫 / walk 上門散客）
+# cat: herb 異化植物 / incense 香 / talisman 防水用品 / beast 動物材料 / ore 礦石 / pill 藥 / spirit 異常物 / weapon 刀具 / story 雜物 / tool 器物 / relic 舊物・異物
+# base: 一單位的基準市價（靈石）；perish: 鮮度天數（null = 不壞）
+# sell: 誰會收（huichun 回春藥行 / tie 鐵師傅 / walk 上門散客 / lin 舊物室林老師）
+# hidden.need：realm（吐納層數）或 flag（studied_<id> 是林老師研究過）
 
 chiyan:
   name: 赤炎草
   cat: herb
   unit: 株
-  grade: 一階靈草
+  grade: 異化植物
   base: 12
   perish: 30
-  stat: 年份 10～80 年｜離土後靈性 30 日｜火屬丹藥主材
-  text: 生於地火裂隙，根鬚扎在燙石裡，葉背有細如髮的金線。年份每長十年，金線多一道。坊間數金線定價，於是有人學會了畫。
+  stat: 年份 10～80 年｜採下後鮮度 30 天｜退燒、暖身藥的主料
+  text: 長在地熱裂縫邊，根扎在燙石頭裡，葉背有頭髮一樣細的金線。老人說每長十年多一道金線。大家數金線定價，所以有人學會了畫。
   hidden:
-    - {label: 築基可見, need: {realm: 10}, text: 地火一旺，此草便早熟。早熟者金線齊全，藥力只有六成。}
+    - {label: 吐納六層可見, need: {realm: 6}, text: 地熱一旺，這種草就早熟。早熟的金線一樣齊，藥效只有六成。}
   sell: [huichun, walk]
 
 dingshen:
   name: 定神香
   cat: incense
   unit: 束
-  grade: 一階雜貨
+  grade: 日用品
   base: 25
   perish: null
-  stat: 一束十炷｜不壞｜打坐時點燃，修為轉換加四成
-  text: 燃一炷可定心神一個時辰。坊市散修打坐必點，所以它從不缺貨，也從不漲價。若哪天定神香漲了，不是香少了，是很多人睡不著。
+  stat: 一束十支｜不壞｜靜坐時點，修行進度加四成
+  text: 點一支，大概能讓人靜下來兩個小時。聚落裡練吐納的人幾乎都在用，所以它從不缺貨，也很少漲價。哪天定神香漲了，通常不是香少了，是很多人睡不著。
   sell: [huichun, walk]
 
 bishui:
-  name: 避水符
+  name: 防水貼
   cat: talisman
   unit: 張
-  grade: 一階符籙
+  grade: 手工品
   base: 8
   perish: null
-  stat: 存放不當會受潮｜渡水、探秘境必備
-  text: 黃紙硃砂，一筆成形。受潮的避水符，硃砂邊緣會暈開一圈極淡的紅。所有製符師都知道這件事，所以他們賣符時從不讓你對著光看。
+  stat: 存放不當會受潮｜過溪、下隧道必備
+  text: 蠟紙一層一層壓出來，邊上用紅墨標日期。受潮的防水貼，紅墨邊緣會暈開一圈很淡的紅。做的人都知道這件事，所以賣的時候不太讓你對著光看。
   sell: [walk]
 
 langya:
   name: 鐵背狼牙
   cat: beast
-  unit: 枚
-  grade: 一階妖獸材料
+  unit: 顆
+  grade: 異變動物材料
   base: 6
   perish: null
-  stat: 不壞｜煉器、入藥兩用
-  text: 牙根若帶血絲，取下時狼還沒死透。獵戶說活取的牙更利，丹師說活取的牙帶著怨，入藥發苦。兩種人都在買，所以獵戶從不先殺狼。
+  stat: 不壞｜打刀、入藥都用得到
+  text: 北林那種背上長出鐵灰色硬毛的狼。牙根如果帶血絲，表示取的時候狼還沒死透。獵人說活取的牙比較硬，藥師說活取的牙入藥會苦。兩邊都在買，所以獵人不急著先殺狼。
   sell: [tie, huichun, walk]
 
 hantie:
   name: 寒鐵
   cat: ore
-  unit: 斤
-  grade: 一階礦材
+  unit: 公斤
+  grade: 礦石（原礦）
   base: 9
   perish: null
-  stat: 不壞｜煉器主材
-  text: 北面礦脈所出，色如積水，冬日握之不冷，冷是被它吸走了。礦脈歸寒潭宗，坊市流通的寒鐵，每一斤都經過執事堂的帳。帳面上。
+  stat: 不壞｜打刀、修工具的主料｜原礦，還沒煉
+  text: 北礦挖出來的鐵礦石，顏色像積水。冬天握在手裡不冰——冰是被它吸走了。礦歸寒潭會管，聚落裡流通的寒鐵，每一公斤都要經過登記。帳面上是這樣。
   sell: [tie, walk]
 
 liaoshang:
-  name: 療傷丹
+  name: 療傷藥
   cat: pill
-  unit: 枚
-  grade: 一階丹藥
+  unit: 瓶
+  grade: 藥品
   base: 18
   perish: null
-  stat: 止血續筋，壓住內傷三日
-  text: 散修出城前總會買兩枚，買了往往捨不得吃。於是療傷丹最常出現的地方，是死人的身上。
+  stat: 止血、接筋，內傷可以撐三天
+  text: 要出聚落的人通常會買兩瓶，買了又捨不得用。所以療傷藥最常被找到的地方，是沒回來的人身上。
   sell: [huichun, walk]
 
 yangqi:
-  name: 養氣丹
+  name: 養氣錠
   cat: pill
-  unit: 枚
-  grade: 一階丹藥
+  unit: 顆
+  grade: 藥品
   base: 22
   perish: null
-  stat: 打坐時服用，修為加十八｜連日服用，藥力減半
-  text: 服之可助一夜行氣。丹坊說一夜一枚即可，散修總想一夜兩枚。於是第二枚的藥力，大多化成了丹毒。
+  stat: 靜坐時吃，修行進度＋18｜連續吃，效果減半
+  text: 幫身體在一個晚上適應多一點。藥行說一晚一顆就好，大家總想一晚兩顆，所以第二顆的效果，大多變成了副作用。
   sell: [huichun, walk]
 
 xuechan:
   name: 雪蟾酥
   cat: spirit
-  unit: 匣
-  grade: 二階靈物
+  unit: 盒
+  grade: 異常物
   base: 70
   perish: 7
-  stat: 凝成後七日化為清水，玉匣只能延緩｜療傷聖藥
-  text: 寒潭雪蟾耳後所凝，一隻雪蟾一生只得一錢，凝成之日便是死期。酥成七日即化為清水，寒潭宗以玉匣封存，也只能多留它幾天。宗門帳上記得清楚：每一錢都有去處。
+  stat: 七天後化成清水，保冷盒只能延緩｜療傷用的好東西
+  text: 寒潭水庫那種白色蟾蜍耳後分泌出來的東西，一隻蟾蜍一輩子只出一點點，出完就死。七天就化成清水，寒潭會用保冷盒封著，也只能多留幾天。會裡的帳記得很清楚：每一點都有去處。
   hidden:
-    - {label: 築基可見, need: {realm: 10}, text: 酥面若有細紋如冰裂，是凝成不過十日。}
+    - {label: 吐納六層可見, need: {realm: 6}, text: 表面如果有細紋像冰裂，表示凝成不到十天。}
   sell: []
 
 lingsui:
   name: 地火靈髓
   cat: spirit
   unit: 塊
-  grade: 二階靈物
+  grade: 異常物
   base: 60
   perish: null
-  stat: 器修淬刃、丹師溫爐
-  text: 地火精氣凝於石中，色如死灰，石心一線暗紅。離開地脈後，日間沉寂，入夜回溫。
+  stat: 打刀淬火、藥行保溫
+  text: 地熱裂縫附近撿到的石頭，灰得像死灰，石心一線暗紅。離開裂縫以後，白天是冷的，晚上會自己回溫。沒有人知道熱是從哪裡來的。
   sell: [huichun, tie]
 
 duanshui:
   name: 斷水刀（殘）
   cat: weapon
   unit: 把
-  grade: 一階法器
+  grade: 刀具
   base: 10
   perish: null
   stat: 有修補痕
-  text: 刀身有一道舊裂，被人用銅汁仔細補過，補痕打磨得幾乎看不見。補刀的人手藝很好，好到願意替一把只值十塊靈石的刀花三天工夫。除非那道裂痕本身，就是要藏起來的東西。
+  text: 刀身有一道舊裂，被人用銅仔細補過，補痕磨得幾乎看不見。補刀的人手藝很好，好到願意替一把只值十塊靈石的刀花三天。除非那道裂痕本身，就是要藏起來的東西。
   hidden:
-    - {label: 築基可見, need: {realm: 10}, text: 裂痕的走向，與一門叫「碎星指」的指法留下的勁力相符。}
+    - {label: 吐納六層可見, need: {realm: 6}, text: 裂痕的走向，像是被一種專門撬開保冷盒鎖扣的工具硬扳出來的。}
   sell: [tie, walk]
 
 duandao:
   name: 寒鐵短刀
   cat: weapon
   unit: 把
-  grade: 一階法器
+  grade: 刀具
   base: 40
   perish: null
-  stat: 鐵老蔫打造｜不壞
-  text: 鐵老蔫打的刀，不好看。刀背厚，刀刃薄，握柄纏得很緊。他說好看的刀是給人看的，他的刀是給人用的。
+  stat: 鐵師傅打的｜不壞
+  text: 鐵師傅打的刀，不好看。刀背厚、刀刃薄，握把纏得很緊。他說好看的刀是給人看的，他的刀是給人用的。
   sell: [tie, walk]
 
 yujian:
-  name: 無字玉簡
+  name: 空白記憶卡
   cat: tool
-  unit: 枚
-  grade: 品階不明
+  unit: 張
+  grade: 舊時代零件
   base: 40
   perish: null
-  stat: 據說需以神識叩問三日方顯
-  text: 玉簡內空無一字。賣家說這是某位前輩坐化前封存的傳承，需以神識叩問三日方顯。坊市裡這樣的玉簡很多，願意叩三日的人很少，所以騙子們從不缺生意。偶爾，也真有一枚會說話。
+  stat: 據說接上能用的讀卡機，三天就讀得出來
+  text: 指甲大小的舊時代記憶卡。賣的人說裡面存著某個老前輩留下的修行方法，只要找到還能用的讀卡機，連續讀三天就會出來。聚落裡這種卡很多，找得到讀卡機的人很少，所以騙子從來不缺生意。偶爾，也真的有一張讀得出東西。
   sell: [walk]
 
 zhuji:
-  name: 築基丹
+  name: 築基藥
   cat: pill
-  unit: 枚
-  grade: 二階丹藥
+  unit: 份
+  grade: 管制藥品
   base: 600
   perish: null
-  stat: 突破築基的關鍵物｜本季已配完
-  text: 一枚築基丹，是一個散修半生的積蓄，或是一個宗門弟子一年的月例。回春堂每季只出九枚，從不多一枚。據說是丹方所限。據說。
+  stat: 從吐納進入築基的關鍵藥｜這一季已經配完
+  text: 一份築基藥，是一個普通人半輩子的存款，或是一個寒潭會正式會員一年的配額。回春藥行每一季只出九份，從不多一份。據說是配方限制。據說。
   hidden:
-    - {label: 前世記憶可見, need: {flag: memory}, text: 第三季那一爐，出了十一枚。}
+    - {label: 看過藥行舊帳可見, need: {flag: zhang_exposed}, text: 去年第三季那一批，出了十一份。}
   sell: []
 
 hudeng:
   name: 狐尾燈
   cat: tool
   unit: 盞
-  grade: 手作
+  grade: 獨一件
   base: 30
   perish: null
-  stat: 盲婆婆製｜擺在鋪子裡，上門客的小動作更容易看見
-  text: 燈罩用的是狐尾內側的軟毛，點起來燈影會輕輕擺動，像有什麼東西在燈後面呼吸。她說這燈照得見說謊的人。她的燈賣得很好，從沒有人回來說不靈。
+  stat: 只有這一盞｜擺在店裡，比較容易注意到客人的小動作
+  text: 燈罩內側是一圈很軟的毛，盲婆婆說是狐狸尾巴。點起來，燈影會輕輕擺，像燈後面有什麼在呼吸。在這盞燈旁邊，你比較容易注意到別人手指停了一下、眼睛多看了一眼。它不會告訴你誰在說謊——那還是你自己判斷。盲婆婆攤子上掛的都是普通燈，這一盞她從來沒掛出來過。
   sell: []
 
 zhangce:
@@ -172,10 +173,10 @@ zhangce:
   grade: 雜物
   base: 0
   perish: null
-  stat: 不可修煉｜市價幾乎為零
-  text: 一本商號的流水帳，字跡工整，最後七頁被整齊裁去。剩下的帳目每一筆都對得上，只有一筆：「壬午年三月，收寒鐵三百斤，付靈石四十。」那一年的寒鐵，四十塊靈石只買得到三十斤。
+  stat: 不能賣｜市價幾乎是零
+  text: 一本店家的流水帳，字很工整，最後七頁被整齊裁掉。剩下的每一筆都對得上，只有一筆：「災後89年3月，收寒鐵三百公斤，付靈石四十。」那一年，四十塊靈石只買得到三十公斤。
   hidden:
-    - {label: 你讀時可見, need: {flag: got_box}, text: 你認得這筆跡。是你爹的。}
+    - {label: 你讀的時候, need: {flag: got_box}, text: 你認得這個字。是你爸的。}
   sell: []
 
 zhangye:
@@ -186,79 +187,78 @@ zhangye:
   base: 0
   perish: null
   stat: 你自己抄的
-  text: 錢不語的包裹裡，包寒鐵的襯紙是從一本舊帳冊上撕下來的。你抄了一份。上面寫著：「壬午年三月，出寒鐵三百斤予許記，收四十。另，周，二十。」字跡圓潤，不是你爹的。
+  text: 錢不語那個包裹裡，包寒鐵的襯紙是從一本舊帳冊撕下來的。你抄了一份：「災後89年3月，出寒鐵三百公斤給許家，收四十。另，周，二十。」字圓圓的，不是你爸的。
   sell: []
 
 jiansui:
-  name: 半截劍穗
+  name: 半截編繩
   cat: story
   unit: 條
   grade: 雜物
   base: 0
   perish: null
-  stat: 不可修煉
-  text: 青絲編成，末端燒焦。穗結是玄霜門的「三回結」，那個門派已經三十年沒人打這種結了。舊貨堆從不說它從哪裡來。
+  stat: 不能賣
+  text: 青色細繩編的，尾端燒焦。繩結是玄霜巡守隊的「三回結」，那支隊伍三十年前就解散了，現在幾乎沒人會打這種結。舊貨堆不會告訴你它從哪裡來。
   hidden:
-    - {label: 盲婆婆摸過後可見, need: {flag: mang_saw_jiansui}, text: 她說，打這種結的人，最後一個是她師妹。}
+    - {label: 盲婆婆摸過以後, need: {flag: mang_saw_jiansui}, text: 她說，會打這種結的人，最後一個是她隊上年紀最小的那個。}
   sell: []
 
 yupai:
-  name: 霜紋玉牌
+  name: 霜紋隊牌
   cat: story
   unit: 塊
   grade: 雜物
   base: 0
   perish: null
-  stat: 不可修煉
-  text: 玉牌一面刻霜紋，一面刻名字。名字被人用指甲一點一點刮掉了。刮的人很有耐心，或者很恨。
+  stat: 不能賣
+  text: 一塊白色石牌，一面刻霜紋，一面刻名字。名字被人用指甲一點一點刮掉了。刮的人很有耐心，或者很恨。
   hidden:
-    - {label: 盲婆婆摸過後可見, need: {flag: mang_saw_yupai}, text: 她摸了很久，說了一個名字，然後問你：「長生典那個人，今年還會來買燈嗎？」}
+    - {label: 盲婆婆摸過以後, need: {flag: mang_saw_yupai}, text: 她摸了很久，說了一個名字，然後問你：「長生當鋪那個人，今年還會來看燈嗎？」}
   sell: []
 
 dangpiao:
-  name: 長生典當票
+  name: 長生當鋪當票
   cat: story
   unit: 張
-  grade: 不可交易
+  grade: 不能交易
   base: 0
   perish: null
-  stat: 不可交易
-  text: 紙色暗黃。上頭寫著：「今典壽元四十年，到期不贖，人死當絕。」落款是你的名字。字是你寫的，手抖得很厲害。
+  stat: 不能交易
+  text: 紙已經黃了。上面寫：「今押壽命四十年，到期不贖，人死當絕。」簽名是你的名字。是你自己寫的，手抖得很厲害。沒有人說得清楚當鋪是怎麼把壽命拿走的，也沒有人敢不信。
   sell: []
 
-# —— 第二個月 ——
 luopan:
   name: 尋脈羅盤
   cat: tool
   unit: 個
-  grade: 一階法器
+  grade: 工具
   base: 60
   perish: null
-  stat: 天池水銀不散｜指針尋地脈
-  text: 看地脈的人用的羅盤。天池裡那滴水銀聚而不散，指針自己會轉，轉到礦脈的方向就停。礦上的人說，好羅盤會記得主人最後一次指的方向。
+  stat: 中間的水銀不散｜指針會找礦脈
+  text: 看地脈的人用的羅盤，看起來像舊時代的登山指北針改的。中間那滴水銀聚著不散，指針自己會轉，轉到礦脈的方向就停。礦上的人說，好羅盤會記得主人最後一次指的方向。
   hidden:
-    - {label: 築基可見, need: {realm: 10}, text: 指針停的地方不是礦脈，是北面礦上一條封了十二年的舊坑道。}
+    - {label: 吐納六層可見, need: {realm: 6}, text: 指針停的地方不是礦脈，是北礦一條封了十二年的舊坑道。}
   sell: [walk]
 
 yaopai:
-  name: 寒潭宗外門腰牌
+  name: 寒潭會識別證
   cat: story
-  unit: 塊
-  grade: 宗門信物
+  unit: 張
+  grade: 會員證件
   base: 0
   perish: null
-  stat: 寒潭宗外門制式｜背刻姓名｜不可交易
-  text: 外門弟子出門辦事，腰牌不離身。腰牌在，人就在；腰牌不在，執事堂就得派人去找。
+  stat: 寒潭會制式｜背面有名字｜不能交易
+  text: 塑膠殼裡夾著手寫的卡片。會員出去辦事，證件不離身。證件在，人就在；證件不在，管理處就得派人去找。
 
 sidai:
-  name: 舊儲物袋
+  name: 舊收納袋
   cat: tool
   unit: 個
-  grade: 一階法器
+  grade: 異常物
   base: 18
   perish: null
-  stat: 內有一方小空間｜袋口花紋被挑掉
-  text: 儲物袋是散修的半個家。袋口的花紋會告訴你它的主人屬於哪裡，所以拿到別人儲物袋的人，第一件事就是挑掉花紋。
+  stat: 裡面比外面大一點｜袋口的標記被挑掉了
+  text: 舊時代的登山收納袋，不知道什麼時候開始，裡面裝得下比外面看起來多一點的東西——多一點點而已，大概一個便當的量。沒有人知道為什麼。袋口的標記會告訴你主人是哪裡的人，所以撿到別人收納袋的人，第一件事就是挑掉標記。
   sell: [walk]
 
 canye:
@@ -268,7 +268,383 @@ canye:
   grade: 雜物
   base: 0
   perish: null
-  stat: 七頁｜字是你爹的｜最後兩頁燒焦了
-  text: 幾頁從帳冊上整齊裁下來的紙。字是你爹的字，墨色有深有淺，像是好幾天裡斷斷續續寫的。
+  stat: 七頁｜是你爸的字｜最後兩頁燒焦了
+  text: 幾頁從帳冊上整齊裁下來的紙。字是你爸的，墨有深有淺，像是好幾天斷斷續續寫的。
   hidden:
-    - {label: 你讀過了, need: {flag: got_pages}, text: 「壬午年三月十七：錢兄薦寒鐵三百斤，價廉，無印。周執事言可入帳。霜華說，這批鐵不能收。」「三月十八：收了。霜華一夜沒睡。」「三月十九：霜華說，要是出事，帶衡兒去找她師姐。」後面兩頁燒焦了，只剩一個「典」字。}
+    - {label: 你讀過了, need: {flag: got_pages}, text: 「災後89年3月17日：老錢介紹寒鐵三百公斤，便宜，沒有登記印。周正說可以入帳。霜華說這批不能收。」「3/18：收了。霜華整晚沒睡。」「3/19：霜華說，要是出事，帶衡去找她以前隊上的人。」後面兩頁燒焦了，只剩一個「當」字。}
+
+shuangjing:
+  name: 霜晶
+  cat: spirit
+  unit: 塊
+  grade: 異常物
+  base: 45
+  perish: null
+  stat: 拿著不會化｜貼著鐵會起霜｜出處：北礦底下
+  text: 六月從北礦流下來的東西。拿在手上它不會化，是你的手掌起霜。礦工說舊坑道裡牆上長滿這個，一面一面，像鏡子。
+  hidden:
+    - {label: 吐納六層可見, need: {realm: 6}, text: 對著光看，霜晶裡封著很細的線條，像帳，又像電路板。}
+    - {label: 林老師研究過, need: {flag: studied_shuangjing}, text: 林老師把它放在舊溫度計旁邊一整晚。溫度計沒有變，霜晶旁邊的紙卻皺了。她說她不知道這代表什麼。}
+    - {label: 守燈之後, need: {flag: finale_lamp}, text: 燈下看霜晶，裡面有一個提燈的人影。你分不清那是誰。}
+  sell: [walk, huichun, lin]
+
+baitie:
+  name: 拜訪信
+  cat: story
+  unit: 封
+  grade: 不能交易
+  base: 0
+  perish: null
+  stat: 寒潭會名譽理事長｜寒漪
+  text: 紅色信封，字是一筆一筆寫的：「寒潭會寒漪，預定第四天中午前，拜訪許家店許老闆。」元嬰級的人寫信給一個吐納程度的店老闆，聚落這一百年沒有過。
+  sell: []
+
+# ═════ 舊物・異物（探索撿到的東西）═════
+# 不是每一件都跟主線有關。有的只是好看，有的只是讓人睡不著。
+youyou:
+  name: 舊悠遊卡
+  cat: relic
+  unit: 張
+  grade: 舊物
+  base: 6
+  perish: null
+  stat: 藍色塑膠卡｜背面有貓的貼紙
+  text: 災變前的交通卡。背面貼著一隻褪色的貓。老人說以前刷這張卡可以坐車、買飲料，餘額存在卡裡面的晶片。現在沒有機器讀得出來，所以它只是一張很耐用的塑膠片。小孩拿它刮冰。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_youyou}, text: 林老師對著光看卡面的細字：「學生卡。發卡日期是2027年。這個小孩，2029年大概國中。」她沒有再說下去。}
+  sell: [walk, lin]
+
+lupai:
+  name: 路牌碎片
+  cat: relic
+  unit: 塊
+  grade: 舊物
+  base: 8
+  perish: null
+  stat: 綠底白字｜「往埔里 32」
+  text: 一塊綠色的路牌碎片，白字寫著「往埔里 32」，後面的單位斷掉了。三十二公里，以前開車大概半小時。現在沒有人說得準埔里在哪個方向——山動過以後，路跟地名都對不上了。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_lupai}, text: 林老師說，舊公路的里程數跟現在實際走的距離，差了將近一倍。有人說是山長高了，有人說是路被拉長了。她說「拉長」這兩個字的時候，自己也笑了一下，笑得不太自然。}
+  sell: [walk, lin]
+
+anquanmao:
+  name: 舊安全帽
+  cat: relic
+  unit: 頂
+  grade: 舊物
+  base: 10
+  perish: null
+  stat: 黃色｜側面貼著「2027 平安」
+  text: 工地用的黃色安全帽，側面貼著一張紅色的「2027 平安」貼紙，帽帶是自己用電線加長過的。還能戴，搬貨的人搶著要。
+  sell: [walk, lin]
+
+keben:
+  name: 課本殘頁
+  cat: relic
+  unit: 頁
+  grade: 舊物
+  base: 7
+  perish: null
+  stat: 國小社會課本｜「第三課　我的家鄉」
+  text: 泡過水又乾掉的一頁課本。上面印著台灣地圖，旁邊有小孩用鉛筆畫的山，山很矮，山腳下畫了一排房子跟一條河。課本上寫的玉山高度，跟聚落老人說的不一樣；差多少，每個人說法不同。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_keben}, text: 林老師把它跟舊物室另外三頁同一本課本的殘頁排在一起。四頁的地圖，海岸線都被同一個小孩用鉛筆往內描了一圈。不知道是畫錯，還是他在練習。}
+  sell: [walk, lin]
+
+shouji:
+  name: 碎螢幕手機
+  cat: relic
+  unit: 支
+  grade: 舊物
+  base: 12
+  perish: null
+  stat: 開不了機｜背殼刻著「小芸」
+  text: 一支螢幕碎成網狀的手機，背殼刻著「小芸」兩個字，旁邊一個歪歪的愛心。開不了機，也沒有地方充電。它的重量剛好放在手心。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_shouji}, text: 林老師說舊物室已經有四十幾支手機，沒有一支開得了。有人堅持手機裡有災變的真相，有人說裡面只有照片跟待辦事項。「兩邊都沒辦法證明，」她說，「我比較希望是照片。」}
+  sell: [walk, lin]
+
+zhuban:
+  name: 主機板碎片
+  cat: relic
+  unit: 片
+  grade: 舊時代零件
+  base: 22
+  perish: null
+  stat: 綠色電路板｜上面有一排看不懂的英文跟數字
+  text: 巴掌大的綠色電路板，一角燒焦。黑市有人專門收這種東西，說是「那個時代的腦袋」。也有人說只是冰箱的零件。它摸起來比旁邊的石頭冷一點點，也可能是你想太多。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_zhuban}, text: 「很多人說災變跟這種東西有關，」林老師把它翻過來，「說是AI做的、說AI想救人卻救錯了、說跟它一點關係都沒有——每一種我都聽過有人講得很肯定。能證明的，一個都沒有。」}
+  sell: [walk, lin]
+
+biao:
+  name: 倒走的錶
+  cat: relic
+  unit: 隻
+  grade: 異物
+  base: 26
+  perish: null
+  stat: 指針只在下雨的時候往回走
+  text: 一隻舊機械錶，晴天的時候停著，一下雨，秒針就開始往回走。雨停了它也停。往回走的總時間，好像跟那場雨下了多久一樣長。沒有人知道它倒回去的時間跑到哪裡去了。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_biao}, text: 林老師記錄了三場雨。第三場雨停的時候，錶上的日期跳了一格，變成30號。她說這隻錶的日期窗本來是壞的。}
+  sell: [walk, lin]
+
+huishi:
+  name: 回聲石
+  cat: relic
+  unit: 顆
+  grade: 異物
+  base: 30
+  perish: null
+  stat: 對它講話，過幾天它會回一句
+  text: 隧道深處撿到的一顆光滑黑石頭。對著它講話，它不會馬上回應；過兩三天，半夜裡，它會用很小的聲音回一句話——不是你說過的話，口音也不是你的。聽得清楚的時候不多。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_huishi}, text: 林老師對它唸了一首童謠。三天後它回了一句：「今天要早點回來喔。」她說那是她外婆常講的話，可是她外婆的聲音，她自己都快忘了。}
+  sell: [walk, lin]
+
+xianshui:
+  name: 斜的海水
+  cat: relic
+  unit: 瓶
+  grade: 異物
+  base: 34
+  perish: null
+  stat: 落海口裝回來的海水｜水面永遠是斜的
+  text: 一個玻璃瓶裝著從西邊落海口附近裝回來的海水。不管瓶子怎麼放，裡面的水面都斜向同一個方向——西邊。晚上把耳朵貼著瓶子，可以聽到很遠的水聲，一直往下流，一直沒有落地。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_xianshui}, text: 林老師把瓶子轉了一整圈。水面始終朝西斜，斜的角度每天差一點點。她把每天的角度記在牆上，牆上已經有另外兩瓶的紀錄，三條線沒有一條一樣。}
+  sell: [walk, lin]
+
+wuguan:
+  name: 一罐霧
+  cat: relic
+  unit: 罐
+  grade: 異物
+  base: 28
+  perish: null
+  stat: 玻璃罐裡的霧，打開也不會散
+  text: 寒潭水庫上的霧，被人用舊果醬罐裝了起來。打開蓋子，霧也不出來，只是在罐口轉。仔細看，霧裡偶爾有很小的光點，像遠處的路燈。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_wuguan}, text: 林老師數過光點。一個晚上最多十七個，排列的方式，跟舊地圖上某個沿海小鎮的路燈位置很像。她沒說是哪個鎮，只說「那裡已經在水下了」。}
+  sell: [walk, lin]
+
+boliye:
+  name: 玻璃蕨葉
+  cat: relic
+  unit: 片
+  grade: 異化植物
+  base: 16
+  perish: null
+  stat: 長成玻璃的蕨類葉子｜很脆
+  text: 隧道口那片蕨類，有幾株的葉子慢慢變成透明的玻璃，葉脈還在裡面。拿在手上很輕，碰到就響，像風鈴。藥行不收，說沒有藥性；小孩很喜歡。
+  sell: [walk, lin]
+
+xianbei:
+  name: 新鮮的貝殼
+  cat: relic
+  unit: 個
+  grade: 異物
+  base: 9
+  perish: null
+  stat: 山上撿到的海貝｜裡面還是濕的
+  text: 在離海很遠很高的地方撿到的貝殼，殼裡還是濕的，有鹹味。老書上說山上找得到貝殼化石，可這不是化石。它新鮮得像是今天早上才被沖上來。
+  sell: [walk, lin]
+
+chanke:
+  name: 大蟬殼
+  cat: relic
+  unit: 個
+  grade: 異物
+  base: 14
+  perish: null
+  stat: 兩個拳頭大｜殼裡朝外長著苔
+  text: 一個比你拳頭還大兩倍的蟬殼，背上裂開的地方很新，裡面卻長滿了青苔，苔是往外長的。今年夏天還沒到。脫殼出去的那隻，不知道在哪裡。
+  sell: [walk, lin]
+
+bijiben:
+  name: 數字筆記本
+  cat: relic
+  unit: 本
+  grade: 舊物
+  base: 15
+  perish: null
+  stat: 寫滿倒數的數字｜最後一頁沒寫完
+  text: 一本學生用的橫線筆記本，每一頁都寫滿數字，一行比一行小：100、99、98……寫到最後一頁，停在「1」的一半——只寫了一撇。封面寫著「不要給媽媽看」。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_bijiben}, text: 林老師說，這種倒數本子舊物室裡有三本，筆跡都不一樣，倒數的起點也不一樣。有人說那時候大家都知道什麼要來；有人說那只是考試倒數。她把三本並排放著，沒有下結論。}
+  sell: [walk, lin]
+
+luyin:
+  name: 錄音帶
+  cat: relic
+  unit: 捲
+  grade: 舊物
+  base: 12
+  perish: null
+  stat: 標籤寫著「給阿嬤 過年」
+  text: 一捲很舊的錄音帶，比災變還舊，標籤上用原子筆寫著「給阿嬤 過年」。帶子還沒斷。聚落裡沒有能放的機器——有人說北礦辦公室有一台，也有人說早就壞了。
+  sell: [walk, lin]
+
+qianshi:
+  name: 籤詩
+  cat: relic
+  unit: 張
+  grade: 舊物
+  base: 5
+  perish: null
+  stat: 「第八十九籤」
+  text: 一張舊廟的籤詩，紅紙已經變成粉紅色。「第八十九籤：山高水遠路難行，回頭方見舊時燈。」聚落裡的人看到這張都會笑一下，然後不笑了。
+  sell: [walk, lin]
+
+hongzhu:
+  name: 黑玻璃珠
+  cat: relic
+  unit: 顆
+  grade: 異物
+  base: 32
+  perish: null
+  stat: 裡面映著別的地方
+  text: 彈珠大小的黑玻璃。湊近看，裡面映的不是你的臉，是一片沙灘、一排椰子樹，和很亮的天空。天空的顏色會跟著時間變——跟這裡的時間，差了大概三個小時。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_hongzhu}, text: 林老師說，舊物室收過一顆一模一樣的，映的是雪地。那顆後來被寒潭會借走，沒有還。}
+  sell: [walk, lin]
+
+lengyu:
+  name: 冷羽毛
+  cat: relic
+  unit: 根
+  grade: 異物
+  base: 20
+  perish: null
+  stat: 白色的長羽毛｜一直是冰的
+  text: 一根比手臂還長的白羽毛，在北礦柵欄外面撿到的。它一直是冰的，冰得剛剛好，不會凍傷人。聚落裡沒有人見過這麼大的鳥。也許它不是鳥的。
+  sell: [walk, lin]
+
+zhibei:
+  name: 指南針
+  cat: relic
+  unit: 個
+  grade: 異物
+  base: 18
+  perish: null
+  stat: 不指北｜永遠指向西邊斷崖下的同一個點
+  text: 一個舊登山指南針，指針不指北，固定指著西邊斷崖底下的某個地方。走到哪裡都一樣。拿著它走到斷崖邊，指針會往下傾。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_zhibei}, text: 林老師說，二十年前有人拿著一個同樣的指南針，順著斷崖邊的舊步道往下走。他回來過一次，說下面有路燈。之後就沒有再回來了。}
+  sell: [walk, lin]
+
+fushi:
+  name: 不沉的石頭
+  cat: relic
+  unit: 顆
+  grade: 異物
+  base: 24
+  perish: null
+  stat: 會浮在水上的灰石｜摸起來溫溫的
+  text: 寒潭水庫邊撿到的灰色石頭，放進水裡會浮起來，而且慢慢往水庫中間漂。撈起來是溫的，像剛被人握過。
+  sell: [walk, lin]
+
+fapiao:
+  name: 統一發票
+  cat: relic
+  unit: 張
+  grade: 舊物
+  base: 4
+  perish: null
+  stat: 2029年11–12月｜熱感紙居然沒褪色
+  text: 一張超商發票，買了一瓶礦泉水和一包衛生紙。期別是2029年11–12月。熱感紙放一百年早該全白了，這一張的字黑得像昨天才印。背面有人用原子筆寫了六個數字，旁邊打了一個勾。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_fapiao}, text: 林老師說那六個數字，跟舊國小倉庫裡一份《2030年1月開獎號碼》剪報對得上——那期開獎，照理說根本沒有辦。剪報是誰剪的，沒人知道。}
+  sell: [walk, lin]
+
+huangdeng:
+  name: 黃燈燈罩
+  cat: relic
+  unit: 個
+  grade: 異物
+  base: 18
+  perish: null
+  stat: 紅綠燈的黃燈罩｜偶爾自己亮一下
+  text: 一個紅綠燈的黃色燈罩，背後沒有燈泡，沒有線。大概每隔一段時間，它會自己亮三秒，很平靜的黃光，像在提醒誰減速。亮的間隔不固定，可是每次亮之前，附近的狗都會先抬頭。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_huangdeng}, text: 林老師記了兩個禮拜的時間。它每次亮，都剛好是北礦那邊的風向轉南的時候。她說可能是巧合，然後在小卡上寫了「可能不是」。}
+  sell: [walk, lin]
+
+jinianc:
+  name: 畢業紀念冊
+  cat: relic
+  unit: 本
+  grade: 舊物
+  base: 10
+  perish: null
+  stat: 某國小第83屆｜團體照多一個位子
+  text: 一本泡過水又乾掉的畢業紀念冊。六年二班的團體照，第二排中間有一個空位，旁邊的同學都微微側身，像在讓位子給一個沒拍進去的人。名單上的名字數一數，比照片上的人多一個。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_jinianc}, text: 林老師把名單一個一個對。多出來的那個名字叫「林」——後面的字被水泡掉了。她說她不姓這個林，然後把紀念冊闔起來，很久沒說話。}
+  sell: [walk, lin]
+
+fengling:
+  name: 鐵管風鈴
+  cat: relic
+  unit: 串
+  grade: 異物
+  base: 16
+  perish: null
+  stat: 五根短鐵管｜沒有風也會響
+  text: 五根鏽掉的短鐵管，用釣魚線綁成一串。掛在室內、門窗全關，它還是會輕輕響，像外面有一陣你感覺不到的風。響的方向永遠是從北往南。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_fengling}, text: 林老師把它掛在教室裡，用手機錄了一晚。放慢八倍聽，鐵管撞出來的聲音裡，有一段很像有人在念數字。數到二十三就停了。}
+  sell: [walk, lin]
+
+daoyu:
+  name: 倒雨罐
+  cat: relic
+  unit: 罐
+  grade: 異物
+  base: 22
+  perish: null
+  stat: 倒過來的玻璃罐｜裡面是往上下的雨
+  text: 一個倒過來放的玻璃罐，罐口朝下，用保鮮膜封住。罐子裡的水珠一直從底部往上「落」，落到罐底（其實是上面）聚成一灘。你把罐子翻正，水就往另一邊落。它好像只認得一個方向，而那個方向不是地面。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_daoyu}, text: 林老師把罐子轉了一整圈，發現水永遠往同一個方向落——偏北、往上。她說那個角度，剛好對著北礦上空那道白線。}
+  sell: [walk, lin]
+
+xiaozhong:
+  name: 小銅鐘
+  cat: relic
+  unit: 個
+  grade: 異物
+  base: 26
+  perish: null
+  stat: 學校的下課鐘舌｜敲了，井裡會回一聲
+  text: 一個巴掌大的銅鐘，鐘舌上刻著「仁愛國小」。在屋裡輕輕敲一下，過了幾秒，街口那口井裡會傳上來一聲一模一樣的鐘聲。打水的人說，井底不可能有東西。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_xiaozhong}, text: 林老師說，水庫底下那間被淹掉的學校，就叫仁愛國小。她沒有說井和水庫是不是通的。她說：「這種事，知道了反而不好睡。」}
+  sell: [walk, lin]
+
+piaogen:
+  name: 公車票根
+  cat: relic
+  unit: 張
+  grade: 舊物
+  base: 5
+  perish: null
+  stat: 「起站：埔里　訖站：　」｜訖站是空的
+  text: 一張舊客運的票根，起站印得很清楚，訖站那一格是空白的，不是褪色，是本來就沒印。日期是2029年12月31日，末班車。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_piaogen}, text: 林老師查了舊時刻表。那一班末班車沒有終點站的紀錄，也沒有抵達的紀錄。她把這張票根跟霧裡那個問路的人的事寫在同一張小卡上。}
+  sell: [walk, lin]
+
+shenhua:
+  name: 深淵的花
+  cat: relic
+  unit: 朵
+  grade: 異物
+  base: 40
+  perish: null
+  stat: 從斷崖下面帶上來的白花｜會跟著人轉頭
+  text: 一朵很小的白花，花莖像細銀線。你把它放在櫃上，它會慢慢轉向屋裡有人的那一邊；屋裡沒人的時候，它轉向北。聞起來沒有味道，可是聞過的人當晚都會夢到很深的樓梯。
+  hidden:
+    - {label: 林老師研究過, need: {flag: studied_shenhua}, text: 林老師說舊國小的植物圖鑑裡沒有這種花。她用放大鏡看了花心，裡面是一圈一圈很細的紋，像年輪，數不完。她說：「它比這座聚落還老。」}
+  sell: [walk, lin]

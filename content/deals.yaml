@@ -1,15 +1,15 @@
 # 交易。truth 三層：goods（貨）/ origin（來路）/ intent（意圖）——玩家永遠看不到。
 # side：sell = 對方賣給你；buy = 對方向你買；task = 委託或其他
 # verdict：哪些處置算「看穿了」；neutral: true 表示這筆不評對錯
-# 〈你〉 會依境界差換成對方對你的稱呼
-# tells.need：你的境界減對方境界 ≥ need 才看得見（狐尾燈在鋪子裡 +2）
+# 〈你〉 會依修行差距換成對方對你的稱呼
+# tells.need：你的層數減對方層數 ≥ need 才看得見（狐尾燈在店裡 +2）
 
 deals:
 
-# ───────────── 初一 ─────────────
+# ───────────── 第一天 ─────────────
 - id: d01
   openFace: smile
-  title: 錢掌櫃收寒鐵
+  title: 錢老闆收寒鐵
   npc: qian
   where: shop
   days: [1, 2]
@@ -20,31 +20,31 @@ deals:
   qty: 10
   price: 6
   truth: {goods: genuine, origin: clean, intent: squeeze}
-  lesson: 「新礦脈」只是他說的。執事堂沒貼告示，鐵老蔫也沒聽說；他說「要跌」時嘴角往上，你一沉默他就加價。真要跌，他不會急著收。
+  lesson: 「新礦脈」只是他說的。管理處沒貼公告，鐵師傅也沒聽說；他說「要跌」時嘴角往上，你一沉默他就加價。真要跌，他不會急著收。
   verdict: [decline, expose]
-  open: 「〈你〉，聽說了沒？北面開了新礦脈，寒鐵要跌。你爹留下那些寒鐵，趁還有人要，我幫你接手。六塊一斤。」
-  ask: {q: 錢掌櫃怎麼突然要收寒鐵？, a: 「錢記做的就是寒鐵生意，跌了我也得收。收的人少，我收的就便宜。這是幫你。」}
+  open: 「〈你〉，聽說了沒？北邊開了新礦脈，寒鐵要跌了。你爸留下那些寒鐵，趁還有人要，我幫你接手。六塊一公斤。」
+  ask: {q: 錢老闆怎麼突然要收寒鐵？, a: 「錢家店做的就是寒鐵生意，跌了我也要收。收的人少，我收的就便宜。這是在幫你。」}
   press:
-    - {q: 新礦脈在哪裡？, a: 「北面嘛。礦上的事，我們做買賣的哪說得清。」}
-    - {q: 誰說的？, a: 「聽雨樓都在傳。白七娘那兒的消息，你還不信？」}
-  silence: 「……你爹當年也這樣，一想就是半天。行，我再加半塊。」
+    - {q: 新礦脈在哪裡？, a: 「北邊嘛。礦上的事，我們做生意的哪講得清楚。」}
+    - {q: 誰說的？, a: 「茶館都在傳。白姐那邊的消息，你還不信？」}
+  silence: 「……你爸當年也這樣，一想就是半天。好啦，我再加半塊。」
   silenceRaise: 6.5
   haggle:
     - {price: 6.5, a: 「六塊半，再多我就虧了。」}
-    - {price: 7, a: 「七塊。〈你〉，這是看在你爹的面子上。」}
+    - {price: 7, a: 「七塊。〈你〉，這是看在你爸的面子上。」}
   tells:
     - {after: open, need: -2, text: 他說「要跌」的時候，嘴角是往上的。, f: smile}
     - {after: silence, need: -2, text: 他加價加得很快，好像早就準備好了這半塊。, f: smile}
   appraise:
-    - {realm: 4, text: 你自己的十斤寒鐵，成色勻淨，是正經礦脈出的老料。}
+    - {realm: 4, text: 你自己的十公斤寒鐵原礦，成色很勻，是正規礦上出的老料，有登記印記。}
   verify:
-    - {who: tie, cost: 0, a: 「北面？我沒聽說。」}
-    - {who: bai, cost: 5, a: 「寒鐵的消息啊……聽雨樓什麼都賣，消息也是。許掌櫃自己判斷。」}
+    - {who: tie, cost: 0, a: 「北邊？我沒聽說。」}
+    - {who: bai, cost: 5, a: 「寒鐵的消息啊……聽雨茶館什麼都賣，消息也是。許老闆自己判斷。」}
   opts:
     deal: {label: 賣給他, text: 錢不語笑著點了靈石：「爽快！」他走的時候，腳步比來時輕。, fx: {mem: {qian: 想用低價收你的寒鐵，你賣了。}}}
     decline: {text: 他也不惱：「行，那你留著。跌了別怨我。」, fx: {mem: {qian: 想用低價收你的寒鐵，你沒賣。}}}
-    expose: {right: true, text: 你說：「真有新礦脈，執事堂早該貼告示了。帳面上的事，錢掌櫃比我清楚。」錢不語哈哈一笑：「誤會，誤會。來，喝茶。」他沒喝就走了。, fx: {rel: {qian: -2}, rep: {loose: 1}, flag: [exposed_qian], mem: {qian: 拿礦脈的傳言壓價收你的寒鐵，被你點破了。}}}
-    report: {text: 你去執事堂說了這件事。周執事只回了一句：「錢掌櫃收寒鐵，礙著你什麼了？」, fx: {rel: {zhou: -1}, mem: {zhou: 你去告錢記壓價，他替錢記說話。}}}
+    expose: {right: true, text: 你說：「真的有新礦脈，管理處早就貼公告了。帳面上的事，錢老闆比我清楚。」錢不語哈哈一笑：「誤會，誤會。來，喝茶。」他自己沒喝就走了。, fx: {rel: {qian: -2}, rep: {loose: 1}, flag: [exposed_qian], mem: {qian: 拿礦脈的傳言壓價收你的寒鐵，被你點破了。}}}
+    report: {text: 你去派出所說了這件事。周警員只回了一句：「錢老闆收寒鐵，礙著你什麼了？」, fx: {rel: {zhou: -1}, mem: {zhou: 你去告錢家店壓價，他替錢家店說話。}}}
 
 - id: d02
   openFace: neutral
@@ -59,30 +59,30 @@ deals:
   qty: 1
   price: 3
   truth: {goods: undervalued, origin: inheritance, intent: plain}
-  lesson: 三塊錢一箱你爹的遺物，問得出寄放的來龍去脈，價錢也不圖什麼。這筆沒有陷阱，該收。
+  lesson: 三塊錢一箱你爸的遺物，問得出寄放的來龍去脈，價錢也不圖什麼。這筆沒有陷阱，該收。
   verdict: [deal]
-  open: 「〈你〉，你爹當年寄在我這兒一箱舊東西，十二年了，佔地方。三塊靈石，你拿回去。」
-  ask: {q: 裡面是什麼？, a: 「舊帳本、破劍穗、幾個空盒子。值錢的早沒了，我可沒動過，你別多想。」}
+  open: 「〈你〉，你爸當年寄在我這裡一箱舊東西，十二年了，很佔位子。三塊靈石，你拿回去。」
+  ask: {q: 裡面是什麼？, a: 「舊帳本、破編繩、幾個空盒子。值錢的早沒了，我可沒動過，你別多想。」}
   press:
-    - {q: 我爹為什麼把箱子寄在你那裡？, a: 「那年……出事前兩天，他扛著箱子來，說放我這兒安心。我也沒多問。」}
-    - {q: 出事前兩天，他還說了什麼？, a: 「說什麼？說『老姚，這箱子你替我收著，誰來問都說沒有。』……後來沒人來問。十二年了，一個都沒有。」}
+    - {q: 我爸為什麼把箱子寄在你那裡？, a: 「那年……出事前兩天，他扛著箱子來，說放我這裡比較安心。我也沒多問。」}
+    - {q: 出事前兩天，他還說了什麼？, a: 「說什麼？說『老姚，這箱子你幫我收著，誰來問都說沒有。』……後來沒人來問。十二年了，一個都沒有。」}
   silence: 「……三塊是箱子錢。你不要，我拿去燒了。」
   haggle:
-    - {price: 2, a: 「兩塊。我跟你爹二十年交情，算我欠他的。」}
+    - {price: 2, a: 「兩塊。我跟你爸二十年交情，算我欠他的。」}
   tells:
     - {after: press, need: -4, text: 他說「出事前兩天」時，眼睛沒有看你。, f: sad}
   appraise:
-    - {realm: 4, text: 箱子裡有一本帳冊，紙質很好，最後幾頁被利刃齊齊裁去。還有一條青絲劍穗，末端燒焦。}
+    - {realm: 4, text: 箱子裡有一本帳冊，紙質很好，最後幾頁被刀子整齊裁掉。還有一條青色編繩，尾端燒焦。}
   verify:
   opts:
-    deal: {label: 收下箱子, text: 箱子很輕。最上面是一本帳冊，封皮上的字你認得，是你爹的。, fx: {give: [{item: zhangce, qty: 1, cost: 0}, {item: jiansui, qty: 1, cost: 0}], flag: [got_box], home: [yao], codex: [zhangce, jiansui], mem: {yao: 把你爹寄放的舊箱子還給了你。}}}
-    decline: {text: 姚四嘆了口氣，扛著箱子走了。, fx: {flag: [box_lost], mem: {yao: 想把你爹的舊箱子還你，你沒收。}}}
+    deal: {label: 收下箱子, text: 箱子很輕。最上面是一本帳冊，封面上的字你認得，是你爸的。, fx: {give: [{item: zhangce, qty: 1, cost: 0}, {item: jiansui, qty: 1, cost: 0}], flag: [got_box], home: [yao], codex: [zhangce, jiansui], mem: {yao: 把你爸寄放的舊箱子還給了你。}}}
+    decline: {text: 姚四嘆了口氣，扛著箱子走了。, fx: {flag: [box_lost], mem: {yao: 想把你爸的舊箱子還你，你沒收。}}}
     expose: {right: false, text: 姚四愣住：「我騙你這三塊做什麼？」他把箱子往地上一放，走了。箱子還在你腳邊。, fx: {give: [{item: zhangce, qty: 1, cost: 0}, {item: jiansui, qty: 1, cost: 0}], flag: [got_box], codex: [zhangce, jiansui], rel: {yao: -2}, rep: {loose: -1}, mem: {yao: 還你舊箱子，被你當成騙子。}}}
   missed: {flag: [box_lost]}
 
 - id: d06
   openFace: smile
-  title: 無字玉簡
+  title: 空白記憶卡
   npc: daoren
   where: shop
   days: [1, 2]
@@ -91,38 +91,38 @@ deals:
   item: yujian
   qty: 1
   price: 40
-  lot: {q: 0.02, label: 傳承玉簡（據說）}
+  lot: {q: 0.02, label: 修行記憶卡（據說）}
   truth: {goods: fake, origin: clean, intent: con}
-  lesson: 洞府在第幾座沙丘、石門上刻什麼都記得，叩了兩日半卻撐不住——故事太完整了。白七娘今年見過四枚，姚四年輕時也買過；鑑定，摸不到禁制。
+  lesson: 實驗室在第幾層、門牌號碼都記得，讀了兩天半卻說讀卡機壞了——故事太完整了。白姐今年見過四張，姚四年輕時也買過；仔細看，卡的金屬接點是新磨的。
   verdict: [decline, expose, refer]
-  open: 「施主有緣。此乃一位前輩坐化前封存的傳承玉簡，需以神識叩問三日方顯。貧道修為淺薄，叩不開，只求換些盤纏。四十靈石。」
-  ask: {q: 道長從哪裡得來的？, a: 「貧道在西漠一處洞府撿到。洞府主人留書：『有緣者得之。』」}
+  open: 「這位老闆有緣。這張記憶卡，是一位老前輩過世前存進去的修行方法，要接上還能用的讀卡機，連續讀三天才出得來。我沒那個機器，只想換點路費。四十靈石。」
+  ask: {q: 師父從哪裡得來的？, a: 「西邊斷崖下面一間舊實驗室撿的。桌上留了一張紙：『有緣的人拿去。』」}
   press:
-    - {q: 洞府在西漠哪裡？, a: 「黑沙嶺往北三百里，第七座沙丘下，入口朝東，石門上刻著一隻三足烏。」}
-    - {q: 道長自己叩過幾日？, a: 「兩日半。最後半日，貧道的神識撐不住了。」}
-  silence: 「……施主不信？那洞府裡還有一具枯骨，手裡握著一卷殘經，貧道沒敢動。前輩坐化時面朝東方，想必是心有所繫……」
+    - {q: 實驗室在斷崖哪裡？, a: 「從舊步道往下三百公尺，第七個平台，鐵門朝東，門牌是B2-17，門上貼著一隻三隻腳的烏鴉貼紙。」}
+    - {q: 師父自己讀過幾天？, a: 「兩天半。最後半天，讀卡機燒掉了。」}
+  silence: 「……這位老闆不信？那間實驗室裡還有一具骨頭，手裡握著一本筆記，我沒敢動。他死的時候臉朝東邊，大概是在想家……」
   haggle:
-    - {price: 30, a: 「三十。貧道只求盤纏。」}
-    - {price: 25, a: 「二十五。再少，貧道就回不了西漠了。」}
+    - {price: 30, a: 「三十。我只是要路費。」}
+    - {price: 25, a: 「二十五。再少，我就回不去了。」}
   tells:
     - {after: silence, need: -3, text: 他說得越多，眼睛越亮，像是在等你的反應。, f: smile}
   appraise:
-    - {realm: 4, text: 玉質尋常。神識探進去，像探進一口深井，摸不到底，也摸不到禁制。}
+    - {realm: 4, text: 卡的金屬接點亮得不正常，是最近才磨過的。舊時代的東西，不會這麼新。}
   verify:
-    - {who: bai, cost: 5, a: 「這種玉簡，今年我見過四枚。四個道士，四座西漠洞府。」}
-    - {who: yao, cost: 0, a: 「無字玉簡？我年輕時也買過一枚，叩了三天，叩出一身汗。」}
+    - {who: bai, cost: 5, a: 「這種記憶卡，今年我看過四張。四個道士，四間斷崖下的實驗室。」}
+    - {who: yao, cost: 0, a: 「空白記憶卡？我年輕時也買過一張，找讀卡機找了三個月，找到了，裡面是空的。」}
   opts:
-    deal: {label: 買下, text: 道人稽首：「施主有緣。」他走得很快，道袍在門口一閃就不見了。, fx: {flag: [bought_yujian]}}
-    decline: {text: 道人稽首：「施主無緣。」轉身去了對門錢記。}
-    expose: {right: true, text: 你說：「道長叩了兩日半就撐不住，卻記得洞口朝東、石門刻著三足烏。這記性，用在叩玉簡上正好。」道人臉色一變，袍袖一甩走了。, fx: {rep: {loose: 1}, tag: {loose: 眼尖}}}
-    report: {text: 周執事懶得理你：「騙子？你不買就是了。」, fx: {rel: {zhou: -1}}}
-    refer: {text: 你指了指對門：「錢記收這種寶貝。」道人稽首道謝，抱著玉簡過街去了。, fx: {flag: [yujian_to_qian]}}
+    deal: {label: 買下, text: 道士合掌：「有緣。」他走得很快，袍子在門口一閃就不見了。, fx: {flag: [bought_yujian]}}
+    decline: {text: 道士合掌：「沒緣分。」轉身去了對門錢家店。}
+    expose: {right: true, text: 你說：「師父讀了兩天半就燒了讀卡機，卻記得門牌B2-17、門上貼什麼貼紙。這記性，拿去背卡裡的東西剛好。」道士臉色一變，甩了一下袖子就走。, fx: {rep: {loose: 1}, tag: {loose: 眼尖}}}
+    report: {text: 周警員懶得理你：「騙子？你不買就是了。」, fx: {rel: {zhou: -1}}}
+    refer: {text: 你指了指對門：「錢家店收這種寶貝。」道士合掌道謝，拿著記憶卡過馬路去了。, fx: {flag: [yujian_to_qian]}}
 
 - id: d05
   title: 阿蘅的野生赤炎草
   npc: aheng
   where: herb
-  hook: {t: 背藥簍的姑娘, d: 田埂盡頭站著一個背藥簍的姑娘，簍裡的赤炎草還帶著土。}
+  hook: {t: 背採集簍的女生, d: 田埂盡頭站著一個背採集簍的女生，簍裡的赤炎草還帶著土。}
   days: [1, 2]
   prio: 8
   side: sell
@@ -133,11 +133,11 @@ deals:
   truth: {goods: genuine, origin: clean, intent: plain}
   lesson: 葉背金線粗細一致，根上帶著林子深處才有的黑土，老葛也替她說話。十塊一株是公道價。
   verdict: [deal]
-  intro: 田埂盡頭站著一個背藥簍的姑娘，簍裡幾株赤炎草還帶著土。
+  intro: 田埂盡頭站著一個背採集簍的女生，簍裡幾株赤炎草還帶著土。
   open: 「野生的，二十年上下。十塊一株。」
   ask: {q: 在哪裡採的？, a: 「北邊林子裡。」}
   press:
-    - {q: 林子哪裡？, a: 「採藥的地方，誰都不說。你問老葛去，他也不說。」}
+    - {q: 林子哪裡？, a: 「採藥的地方，誰都不會講。你去問老葛，他也不會講。」}
   silence: 「……要就要，不要我走。」
   haggle:
     - {price: 9, a: 「九塊。不能再少，我弟弟等著用錢。」}
@@ -152,7 +152,7 @@ deals:
     decline: {text: 她把草放回簍裡，轉身走了。}
     expose: {right: false, text: 她看了你一眼，什麼都沒說，把草收進簍子裡。, fx: {rel: {aheng: -2}, rep: {loose: -1}, mem: {aheng: 你懷疑她的草有問題。}}}
 
-# ───────────── 初二 ─────────────
+# ───────────── 第二天 ─────────────
 - id: d03
   title: 五十年赤炎草
   npc: yao
@@ -165,32 +165,32 @@ deals:
   price: 13
   lot: {q: 0.65, label: 五十年赤炎草, flags: [painted]}
   truth: {goods: inferior, origin: clean, intent: dump}
-  lesson: 年份、日期、山溝記得清清楚楚，又說玉盒養得住靈性；老葛說南嶺地火不穩，草長不老。對著光看，後兩道金線比較粗，顏色也新。
+  lesson: 年份、日期、哪一條山溝記得清清楚楚，又說密封盒保得住鮮度；老葛說南稜地熱不穩，草長不老。對著光看，後兩道金線比較粗，顏色也新。
   verdict: [decline, expose, refer]
-  open: 「〈你〉，好東西。五十年的赤炎草，五株。十三塊一株，回春堂收都要十五。」
-  ask: {q: 哪來的？, a: 「南嶺採的，我年年去。這批是運氣好。」}
+  open: 「〈你〉，好東西。五十年的赤炎草，五株。十三塊一株，回春藥行收都要十五。」
+  ask: {q: 哪來的？, a: 「南稜採的，我年年去。這批是運氣好。」}
   press:
-    - {q: 哪一年採的？, a: 「大前年秋天，九月十三，南嶺東坡第三道溝。那天還下了點雨，我記得清清楚楚。」}
-    - {q: 大前年採的，靈性不早散了？, a: 「我一直拿玉盒養著。你不懂，玉盒養得住。」}
+    - {q: 哪一年採的？, a: 「大前年秋天，九月十三，南稜東坡第三道溝。那天還下了點雨，我記得清清楚楚。」}
+    - {q: 大前年採的，鮮度不早散了？, a: 「我一直放在密封盒裡。你不懂，那種盒子保得住。」}
   silence: 「……你要是嫌貴，十二也行。我急著用錢，要去南邊一趟。」
   silenceDrop: 12
   haggle:
     - {price: 12, a: 「十二。再少我就虧本了。」}
-    - {price: 11, a: 「十一！我跟你說，四十年前這價錢買不到一根鬚。」}
+    - {price: 11, a: 「十一！我跟你講，四十年前這個價連一根鬚都買不到。」}
   tells:
     - {after: open, need: -1, text: 他說「五十年」的時候，拇指在葉背上輕輕抹了一下。, f: uneasy}
   appraise:
-    - {realm: 4, text: 葉背金線五道。對著光看，前三道細如髮絲，後兩道略粗，顏色也新一些。}
-    - {realm: 10, text: 根鬚的乾縮程度，最多三十年。}
+    - {realm: 4, text: 葉背金線五道。對著光看，前三道細得像頭髮，後兩道粗一點，顏色也新一點。}
+    - {realm: 6, text: 根鬚的乾縮程度，最多三十年。}
   verify:
-    - {who: ge, cost: 0, a: 「五十年？南嶺地火不穩，草長得快，長不老。能有三十年就算好的了。」}
+    - {who: ge, cost: 0, a: 「五十年？南稜地熱不穩，草長太快，長不老。有三十年就算好的了。」}
     - {who: tie, cost: 0, a: 「草的事我不懂。」}
   opts:
-    deal: {label: 買下, text: 姚四收了靈石，把草包好，連說了三聲「你爹會高興的」。, fx: {mem: {yao: 賣你「五十年」赤炎草。}}}
-    decline: {text: 姚四嘖了一聲，把草收回去：「錢記會要的。」}
-    expose: {right: true, text: 你把葉子翻過來對著光：「後兩道金線，金粉還沒定住吧。」姚四盯著你看了很久，長嘆一口氣：「你爹當年，也是這麼看出來的。」, fx: {rel: {yao: -1}, rep: {loose: 1}, tag: {loose: 眼尖}, flag: [exposed_yao, knows_yao_paints], mem: {yao: 在赤炎草上畫金線，被你看出來了。}}}
-    report: {text: 周執事擺擺手：「以次充好，你們自己了結。執事堂不管這種事。」, fx: {rel: {zhou: -1}}}
-    refer: {text: 你說錢記收得起好貨。姚四眼睛一亮，抱著草過街去了。, fx: {flag: [yao_to_qian]}}
+    deal: {label: 買下, text: 姚四收了靈石，把草包好，連說了三聲「你爸會高興的」。, fx: {mem: {yao: 賣你「五十年」赤炎草。}}}
+    decline: {text: 姚四嘖了一聲，把草收回去：「錢家店會要。」}
+    expose: {right: true, text: 你把葉子翻過來對著光：「後面兩道金線，金粉還沒乾吧。」姚四盯著你看了很久，嘆了一口長氣：「你爸當年，也是這樣看出來的。」, fx: {rel: {yao: -1}, rep: {loose: 1}, tag: {loose: 眼尖}, flag: [exposed_yao, knows_yao_paints], mem: {yao: 在赤炎草上畫金線，被你看出來了。}}}
+    report: {text: 周警員擺擺手：「以次充好，你們自己了結。管理處不管這種事。」, fx: {rel: {zhou: -1}}}
+    refer: {text: 你說錢家店收得起好貨。姚四眼睛一亮，抱著草過馬路去了。, fx: {flag: [yao_to_qian]}}
 
 - id: d04
   openFace: cold
@@ -205,42 +205,42 @@ deals:
   price: 40
   lot: {q: 1, label: 雪蟾酥, flags: [stolen, sect], perishDay: 6}
   truth: {goods: genuine, origin: stolen, intent: plain}
-  lesson: 玉匣是寒潭宗的制式，底下刮花了一塊；舅舅「上個月……不，開春」走的，說到一半改口；燒火的雜役拿不到二階靈物。宗門正在北林找一個送貨的人。買下，就是收贓。
+  lesson: 保冷盒是寒潭會的規格，底下刮花了一塊；舅舅「上個月……不，開春」走的，說到一半改口；燒熱水的工友拿不到這種東西。寒潭會正在北林找一個送貨的人。買下，就是收贓。
   verdict: [decline, report, special, expose]
-  intro: 她把一方玉匣放在櫃上。玉匣底部有一塊被刮花的地方。
+  intro: 她把一方保冷盒放在櫃上。保冷盒底部有一塊被刮花的地方。
   open: 「這個，你收不收？」
-  ask: {q: 這是哪來的？, a: 「我舅舅留下的。他以前在寒潭宗燒火，攢了點東西。」}
+  ask: {q: 這是哪來的？, a: 「我舅舅留下的。他以前在寒潭會燒熱水，存了一點東西。」}
   press:
     - {q: 你舅舅什麼時候走的？, a: 「上個月……不，開春。開春的時候。」}
-    - {q: 燒火的雜役，拿得到雪蟾酥？, a: 「我不知道他怎麼拿的。人都死了。」}
-  silence: 「……匣子底下那塊，是我舅舅刮的。他不想讓人知道他從宗門拿東西。」
+    - {q: 燒熱水的工友，拿得到雪蟾酥？, a: 「我不知道他怎麼拿的。人都死了。」}
+  silence: 「……盒子底下那塊，是我舅舅刮的。他不想讓人知道他從寒潭會拿東西。」
   haggle:
     - {price: 24, a: 「今天要的話，就這個價。」}
   tells:
-    - {after: press, need: -2, text: 她說「開春」的時候，手指扣緊了匣蓋。, f: uneasy}
+    - {after: press, need: -2, text: 她說「開春」的時候，手指扣緊了盒蓋。, f: uneasy}
   appraise:
-    - {realm: 4, text: 二階靈物，成色完好，酥面還是乾的。玉匣是寒潭宗制式。}
-    - {realm: 10, text: 酥面細紋如冰裂，凝成不過十日。}
+    - {realm: 4, text: 成色完好，表面還是乾的。保冷盒是寒潭會的規格。}
+    - {realm: 6, text: 表面有像冰裂的細紋，凝成不到十天。}
   verify:
-    - {who: bai, cost: 5, a: 「宗門在北林找一個送貨的人。送什麼，執事堂沒說。」}
-    - {who: yao, cost: 0, a: 「阿蘅？老實丫頭。就是她弟弟不爭氣，欠了鬼市的錢。」}
+    - {who: bai, cost: 5, a: 「寒潭會在北林找一個送貨的人。送什麼，管理處沒說。」}
+    - {who: yao, cost: 0, a: 「阿蘅？老實的女生。就是她弟弟不爭氣，欠了黑市的錢。」}
   opts:
-    deal: {label: 買下, text: 她數了兩遍靈石，沒說謝，走得很快。, fx: {mem: {aheng: 賣給你一匣雪蟾酥。}}}
-    decline: {text: 她把匣子收回懷裡，往對門錢記走去。, fx: {flag: [xuechan_to_qian]}}
-    expose: {right: true, label: 拆穿, text: 你說：「這匣子不是燒火雜役拿得到的。」她沒哭，只是把匣子收回去，走了。, fx: {rel: {aheng: -2}, rep: {loose: 1}, tag: {loose: 眼尖嘴毒}, flag: [xuechan_to_qian], mem: {aheng: 你說破了玉匣的來歷，她走了。}}}
-    report: {text: 周執事親自來了一趟，帶走了阿蘅和玉匣。臨走前他拍拍你的肩：「許掌櫃明事理。賞錢，照宗門的規矩給。」, fx: {bounty: xuechan, rel: {zhou: 2, aheng: -5}, rep: {sect: 1, loose: -2}, tag: {loose: 會報官, sect: 明事理}, flag: [aheng_taken], mem: {aheng: 你把她報給了執事堂。, zhou: 你把採藥的阿蘅報了上來，他很滿意。}}}
+    deal: {label: 買下, text: 她數了兩遍靈石，沒說謝，走得很快。, fx: {mem: {aheng: 賣給你一盒雪蟾酥。}}}
+    decline: {text: 她把盒子收回懷裡，往對門錢家店走去。, fx: {flag: [xuechan_to_qian]}}
+    expose: {right: true, label: 拆穿, text: 你說：「這盒子不是燒熱水的工友拿得到的。」她沒哭，只是把盒子收回去，走了。, fx: {rel: {aheng: -2}, rep: {loose: 1}, tag: {loose: 眼尖嘴毒}, flag: [xuechan_to_qian], mem: {aheng: 你說破了保冷盒的來歷，她走了。}}}
+    report: {text: 周警員親自來了一趟，帶走了阿蘅和保冷盒。走之前他拍拍你的肩：「許老闆明事理。獎金照規定給。」, fx: {bounty: xuechan, rel: {zhou: 2, aheng: -5}, rep: {sect: 1, loose: -2}, tag: {loose: 會報警, sect: 明事理}, flag: [aheng_taken], mem: {aheng: 你把她報給了派出所。, zhou: 你把採藥的阿蘅報了上來，他很滿意。}}}
     special:
       seal: 勸交
       label: 勸她自己交出去
       need: {rel: {aheng: 1}}
-      text: 你說，執事堂的賞錢比你給的多，而且乾淨。她咬著嘴唇想了很久：「你替我交。賞錢分我一半。」她把玉匣推給你，轉身就走，走到門口又回頭：「掌櫃的，我信你一次。」
-      fx: {give: [{item: xuechan, qty: 1, cost: 0, label: 阿蘅託你交的雪蟾酥, flags: [stolen, sect, entrusted], perishDay: 6}], rel: {aheng: 3}, flag: [aheng_entrust], mem: {aheng: 託你把雪蟾酥交給執事堂，賞錢對分。}}
-      fail: {text: 她搖頭：「我不信執事堂，也不信你。」她抱著匣子走了，往對門去。, fx: {flag: [xuechan_to_qian]}}
+      text: 你說，派出所的懸賞獎金比你給的多，而且乾淨。她咬著嘴唇想了很久：「你幫我交。獎金分我一半。」她把保冷盒推給你，轉身就走，走到門口又回頭：「老闆，我信你一次。」
+      fx: {give: [{item: xuechan, qty: 1, cost: 0, label: 阿蘅託你交的雪蟾酥, flags: [stolen, sect, entrusted], perishDay: 6}], rel: {aheng: 3}, flag: [aheng_entrust], mem: {aheng: 託你把雪蟾酥交給派出所，獎金對分。}}
+      fail: {text: 她搖頭：「我不信派出所，也不信你。」她抱著盒子走了，往對門去。, fx: {flag: [xuechan_to_qian]}}
   missed: {flag: [xuechan_to_qian]}
 
 # 錢不語聞到風聲，來收雪蟾酥（不計入二十筆）
 - id: d04b
-  title: 錢掌櫃收雪蟾酥
+  title: 錢老闆收雪蟾酥
   npc: qian
   where: shop
   days: [3, 4]
@@ -253,8 +253,8 @@ deals:
   extra: true
   truth: {goods: genuine, origin: stolen, intent: plain}
   neutral: true
-  open: 「〈你〉，聽說你手上有個玉匣？我有門路，四十五，我收了。你放著，過幾天就是一汪水。」
-  ask: {q: 錢掌櫃怎麼知道的？, a: 「坊市就這麼大。誰手上有什麼，我閉著眼睛都聞得到。」}
+  open: 「〈你〉，聽說你手上有個保冷盒？我有門路，四十五，我收。你放著，過幾天就是一灘水。」
+  ask: {q: 錢老闆怎麼知道的？, a: 「聚落就這麼大。誰手上有什麼，我閉著眼睛都聞得到。」}
   press:
     - {q: 你收了賣給誰？, a: 「這你就別管了。我錢不語做生意，從來不讓下家知道上家。」}
   silence: 「……五十。不能再多了。」
@@ -262,14 +262,14 @@ deals:
   haggle:
     - {price: 52, a: 「五十二。〈你〉，這東西燙手，我是替你擔風險。」}
   appraise:
-    - {realm: 4, text: 玉匣還是涼的。雪蟾酥的邊緣，已經開始有一點濕了。}
+    - {realm: 4, text: 保冷盒還是涼的。雪蟾酥的邊緣，已經開始有一點濕了。}
   verify:
-    - {who: bai, cost: 5, a: 「鬼市這幾天在收寒潭宗的東西。錢掌櫃跟鬼市，一向有來往。」}
+    - {who: bai, cost: 5, a: 「黑市這幾天在收寒潭會的東西。錢老闆跟黑市，一向有來往。」}
   opts:
-    deal: {label: 賣給他, text: 錢不語接過玉匣，掂了掂，笑得眼睛都瞇了。, fx: {flag: [xuechan_sold_qian], rel: {qian: 1}, mem: {qian: 從你手上收走了雪蟾酥。}}}
-    decline: {text: 「行。你留著看它化。」錢不語拍拍衣袖走了。}
+    deal: {label: 賣給他, text: 錢不語接過保冷盒，拿起來試了試重量，笑得眼睛都瞇起來。, fx: {flag: [xuechan_sold_qian], rel: {qian: 1}, mem: {qian: 從你手上收走了雪蟾酥。}}}
+    decline: {text: 「好啊。你留著看它化。」錢不語拍拍衣服走了。}
 
-# ───────────── 市集與初三 ─────────────
+# ───────────── 市集與第三天 ─────────────
 - id: d09
   title: 會發燙的石頭
   npc: stone
@@ -283,12 +283,12 @@ deals:
   price: 3
   lot: {q: 1, label: 會發燙的灰石頭}
   truth: {goods: undervalued, origin: clean, intent: plain}
-  lesson: 晚上會發燙，石心有一線暗紅，是地火靈髓。鐵老蔫一聽就叫你別讓孩子賣掉。
+  lesson: 晚上會發燙，石心有一線暗紅，是地火靈髓。鐵師傅一聽就叫你不要讓那孩子賣掉。
   verdict: [deal, expose, special]
   open: 「〈你〉，這塊你看看，晚上會發燙，真的！三塊靈石。」
-  ask: {q: 在哪撿的？, a: 「南嶺山腳，跟一堆石頭混在一起。」}
+  ask: {q: 在哪撿的？, a: 「南稜山腳，跟一堆石頭混在一起。」}
   press:
-    - {q: 多燙？, a: 「燙得握不住！我娘說是石頭裡有火，叫我拿去扔了。」}
+    - {q: 多燙？, a: 「燙到拿不住！我媽說石頭裡面有火，叫我拿去丟掉。」}
   silence: 「……兩塊也行。我想買把小鎚子。」
   silenceDrop: 2
   haggle:
@@ -300,11 +300,11 @@ deals:
   opts:
     deal: {label: 買下, text: 小石頭把石頭用舊布包好，高高興興地數那幾塊靈石。, fx: {codex: [lingsui], mem: {stone: 賣給你一塊會發燙的石頭。}}}
     decline: {text: 小石頭把石頭放回布上，又擺正了一下。}
-    expose: {right: true, label: 點破, text: 你告訴他，這可能是地火靈髓，值六十塊靈石。小石頭張大了嘴：「那、那我不賣了，我要拿去給師父看！」他抱著石頭，跑向鐵老蔫的攤子。, fx: {rel: {stone: 3, tie: 1}, rep: {loose: 1}, tag: {loose: 厚道}, flag: [stone_told], codex: [lingsui], mem: {stone: 你告訴他石頭的價值，他沒賣。, tie: 你沒坑那個撿石頭的孩子。}}}
+    expose: {right: true, label: 點破, text: 你告訴他，這可能是地火靈髓，值六十塊靈石。小石頭張大了嘴：「那、那我不賣了，我要拿去給鐵師傅看！」他抱著石頭，跑向鐵師傅的攤子。, fx: {rel: {stone: 3, tie: 1}, rep: {loose: 1}, tag: {loose: 厚道}, flag: [stone_told], codex: [lingsui], mem: {stone: 你告訴他石頭的價值，他沒賣。, tie: 你沒坑那個撿石頭的孩子。}}}
     special:
       seal: 公道
       label: 出公道價（二十）
-      text: 你說：「這塊石頭，我出二十。」小石頭愣了半天，眼眶紅了：「二十？掌櫃的，你沒數錯？」
+      text: 你說：「這塊石頭，我出二十。」小石頭愣了半天，眼眶紅了：「二十？老闆，你沒數錯？」
       price: 20
       fx: {rel: {stone: 2}, rep: {loose: 1}, tag: {loose: 厚道}, flag: [stone_fair], codex: [lingsui], mem: {stone: 用二十靈石買了他的石頭。}}
 
@@ -320,27 +320,28 @@ deals:
   repeatable: true
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
-  open: 「這盞不賣你。你還用不上。」
-  ask: {q: 婆婆的燈，有什麼特別？, a: 「照得見說謊的人。」}
+  intro: 竹竿上掛著一排普通的小燈。攤子最裡面，有一盞燈蓋著布。
+  open: 「外面這些隨便看，都是普通的燈。布底下那盞不賣。你還用不上。」
+  ask: {q: 布底下那盞，有什麼特別？, a: 「點著它，你會比較看得清楚別人的手在做什麼、眼睛在看哪裡。就這樣而已。誰說謊，還是要你自己判斷。」}
   press:
-    - {q: 真的照得見？, a: 「燈不會說謊，點燈的人會。」}
-  silence: 「……你爹也買過一盞。」
+    - {q: 為什麼只有一盞？, a: 「做它的人不在了。我只會做普通的。」}
+  silence: 「……你爸以前也來看過這盞。他沒拿。」
   opts:
     decline: {label: 告辭, text: 她低頭繼續纏燈罩，像你從來沒來過。}
     special:
-      seal: 劍穗
-      label: 給她看半截劍穗
+      seal: 編繩
+      label: 給她看半截編繩
       need: {has: {jiansui: 1}}
-      text: 她伸出手。你把劍穗放在她掌心。她的手指在穗結上停了很久：「三回結……打這種結的，最後一個是我師妹。」她把一盞燈推到你面前：「拿去。不要錢。」
-      fx: {give: [{item: hudeng, qty: 1, cost: 0}], flag: [lamp, mang_saw_jiansui], rel: {mang: 3}, codex: [hudeng, jiansui], mem: {mang: 摸過你的劍穗，送你一盞狐尾燈。}}
+      text: 她伸出手。你把編繩放在她手心。她的手指在繩結上停了很久：「三回結……會打這種結的，最後一個是我們隊上年紀最小的。」她把布掀開，把底下那盞燈推到你面前：「拿去。不要錢。這盞燈只有一盞，弄丟了就沒有了。」
+      fx: {give: [{item: hudeng, qty: 1, cost: 0}], flag: [lamp, mang_saw_jiansui], rel: {mang: 3}, codex: [hudeng, jiansui], mem: {mang: 摸過你的編繩，把那盞唯一的狐尾燈給了你。}}
     special2:
-      label: 給她看霜紋玉牌
+      label: 給她看霜紋隊牌
       need: {has: {yupai: 1}, flag: [mang_saw_jiansui]}
-      text: 她摸了很久，說了一個名字，然後問你：「長生典那個人，今年還會來買燈嗎？」
-      fx: {flag: [mang_saw_yupai], rel: {mang: 1}, codex: [yupai], mem: {mang: 摸過你的霜紋玉牌，問起長生典。}}
+      text: 她摸了很久，說了一個名字，然後問你：「長生當鋪那個人，今年還會來看燈嗎？」
+      fx: {flag: [mang_saw_yupai], rel: {mang: 1}, codex: [yupai], mem: {mang: 摸過你的霜紋隊牌，問起長生當鋪。}}
 
 - id: d07
-  title: 陶老符的避水符
+  title: 陶師傅的防水貼
   npc: tao
   where: market
   days: [3, 3]
@@ -349,29 +350,29 @@ deals:
   item: bishui
   qty: 10
   price: 5
-  lot: {q: 0.25, label: 陶記避水符, flags: [damp]}
+  lot: {q: 0.25, label: 陶記防水貼, flags: [damp]}
   truth: {goods: flawed, origin: clean, intent: innocent}
-  lesson: 符讓徒弟搬去城東倉庫放過幾天，而城東連下了三天雨，倉庫漏水。對著光看，十張的硃砂都暈開了。陶老符自己也不知道——點破，比買下或告他都好。
+  lesson: 貼讓徒弟搬去東邊倉庫放過幾天，而東邊連下了三天雨，倉庫漏水。對著光看，十張的紅墨都暈開了。陶師傅自己也不知道——點破，比買下或告他都好。
   verdict: [expose, decline]
-  open: 「避水符，十張，五塊一張。我陶某畫了四十年符，你去問。」
-  ask: {q: 都是您自己畫的？, a: 「自己畫的。前陣子……不，上個月，讓徒弟搬到城東倉庫放了幾天，這兩天才搬回來擺攤。」}
+  open: 「防水貼，十張，五塊一張。我做了四十年，你去問。」
+  ask: {q: 都是您自己做的？, a: 「自己做的。前陣子……不，上個月，叫徒弟搬到東邊倉庫放了幾天，這兩天才搬回來擺攤。」}
   press:
     - {q: 怎麼這麼便宜？, a: 「市集日嘛，薄利多銷。我年紀大了，不想再扛回去。」}
-  silence: 「……你要看就看，對著光看也行。陶某的符從不怕看。」
+  silence: 「……你要看就看，對著光看也可以。我做的東西不怕看。」
   haggle:
     - {price: 4.5, a: 「四塊半，十張都給你。」}
   tells:
-    - {after: silence, need: -2, text: 他把符遞過來的時候，手很穩。, f: neutral}
+    - {after: silence, need: -2, text: 他把貼遞過來的時候，手很穩。, f: neutral}
   appraise:
-    - {realm: 4, text: 你把符舉到光下。硃砂邊緣暈開一圈極淡的紅。一張、兩張……十張都是。}
+    - {realm: 4, text: 你把貼舉到光下。紅墨邊緣暈開一圈極淡的紅。一張、兩張……十張都是。}
   verify:
     - {who: tie, cost: 0, a: 「老陶？手藝沒話說。人老實，就是不太管倉庫。」}
-    - {who: bai, cost: 5, a: 「城東那幾間倉庫，這陣子屋頂漏得厲害。」}
+    - {who: bai, cost: 5, a: 「東邊那幾間倉庫，這陣子屋頂漏得厲害。」}
   opts:
-    deal: {label: 買下, text: 陶老符把符疊好，用紅繩紮起來遞給你：「你識貨。」, fx: {flag: [bought_bishui], event: [{id: e_tao_back, at: 5}]}}
-    decline: {text: 陶老符也不在意，轉頭招呼下一位客人。}
-    expose: {right: true, label: 點破, text: 你把一張符舉到光下，指給他看那圈紅暈。陶老符的臉一下子白了。他翻了好幾張，嘴唇發抖：「是倉庫……是倉庫漏了。」他把符收起來，朝你深深一揖，又從懷裡摸出兩張：「這兩張我一直貼身放著，你拿去。」, fx: {give: [{item: bishui, qty: 2, cost: 0, label: 陶記避水符（貼身的）}], rel: {tao: 3}, rep: {loose: 1}, tag: {loose: 眼睛毒}, flag: [tao_grateful], mem: {tao: 你點破他的符受了潮，他很感激。}}}
-    report: {text: 周執事：「受潮的符？這也來報？」, fx: {rel: {zhou: -1}}}
+    deal: {label: 買下, text: 陶師傅把貼片疊好，用紅繩綁起來遞給你：「你識貨。」, fx: {flag: [bought_bishui], event: [{id: e_tao_back, at: 5}]}}
+    decline: {text: 陶師傅也不在意，轉頭招呼下一位客人。}
+    expose: {right: true, label: 點破, text: 你把一張貼舉到光下，指給他看那圈紅暈。陶師傅的臉一下子白了。他翻了好幾張，嘴唇發抖：「是倉庫……是倉庫漏了。」他把貼片收起來，朝你深深鞠了一個躬，又從口袋裡摸出兩張：「這兩張我一直放在身上，你拿去。」, fx: {give: [{item: bishui, qty: 2, cost: 0, label: 陶記防水貼（貼身的）}], rel: {tao: 3}, rep: {loose: 1}, tag: {loose: 眼睛毒}, flag: [tao_grateful], mem: {tao: 你點破他的貼受了潮，他很感激。}}}
+    report: {text: 周警員：「受潮的防水貼？這也要來報案？」, fx: {rel: {zhou: -1}}}
 
 - id: d08
   title: 斷水刀
@@ -385,12 +386,12 @@ deals:
   price: 8
   lot: {q: 1, label: 斷水刀（殘）, flags: [stolen]}
   truth: {goods: genuine, origin: stolen, intent: plain}
-  lesson: 刀柄的纏繩纏得極細，是給一隻小手纏的；刀上的裂誰補的，他說不出來；鐵老蔫記得，補這把刀的是個瘦小的年輕人。執事堂正在找一個佩刀的瘦小散修。
+  lesson: 刀柄的纏繩纏得很細，是一雙小手纏的；刀上的裂誰補的，他說不出來；鐵師傅記得，補這把刀的是個瘦小的年輕人。派出所正在找一個帶刀的瘦小年輕人。
   verdict: [decline, expose, report]
   open: 「好刀，斷水刀。八塊，拿走。」
   ask: {q: 刀是你的？, a: 「我自己的，用了十年。」}
   press:
-    - {q: 刀身這道裂怎麼來的？, a: 「黑風口，去年臘月初七，砍一頭鐵背狼崩的。那狼足有三丈長。」}
+    - {q: 刀身這道裂怎麼來的？, a: 「黑風口，去年一月七號，砍一隻鐵背狼崩的。那隻狼有三公尺長。」}
     - {q: 誰補的？手藝很好。, a: 「……路邊找人補的。記不得了。」}
   silence: 「……不要拉倒。」他把刀拿起來，作勢要走。
   haggle:
@@ -399,19 +400,19 @@ deals:
     - {after: ask, need: -2, text: 他握刀的手很大。刀柄的纏繩卻纏得很細，是給一隻小手纏的。, f: cold}
   appraise:
     - {realm: 4, text: 刀柄的纏繩舊了，纏得極細；繩尾一截被割斷，斷口整齊。}
-    - {realm: 10, text: 裂痕的走向，與「碎星指」的勁力相符。}
+    - {realm: 6, text: 裂痕的走向，像是被一種專門撬保冷盒鎖扣的工具硬扳出來的。}
   verify:
     - {who: tie, cost: 0, a: 「這刀……我補過。三個月前，一個瘦小的年輕人拿來的。」}
   opts:
-    deal: {label: 買下, text: 疤臉把刀丟給你，數也不數就把靈石揣進懷裡，轉身擠進人群。, fx: {codex: [duanshui]}}
+    deal: {label: 買下, text: 疤臉把刀丟給你，數都沒數就把靈石塞進口袋，轉身擠進人群。, fx: {codex: [duanshui]}}
     decline: {text: 疤臉罵了一聲，收刀走了。}
     expose: {right: true, text: 你說：「這刀柄，是給一隻小手纏的。」疤臉盯著你，手按上刀柄。過了好一會兒，他笑了一聲，走了。, fx: {rep: {loose: 1}, flag: [scar_grudge], codex: [duanshui]}}
-    report: {need: {flag: [bounty_seen]}, text: 你去執事堂報了疤臉的樣貌。周執事記下了，給了你二十靈石：「余小六的事，有消息再來。」, fx: {stones: 20, rel: {zhou: 1}, rep: {sect: 1}, flag: [scar_reported], codex: [duanshui], mem: {zhou: 你報了拿著余小六佩刀的人。}}}
+    report: {need: {flag: [bounty_seen]}, text: 你去派出所報了疤臉的樣貌。周警員記下了，給了你二十靈石：「余小六的事，有消息再來。」, fx: {stones: 20, rel: {zhou: 1}, rep: {sect: 1}, flag: [scar_reported], codex: [duanshui], mem: {zhou: 你報了拿著余小六佩刀的人。}}}
 
-# ───────────── 初四 ─────────────
+# ───────────── 第四天 ─────────────
 - id: d11
   openFace: smile
-  title: 便宜的療傷丹
+  title: 便宜的療傷藥
   npc: liu
   where: shop
   days: [4, 4]
@@ -420,14 +421,14 @@ deals:
   item: liaoshang
   qty: 3
   price: 9
-  lot: {q: 1, label: 柳郎中的療傷丹, flags: [sting, sect]}
+  lot: {q: 1, label: 柳醫師的療傷藥, flags: [sting, sect]}
   truth: {goods: genuine, origin: stolen, intent: sting}
-  lesson: 半價的療傷丹，開口就說「不用問來歷」，說「乾淨」時眼睛看著門外；瓶底的硃印沒擦乾淨。白七娘說，他賣過三回好東西，三家鋪子被查。
+  lesson: 半價的療傷藥，開口就說「不用問來歷」，說「乾淨」時眼睛看著門外；瓶底的紅印沒擦乾淨。白姐說，他賣過三次好東西，三家店被查。
   verdict: [decline, expose, report]
-  open: 「〈你〉，上好的療傷丹，三枚。九塊一枚。不用問來歷，乾淨得很。」
-  ask: {q: 丹是哪來的？, a: 「城西一位孫老爺，腿上的傷好了，丹藥用不完，託我轉賣。」}
+  open: 「〈你〉，上好的療傷藥，三瓶。九塊一瓶。不用問來歷，很乾淨。」
+  ask: {q: 藥是哪來的？, a: 「西邊一位孫先生，腳上的傷好了，藥用不完，託我轉賣。」}
   press:
-    - {q: 孫老爺住哪？, a: 「郎中不說病人的住處，這是規矩。」}
+    - {q: 孫先生住哪？, a: 「醫師不講病人住哪裡，這是規矩。」}
     - {q: 九塊？市價十八。, a: 「所以我說，〈你〉是聰明人。」}
   silence: {narr: 他不說話，只是笑著，替自己倒了第二杯茶。}
   haggle:
@@ -435,20 +436,20 @@ deals:
   tells:
     - {after: open, need: -1, text: 他說「乾淨」兩個字的時候，眼睛看的是門外。, f: smile}
   appraise:
-    - {realm: 4, text: 丹是好丹，色澤勻淨。丹瓶底有一圈極淡的硃印，被人用指腹擦過，沒擦乾淨。}
+    - {realm: 4, text: 藥是好藥，顏色很勻。藥瓶底有一圈很淡的紅印，被人用指腹擦過，沒擦乾淨。}
   verify:
-    - {who: bai, cost: 5, a: 「柳郎中的丹，從不還價。」}
-    - {who: yao, cost: 0, a: 「那個郎中？面生得很，來了沒兩個月。」}
+    - {who: bai, cost: 5, a: 「柳醫師的藥，從來不讓人還價。」}
+    - {who: yao, cost: 0, a: 「那個醫師？很面生，來不到兩個月。」}
   opts:
-    deal: {label: 買下, text: 柳郎中把三枚丹藥排在櫃上，拱拱手：「〈你〉是聰明人。」, fx: {event: [{id: e_sting, in: 2}]}}
-    decline: {text: 柳郎中拱拱手，走了。你看著他出門。他沒有去對門錢記。}
-    expose: {right: true, text: 你說：「九塊的療傷丹，瓶底的硃印還沒擦乾淨。」柳郎中的笑容一點都沒變，拱了拱手：「〈你〉是聰明人。」, fx: {rel: {liu: -2}, flag: [liu_exposed], mem: {liu: 想賣你帶執事堂印的療傷丹，被你說破。}}}
-    report: {text: 你去執事堂說了柳郎中的事。周執事聽完，看了你很久，笑了：「你倒是機靈。」, fx: {rel: {zhou: 2}, rep: {sect: 1}, tag: {sect: 機靈}, flag: [passed_sting], mem: {zhou: 你沒上柳郎中的鉤，還來報了。他記住你了。}}}
-    refer: {text: 你指了指對門錢記。柳郎中笑了笑：「錢記？不必了。」, fx: {flag: [liu_refer_hint]}}
+    deal: {label: 買下, text: 柳醫師把三瓶藥排在櫃上，點點頭：「〈你〉是聰明人。」, fx: {event: [{id: e_sting, in: 2}]}}
+    decline: {text: 柳醫師點點頭，走了。你看著他出門。他沒有去對門錢家店。}
+    expose: {right: true, text: 你說：「九塊的療傷藥，瓶底的紅印還沒擦乾淨。」柳醫師的笑容一點都沒變，點了點頭：「〈你〉是聰明人。」, fx: {rel: {liu: -2}, flag: [liu_exposed], mem: {liu: 想賣你瓶底有紅印的療傷藥，被你說破。}}}
+    report: {text: 你去派出所說了柳醫師的事。周警員聽完，看了你很久，笑了：「你倒是機靈。」, fx: {rel: {zhou: 2}, rep: {sect: 1}, tag: {sect: 機靈}, flag: [passed_sting], mem: {zhou: 你沒上柳醫師的鉤，還來報了。他記住你了。}}}
+    refer: {text: 你指了指對門錢家店。柳醫師笑了笑：「錢家店？不必了。」, fx: {flag: [liu_refer_hint]}}
 
 - id: d12
   openFace: smile
-  title: 錢掌櫃的包裹
+  title: 錢老闆的包裹
   npc: qian
   where: shop
   days: [4, 4]
@@ -458,11 +459,11 @@ deals:
   itemName: 一個油布包裹
   price: 5
   truth: {goods: fake, origin: contraband, intent: proxy}
-  lesson: 火漆的印紋歪了半分，分量不止幾塊樣品；鐵老蔫說錢記從不給人看樣品；「後天出城」是有人放出來的說法。收下，就是替人藏東西。
+  lesson: 封蠟的印紋歪了一點點，重量不只幾塊樣品；鐵師傅說錢家店從不給人看樣品；「後天出聚落」是有人故意放出來的說法。收下，就是幫人藏東西。
   verdict: [decline, expose, special]
-  intro: 包裹用油布裹著，封著寒潭宗的火漆。
+  intro: 包裹用油布包著，封口蓋著寒潭會的封蠟。
   open: 「〈你〉，幫個忙。這包東西後天有人來取，替我轉交。五塊辛苦費。」
-  ask: {q: 錢掌櫃怎麼不自己交？, a: 「我後天要出城收貨，人不在。放你這兒最安全。」}
+  ask: {q: 錢老闆怎麼不自己交？, a: 「我後天要出聚落收貨，人不在。放你這兒最安全。」}
   press:
     - {q: 裡面是什麼？, a: 「寒鐵樣品，給人看成色的。」}
     - {q: 誰來取？, a: 「到時你就知道了。」}
@@ -472,24 +473,24 @@ deals:
   tells:
     - {after: press, need: -2, text: 包裹不大，他放下時卻很小心，像怕它發出聲音。, f: uneasy}
   appraise:
-    - {realm: 4, text: 火漆是寒潭宗的，印紋卻歪了半分，像是照著描的。包裹的分量，不止幾塊樣品。}
+    - {realm: 4, text: 封蠟是寒潭會的樣式，印紋卻歪了一點點，像照著描的。包裹的重量，不只幾塊樣品。}
   verify:
-    - {who: tie, cost: 0, a: 「錢記的寒鐵樣品？他從不給人看樣品。」}
-    - {who: bai, cost: 5, a: 「錢掌櫃後天出城？是有這麼個說法。說法是誰放的，我就不說了。」}
+    - {who: tie, cost: 0, a: 「錢家店的寒鐵樣品？他從不給人看樣品。」}
+    - {who: bai, cost: 5, a: 「錢老闆後天出聚落？是有這麼個說法。說法是誰放的，我就不說了。」}
   opts:
     deal: {label: 答應, text: 你收下包裹，放在櫃下。錢不語拍拍你的肩：「好兄弟。」, fx: {flag: [pkg_taken], event: [{id: e_pkg, at: 6}], mem: {qian: 託你轉交一個包裹。}}}
     decline: {text: 錢不語笑笑：「那算了。」他抱著包裹回了對門。}
-    expose: {right: true, text: 你說：「這火漆，是照著描的吧。」錢不語的笑停了一瞬：「誤會，誤會。」他抱著包裹走了。, fx: {rel: {qian: -2}, flag: [pkg_exposed], mem: {qian: 想讓你替他收一個封著假火漆的包裹，被你看出來了。}}}
-    report: {text: 周執事聽完，擺擺手：「錢掌櫃的東西？你多心了。」, fx: {rel: {zhou: -1}, flag: [pkg_report_dismissed], mem: {zhou: 你去報錢記的包裹，他說你多心了。}}}
+    expose: {right: true, text: 你說：「這個封蠟，是照著描的吧。」錢不語的笑停了一瞬：「誤會，誤會。」他抱著包裹走了。, fx: {rel: {qian: -2}, flag: [pkg_exposed], mem: {qian: 想讓你替他收一個封著假封蠟的包裹，被你看出來了。}}}
+    report: {text: 周警員聽完，擺擺手：「錢老闆的東西？你多心了。」, fx: {rel: {zhou: -1}, flag: [pkg_report_dismissed], mem: {zhou: 你去報錢家店的包裹，他說你多心了。}}}
     special:
       seal: 偷看
       label: 將計就計（收下，偷看）
       need: {appraised: true}
-      text: 你收下包裹。等錢不語走遠，你挑開火漆。裡面是二十斤沒有印記的寒鐵，包鐵的襯紙是從一本舊帳冊上撕下來的。紙上寫著：「壬午年三月，出寒鐵三百斤予許記，收四十。另，周，二十。」你把那頁紙抄了一份，原樣封好，傍晚送回錢記：「這忙，我幫不上。」錢不語接過包裹，看了你一眼，什麼都沒說。
+      text: 你收下包裹。等錢不語走遠，你挑開封蠟。裡面是二十公斤沒有登記印記的寒鐵，包鐵的襯紙是從一本舊帳冊撕下來的。紙上寫著：「災後89年3月，出寒鐵三百公斤給許家，收四十。另，周，二十。」你把那頁紙抄了一份，原樣封好，傍晚送回錢家店：「這忙，我幫不上。」錢不語接過包裹，看了你一眼，什麼都沒說。
       fx: {give: [{item: zhangye, qty: 1, cost: 0}], flag: [pkg_peeked], codex: [zhangye], mem: {qian: 他的包裹你看過了。他不知道。}}
 
 - id: d13
-  title: 收定神香的駝隊
+  title: 收定神香的運貨人
   npc: han
   where: shop
   days: [4, 4]
@@ -501,23 +502,23 @@ deals:
   price: 39
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
-  open: 「掌櫃的，定神香有多少收多少。三十九一束。」
-  ask: {q: 駝隊要這麼多定神香做什麼？, a: 「要北上。北邊那條道上的人，最近都睡不著，說夜裡聽得見狼，一整夜一整夜地叫。」}
+  open: 「老闆，定神香有多少收多少。三十九一束。」
+  ask: {q: 要這麼多定神香做什麼？, a: 「要往北走。北邊那條路上的人，最近都睡不著，說晚上聽得到狼，一整夜一整夜地叫。」}
   press:
     - {q: 狼？, a: 「鐵背狼。往年冬天才下山，今年早了。」}
   silence: 「……四十，不能再多。」
   silenceRaise: 40
   haggle:
     - {price: 40, a: 「四十。」}
-    - {price: 41, a: 「四十一。我們趕路。」}
+    - {price: 41, a: 「四十一。我在趕路。」}
   verify:
     - {who: ge, cost: 0, a: 「狼？北林那邊是有些動靜。我家的狗這幾天夜裡不肯進屋。」}
   opts:
-    deal: {label: 賣給他, text: 韓九把定神香捆在背上，道了聲謝，北方口音很重。}
-    decline: {text: 「那我去別家問問。」韓九拱拱手走了。}
+    deal: {label: 賣給他, text: 韓九把定神香綁在騾子背上，說了聲謝謝，北邊口音很重。}
+    decline: {text: 「那我去別家問問。」韓九點點頭走了。}
     expose: {right: false, text: 韓九一臉莫名：「我買香，你拆穿我什麼？」, fx: {rel: {han: -1}}}
 
-# ───────────── 初五 ─────────────
+# ───────────── 第五天 ─────────────
 - id: d14
   openFace: sad
   title: 老葛的狼牙
@@ -534,10 +535,10 @@ deals:
   lesson: 狼群下山的消息、他手臂上的傷、帶血絲的牙根，全都對得上。這筆是真的，價錢也公道。
   verdict: [deal, special]
   intro: 他的左臂纏著布，布上滲著血。
-  open: 「許掌櫃，狼牙，八枚。四塊一枚。」
-  ask: {q: 老葛，你的手怎麼了？, a: 「昨夜狼進了村，我們幾個打死了三頭。」}
+  open: 「許老闆，狼牙，八顆。四塊一顆。」
+  ask: {q: 老葛，你的手怎麼了？, a: 「昨天晚上狼跑進村子，我們幾個打死了三隻。」}
   press:
-    - {q: 牙根怎麼帶血絲？, a: 「狼還沒死透，村裡的人就拔了。說活取的牙值錢。」}
+    - {q: 牙根怎麼帶血絲？, a: 「狼還沒死透，村裡的人就拔了。說活取的牙比較值錢。」}
   silence: 「……我要買藥。三塊半也行。」
   silenceDrop: 3.5
   haggle:
@@ -548,19 +549,19 @@ deals:
   verify:
     - {who: aheng, cost: 0, notFlag: aheng_taken, a: 「葛叔不會騙人。」}
   opts:
-    deal: {label: 買下, text: 老葛把狼牙倒在櫃上，一枚一枚數給你看。, fx: {relByPrice: {npc: ge, atLeast: 4, good: 1, bad: -1}, mem: {ge: 狼群下山後，賣給你八枚活取的狼牙。}}}
+    deal: {label: 買下, text: 老葛把狼牙倒在櫃上，一顆一顆數給你看。, fx: {relByPrice: {npc: ge, atLeast: 4, good: 1, bad: -1}, mem: {ge: 狼群下山後，賣給你八顆活取的狼牙。}}}
     decline: {text: 老葛點點頭，把狼牙收回布袋，慢慢走了。}
-    expose: {right: false, text: 老葛愣在那裡，好一會兒才說：「許掌櫃，我老葛這輩子沒騙過人。」, fx: {rel: {ge: -3}, rep: {loose: -1}}}
+    expose: {right: false, text: 老葛愣在那裡，好一會兒才說：「許老闆，我老葛這輩子沒騙過人。」, fx: {rel: {ge: -3}, rep: {loose: -1}}}
     special:
       seal: 多給
-      label: 多給他一點（五塊一枚）
+      label: 多給他一點（五塊一顆）
       price: 5
       text: 你數了四十塊靈石給他。老葛看著靈石，又看看你，嘴唇動了動，什麼都沒說，朝你點了點頭。
       fx: {rel: {ge: 3}, rep: {loose: 1}, tag: {loose: 厚道}, mem: {ge: 你多給了他錢買藥。}}
 
 - id: d15
   openFace: smile
-  title: 霜紋玉牌
+  title: 霜紋隊牌
   npc: stone
   where: shop
   days: [5, 6]
@@ -570,26 +571,26 @@ deals:
   item: yupai
   qty: 1
   price: 5
-  lot: {q: 1, label: 霜紋玉牌}
+  lot: {q: 1, label: 霜紋隊牌}
   truth: {goods: genuine, origin: clean, intent: plain}
   lesson: 小石頭先拿給你看，是因為你上回沒坑他。名字不是他刮的。
   verdict: [deal]
-  open: 「掌櫃的，上回你沒坑我。這個，我先給你看。」
-  ask: {q: 在哪撿的？, a: 「南嶺的溪裡，卡在石縫裡。」}
+  open: 「老闆，上回你沒坑我。這個，我先給你看。」
+  ask: {q: 在哪撿的？, a: 「南稜的溪裡，卡在石縫裡。」}
   press:
     - {q: 背面的名字呢？, a: 「本來就刮掉了。不是我刮的。」}
-  silence: 「……師父說這是好玉。五塊。」
+  silence: 「……鐵師傅說這是好石頭。五塊。」
   haggle:
-    - {price: 4, a: 「四塊。師父說不能賣太便宜。」}
+    - {price: 4, a: 「四塊。鐵師傅說不能賣太便宜。」}
   appraise:
-    - {realm: 4, text: 玉是好玉。一面霜紋，一面的名字被人用指甲一點一點刮掉了。}
+    - {realm: 4, text: 石牌磨得很光。一面霜紋，一面的名字被人用指甲一點一點刮掉了。}
   opts:
-    deal: {label: 買下, text: 小石頭把玉牌放在你手心：「師父說，好東西要給識貨的人。」, fx: {rel: {stone: 1}, codex: [yupai]}}
-    decline: {text: 小石頭把玉牌收回懷裡：「那我先留著。」}
+    deal: {label: 買下, text: 小石頭把隊牌放在你手心：「鐵師傅說，好東西要給識貨的人。」, fx: {rel: {stone: 1}, codex: [yupai]}}
+    decline: {text: 小石頭把隊牌收回口袋：「那我先留著。」}
     expose: {right: false, text: 小石頭眼眶一紅：「我沒刮！」他跑了。, fx: {rel: {stone: -3}}}
 
 - id: d16
-  title: 回春堂的學徒
+  title: 回春藥行的學徒
   npc: xiaoman
   where: shop
   days: [5, 6]
@@ -602,32 +603,32 @@ deals:
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
   honestyTest: true
-  open: 「掌櫃的，我是回春堂的學徒葛小滿。師父要二十年以上的赤炎草，五株，十四塊一株。」
-  ask: {q: 張掌事要煉什麼？, a: 「療傷丹。城北傷了人，師父說要多煉一爐。」}
+  open: 「老闆，我是回春藥行的學徒葛小滿。師父要二十年以上的赤炎草，五株，十四塊一株。」
+  ask: {q: 張主任要做什麼藥？, a: 「療傷藥。北邊有人受傷，師父說要多做一批。」}
   press:
     - {q: 你分得出年份嗎？, a: 「……我還在學。師父說，看金線。」}
-  silence: 「……掌櫃的？」
+  silence: 「……老闆？」
   haggle:
     - {price: 15, a: 「十五。師父給的就這麼多。」}
   opts:
-    deal: {label: 賣給她, text: 葛小滿數了好幾遍，把草小心地放進藥箱：「謝謝掌櫃的。」}
+    deal: {label: 賣給她, text: 葛小滿數了好幾遍，把草小心地放進藥箱：「謝謝老闆。」}
     decline: {text: 「那我再去別家看看。」她鞠了個躬，走了。}
 
 - id: d20
-  title: 戴鬼面的人
+  title: 戴面具的人
   npc: hu
   where: tea
-  hook: {t: 窗邊的人, d: 窗邊有個戴鬼面的人，朝你招了招手。}
+  hook: {t: 窗邊的人, d: 窗邊有個戴半張面具的人，朝你招了招手。}
   days: [5, 6]
   prio: 9
   side: task
   item: mask
-  itemName: 鬼面
+  itemName: 面具
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
-  intro: 一個戴著半張鬼面的男人在你對面坐下，自己倒了茶。
+  intro: 一個戴著半張舊塑膠面具的男人在你對面坐下，自己倒了茶。
   open: 「聽說〈你〉手上，有些燙手的東西。」
-  ask: {q: 你是誰？, a: 「戴著面，就不是誰。」}
+  ask: {q: 你是誰？, a: 「戴著面具，就不是誰。」}
   press:
     - {q: 你收什麼？, a: 「什麼都收。不問來路，只問價錢。」}
   silence: 「……熟客九折，生客加三成。〈你〉現在還是生客。」
@@ -636,18 +637,18 @@ deals:
     sellhot:
       label: 把燙手的東西賣給他
       need: {holdAny: [stolen, sting]}
-      text: 他把你帶來的東西看都不看，就收進袖子裡，推過來一袋靈石。「下次，直接來鬼市找我。」
+      text: 他看都不看你帶來的東西，直接收進背包，推過來一袋靈石。「下次，直接去黑市找我。」
       fx: {sellHot: {xuechan: 55, duanshui: 15, liaoshang: 12}, rep: {ghost: 1}, flag: [fenced], mem: {hu: 從你手上收了燙手的東西。}}
     mask:
-      label: 買他的鬼面（三十）
+      label: 買他的面具（三十）
       need: {stones: 30}
-      text: 他從懷裡摸出半張鬼面，放在桌上：「戴上它，鬼市不看修為，看臉。」
-      fx: {stones: -30, flag: [ghostmask], mem: {hu: 賣給你一張鬼面。}}
+      text: 他從口袋裡摸出半張面具，放在桌上：「戴上它，黑市的人就認得你。」
+      fx: {stones: -30, flag: [ghostmask], mem: {hu: 賣給你一張面具。}}
 
-# ───────────── 初六 ─────────────
+# ───────────── 第六天 ─────────────
 - id: d17
   openFace: smile
-  title: 白七娘買消息
+  title: 白姐買消息
   npc: bai
   where: shop
   days: [6, 6]
@@ -658,13 +659,13 @@ deals:
   infoBuyer: true
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
-  open: 「許掌櫃這個月，看穿了不少人吧？說一件給我聽。價錢好商量。」
-  ask: {q: 七娘買消息做什麼？, a: 「我開茶樓，賣的就是消息。買的人多，賣的人少。」}
+  open: 「許老闆這個月，看穿了不少人吧？說一件給我聽。價錢好商量。」
+  ask: {q: 白姐買消息做什麼？, a: 「我開茶館，賣的就是消息。買的人多，賣的人少。」}
   press:
     - {q: 你會賣給誰？, a: 「誰付得起，就賣給誰。這是規矩。」}
   silence: 「……不說也好。嘴緊的人，我也喜歡。」
   opts:
-    decline: {label: 什麼都不說, text: 白七娘笑了：「許掌櫃嘴緊。」她放下一包茶葉走了。, fx: {rel: {bai: 1}, mem: {bai: 想買你的消息，你什麼都沒說。}}}
+    decline: {label: 什麼都不說, text: 白姐笑了：「許老闆嘴緊。」她放下一包茶葉走了。, fx: {rel: {bai: 1}, mem: {bai: 想買你的消息，你什麼都沒說。}}}
 
 - id: d19
   openFace: sad
@@ -681,50 +682,50 @@ deals:
   truth: {goods: genuine, origin: clean, intent: plain}
   lesson: 刀柄的細繩是她纏的，她手小。這筆沒有陷阱，只看你怎麼做。
   verdict: [deal, special, report]
-  open: 「掌櫃的……這把刀，是我哥的。」
-  ask: {q: 你哥哥是誰？, a: 「余小六。三個月前出城，就沒回來。」}
+  open: 「老闆……這把刀，是我哥的。」
+  ask: {q: 你哥哥是誰？, a: 「余小六。三個月前出聚落，就沒回來。」}
   press:
     - {q: 你怎麼認得是他的刀？, a: 「刀柄的繩是我纏的。我手小，纏得細。」}
-    - {q: 他出城做什麼？, a: 「……他欠了人錢。說出去一趟，回來就能還。」}
+    - {q: 他出聚落做什麼？, a: 「……他欠了人錢。說出去一趟，回來就能還。」}
   silence: 「……我只有十塊。」
   opts:
-    deal: {label: 賣給她（十）, text: 她把布袋裡的靈石全倒在櫃上，十塊，一塊不多。她抱著刀，一直沒哭。, fx: {rep: {loose: 2}, tag: {loose: 厚道}, rel: {xiaoqi: 3}, mem: {xiaoqi: 你把哥哥的刀賣還給她。}}}
+    deal: {label: 賣給她（十）, text: 她把布袋裡的靈石全倒在櫃上，十塊，一塊不多。她抱著刀，一直沒有哭。, fx: {rep: {loose: 2}, tag: {loose: 厚道}, rel: {xiaoqi: 3}, mem: {xiaoqi: 你把哥哥的刀賣還給她。}}}
     special:
       seal: 買下
       seal: 還刀
       label: 把刀還給她
       text: 你把刀推到她面前，沒收錢。她抱著刀，終於哭了。
       fx: {take: [{item: duanshui, qty: 1}], rep: {loose: 2}, tag: {loose: 厚道}, rel: {xiaoqi: 4}, flag: [gave_knife], mem: {xiaoqi: 你把哥哥的刀還給了她。}}
-    report: {label: 帶她去執事堂, text: 你帶她去了執事堂。周執事收下刀，記了一筆，給了你二十：「余小六的案子，有下文會通知你們。」, fx: {take: [{item: duanshui, qty: 1}], stones: 20, rel: {zhou: 1, xiaoqi: 1}, mem: {xiaoqi: 你帶她去了執事堂。}}}
+    report: {label: 帶她去派出所, text: 你帶她去了派出所。周警員收下刀，記了一筆，給了你二十：「余小六的案子，有下文會通知你們。」, fx: {take: [{item: duanshui, qty: 1}], stones: 20, rel: {zhou: 1, xiaoqi: 1}, mem: {xiaoqi: 你帶她去了派出所。}}}
     decline: {text: 她低著頭走了。, fx: {rep: {loose: -1}}}
 
-# 月底：執事堂收規費（不計入二十筆）
+# 月底：管理處收規費（不計入二十筆）
 - id: d18
-  title: 月底規費
-  npc: zhou
+  title: 聚落規費
+  npc: he
   where: dues
   month: all
   days: [6, 6]
   side: task
   item: dues
-  itemName: 坊市規費
+  itemName: 聚落規費
   extra: true
   neutral: true
   truth: {goods: genuine, origin: clean, intent: plain}
-  open: 「月底了。規費，八十。」
-  openHigh: 「許掌櫃這個月生意不錯？規費，是不是也該跟著漲一漲。一百。」
-  ask: {q: 規費怎麼算的？, a: 「坊市的規矩，執事堂定的。你問我，我問誰？」}
-  silence: 「……我的時間很貴。」
+  open: 「北邊可能要封路，管理處先把這一期的帳收齊。規費，八十。」
+  openHigh: 「許老闆這陣子生意不錯喔？規費也要跟著調一下。一百。」
+  ask: {q: 規費怎麼算的？, a: 「公告上有寫，管理處開會定的。你問我，我也只是收錢的。」}
+  silence: 「……後面還有十幾家要收。」
   opts:
-    pay: {label: 照付, text: 周執事把靈石收進袖子，在帳上記了一筆：「許掌櫃爽快。」}
+    pay: {label: 照付, text: 何小姐把靈石點清楚，在收據上蓋了章：「許老闆爽快。」}
     poor:
       label: 哭窮
-      text: 周執事看了看你空了大半的貨架，哼了一聲：「八十。下個月可不行。」
-      fail: {text: 周執事笑了：「許掌櫃，你這個月的威風，整條街都看見了。一百，一塊都不能少。」, fx: {rel: {zhou: -1}}}
+      text: 何小姐看了看你空了大半的貨架，嘆了口氣：「八十。下次不行喔。」
+      fail: {text: 何小姐笑了：「許老闆，你這陣子多風光，整條街都看到了。一百，一塊都不能少。」, fx: {rel: {he: -1}}}
 
 - id: d21
   openFace: neutral
-  title: 執事堂來買寒鐵
+  title: 管理處來買寒鐵
   npc: afu
   where: shop
   days: [3, 5]
@@ -736,31 +737,31 @@ deals:
   price: 9
   payDouble: true
   truth: {goods: genuine, origin: clean, intent: test}
-  lesson: 錢袋可以掂一掂：五斤寒鐵四十五塊，袋裡至少九十。阿福說帳房給的，他沒點。這是試探——點出多給了，才算過關。
+  lesson: 錢袋可以試一試：五公斤寒鐵四十五塊，袋裡至少九十。阿福說帳房給的，他沒點。這是試探——點出多給了，才算過關。
   verdict: [special]
-  open: 「許掌櫃，執事堂要五斤寒鐵修門閂。周執事說照老價，九塊一斤。錢在這兒。」他把一袋靈石放在櫃上。
-  ask: {q: 執事堂自己沒有寒鐵？, a: 「庫裡的是宗門的，不能動。周執事說，坊市的事，用坊市的貨。」}
+  open: 「許老闆，管理處要五公斤寒鐵修門閂。周警員說照老價，九塊一公斤。錢在這裡。」他把一袋靈石放在櫃上。
+  ask: {q: 管理處自己沒有寒鐵？, a: 「倉庫裡的是寒潭會配額，不能動。周警員說，聚落的事，用聚落的貨。」}
   press:
-    - {q: 這袋靈石，你點過嗎？, a: 「帳房給的，我沒點。帳上寫多少，就是多少。」}
+    - {q: 這袋靈石，你點過嗎？, a: 「會計給的，我沒點。帳上寫多少，就是多少。」}
   silence: {narr: 他站著等你點貨，眼睛一直看著那袋靈石，又看看你。}
   appraise:
-    - {realm: 4, text: 你掂了掂那袋靈石。五斤寒鐵四十五塊，這袋至少有九十。}
+    - {realm: 4, text: 你拿起來試了試那袋靈石。五公斤寒鐵四十五塊，這袋至少有九十。}
   verify:
-    - {who: bai, cost: 5, a: 「執事堂的帳房？從來沒算錯過一塊靈石。」}
+    - {who: bai, cost: 5, a: 「管理處的會計？從來沒算錯過一塊靈石。」}
   opts:
-    deal: {label: 交貨, text: 阿福扛著寒鐵走了。袋子裡是九十塊靈石，整整多了一倍。, fx: {stones: 45, flag: [kept_overpay], mem: {zhou: 執事堂多付了你一倍的寒鐵錢，你收下了。}}}
+    deal: {label: 交貨, text: 阿福扛著寒鐵走了。袋子裡是九十塊靈石，整整多了一倍。, fx: {stones: 45, flag: [kept_overpay], mem: {zhou: 管理處多付了你一倍的寒鐵錢，你收下了。}}}
     special:
       seal: 退錢
       label: 點出多給了
       need: {noticed: true}
-      text: 你把多出來的四十五塊推回去：「帳房多給了。」阿福愣了一下，笑了，像是鬆了口氣：「周執事說，許掌櫃要是會退，就讓我說一聲：下個月執事堂有一筆大生意。」
-      fx: {rel: {zhou: 2}, rep: {sect: 1}, tag: {sect: 帳清}, flag: [passed_test], mem: {zhou: 你退回了執事堂多付的錢。他記住了。}}
-    decline: {text: 「那我去錢記問問。」阿福把靈石收回去，走了。}
+      text: 你把多出來的四十五塊推回去：「會計多給了。」阿福愣了一下，笑了，像是鬆了口氣：「周警員說，許老闆要是會退，就叫我跟你講：下個月有一筆大生意。」
+      fx: {rel: {zhou: 2}, rep: {sect: 1}, tag: {sect: 帳清}, flag: [passed_test], mem: {zhou: 你退回了管理處多付的錢。他記住了。}}
+    decline: {text: 「那我去錢家店問問。」阿福把靈石收回去，走了。}
 
 # ═════════════════════════ 第二個月 ═════════════════════════
-# 市集日在初四。month: 2 的交易只在第二個月出現。
+# 市集日在第四天。month: 2 的交易只在第二個月出現。
 
-# ───────────── 初一、初二 ─────────────
+# ───────────── 第一天、第二天 ─────────────
 - id: m201
   month: 2
   title: 合夥收寒鐵
@@ -772,39 +773,39 @@ deals:
   item: hantie
   qty: 20
   price: 4
-  lot: {q: 1, label: 錢記的寒鐵, flags: [contraband]}
+  lot: {q: 1, label: 錢家店的寒鐵, flags: [contraband]}
   truth: {goods: genuine, origin: contraband, intent: setup}
-  lesson: 市價八九塊的寒鐵賣四塊，錢還「不急著要」。鑑定看得出每一塊都沒有礦脈的印記；初二執事堂就貼了告示——北面礦上少了三百斤無印寒鐵。鐵老蔫一句話就說穿了：沒有印記的鐵，只有一條路出得來。十二年前，你爹帳上也有一筆一模一樣的生意。
+  lesson: 市價八九塊的寒鐵賣四塊，錢還「不急著要」。鑑定看得出每一塊都沒有登記印記；第二天管理處就貼了公告——北礦少了三百公斤沒有印記的寒鐵。鐵師傅一句話就說穿了：沒有印記的鐵，只有一條路出得來。十二年前，你爸帳上也有一筆一模一樣的生意。
   verdict: [decline, expose, special]
   openFace: smile
-  open: 「許老弟，上個月是我不對。今天帶了一樁好生意來賠罪：二十斤寒鐵，四塊一斤，比市價便宜一半。錢不急，你賣出去再給我也行。」
-  ask: {q: 這麼便宜，鐵是哪來的？, a: 「北面的老礦工，家裡急用錢，便宜出。我收多了，鋪子裡放不下。」, f: smile}
+  open: 「許老弟，上個月是我不對。今天帶一筆好生意來賠罪：二十公斤寒鐵，四塊一公斤，比市價便宜一半。錢不急，你賣出去再給我也可以。」
+  ask: {q: 這麼便宜，鐵是哪來的？, a: 「北邊的老礦工，家裡急用錢，便宜賣。我收太多，店裡放不下。」, f: smile}
   press:
-    - {q: 放不下，為什麼不自己慢慢賣？, a: 「我這陣子要跑北邊，鋪子顧不過來。肥水不落外人田嘛。」, f: smile}
-    - {q: 鐵上有礦脈的印記嗎？, a: 「印記？老礦工自家挖的，哪來的印記。寒鐵就是寒鐵，收的人也不看那個。」, f: smile}
-  silence: 「……你爹當年也這樣，一想就想半天。最後還不是收了。」
+    - {q: 放不下，為什麼不自己慢慢賣？, a: 「我這陣子要跑北邊，店顧不過來。好康的當然先給自己人。」, f: smile}
+    - {q: 鐵上有礦脈的印記嗎？, a: 「印記？老礦工自己挖的，哪來的印記。寒鐵就是寒鐵，買的人也不看那個。」, f: smile}
+  silence: 「……你爸當年也這樣，一想就想半天。最後還不是收了。」
   silenceFace: smile
   haggle:
-    - {price: 3.5, a: 「三塊半！老弟，我這是虧本賠罪。」, f: think}
+    - {price: 3.5, a: 「三塊半！老弟，我這是虧本在賠罪。」, f: think}
   tells:
     - {after: press, need: -3, text: 你問到印記的時候，他的笑停了一下，又接上了。, f: uneasy}
   appraise:
-    - {realm: 4, text: 鐵是好鐵，成色勻淨。可每一塊都光溜溜的，沒有礦脈打上的印記。}
+    - {realm: 4, text: 鐵是好鐵，成色很勻。可是每一塊都光溜溜的，沒有礦上打的登記印記。}
   verify:
-    - {who: tie, cost: 0, a: 「沒有印記的寒鐵？坊市裡只有一條路出得來那種鐵。你別碰。」}
-    - {who: bai, cost: 5, a: 「北面礦上這個月點貨，聽說少了些什麼。少了什麼，執事堂還沒說。」}
+    - {who: tie, cost: 0, a: 「沒有印記的寒鐵？聚落裡只有一條路出得來那種鐵。你別碰。」}
+    - {who: bai, cost: 5, a: 「北礦這個月盤點，聽說少了一些東西。少了什麼，管理處還沒講。」}
   opts:
-    deal: {label: 買下, text: 錢不語笑著拍拍你的肩：「爽快！跟你爹一樣爽快。」他讓夥計把鐵搬進你的庫房，自己在門口多站了一會兒。, fx: {event: [{id: e_siti_raid, at: 4}], mem: {qian: 賣給你二十斤沒有印記的寒鐵，很便宜。}}}
-    decline: {text: 錢不語也不惱：「行，那我找別家。」他走的時候還在笑。, fx: {mem: {qian: 想賣你二十斤便宜寒鐵，你沒要。}}}
-    expose: {right: true, label: 點破, text: 你說：「沒有印記的寒鐵，四塊一斤，錢掌櫃不留著自己賺，倒來找我。」錢不語的笑淡了一點：「老弟多心了。」他讓夥計把鐵搬了回去。, fx: {rel: {qian: -1}, flag: [refused_siti], mem: {qian: 想賣你無印寒鐵，被你點破了。}}}
-    report: {text: 你去執事堂說了這件事。周執事頭也沒抬：「錢掌櫃的貨？你看錯了吧。」, fx: {rel: {zhou: -1}, mem: {zhou: 你去告錢記賣無印寒鐵，他說你看錯了。}}}
+    deal: {label: 買下, text: 錢不語笑著拍拍你的肩：「爽快！跟你爸一樣爽快。」他叫店員把鐵搬進你的倉庫，自己在門口多站了一下。, fx: {event: [{id: e_siti_raid, at: 4}], mem: {qian: 賣給你二十公斤沒有印記的寒鐵，很便宜。}}}
+    decline: {text: 錢不語也不惱：「行，那我找別家。」他走的時候還在笑。, fx: {mem: {qian: 想賣你二十公斤便宜寒鐵，你沒要。}}}
+    expose: {right: true, label: 點破, text: 你說：「沒有印記的寒鐵，四塊一公斤，錢老闆不留著自己賺，反而來找我。」錢不語的笑淡了一點：「老弟想太多了。」他叫店員把鐵搬了回去。, fx: {rel: {qian: -1}, flag: [refused_siti], mem: {qian: 想賣你無印寒鐵，被你點破了。}}}
+    report: {text: 你去派出所說了這件事。周警員頭也沒抬：「錢老闆的貨？你看錯了吧。」, fx: {rel: {zhou: -1}, mem: {zhou: 你去告錢家店賣無印寒鐵，他說你看錯了。}}}
     special:
       seal: 對帳
-      label: 拿你爹的帳冊說話
+      label: 拿你爸的帳冊說話
       need: {has: {zhangce: 1}, noticed: true}
-      text: 你把帳冊翻到那一頁，推到他面前：「壬午年三月，收寒鐵三百斤，付靈石四十。錢掌櫃，十二年了，這生意的做法一點都沒變。」錢不語盯著那一行字看了很久，臉上的笑一點一點收乾淨了。他讓夥計把鐵搬了回去，走到門口，回頭說了一句：「你爹當年，要是有你一半小心就好了。」
+      text: 你把帳冊翻到那一頁，推到他面前：「災後89年3月，收寒鐵三百公斤，付靈石四十。錢老闆，十二年了，這種生意的做法一點都沒變。」錢不語盯著那一行字看了很久，臉上的笑一點一點收乾淨了。他叫店員把鐵搬回去，走到門口，回頭說了一句：「你爸當年，要是有你一半小心就好了。」
       f: shock
-      fx: {rel: {qian: -3}, rep: {loose: 1}, flag: [refused_siti, qian_confronted], mem: {qian: 你拿你爹的帳冊，當面跟他對了十二年前那筆帳。}}
+      fx: {rel: {qian: -3}, rep: {loose: 1}, flag: [refused_siti, qian_confronted], mem: {qian: 你拿你爸的帳冊，當面跟他對了十二年前那筆帳。}}
 
 - id: m202
   month: 2
@@ -819,35 +820,35 @@ deals:
   price: 12
   lot: {q: 1, label: 尋脈羅盤}
   truth: {goods: undervalued, origin: inheritance, intent: plain}
-  lesson: 羅盤天池裡那滴水銀聚而不散，指針會自己找地脈——這是尋脈羅盤，鑑定看得出來，鐵老蔫也認得，說年輕時見過一個賣了六十。錢記說它只值五塊，是在等她走投無路。她說的每一句都是實話。
+  lesson: 羅盤中間那滴水銀聚著不散，指針會自己找地脈——這是尋脈羅盤，鑑定看得出來，鐵師傅也認得，說年輕時見過一個賣了六十。錢家店說它只值五塊，是在等她走投無路。她說的每一句都是實話。
   verdict: [special, expose]
   noJudge: [deal]
-  intro: 一個穿素服的婦人站在櫃前，懷裡抱著一個用舊布包著的東西，包得很仔細。
+  intro: 一個穿素色衣服的太太站在櫃台前，懷裡抱著一個用舊布包著的東西，包得很仔細。
   openFace: sad
-  open: 「掌櫃的，這是我當家的留下的羅盤。對門錢記說，這東西只值五塊……我不懂。您看看，十二塊收不收？」
-  ask: {q: 您當家的是做什麼的？, a: 「替人看地脈的。去年冬天進了北面的礦，沒出來。」, f: sad}
+  open: 「老闆，這是我先生留下的羅盤。對面錢家店說，這只值五塊……我不懂。您看看，十二塊收不收？」
+  ask: {q: 您先生是做什麼的？, a: 「幫人看地脈的。去年冬天進了北礦，沒出來。」, f: sad}
   press:
-    - {q: 錢記怎麼說的？, a: 「錢掌櫃說，這種舊羅盤滿街都是，五塊他都嫌多。他說等我想通了再去找他。」, f: sad}
-    - {q: 為什麼要十二塊？, a: 「孩子要交學堂的束脩，十二塊。多一塊，我都不敢要。」, f: sad}
-  silence: 「……十塊也行。掌櫃的，您看著給吧。」
+    - {q: 錢家店怎麼說的？, a: 「錢老闆說，這種舊羅盤滿街都是，五塊他都嫌多。他說等我想通了再去找他。」, f: sad}
+    - {q: 為什麼是十二塊？, a: 「小孩要交學費，十二塊。多一塊，我都不敢要。」, f: sad}
+  silence: 「……十塊也行。老闆，您看著給吧。」
   silenceFace: sad
   silenceDrop: 10
   haggle:
     - {price: 10, a: 「十塊……行。」, f: sad}
   appraise:
-    - {realm: 4, text: 羅盤中央的天池裡，有一滴水銀聚而不散。你把羅盤放平，指針慢慢轉了半圈，停在北面。}
+    - {realm: 4, text: 羅盤中間有一滴水銀聚著不散。你把羅盤放平，指針慢慢轉了半圈，停在北邊。}
   verify:
     - {who: tie, cost: 0, a: 「尋脈羅盤？好東西。我年輕時見過一個，賣了六十。」}
     - {who: qian, cost: 0, a: 「那個舊羅盤？五塊頂天了。老弟要是想要，我五塊收了轉給你。」}
   opts:
-    deal: {label: 買下, text: 她把羅盤放在櫃上，手在布上停了一下才收回去：「謝謝掌櫃的。」, fx: {codex: [luopan], mem: {meng: 用她開的價，買下了她亡夫的羅盤。}}}
-    decline: {text: 她把羅盤包好，低著頭走了。你看見她在錢記門口站了很久，沒有進去。}
-    expose: {right: true, label: 告訴她值多少, text: 你告訴她，這是尋脈羅盤，懂行的人出價五六十。她愣了很久，眼圈紅了，朝你鞠了一躬：「我去回春堂問問。」, f: cry, fx: {rel: {meng: 3}, rep: {loose: 1}, tag: {loose: 厚道}, codex: [luopan], mem: {meng: 你告訴她羅盤的真價，她沒有賣給你。}}}
+    deal: {label: 買下, text: 她把羅盤放在櫃上，手在布上停了一下才收回去：「謝謝老闆。」, fx: {codex: [luopan], mem: {meng: 用她開的價，買下了她亡夫的羅盤。}}}
+    decline: {text: 她把羅盤包好，低著頭走了。你看見她在錢家店門口站了很久，沒有進去。}
+    expose: {right: true, label: 告訴她值多少, text: 你告訴她，這是尋脈羅盤，懂行的人出價五六十。她愣了很久，眼圈紅了，朝你鞠了一躬：「我去回春藥行問問。」, f: cry, fx: {rel: {meng: 3}, rep: {loose: 1}, tag: {loose: 厚道}, codex: [luopan], mem: {meng: 你告訴她羅盤的真價，她沒有賣給你。}}}
     special:
       seal: 公道
       label: 多給她一些（四十）
       price: 40
-      text: 你數了四十塊靈石推過去。她看著靈石，又看看你，嘴唇動了好幾次：「掌櫃的……您是不是數錯了？」你說沒有。她把羅盤放下，深深鞠了一躬，走的時候一直用袖子擦眼睛。
+      text: 你數了四十塊靈石推過去。她看著靈石，又看看你，嘴唇動了好幾次：「老闆……您是不是算錯了？」你說沒有。她把羅盤放下，深深鞠了一個躬，走的時候一直用袖子擦眼睛。
       f: cry
       fx: {rel: {meng: 3}, rep: {loose: 1}, tag: {loose: 厚道}, flag: [meng_fair], codex: [luopan], mem: {meng: 你用四十塊買下了她亡夫的羅盤。}}
 
@@ -869,19 +870,19 @@ deals:
   lesson: 上個月她把雪蟾酥託給你，你守了信。這一回她給的是熟客的價，草也是好草。
   verdict: [deal]
   openFace: neutral
-  open: 「掌櫃的。上回的賞錢，我收到了。這幾株給你，九塊。」
-  ask: {q: 最近北林怎麼樣？, a: 「狼走了。溪邊有人的腳印，很小，往南嶺去。不是我弟弟的。」, f: think}
+  open: 「老闆。上回的賞錢，我收到了。這幾株給你，九塊。」
+  ask: {q: 最近北林怎麼樣？, a: 「狼走了。溪邊有人的腳印，很小，往南稜去。不是我弟弟的。」, f: think}
   press:
     - {q: 腳印？什麼時候的？, a: 「這幾天的。一個人，走得很急，有時候是拖著腳走的。」, f: think}
-  silence: 「……你要是見到一個右手受傷的瘦小子，先別報官。他不是壞人。」
+  silence: 「……你要是遇到一個右手受傷的瘦瘦的年輕人，先不要報警。他不是壞人。」
   silenceFace: uneasy
   appraise:
     - {realm: 4, text: 葉背金線兩道，根上帶著北林的黑土。跟上個月一樣仔細。}
   opts:
-    deal: {label: 買下, text: 她把草遞給你，這回沒有馬上走：「掌櫃的，你是好人。」說完，自己先別開了臉。, f: smile, fx: {rel: {aheng: 1}, mem: {aheng: 又來賣你草，跟你說了北林溪邊的腳印。}}}
+    deal: {label: 買下, text: 她把草遞給你，這回沒有馬上走：「老闆，你是好人。」說完，自己先別開了臉。, f: smile, fx: {rel: {aheng: 1}, mem: {aheng: 又來賣你草，跟你說了北林溪邊的腳印。}}}
     decline: {text: 她點點頭，把草收回簍子裡。}
 
-# ───────────── 初二至初四 ─────────────
+# ───────────── 第二天至第四天 ─────────────
 - id: m204
   month: 2
   title: 又一塊發燙的石頭
@@ -895,30 +896,30 @@ deals:
   price: 8
   lot: {q: 0.04, label: 帶紅紋的石頭, flags: [fake]}
   truth: {goods: fake, origin: clean, intent: innocent}
-  lesson: 真的地火靈髓白天是涼的，入夜才回溫；這一塊白天比晚上還燙，是剛在火邊烤過，布都被烤黃了。石心那線紅是畫進石縫的硃砂，指甲一刮就掉。小石頭自己也被騙了——他是想幫你。
+  lesson: 真的地火靈髓白天是涼的，晚上才回溫；這一塊白天比晚上還燙，是剛在火邊烤過，布都被烤黃了。石心那線紅是畫進石縫的紅墨，指甲一刮就掉。小石頭自己也被騙了——他是想幫你。
   verdict: [decline, expose]
   openFace: smile
-  open: 「掌櫃的！一塊會發燙的石頭！我用五塊跟一個外地人換的，八塊給你，我只賺三塊。鐵老蔫說過，會發燙的石頭值錢……」
-  ask: {q: 跟誰換的？, a: 「一個戴斗笠的外地人，說他在南嶺撿了好幾塊，帶不動。他還問我，上回那塊賣給誰了。」, f: smile}
+  open: 「老闆！一塊會發燙的石頭！我用五塊跟一個外地人換的，八塊給你，我只賺三塊。鐵師傅說過，會發燙的石頭值錢……」
+  ask: {q: 跟誰換的？, a: 「一個戴斗笠的外地人，說他在南稜撿了好幾塊，帶不動。他還問我，上次那塊賣給誰了。」, f: smile}
   press:
     - {q: 現在是白天，怎麼摸起來這麼燙？, a: 「對呀！比上回那塊還燙！所以我才覺得這塊更好。」, f: laugh}
-  silence: 「……掌、掌櫃的，不要嗎？那五塊也行，我不賺了。」
+  silence: 「……老、老闆，不要嗎？那五塊也可以，我不賺了。」
   silenceFace: uneasy
   silenceDrop: 5
   tells:
     - {after: open, need: -2, text: 石頭在布上放久了，布被烤出一圈淡淡的黃。, f: smile}
   appraise:
-    - {realm: 4, text: 石心那線紅，是畫在石縫裡的硃砂，指甲一刮就掉。石頭只是普通的灰岩，外頭還留著一點煙燻的痕。}
+    - {realm: 4, text: 石心那線紅，是畫在石縫裡的紅墨，指甲一刮就掉。石頭只是普通的灰岩，外頭還留著一點煙燻的痕。}
   verify:
     - {who: tie, cost: 0, a: 「這不是。真的那種，白天是涼的。……那孩子被人騙了。」}
   opts:
-    deal: {label: 買下, text: 小石頭高高興興地數著靈石：「掌櫃的，下回撿到好的，我還先拿給你！」, fx: {mem: {stone: 又賣給你一塊「會發燙的石頭」。}}}
-    decline: {text: 小石頭有點失望，把石頭包了起來：「那我拿去問問師父。」}
-    expose: {right: true, label: 點破, text: 你把石頭翻過來，指甲刮了刮那道紅，硃砂沾在指甲上。小石頭的臉一下子紅到耳根，眼淚在眼眶裡打轉：「我、我被騙了……」他把石頭丟進水溝，又跑回來：「掌櫃的，那個人還問我，上回那塊真的賣給誰了。我沒說。」, f: cry, fx: {rel: {stone: 1}, mem: {stone: 他被人騙了一塊假靈髓，你點破了。}}}
+    deal: {label: 買下, text: 小石頭高高興興地數著靈石：「老闆，下回撿到好的，我還先拿給你！」, fx: {mem: {stone: 又賣給你一塊「會發燙的石頭」。}}}
+    decline: {text: 小石頭有點失望，把石頭包了起來：「那我拿去問鐵師傅。」}
+    expose: {right: true, label: 點破, text: 你把石頭翻過來，指甲刮了刮那道紅，紅墨沾在指甲上。小石頭的臉一下子紅到耳根，眼淚在眼眶裡打轉：「我、我被騙了……」他把石頭丟進水溝，又跑回來：「老闆，那個人還問我，上回那塊真的賣給誰了。我沒說。」, f: cry, fx: {rel: {stone: 1}, mem: {stone: 他被人騙了一塊假靈髓，你點破了。}}}
 
 - id: m205
   month: 2
-  title: 一塊腰牌
+  title: 一塊識別證
   npc: xiaoliu
   where: shop
   days: [2, 3]
@@ -927,38 +928,38 @@ deals:
   item: yaopai
   qty: 1
   price: 20
-  lot: {q: 1, label: 寒潭宗外門腰牌, flags: [sect, evidence]}
+  lot: {q: 1, label: 寒潭會識別證, flags: [sect, evidence]}
   truth: {goods: genuine, origin: evidence, intent: plain}
-  lesson: 十八九歲，身形瘦小，右手受了傷，腰間有掛刀的皮扣卻沒有刀，連名字都說不順——執事堂懸賞找的就是這樣一個人。腰牌背面刻著「沈青」，正是死在北林溪底的外門弟子。他不是來銷贓的，是來換路費的；這塊腰牌，是他唯一能證明那天發生了什麼的東西。
+  lesson: 十八九歲，瘦瘦小小，右手受傷，腰上有掛刀的皮扣卻沒有刀，連名字都講不順——派出所懸賞找的就是這樣一個人。識別證背面寫著「沈青」，就是死在北林溪底的那個寒潭會年輕人。他不是來銷贓的，是來換路費的；這塊識別證，是他唯一能證明那天發生了什麼的東西。
   verdict: [special]
   noJudge: [deal, decline, report]
   intro: 一個瘦小的年輕人在門口站了很久才進來。右手纏著布，布上有乾了的血。他把一塊東西放在櫃上，手馬上縮回袖子裡。
   openFace: uneasy
-  open: 「掌櫃的……這個，二十塊，收不收？撿的。」
+  open: 「老闆……這個，二十塊，收不收？撿的。」
   ask: {q: 哪裡撿的？, a: 「北林。溪邊。」, f: uneasy}
   press:
     - {q: 你叫什麼名字？, a: 「……阿六。不是，我、我姓……姓魚。」, f: uneasy}
     - {q: 手怎麼傷的？, a: 「砍柴。」他把手往袖子裡又縮了縮。, f: sad}
-  silence: {narr: 他低著頭，盯著櫃上的腰牌。過了很久，他小聲說：「十五也行。我要出城。」, f: sad}
+  silence: {narr: 他低著頭，盯著櫃上的識別證。過了很久，他小聲說：「十五也行。我要出聚落。」, f: sad}
   silenceDrop: 15
   tells:
     - {after: open, need: -1, text: 他腰間有一個磨得發亮的皮扣，是掛刀的地方。刀不在。, f: uneasy}
   appraise:
-    - {realm: 4, text: 寒潭宗外門的制式腰牌，背面刻著兩個字：沈青。牌角沾著一點泥，泥是黑的，北林溪邊才有這種泥。}
+    - {realm: 4, text: 寒潭會的識別證，塑膠殼裡的卡片寫著兩個字：沈青。殼角沾著一點泥，泥是黑的，北林溪邊才有這種泥。}
   verify:
-    - {who: bai, cost: 5, a: 「沈青？寒潭宗上個月在北林丟的，就是一個叫沈青的外門弟子。」}
+    - {who: bai, cost: 5, a: 「沈青？寒潭會上個月在北林失聯的，就是一個叫沈青的年輕人。」}
   opts:
-    deal: {label: 買下, text: 他抓起靈石，連數都沒數，轉身就走。走到門口，又回頭看了一眼你的刀架，才擠進人群裡。, fx: {mem: {xiaoliu: 賣給你一塊寒潭宗腰牌，換了路費。}}}
-    decline: {text: 他把腰牌收回懷裡，低著頭走了。}
-    report: {label: 報執事堂, text: 你去執事堂報了。周執事帶人在城門口截住了他。「余小六，」周執事念著懸賞上的名字，「北林的事，你慢慢說。」他被帶走的時候，一直回頭看許記。, f: shock, fx: {stones: 20, rel: {zhou: 1, xiaoliu: -5, xiaoqi: -4}, flag: [xiaoliu_taken], rep: {sect: 1, loose: -1}, mem: {xiaoliu: 你把他報給了執事堂。, zhou: 你報了余小六的行蹤。}}}
+    deal: {label: 買下, text: 他抓起靈石，連數都沒數，轉身就走。走到門口，又回頭看了一眼你的刀架，才擠進人群裡。, fx: {mem: {xiaoliu: 賣給你一塊寒潭會識別證，換了路費。}}}
+    decline: {text: 他把識別證收回懷裡，低著頭走了。}
+    report: {label: 報警, text: 你去派出所報了。周警員帶人在聚落入口截住了他。「余小六，」周警員念著懸賞上的名字，「北林的事，你慢慢說。」他被帶走的時候，一直回頭看許家店。, f: shock, fx: {stones: 20, rel: {zhou: 1, xiaoliu: -5, xiaoqi: -4}, flag: [xiaoliu_taken], rep: {sect: 1, loose: -1}, mem: {xiaoliu: 你把他報給了管理處。, zhou: 你報了余小六的行蹤。}}}
     special:
       seal: 信他
-      label: 說起上個月來認刀的姑娘
+      label: 說起上個月來認刀的女生
       need: {rel: {xiaoqi: 1}}
-      text: 你說：「你妹妹上個月來過。她抱著你的刀，在這裡哭了。」他像被人打了一拳，整個人晃了一下，扶著櫃台蹲了下去。過了很久，他抬起頭，眼睛是紅的：「那天我替沈師兄帶路，在北林溪邊碰上一個臉上有疤的人。他要那個玉匣。沈師兄不給，被他推下了溪。我拿刀砍他，刀被他奪了去，我搶了師兄的腰牌就跑……沒有人會信我。」他把腰牌推給你：「掌櫃的，你信嗎？」
+      text: 你說：「你妹妹上個月來過。她抱著你的刀，在這裡哭了。」他像被人打了一拳，整個人晃了一下，扶著櫃台蹲了下去。過了很久，他抬起頭，眼睛是紅的：「那天我幫沈青大哥帶路，在北林溪邊遇到一個臉上有疤的人。他要那個保冷盒。沈大哥不給，被他推下溪。我拿刀砍他，刀被他搶走，我抓了沈大哥的識別證就跑……沒有人會信我。」他把識別證推給你：「老闆，你信嗎？」
       f: cry
-      fx: {give: [{item: yaopai, qty: 1, cost: 0, label: 沈青的腰牌（余小六託付）, flags: [evidence]}], rel: {xiaoliu: 4, xiaoqi: 2}, flag: [xiaoliu_truth], mem: {xiaoliu: 把北林那天的事告訴了你，把腰牌託給你。}}
-      fail: {text: 你想再問，他已經把腰牌收回懷裡：「不賣了。」他走得很快。}
+      fx: {give: [{item: yaopai, qty: 1, cost: 0, label: 沈青的識別證（余小六託付）, flags: [evidence]}], rel: {xiaoliu: 4, xiaoqi: 2}, flag: [xiaoliu_truth], mem: {xiaoliu: 把北林那天的事告訴了你，把識別證託給你。}}
+      fail: {text: 你想再問，他已經把識別證收回懷裡：「不賣了。」他走得很快。}
 
 - id: m206
   month: 2
@@ -968,7 +969,7 @@ deals:
   days: [2, 5]
   prio: 7
   repeatable: true
-  hook: {t: 白七娘, d: 白七娘親自給你倒了茶，在你對面坐下。}
+  hook: {t: 白姐, d: 白姐親自給你倒了茶，在你對面坐下。}
   side: sell
   item: info
   itemName: 一則十二年前的消息
@@ -977,21 +978,21 @@ deals:
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
   openFace: smile
-  open: 「許掌櫃這個月，在查你爹的事吧？我這兒有一則，十二年沒人買過。四十塊。或者——拿一則只有你知道的消息來換。」
-  ask: {q: 為什麼十二年沒人買？, a: 「因為想知道的人，當年都不在坊市了。」, f: smile}
+  open: 「許老闆這陣子在查你爸的事吧？我這裡有一則，十二年沒人買過。四十塊。或者——拿一則只有你知道的消息來換。」
+  ask: {q: 為什麼十二年沒人買？, a: 「因為想知道的人，當年都不在聚落了。」, f: smile}
   press:
-    - {q: 這則消息，是真的嗎？, a: 「聽雨樓賣的東西，從來不保證是真的。但這一則，是我親眼看見的。」, f: cold}
-  silence: 「……許掌櫃跟你爹一樣，想事情的時候，手指會敲櫃台。」
+    - {q: 這則消息，是真的嗎？, a: 「聽雨茶館賣的東西，從來不保證是真的。但這一則，是我親眼看見的。」, f: cold}
+  silence: 「……許老闆跟你爸一樣，想事情的時候，手指會敲櫃台。」
   silenceFace: smile
   opts:
-    deal: {label: 付四十, text: 白七娘收了靈石，聲音放得很低：「十二年前三月二十一，天沒亮，周正帶著人進了許記的倉庫。告發的人沒有留名字。可那天清早，我看見錢掌櫃站在對街，一直站到天亮。那年秋天，錢記多了一門寒鐵生意。」, fx: {flag: [knows_raid]}}
-    barter: {text: 白七娘聽完，點點頭，聲音放得很低：「十二年前三月二十一，天沒亮，周正帶著人進了許記的倉庫。告發的人沒有留名字。可那天清早，我看見錢掌櫃站在對街，一直站到天亮。那年秋天，錢記多了一門寒鐵生意。」, fx: {flag: [knows_raid]}}
-    decline: {label: 不了, text: 白七娘笑笑，替你把茶添滿：「想通了再來。這則消息，不會舊。」}
+    deal: {label: 付四十, text: 白姐收了靈石，聲音放得很低：「十二年前三月二十一，天沒亮，周正帶著人進了許家店的倉庫。告發的人沒有留名字。可那天清早，我看見錢老闆站在對街，一直站到天亮。那年秋天，錢家店多了一門寒鐵生意。」, fx: {flag: [knows_raid]}}
+    barter: {text: 白姐聽完，點點頭，聲音放得很低：「十二年前三月二十一，天沒亮，周正帶著人進了許家店的倉庫。告發的人沒有留名字。可那天清早，我看見錢老闆站在對街，一直站到天亮。那年秋天，錢家店多了一門寒鐵生意。」, fx: {flag: [knows_raid]}}
+    decline: {label: 不了, text: 白姐笑笑，替你把茶添滿：「想通了再來。這則消息，不會舊。」}
 
-# ───────────── 初三 ─────────────
+# ───────────── 第三天 ─────────────
 - id: m207
   month: 2
-  title: 內門來的執法
+  title: 寒潭會派來的調查員
   npc: lu
   where: shop
   days: [3, 3]
@@ -1000,21 +1001,21 @@ deals:
   item: xuechan
   itemName: 上個月的雪蟾酥
   truth: {goods: genuine, origin: clean, intent: test}
-  lesson: 他問話的語氣不像在問，像在對帳——筆尖早就停在冊子上寫著字的那一行。坊市每一家他都問過，上個月見過那個玉匣的人，他都問過了。說實話永遠不會錯；說謊，是賭他手上沒有別人的口供。
+  lesson: 他問話的語氣不像在問，像在對帳——筆尖早就停在冊子上寫著字的那一行。聚落每一家他都問過，上個月見過那個保冷盒的人，他都問過了。說實話永遠不會錯；說謊，是賭他手上沒有別人的口供。
   verdict: [deal, special]
-  intro: 一個穿寒潭宗內門青袍的年輕人進了門，修為你看不透。他把一本冊子放在櫃上，翻開。
+  intro: 一個穿寒潭會深藍色制服的年輕人進了門，你看不出他的深淺。他把一本冊子放在櫃上，翻開。
   openFace: cold
-  open: 「寒潭宗執法堂，陸。上個月北林丟了一匣雪蟾酥，一個外門弟子沒回來。許掌櫃，上個月有沒有人拿雪蟾酥來過許記？」
-  ask: {q: 陸執法為什麼來問我？, a: 「坊市每一家，我都會問。許記是第七家。」, f: cold}
+  open: 「寒潭會調查員，陸。上個月北林少了一盒雪蟾酥，一個年輕人沒回來。許老闆，上個月有沒有人拿雪蟾酥來過你店裡？」
+  ask: {q: 陸調查員為什麼來問我？, a: 「聚落每一家，我都會問。你這間是第七家。」, f: cold}
   press:
-    - {q: 那個弟子，找到了嗎？, a: 「找到了。在北林的溪底。」他的語氣沒有變。, f: cold}
+    - {q: 那個年輕人，找到了嗎？, a: 「找到了。在北林的溪底。」他的語氣沒有變。, f: cold}
   silence: {narr: 他也不說話，只是用筆尖輕輕點著冊子上的某一行，像在等你自己開口。, f: cold}
   tells:
     - {after: open, need: -7, text: 他問「有沒有人來過」的時候，筆尖已經停在冊子上的某一行了。那一行，寫著字。, f: cold}
   opts:
     deal:
       label: 照實說
-      text: 你把上個月看到的、聽到的，一五一十說了。陸執法聽完，在冊子上記了一筆，合上：「許掌櫃是坊市裡第一個沒跟我繞彎子的。」
+      text: 你把上個月看到的、聽到的，一五一十說了。陸調查員聽完，在冊子上記了一筆，合上：「許老闆是聚落裡第一個沒跟我繞彎子的。」
       f: neutral
       fx: {rel: {lu: 2}, rep: {sect: 1}, flag: [told_lu], mem: {lu: 你把上個月雪蟾酥的事照實說了。}}
       extra:
@@ -1024,13 +1025,13 @@ deals:
     decline:
       label: 說沒見過
       need: {notIntel: [i_xuechan]}
-      text: 「沒見過。」陸執法看了你一眼，在冊子上劃了一筆，走了。
-      fail: {text: 「沒見過。」陸執法把冊子轉過來，推到你面前。那一行寫著別人的口供，口供上有你的名字。「許掌櫃，」他說，「說謊，比收贓罰得重。」他罰了你五十，在冊子上你的名字旁邊畫了一個圈。, f: cold, fx: {stones: -50, rel: {lu: -3}, rep: {sect: -1}, tag: {sect: 說謊}, flag: [lied_lu], mem: {lu: 你對他說謊，被他拿口供當場對上了。}}}
+      text: 「沒見過。」陸調查員看了你一眼，在冊子上劃了一筆，走了。
+      fail: {text: 「沒見過。」陸調查員把冊子轉過來，推到你面前。那一行寫著別人的口供，口供上有你的名字。「許老闆，」他說，「說謊，比收贓罰得重。」他罰了你五十，在冊子上你的名字旁邊畫了一個圈。, f: cold, fx: {stones: -50, rel: {lu: -3}, rep: {sect: -1}, tag: {sect: 說謊}, flag: [lied_lu], mem: {lu: 你對他說謊，被他拿口供當場對上了。}}}
     special:
       seal: 實情
       label: 說出余小六告訴你的事
       need: {flag: [xiaoliu_truth]}
-      text: 你把余小六的話說了：北林溪邊，臉上有疤的人，被推下溪的沈青，被奪走的刀。陸執法的筆停了很久。「疤臉，」他說，「上個月在市集賣過一把斷水刀的那個？」他站起來：「許掌櫃，這件事，先別跟任何人說。」
+      text: 你把余小六的話說了：北林溪邊，臉上有疤的人，被推下溪的沈青，被奪走的刀。陸調查員的筆停了很久。「疤臉，」他說，「上個月在市場賣過一把斷水刀的那個？」他站起來：「許老闆，這件事，先別跟任何人說。」
       f: shock
       fx: {rel: {lu: 3}, rep: {sect: 1}, flag: [told_lu, lu_knows_scar], mem: {lu: 你把余小六說的北林真相告訴了他。}}
 
@@ -1047,25 +1048,25 @@ deals:
   itemName: 幾頁帳紙
   qty: 1
   price: 50
-  lot: {q: 1, label: 你爹帳冊的缺頁}
+  lot: {q: 1, label: 你爸帳冊的缺頁}
   truth: {goods: genuine, origin: inheritance, intent: plain}
-  lesson: 紙質、字跡、裁口，都跟你爹那本帳冊對得上。他連十二年前替錢記收鐵的事都認了。他要的是出城的路費，不是坑你。
+  lesson: 紙質、字跡、裁口，都跟你爸那本帳冊對得上。他連十二年前替錢家店收鐵的事都認了。他要的是出聚落的路費，不是坑你。
   verdict: [deal]
   intro: 姚四揹著一個包袱，像是要出遠門。
   openFace: sad
-  open: 「小許，我要去南邊了，這輩子大概不回來了。走之前，有樣東西得還你。」他從懷裡摸出幾頁對折的帳紙：「你爹那本帳，最後七頁，是他自己裁下來交給我的。五十塊，算我的路費。」
-  ask: {q: 我爹為什麼要裁下來？, a: 「他說，箱子早晚會被人翻。這幾頁，得跟箱子分開放。他把箱子寄給我那天，把這幾頁也塞給了我。」, f: sad}
+  open: 「小許，我要去南邊了，這輩子大概不會回來了。走之前，有樣東西要還你。」他從口袋裡摸出幾頁對折的帳紙：「你爸那本帳，最後七頁，是他自己裁下來交給我的。五十塊，算我的路費。」
+  ask: {q: 我爸為什麼要裁下來？, a: 「他說，箱子早晚會被人翻。這幾頁，得跟箱子分開放。他把箱子寄給我那天，把這幾頁也塞給了我。」, f: sad}
   press:
-    - {q: 我爹帳上那三百斤寒鐵，你知道什麼？, a: 他沉默了很久：「……是我替錢記收的。三百斤沒有印記的寒鐵，從北面礦上下來，在我那兒放了兩夜，才送進許記的倉庫。我不知道那是給你爹下的套。我知道的時候，已經晚了。」, f: cry}
+    - {q: 我爸帳上那三百公斤寒鐵，你知道什麼？, a: 他沉默了很久：「……是我幫錢家店收的。三百公斤沒有印記的寒鐵，從北礦下來，在我那裡放了兩個晚上，才送進你們家的倉庫。我不知道那是給你爸設的局。我知道的時候，已經來不及了。」, f: cry}
     - {q: 為什麼現在才拿出來？, a: 「因為你上個月收了箱子。收了箱子的人，才問得到這幾頁。」, f: sad}
-  silence: 「……四十也行。剩下的，算我欠你爹的。」
+  silence: 「……四十也可以。剩下的，算我欠你爸的。」
   silenceFace: sad
   silenceDrop: 40
   appraise:
-    - {realm: 4, text: 紙質跟你爹那本帳冊一樣，裁口也對得上。字是你爹的字。}
+    - {realm: 4, text: 紙質跟你爸那本帳冊一樣，裁口也對得上。字是你爸的字。}
   opts:
-    deal: {label: 買下, text: 姚四把帳紙放在櫃上，朝你深深作了個揖。他走的時候沒有回頭，背上的包袱很輕。, fx: {codex: [canye], flag: [got_pages, yao_left], mem: {yao: 把你爹帳冊缺的幾頁還給了你，出城往南去了。}}}
-    decline: {text: 姚四嘆了口氣，把帳紙收回懷裡：「那我留給白七娘。你什麼時候想要，去找她。」他出城往南去了。, fx: {flag: [yao_left, pages_at_bai], mem: {yao: 要把你爹帳冊的缺頁還你，你沒收。他留給了白七娘。}}}
+    deal: {label: 買下, text: 姚四把帳紙放在櫃上，朝你深深鞠了個躬。他走的時候沒有回頭，背上的包袱很輕。, fx: {codex: [canye], flag: [got_pages, yao_left], mem: {yao: 把你爸帳冊缺的幾頁還給了你，離開聚落往南去了。}}}
+    decline: {text: 姚四嘆了口氣，把帳紙收回口袋：「那我留給白姐。你什麼時候想要，去找她。」他離開聚落往南去了。, fx: {flag: [yao_left, pages_at_bai], mem: {yao: 要把你爸帳冊的缺頁還你，你沒收。他留給了白姐。}}}
   missed: {flag: [yao_left, pages_at_bai]}
 
 - id: m209
@@ -1077,25 +1078,25 @@ deals:
   prio: 6
   repeatable: true
   need: {flag: [got_box], anyFlag: [yao_closed, pages_at_bai], not: [got_pages]}
-  hook: {t: 一個布包, d: 白七娘的櫃台上放著一個布包，布包上寫著一個「許」字。}
+  hook: {t: 一個布包, d: 白姐的櫃台上放著一個布包，布包上寫著一個「許」字。}
   side: sell
   item: canye
   itemName: 姚四留下的布包
   qty: 1
   price: 120
-  lot: {q: 1, label: 你爹帳冊的缺頁}
+  lot: {q: 1, label: 你爸帳冊的缺頁}
   truth: {goods: genuine, origin: inheritance, intent: plain}
   neutral: true
   openFace: smile
-  open: 「姚四出城前留下的。他說是給你的，可沒說是送你的。一百二十塊，聽雨樓的規矩。」
+  open: 「姚四離開前留下的。他說是給你的，可沒說是送你的。一百二十塊，茶館的規矩。」
   ask: {q: 裡面是什麼？, a: 「我沒拆。拆了，就不值這個價了。」, f: smile}
   haggle:
-    - {price: 100, a: 「一百。看在你爹的份上。」, f: think}
+    - {price: 100, a: 「一百。看在你爸的份上。」, f: think}
   opts:
-    deal: {label: 買下, text: 布包裡是幾頁帳紙，裁口整齊，字是你爹的字。, fx: {codex: [canye], flag: [got_pages]}}
-    decline: {label: 先不買, text: 白七娘把布包收回櫃台底下：「我替你留著。」}
+    deal: {label: 買下, text: 布包裡是幾頁帳紙，裁口整齊，字是你爸的字。, fx: {codex: [canye], flag: [got_pages]}}
+    decline: {label: 先不買, text: 白姐把布包收回櫃台底下：「我替你留著。」}
 
-# ───────────── 市集與初四 ─────────────
+# ───────────── 市集與第四天 ─────────────
 - id: m210
   month: 2
   title: 燈下的舊事
@@ -1110,10 +1111,10 @@ deals:
   neutral: true
   openFace: smile
   open: 「孩子，你又來了。燈還亮嗎？」
-  ask: {q: 婆婆，燈點久了會怎樣？, a: 「燈不會怎樣。點燈的人會。照得見別人說謊，就照得見自己。」, f: neutral}
+  ask: {q: 婆婆，燈點久了會怎樣？, a: 「燈不會怎樣。點燈的人會。看別人看得越清楚，就越會看到自己。」, f: neutral}
   press:
-    - {q: 長生典的人，每年都來買燈？, a: 「每年一盞。他說，點在當票庫裡。照的是什麼，他沒說，我也沒問。」, f: think}
-  silence: 「……你身上，有你娘的味道。」
+    - {q: 長生當鋪的人，每年都來買燈？, a: 「每年買一盞普通的。他說點在當票庫裡。他每次都會掀開布看一下那盞，不買，也不問價。」, f: think}
+  silence: 「……你身上，有你媽的味道。」
   silenceFace: sad
   opts:
     decline: {label: 告辭, text: 她低頭繼續纏燈罩，嘴裡哼著一段你沒聽過的調子。}
@@ -1121,9 +1122,9 @@ deals:
       seal: 相認
       label: 把帳紙上的那句話唸給她聽
       need: {has: {canye: 1}}
-      text: 你唸：「霜華說，要是出事，帶衡兒去找她師姐。」盲婆婆手裡的燈罩掉在地上。她伸出手，摸到你的臉，從眉毛摸到下巴，摸了很久：「霜華的孩子……我在這條街上擺了十二年攤，就是在等一個姓許的孩子來找我。」她哭得很安靜：「孩子，你娘走的那年，不是你們說的那樣。」她沒有再說下去，只是把你的手握得很緊。
+      text: 你唸：「霜華說，要是出事，帶衡去找她以前隊上的人。」盲婆婆手裡的燈罩掉在地上。她伸出手，摸到你的臉，從眉毛摸到下巴，摸了很久：「霜華的孩子……我在這條路上擺了十二年攤，就是在等一個姓許的孩子來找我。」她哭得很安靜：「孩子，你媽走的那年，不是你們家說的那樣。」她沒有再說下去，只是把你的手握得很緊。
       f: cry
-      fx: {rel: {mang: 4}, flag: [mang_told_mother], mem: {mang: 她是你娘霜華的師姐。她說，你娘走的那年，不是你們說的那樣。}}
+      fx: {rel: {mang: 4}, flag: [mang_told_mother], mem: {mang: 她是你媽霜華以前的隊友。她說，你媽走的那年，不是你們家說的那樣。}}
 
 - id: m211
   month: 2
@@ -1135,33 +1136,33 @@ deals:
   item: dingshen
   qty: 5
   price: 12
-  lot: {q: 0.4, label: 北地定神香, flags: [cut]}
+  lot: {q: 0.4, label: 北邊來的定神香, flags: [cut]}
   truth: {goods: inferior, origin: clean, intent: dump}
-  lesson: 定神香從不缺貨，也從不便宜；半價一次賣五束，本身就是破綻。點一炷試，燒得比平常快，煙還嗆；掐開一炷，斷面黃白兩色——香裡摻了木屑。上個月駝隊把定神香收空了，這個月就有人拿次貨來填。
+  lesson: 定神香從不缺貨，也從不便宜；半價一次賣五束，本身就是破綻。點一支試，燒得比平常快，煙還嗆；掐斷一支，斷面黃白兩色——香裡摻了木屑。上個月運貨的人把定神香收空了，這個月就有人拿次級品來補。
   verdict: [decline, expose]
   openFace: smile
-  open: 「北地來的定神香，五束，十二塊一束！回春堂賣二十多，我這是趕路，不想扛回去。」
-  ask: {q: 北地的香，跟這裡的有什麼不同？, a: 「北地的香料足！燒起來香氣更衝，一炷頂兩炷。」, f: smile}
+  open: 「北邊來的定神香，五束，十二塊一束！回春藥行賣二十幾，我在趕路，不想扛回去。」
+  ask: {q: 北邊的香，跟這裡的有什麼不一樣？, a: 「北邊的香料足！燒起來味道比較衝，一支抵兩支。」, f: smile}
   press:
-    - {q: 一炷頂兩炷，為什麼賣半價？, a: 「趕路嘛！客官，做生意講究一個快。」, f: smile}
-  silence: {narr: 你沒說話。他點了一炷香插在攤上給你看：「您聞聞。」香燒得很快，不到一盞茶就短了一截，煙有點嗆。}
+    - {q: 一支抵兩支，為什麼賣半價？, a: 「趕路嘛！老闆，做生意就是要快。」, f: smile}
+  silence: {narr: 你沒說話。他點了一支香插在推車上給你看：「您聞聞看。」香燒得很快，不到十分鐘就短了一截，煙有點嗆。}
   haggle:
     - {price: 10, a: 「十塊！虧本了虧本了！」, f: think}
   tells:
-    - {after: silence, need: -2, text: 香燒得快，他的眼睛一直盯著那截香灰，像在數它還能燒多久。, f: uneasy}
+    - {after: silence, need: -2, text: 香燒得快，他的眼睛一直盯著那截香灰，像在算它還能燒多久。, f: uneasy}
   appraise:
-    - {realm: 4, text: 香身裡夾著細碎的木屑。掐開一炷，斷面是黃白兩色的。}
+    - {realm: 4, text: 香裡面夾著細碎的木屑。掐斷一支，斷面是黃白兩色的。}
   verify:
-    - {who: bai, cost: 5, a: 「上個月北邊駝隊把定神香收空了。這個月，賣香的人就多了。」}
-    - {who: zhang, cost: 0, a: 「定神香？回春堂從不缺貨，也從不賤賣。賤賣的香裡摻了什麼，許掌櫃自己想。」}
+    - {who: bai, cost: 5, a: 「上個月北邊來運貨的把定神香收空了。這個月，賣香的人就變多了。」}
+    - {who: zhang, cost: 0, a: 「定神香？回春藥行從不缺貨，也從不賤賣。賤賣的香裡摻了什麼，許老闆自己想。」}
   opts:
-    deal: {label: 買下, text: 他把五束香用麻繩一綁塞給你，收了錢就開始收攤。, fx: {flag: [bought_cut_incense], mem: {xiangke: 賣給你五束便宜的北地定神香。}}}
+    deal: {label: 買下, text: 他把五束香用麻繩一綁塞給你，收了錢就開始收攤。, fx: {flag: [bought_cut_incense], mem: {xiangke: 賣給你五束便宜的北邊定神香。}}}
     decline: {text: 他嘟囔了一句，轉頭招呼下一個人。}
-    expose: {right: true, text: 你把一炷香掐斷，斷面黃白兩色：「香料足，木屑也足。」周圍幾個散修圍過來看。香商的臉漲紅了，收拾東西就走。, f: angry, fx: {rep: {loose: 1}, tag: {loose: 眼尖}, mem: {xiangke: 你當眾掐斷了他摻木屑的香。}}}
+    expose: {right: true, text: 你把一支香掐斷，斷面黃白兩色：「香料足，木屑也足。」旁邊幾個人圍過來看。香商的臉漲紅了，收拾東西就走。, f: angry, fx: {rep: {loose: 1}, tag: {loose: 眼尖}, mem: {xiangke: 你當眾掐斷了他摻木屑的香。}}}
 
 - id: m212
   month: 2
-  title: 舊儲物袋
+  title: 舊收納袋
   npc: scar
   where: market
   days: [4, 4]
@@ -1170,34 +1171,34 @@ deals:
   item: sidai
   qty: 1
   price: 15
-  lot: {q: 1, label: 舊儲物袋, flags: [stolen, sect]}
+  lot: {q: 1, label: 舊收納袋, flags: [stolen, sect]}
   truth: {goods: genuine, origin: stolen, intent: plain}
-  lesson: 袋口的雲紋是寒潭宗的制式，被人用刀尖一針一針挑掉了，線頭還新；袋底內側縫著一個名字：沈青。死在北林溪底的外門弟子，就叫沈青。
+  lesson: 袋口的會徽是寒潭會的樣式，被人用刀尖一針一針挑掉了，線頭還新；袋底內側縫著一個名字：沈青。死在北林溪底的那個年輕人，就叫沈青。
   verdict: [decline, report, expose]
   openFace: cold
-  open: 「儲物袋，舊的，裡頭空了。十五。」
+  open: 「收納袋，舊的，裡頭空了。十五。」
   ask: {q: 哪來的？, a: 「撿的。」, f: cold}
   press:
-    - {q: 袋口的花紋怎麼挑掉了？, a: 「破了，我自己縫的。愛買不買。」, f: angry}
+    - {q: 袋口的標記怎麼挑掉了？, a: 「破了，我自己縫的。愛買不買。」, f: angry}
   silence: 「……十二。最後一口價。」
   silenceFace: cold
   silenceDrop: 12
   tells:
     - {after: open, need: -1, text: 他說話的時候，眼睛一直往你身後看，像在找什麼人。, f: cold}
   appraise:
-    - {realm: 4, text: 袋口原本繡著雲紋，被人用刀尖一針一針挑掉了，線頭還是新的。袋底內側縫著兩個小字：沈青。}
+    - {realm: 4, text: 袋口原本繡著會徽，被人用刀尖一針一針挑掉了，線頭還是新的。袋底內側縫著兩個小字：沈青。}
   verify:
     - {who: tie, cost: 0, a: 「又是他？……上個月那把刀，我記得。你小心點。」}
-    - {who: bai, cost: 5, a: 「疤臉這個月又進城了。聽說在找一個瘦小子。」}
+    - {who: bai, cost: 5, a: 「疤臉這個月又進聚落了。聽說在找一個瘦瘦小小的年輕人。」}
   opts:
-    deal: {label: 買下, text: 疤臉把袋子丟給你，揣起靈石，臨走前回頭看了你一眼。, fx: {mem: {scar: 賣給你一個挑掉了花紋的舊儲物袋。}}}
+    deal: {label: 買下, text: 疤臉把袋子丟給你，揣起靈石，臨走前回頭看了你一眼。, fx: {mem: {scar: 賣給你一個挑掉了標記的舊收納袋。}}}
     decline: {text: 疤臉把袋子塞回懷裡，轉身走了。}
     expose: {right: true, text: 你說：「袋底縫著的名字，你沒挑掉。」疤臉的手按上了刀柄。周圍的人都看了過來。他盯了你一會兒，冷笑一聲，擠進人群裡不見了。, f: angry, fx: {flag: [scar_grudge, scar_alerted], mem: {scar: 你當眾說破了那個袋子的來路。}}}
-    report: {text: 你去執事堂報了疤臉的行蹤。周執事派人去市集，疤臉已經不在了。「他跑不遠。」周執事說。, fx: {rel: {zhou: 1}, flag: [scar_reported2], rep: {sect: 1}, mem: {zhou: 你報了疤臉在市集賣東西。}}}
+    report: {text: 你去派出所報了疤臉的行蹤。周警員派人去市場，疤臉已經不在了。「他跑不遠。」周警員說。, fx: {rel: {zhou: 1}, flag: [scar_reported2], rep: {sect: 1}, mem: {zhou: 你報了疤臉在市場賣東西。}}}
 
 - id: m213
   month: 2
-  title: 執事堂的大生意
+  title: 寒潭會的大生意
   npc: afu
   where: shop
   days: [4, 6]
@@ -1211,18 +1212,18 @@ deals:
   neutral: true
   dirty: {flag: contraband, event: e_bigdeal_dirty}
   openFace: smile
-  open: 「許掌櫃，周執事說的大生意來了：宗門要修北面礦上的閘門，要寒鐵，十二塊一斤，最多二十斤。有多少收多少。」
-  ask: {q: 為什麼找我？, a: 「周執事說，上個月許掌櫃把多的錢退了回來。帳清的人，宗門放心。」, f: smile}
+  open: 「許老闆，周警員說的大生意來了：寒潭會的資源組要修北礦的閘門，要寒鐵，十二塊一公斤，最多二十公斤。有多少收多少。」
+  ask: {q: 為什麼找我？, a: 「周警員說，上個月許老闆把多的錢退了回來。帳清的人，寒潭會放心。」, f: smile}
   press:
     - {q: 寒鐵要什麼樣的？, a: 「礦上的規矩，要有印記的。沒印記的，礦上不收。」, f: neutral}
   opts:
-    deal: {label: 賣給他, text: 阿福點了貨，在帳上記了一筆：「許掌櫃，下回還找你。」, fx: {rel: {zhou: 1}, flag: [did_big_deal], mem: {zhou: 這個月執事堂的寒鐵生意，你做了。}}}
-    decline: {text: 「那我回去跟周執事說一聲。」阿福走了。}
+    deal: {label: 賣給他, text: 阿福點了貨，在帳上記了一筆：「許老闆，下回還找你。」, fx: {rel: {zhou: 1}, flag: [did_big_deal], mem: {zhou: 這個月寒潭會的寒鐵生意，你做了。}}}
+    decline: {text: 「那我回去跟周警員說一聲。」阿福走了。}
 
-# ───────────── 初五、初六 ─────────────
+# ───────────── 第五天、第六天 ─────────────
 - id: m214
   month: 2
-  title: 一枚築基丹
+  title: 一份築基藥
   npc: hu
   where: shop
   days: [5, 5]
@@ -1231,31 +1232,31 @@ deals:
   item: zhuji
   qty: 1
   price: 220
-  lot: {q: 1, label: 築基丹（來路不明）, flags: [contraband]}
+  lot: {q: 1, label: 築基藥（來路不明）, flags: [contraband]}
   truth: {goods: genuine, origin: contraband, intent: plain}
-  lesson: 回春堂說這季九枚全數配出，上個月聽雨樓卻有人說「丹坊那兩枚，這季還是老規矩……鬼市見」。鑑定看得到瓶底刻著一個極小的「回」字。丹是真丹，來路是丹坊帳外的那兩枚——收了，就是收宗門的東西。
+  lesson: 回春藥行說這一季九份全部配出去了，上個月茶館卻有人說「藥行那兩份，這季還是老規矩……黑市見」。鑑定看得到瓶底刻著一個很小的「回」字。藥是真的，來路是藥行帳外那兩份——收了，就是收寒潭會的管制品。
   verdict: [decline, special]
-  intro: 一個戴半張鬼面的人在你對面坐下，從袖子裡摸出一個小玉瓶，放在櫃上。
+  intro: 一個戴半張面具的人在你對面坐下，從口袋裡摸出一個小藥瓶，放在櫃上。
   openFace: neutral
-  open: 「築基丹。回春堂一枚要六百，還買不到。〈你〉要的話，兩百二。」
-  ask: {q: 哪來的？, a: 「鬼市的東西，不問來路。」, f: neutral}
+  open: 「築基藥。回春藥行一份要六百，還買不到。〈你〉要的話，兩百二。」
+  ask: {q: 哪來的？, a: 「黑市的東西，不問來路。」, f: neutral}
   press:
-    - {q: 回春堂說這季九枚都配出去了。, a: 「是配出去了。配給誰，回春堂的帳上寫得清清楚楚。」他笑了一聲。, f: smile}
-  silence: 「……兩百。這個價，〈你〉這輩子見不到第二次。」
+    - {q: 回春藥行說這季九份都配出去了。, a: 「是配出去了。配給誰，回春藥行的帳上寫得清清楚楚。」他笑了一聲。, f: smile}
+  silence: 「……兩百。這個價，〈你〉這輩子看不到第二次。」
   silenceDrop: 200
   appraise:
-    - {realm: 4, text: 丹是真丹，丹紋九道，藥香壓得很深。瓶底刻著一個極小的「回」字。}
+    - {realm: 4, text: 藥是真的，藥丸上壓著九道紋，味道壓得很深。瓶底刻著一個很小的「回」字。}
   verify:
-    - {who: bai, cost: 5, a: 「鬼市這個月有兩枚築基丹。每一季都是兩枚，不多不少。」}
+    - {who: bai, cost: 5, a: 「黑市這個月有兩份築基藥。每一季都是兩份，不多不少。」}
   opts:
-    deal: {label: 買下, text: 他把玉瓶推給你，收了靈石，起身走了：「下回，去鬼市找我。」, fx: {flag: [bought_zhuji], event: [{id: e_zhuji_audit, at: 6}], mem: {hu: 賣給你一枚來路不明的築基丹。}}}
-    decline: {text: 他把玉瓶收回袖子裡：「〈你〉想通了，鬼市找我。」}
+    deal: {label: 買下, text: 他把藥瓶推給你，收了靈石，起身走了：「下次，去黑市找我。」, fx: {flag: [bought_zhuji], event: [{id: e_zhuji_audit, at: 6}], mem: {hu: 賣給你一份來路不明的築基藥。}}}
+    decline: {text: 他把藥瓶收回口袋：「〈你〉想通了，黑市找我。」}
     special:
       seal: 回字
       label: 指著瓶底的「回」字
       need: {appraised: true}
-      text: 你把玉瓶翻過來，指著瓶底那個「回」字。鬼面人沉默了一會兒，笑了：「〈你〉眼睛真尖。丹坊的東西，自然是丹坊的人拿出來的。這話，我沒說過。」他收起玉瓶走了。
-      fx: {flag: [knows_zhang_divert], mem: {hu: 你看出了築基丹瓶底的「回」字。}}
+      text: 你把藥瓶翻過來，指著瓶底那個「回」字。面具人沉默了一下，笑了：「〈你〉眼睛真尖。藥行的東西，自然是藥行的人拿出來的。這話，我沒說過。」他收起藥瓶走了。
+      fx: {flag: [knows_zhang_divert], mem: {hu: 你看出了築基藥瓶底的「回」字。}}
 
 - id: m215
   month: 2
@@ -1271,20 +1272,20 @@ deals:
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
   openFace: sad
-  open: 「掌櫃的，我曬了些山棗，給你。」她把一個小布包放在櫃上，又小聲問：「……你有沒有見過我哥？」
+  open: 「老闆，我曬了些山棗，給你。」她把一個小布包放在櫃上，又小聲問：「……你有沒有見過我哥？」
   ask: {q: 刀還好嗎？, a: 「我每天都擦。刀柄的繩，我又纏了一次。」, f: smile}
   opts:
     deal:
       label: 告訴她，你見過他
       need: {flag: [xiaoliu_truth]}
-      text: 你說，你見過他，他活著，手受了點傷，他說的話你信。余小七愣了很久，然後蹲在櫃台邊上，抱著膝蓋哭了。哭完，她站起來，把山棗往你面前推了推：「掌櫃的，你吃。」
+      text: 你說，你見過他，他活著，手受了點傷，他說的話你信。余小七愣了很久，然後蹲在櫃台邊上，抱著膝蓋哭了。哭完，她站起來，把山棗往你面前推了推：「老闆，你吃。」
       f: cry
       fx: {rel: {xiaoqi: 3}, flag: [told_xiaoqi], mem: {xiaoqi: 你告訴她，她哥哥還活著。}}
     decline: {label: 說沒見過, text: 她點點頭，像是早就習慣了這個答案：「那我再等等。」她走了，山棗留在了櫃上。}
 
 - id: m216
   month: 2
-  title: 張掌事來訪
+  title: 張主任來訪
   npc: zhang
   where: shop
   days: [6, 6]
@@ -1297,25 +1298,25 @@ deals:
   truth: {goods: genuine, origin: clean, intent: bribe}
   neutral: true
   openFace: cold
-  open: 「許掌櫃，回春堂的帳，一向是清的。」他把一包靈石放在櫃上，沒有推過來，也沒有收回去。「聽說許掌櫃最近眼睛很尖。眼睛尖的人，嘴通常也緊。四十塊，算回春堂跟許掌櫃交個朋友。」
-  ask: {q: 張掌事這是什麼意思？, a: 「意思是，許掌櫃以後在回春堂買東西，回春堂都記著許掌櫃的情。」, f: smile}
+  open: 「許老闆，回春藥行的帳，一向是清的。」他把一包靈石放在櫃上，沒有推過來，也沒有收回去。「聽說許老闆最近眼睛很利。眼睛利的人，嘴通常也很緊。四十塊，算回春藥行跟許老闆交個朋友。」
+  ask: {q: 張主任這是什麼意思？, a: 「意思是，許老闆以後在回春藥行買東西，回春藥行都記著許老闆的情。」, f: smile}
   press:
-    - {q: 要是我不收呢？, a: 「那這包靈石，我就拿回去。」他頓了頓：「陸執法這個月在坊市，查的是北林的案子，不是丹坊的。」, f: cold}
+    - {q: 要是我不收呢？, a: 「那這包靈石，我就拿回去。」他停了一下：「陸調查員這個月在聚落，查的是北林的案子，不是藥行的。」, f: cold}
   silence: {narr: 他也不急，慢慢喝了一口茶。茶是你泡的，他喝得很仔細。, f: cold}
   opts:
-    deal: {label: 收下, text: 張掌事站起來，拱了拱手：「許掌櫃明事理。」他走的時候，步子比來的時候慢。, fx: {flag: [took_zhang_money], rel: {zhang: 2}, mem: {zhang: 你收了他的封口錢。}}}
-    decline: {label: 不收, text: 你把靈石推回去。張掌事看了你一會兒，收起靈石：「許掌櫃保重。」, fx: {rel: {zhang: -2}, mem: {zhang: 你沒收他的封口錢。}}}
+    deal: {label: 收下, text: 張主任站起來，點了點頭：「許老闆明事理。」他走的時候，步子比來的時候慢。, fx: {flag: [took_zhang_money], rel: {zhang: 2}, mem: {zhang: 你收了他的封口錢。}}}
+    decline: {label: 不收, text: 你把靈石推回去。張主任看了你一會兒，收起靈石：「許老闆保重。」, fx: {rel: {zhang: -2}, mem: {zhang: 你沒收他的封口錢。}}}
     special:
-      seal: 見官
-      label: 請他一起去見陸執法
+      seal: 上派出所
+      label: 請他一起去見陸調查員
       need: {flag: [told_lu]}
-      text: 你說：「陸執法說，坊市裡的事，他都想聽。張掌事要不要跟我一起去？」張掌事端著茶杯的手停在半空。過了很久，他把茶杯放下，靈石也沒拿，自己走了出去——往執事堂的方向。
+      text: 你說：「陸調查員說，聚落裡的事，他都想聽。張主任要不要跟我一起去？」張主任端著茶杯的手停在半空。過了很久，他把茶杯放下，靈石也沒拿，自己走了出去——往派出所的方向。
       f: shock
-      fx: {rel: {zhang: -6, lu: 2}, rep: {sect: 2}, tag: {sect: 不收封口錢}, flag: [zhang_exposed], mem: {zhang: 你逼他去執事堂見了陸執法。, lu: 你讓張掌事自己去交代了丹坊的帳。}}
+      fx: {rel: {zhang: -6, lu: 2}, rep: {sect: 2}, tag: {sect: 不收封口錢}, flag: [zhang_exposed], mem: {zhang: 你逼他去派出所見了陸調查員。, lu: 你讓張主任自己去交代了藥行的帳。}}
 
 - id: m217
   month: 2
-  title: 白七娘又來買消息
+  title: 白姐又來買消息
   npc: bai
   where: shop
   days: [6, 6]
@@ -1327,11 +1328,11 @@ deals:
   truth: {goods: genuine, origin: clean, intent: plain}
   neutral: true
   openFace: smile
-  open: 「許掌櫃這個月，坊市裡的風都往你這兒吹。說一件給我聽？價錢照舊。」
-  ask: {q: 七娘這個月想買什麼？, a: 「誰在找誰，誰在躲誰。這個月，這種消息最值錢。」, f: smile}
+  open: 「許老闆這個月，聚落裡的風都往你這兒吹。說一件給我聽？價錢照舊。」
+  ask: {q: 白姐這個月想買什麼？, a: 「誰在找誰，誰在躲誰。這個月，這種消息最值錢。」, f: smile}
   silence: 「……不說也好。嘴緊的人，我也喜歡。」
   opts:
-    decline: {label: 什麼都不說, text: 白七娘笑了：「許掌櫃嘴緊。」她放下一包茶葉走了。, fx: {rel: {bai: 1}}}
+    decline: {label: 什麼都不說, text: 白姐笑了：「許老闆嘴緊。」她放下一包茶葉走了。, fx: {rel: {bai: 1}}}
 
 - id: m218
   month: 2
@@ -1349,17 +1350,17 @@ deals:
   neutral: true
   dirty: {flag: contraband, event: e_kuang_dirty}
   openFace: neutral
-  open: 「掌櫃的，北面礦上的閘門壞了，工頭叫我下山買寒鐵。十塊一斤，最多十斤。」
-  ask: {q: 礦上不是有寒鐵嗎？, a: 「礦上的鐵是宗門的，一斤都不能動。前陣子點貨少了三百斤，現在誰碰誰倒楣。」, f: uneasy}
+  open: 「老闆，北礦的閘門壞了，工頭叫我下山買寒鐵。十塊一公斤，最多十公斤。」
+  ask: {q: 礦上不是有寒鐵嗎？, a: 「礦上的鐵是寒潭會的配額，一公斤都不能動。前陣子盤點少了三百公斤，現在誰碰誰倒楣。」, f: uneasy}
   press:
-    - {q: 鐵要什麼樣的？, a: 「要有印記的。工頭說了，沒印記的，礦上點貨要出事。」, f: neutral}
+    - {q: 鐵要什麼樣的？, a: 「要有印記的。工頭說了，沒印記的，礦上盤點會出事。」, f: neutral}
   opts:
-    deal: {label: 賣給他, text: 礦工把寒鐵一塊一塊翻過來看了印記，才捆上背簍：「掌櫃的實在。」}
+    deal: {label: 賣給他, text: 礦工把寒鐵一塊一塊翻過來看了印記，才捆上背簍：「老闆實在。」}
     decline: {text: 「那我再問問別家。」他背著空簍子走了。}
 
 - id: m219
   month: 2
-  title: 回春堂又來收草
+  title: 回春藥行又來收草
   npc: xiaoman
   where: shop
   days: [5, 6]
@@ -1373,17 +1374,17 @@ deals:
   neutral: true
   honestyTest: true
   openFace: neutral
-  open: 「掌櫃的，回春堂要多煉一爐療傷丹，師父讓我來收赤炎草，二十年以上的，四株，十四塊一株。」
-  ask: {q: 怎麼又要煉療傷丹？, a: 「陸執法說，北林那邊還要派人去。去的人，都要帶藥。」, f: neutral}
+  open: 「老闆，回春藥行要多做一批療傷藥，師父叫我來收赤炎草，二十年以上的，四株，十四塊一株。」
+  ask: {q: 怎麼又要做療傷藥？, a: 「陸調查員說，北林那邊還要派人去。去的人，都要帶藥。」, f: neutral}
   haggle:
     - {price: 15, a: 「十五。師父給的就這麼多。」, f: uneasy}
   opts:
-    deal: {label: 賣給她, text: 葛小滿數了好幾遍，把草小心地放進藥箱：「謝謝掌櫃的。」}
+    deal: {label: 賣給她, text: 葛小滿數了好幾遍，把草小心地放進藥箱：「謝謝老闆。」}
     decline: {text: 「那我再去別家看看。」她鞠了個躬，走了。}
 
 - id: m220
   month: 2
-  title: 駝隊又回來了
+  title: 韓九又回來了
   npc: han
   where: shop
   days: [5, 6]
@@ -1397,10 +1398,419 @@ deals:
   neutral: true
   dirty: {flag: cut, event: e_han_cut}
   openFace: neutral
-  open: 「掌櫃的，又是我。駝隊要再往北走一趟，定神香有多少收多少，三十八一束，最多四束。」
-  ask: {q: 北邊還是睡不著？, a: 「狼是走了，可人還是睡不著。北邊的礦上，夜裡有人在挖東西。」, f: uneasy}
+  open: 「老闆，又是我。要再往北走一趟，定神香有多少收多少，三十八一束，最多四束。」
+  ask: {q: 北邊還是睡不著？, a: 「狼是走了，可人還是睡不著。北礦那邊，晚上有人在挖東西。」, f: uneasy}
   press:
-    - {q: 挖什麼？, a: 「不知道。駝隊只管送貨，不管挖什麼。」, f: neutral}
+    - {q: 挖什麼？, a: 「不知道。我只管送貨，不管人家挖什麼。」, f: neutral}
   opts:
-    deal: {label: 賣給他, text: 韓九把香捆在駱駝背上，道了聲謝，北方口音還是很重。}
-    decline: {text: 「那我去別家問問。」韓九拱拱手走了。}
+    deal: {label: 賣給他, text: 韓九把香綁在騾子背上，說了聲謝謝，北邊口音還是很重。}
+    decline: {text: 「那我去別家問問。」韓九點點頭走了。}
+
+# ═════════════════════════ 第三個月：結霜（終章） ═════════════════════════
+# 只有四天，市集日在第二天，不收規費。第四天，元嬰級的寒漪來店裡拜訪；
+# 拜訪時你能拿出什麼，取決於前兩個月的選擇，決定三種結局（守燈／清帳／典當）。
+# 「末日」——北礦的霜，以及一百年前的災變——到底是什麼，遊戲裡不給答案。
+
+# ───────────── 第一天：奇遇 ─────────────
+- id: m301
+  month: 3
+  title: 討水的老人
+  npc: xuelao
+  where: shop
+  days: [1, 1]
+  prio: 10
+  side: task
+  item: info
+  itemName: 一杯熱茶
+  truth: {goods: genuine, origin: clean, intent: test}
+  neutral: true
+  intro: 六月的早上，門口站著一個穿薄襯衫的老人，鬍子上結著一層白霜。他身後的柏油路面上，一路都是濕的腳印。
+  openFace: neutral
+  open: 「老闆，跟你要一杯熱水。從北邊走過來，渴了。」
+  ask: {q: 老人家從北邊哪裡來？, a: 「礦上。礦上冷，冷到井都結冰了。」他說得很平常，像在說今天下雨。, f: neutral}
+  press:
+    - {q: 六月天，鬍子上怎麼會結霜？, a: 「老了，身體冷。」他用袖子擦了擦，霜沒有化，只是掉在櫃上，一粒一粒的，很久都不化。, f: smile}
+    - {q: 礦上出了什麼事？, a: 「有人說是地底下的東西醒了。有人說是一百年前那台機器又開始動了。也有人說，是有一筆很老的帳，到期了。」他看著你：「你信哪一種？」, f: think}
+  silence: {narr: 他也不催，只是看著你櫃上那本缺頁的帳冊，看了很久。, f: think}
+  tells:
+    - {after: open, need: -20, text: 你看不出他的深淺。不是看不透，是什麼都看不到——像一口很深的井。}
+  opts:
+    deal:
+      label: 倒一杯熱茶，再拿兩個饅頭
+      text: 你倒了一杯熱茶，又包了兩個饅頭。老人捧著杯子，慢慢喝完，杯底結了一圈薄冰。他把杯子放下：「許家的茶，跟十二年前一樣淡。」你還來不及問，門口已經沒有人了，只剩一行濕腳印，往北。
+      f: smile
+      fx: {flag: [qiyu_elder], mem: {xuelao: 你請他喝了一杯熱茶。他說，許家的茶跟十二年前一樣淡。}}
+    special:
+      seal: 照影
+      label: 點起狐尾燈照他
+      need: {has: {hudeng: 1}}
+      text: 你點起狐尾燈。燈影輕輕擺，你看得很清楚：他的手一直很穩，眼睛一直看著燈，沒有躲。可是燈下的地上，他沒有影子。老人看了燈很久：「霜華的燈。」他把熱茶喝完，杯底結了一圈冰：「孩子，第四天我再來。帶著這盞燈。」
+      f: shock
+      fx: {flag: [qiyu_elder, elder_lamp], mem: {xuelao: 狐尾燈照不出他的影子。他認得你媽的燈。}}
+    decline:
+      label: 「小店不賣熱水。」
+      text: 老人點點頭，沒有說什麼，轉身走了。他站過的地方，柏油路面上結了一層薄霜，到中午都沒化。
+      fx: {flag: [elder_turned_away], mem: {xuelao: 他來要一杯熱水，你沒給。}}
+  missed: {flag: [elder_turned_away]}
+
+- id: m302
+  month: 3
+  title: 錢家店的避寒霜晶
+  npc: qian
+  where: shop
+  days: [1, 2]
+  prio: 9
+  side: sell
+  item: shuangjing
+  qty: 1
+  price: 60
+  lot: {q: 0.05, label: 錢家店的「霜晶」, flags: [fake]}
+  truth: {goods: fake, origin: clean, intent: con}
+  lesson: 真的霜晶放在手心不會化，貼在鐵上鐵會起霜；錢不語這一塊握一下就出水，是寒鐵屑包著冰過的玻璃。他說是「礦上的人拿出來的」，可礦上第一天就封了，誰都進不去。聚落在慌，最先賣「避難貨」的，通常是最不慌的人。
+  verdict: [decline, expose]
+  openFace: smile
+  open: 「許老弟，北邊的事聽說了吧？礦上冒出來的霜晶，戴在身上，冷氣就近不了身。我只剩這一塊，六十，算你自己人價。再過兩天，三百都買不到。」
+  ask: {q: 礦上封了，霜晶怎麼出來的？, a: 「礦上的人拿出來的嘛。封之前拿的，封之前。」, f: smile}
+  press:
+    - {q: 封之前？哪一天封的？, a: 「前……前幾天。老弟，你管它哪天，東西是好東西。」, f: smile}
+    - {q: 這麼好的東西，錢老闆自己不戴？, a: 「我？我有了，有了。」他拍拍胸口，那裡什麼都沒有。, f: sweat}
+  silence: 「……五十。老弟，你爸要是在，早就買了。」
+  silenceFace: smile
+  silenceDrop: 50
+  tells:
+    - {after: press, need: -3, text: 他說「有了」的時候，手在胸口拍了兩下。衣服底下是平的。, f: uneasy}
+    - {after: silence, need: -2, text: 霜晶放在櫃上，底下慢慢洇出一小圈水。, f: smile}
+  appraise:
+    - {realm: 4, text: 你握住它。一開始冰到手痛，握了十幾秒，指縫開始出水。外面一層寒鐵屑，底下是透明的——是玻璃。}
+  verify:
+    - {who: tie, cost: 0, a: 「霜晶？真的那種，放在鐵上，鐵會起一層霜。放在手裡，它不會化，是你的手會起霜。」}
+    - {who: bai, cost: 5, a: 「礦上第一天一早就封了，連陸調查員都進不去。這兩天聚落裡的霜晶，比礦上一年出的還多。」}
+  opts:
+    deal: {label: 買下, text: 錢不語把霜晶塞到你手裡，笑得很開：「老弟有眼光。」他走得很快。, fx: {mem: {qian: 末日當頭，賣給你一塊「霜晶」。}}}
+    decline: {text: 「好，好，那我找別家。」錢不語把霜晶塞回口袋，口袋濕了一塊。}
+    expose:
+      right: true
+      label: 點破
+      text: 你把霜晶放在櫃上那塊寒鐵旁邊。鐵沒有起霜，霜晶底下倒是積了一灘水。錢不語看了一眼，笑容掛在臉上，掛了很久：「老弟，這年頭，大家都是想活命。」
+      f: sweat
+      fx: {rel: {qian: -1}, rep: {loose: 1}, tag: {loose: 眼尖}, flag: [qian_crystal_exposed], mem: {qian: 你當面點破了他的假霜晶。}}
+
+# ───────────── 第一天、第二天：市集 ─────────────
+- id: m303
+  month: 3
+  title: 溪裡撿的冰石頭
+  npc: stone
+  where: market
+  days: [1, 2]
+  side: sell
+  item: shuangjing
+  itemName: 一塊不化的冰石頭
+  qty: 1
+  price: 6
+  lot: {q: 1, label: 小石頭撿的霜晶}
+  truth: {goods: undervalued, origin: clean, intent: plain}
+  lesson: 礦上的水流進北林溪，霜晶是順水沖下來的——不是偷的。它在太陽底下擺了一上午沒化，貼在鐵上鐵會起霜。小石頭只知道它「冰」，不知道它值多少。他說話顛三倒四，是因為怕被當成賊。
+  verdict: [special, expose]
+  noJudge: [deal]
+  openFace: uneasy
+  open: 「老闆……一塊冰石頭，不會化。六塊……你要不要？我不是從礦上拿的，真的不是。」
+  ask: {q: 哪裡撿的？, a: 「北林溪。溪水這幾天好冰，石頭縫裡卡著這個。我、我沒進礦，礦上有人守著。」, f: uneasy}
+  press:
+    - {q: 你怎麼一開口就說不是從礦上拿的？, a: 「因為……因為昨天有人說，拿礦上東西的都要抓。我怕。」他眼圈紅了。, f: sad}
+  silence: 「……五塊也可以。鐵師傅說，冰的東西不能放在爐子旁邊，我沒地方放。」
+  silenceFace: uneasy
+  tells:
+    - {after: open, need: -2, text: 他把冰石頭放在布上曬著。太陽已經很高了，石頭一點水都沒出。}
+  appraise:
+    - {realm: 4, text: 真的霜晶。你握在手裡，它不化，是你的掌心起了一層白。石面上有水流磨過的痕，是溪裡沖下來的。}
+  verify:
+    - {who: tie, cost: 0, a: 「是霜晶。……那孩子沒偷。礦上的水，就是流進北林溪的。」}
+  opts:
+    deal: {label: 買下, text: 小石頭鬆了一口氣，把靈石數了兩遍：「老闆，你別告訴別人是我撿的。」, fx: {mem: {stone: 賣給你一塊溪裡撿的霜晶。}}}
+    decline: {text: 小石頭把冰石頭包起來，抱在懷裡，像抱著一塊燙手的東西。}
+    expose:
+      right: true
+      label: 告訴他這是什麼
+      text: 你告訴他，這是霜晶，真的，值好幾十。小石頭張大了嘴，又摀住：「那我、我拿去給鐵師傅，他說要用它淬刀。」他跑了幾步，又跑回來：「老闆，溪裡還有好多，越往上游越冰。」
+      fx: {rel: {stone: 2, tie: 1}, rep: {loose: 1}, tag: {loose: 厚道}, flag: [stone_crystal_told], mem: {stone: 你告訴他那塊冰石頭的價值。}}
+    special:
+      seal: 公道
+      label: 出公道價（三十）
+      price: 30
+      text: 「三十。」小石頭看著靈石，又看看你：「老闆，你上次也是這樣。」他把霜晶放下，跑去鐵師傅的攤子，一路都在笑。
+      fx: {rel: {stone: 2, tie: 1}, rep: {loose: 1}, tag: {loose: 厚道}, flag: [stone_crystal_fair], mem: {stone: 用三十塊買了他撿的霜晶。}}
+
+- id: m304
+  month: 3
+  title: 燈攤後面的門
+  npc: mang
+  where: market
+  days: [1, 4]
+  prio: 6
+  need: {anyFlag: [mang_told_mother, mang_saw_jiansui]}
+  side: task
+  item: hudeng
+  itemName: 一盞沒點的燈
+  truth: {goods: genuine, origin: clean, intent: plain}
+  neutral: true
+  hook: {t: 盲婆婆, d: 燈攤收了一半，盲婆婆坐在攤子後面，像是在等你。}
+  openFace: neutral
+  open: 「孩子，你來了。北邊的霜，你看見了吧。我說過，要帶你去一個地方。」
+  ask: {q: 婆婆，北邊到底是什麼？, a: 「玄霜巡守隊守了幾十年的東西。守的是什麼，隊長沒說，隊長的隊長也沒說。我們只知道，燈不能滅。」, f: think}
+  press:
+    - {q: 我媽……她是怎麼走的？, a: 「十二年前，礦上也結過一次霜。你媽一個人提著燈進去，霜退了，她沒出來。聚落裡的人說她跟人跑了。我不信，也不敢說。」, f: sad}
+    - {q: 那東西，是活的嗎？, a: 「我不知道。也許是一頭睡著的東西。也許是災變那年留下來、一直沒關掉的什麼。也許什麼都沒有，只有冷。」她停了一下：「長生當鋪那個人說，是一本帳。」, f: think}
+  silence: 「……你媽那年，也是這樣不說話，想了一整夜。」
+  silenceFace: sad
+  opts:
+    decline: {label: 再想想, text: 她點點頭，繼續纏燈罩：「第四天之前，想好。」}
+    special:
+      seal: 隨行
+      label: 跟她去
+      need: {not: [lamp]}
+      text: 盲婆婆收了攤，帶你穿過市場後面一條你從沒走過的小巷。巷底是一扇鐵門，門上用油漆畫著三回結。門後是一間空屋，地上一個燈座，燈座上放著一盞燈，燈罩內側是一圈軟毛——就是她攤上那盞從來不掀布的燈，原來一直擺在這裡。旁邊壓著一張紙，是你媽的字：「阿衡如果來，燈給他。」盲婆婆把燈放在你手心：「只有這一盞。孩子，第四天有人要來找你。到時候，你自己選。」
+      f: cry
+      fx: {flag: [mang_north, lamp], rel: {mang: 2}, give: [{item: hudeng, qty: 1, cost: 0, label: 霜華留下的狐尾燈}], mem: {mang: 帶你去看了你媽留下的燈，把那盞唯一的狐尾燈給了你。}}
+    special2:
+      seal: 隨行
+      label: 跟她去
+      need: {flag: [lamp], not: [sold_lamp]}
+      text: 盲婆婆收了攤，帶你穿過市場後面一條你從沒走過的小巷。巷底是一扇鐵門，門上用油漆畫著三回結。門後是一間空屋，地上一個空的燈座，燈座上有一圈很淺的印子，是你手上這盞燈放了很多年留下的。旁邊壓著一張紙，是你媽的字：「阿衡如果來，燈給他。」盲婆婆摸了摸你手上的燈：「它本來就是要給你的。孩子，第四天有人要來找你。到時候，你自己選。」
+      f: cry
+      fx: {flag: [mang_north], rel: {mang: 2}, mem: {mang: 帶你去看了那盞燈原本的燈座。}}
+
+# ───────────── 第二天、第三天：奇遇與來客 ─────────────
+- id: m305
+  month: 3
+  title: 刀胚開刃
+  npc: tie
+  where: shop
+  days: [2, 3]
+  prio: 8
+  need: {anyFlag: [gave_tie_lingsui, stone_told, stone_fair, stone_apprentice, stone_crystal_told, stone_crystal_fair]}
+  side: task
+  item: duandao
+  itemName: 一把開了刃的刀
+  truth: {goods: genuine, origin: inheritance, intent: plain}
+  neutral: true
+  intro: 鐵師傅第一次走進你的店。他手裡拿著一把刀，刀身上的煙燻擦掉了，露出兩個字。
+  openFace: cold
+  open: 「……那把刀胚，開刃了。給你。」
+  ask: {q: 刀上刻的是什麼字？, a: 「玄霜。」他停了很久：「我年輕時幫玄霜巡守隊打工具。隊上出事那年，我欠了一條命，躲到這裡，躲了二十年。」, f: cold}
+  press:
+    - {q: 為什麼給我？, a: 「你媽救過我。她走之前說，這把刀，等她兒子長大了再開刃。」他停了一下：「那孩子說你是好人。」, f: sad}
+  silence: {narr: 他也不說話，把刀放在櫃上，又把刀往你這邊推了推。, f: cold}
+  opts:
+    deal:
+      label: 收下
+      text: 你接過刀。刀不好看，刀背厚，刀刃薄，握在手裡是溫的——像是剛從爐子裡出來，又像是一直有人握著。鐵師傅點點頭，走了。
+      f: smile
+      fx: {flag: [tie_xuanshuang], give: [{item: duandao, qty: 1, cost: 0, label: 玄霜刀}], rel: {tie: 2}, mem: {tie: 他以前幫玄霜巡守隊打工具。他把刻著「玄霜」的刀給了你。}}
+    decline: {label: 請他留著, text: 「……也好。」鐵師傅把刀收回去：「用得著的時候，來找我。」, fx: {flag: [tie_xuanshuang], rel: {tie: 1}, mem: {tie: 他以前幫玄霜巡守隊打工具。}}}
+
+- id: m306
+  month: 3
+  title: 一張拜訪信
+  npc: ye
+  where: shop
+  days: [2, 3]
+  prio: 10
+  side: task
+  item: baitie
+  itemName: 寒漪的拜訪信
+  truth: {goods: genuine, origin: clean, intent: plain}
+  neutral: true
+  intro: 管理處的人在路口清出一條路。一個穿淺灰外套的中年人走進你的店，周警員跟在後面，頭低低的，一句話都沒說。
+  openFace: neutral
+  open: 「寒潭會，葉。」他雙手遞上一個紅色信封：「寒漪老師三天前從總會出發，預定第四天中午前到，想來你店裡拜訪。我先來送信。」
+  ask: {q: 元嬰級的人……為什麼要來我這間小店？, a: 「她沒說。她只說，你店裡有一樣東西，十二年前就該有人來問。」他停了一下：「她三天前就出發了。總會的人說，那時候結霜的消息還沒送到。」, f: neutral}
+  press:
+    - {q: 北礦到底出了什麼事？, a: 「寒潭會的公告是坍方。」他看了一眼窗外：「可是坍方不會讓六月結霜。我是金丹級的，進得去比較深的地方，我也說不出那是什麼。」, f: think}
+    - {q: 周警員為什麼跟著您？, a: 「寒漪老師要看十二年前你家那件案子的卷宗。周警員是當年經手的人。」周警員的臉白了一下。, f: cold}
+  silence: {narr: 葉理事等你開口，等得很有耐心。周警員站在他後面，汗從髮際流下來。, f: neutral}
+  tells:
+    - {after: open, need: -9, text: 你看不出他的深淺。他後面的周警員，在他面前連大氣都不敢喘。}
+  opts:
+    deal:
+      label: 收下拜訪信
+      text: 你收下拜訪信。葉理事點頭，退了出去。周警員走在最後，到了門口，回頭看了你一眼，那一眼裡什麼都有。
+      fx: {give: [{item: baitie, qty: 1, cost: 0}], flag: [got_baitie], rel: {zhou: -1}, mem: {zhou: 跟著寒潭會的葉理事來送拜訪信。他看你的眼神變了。}}
+    decline:
+      label: 「小店不敢當。」
+      text: 葉理事笑了一下，把拜訪信放在櫃上：「寒漪老師說了，許老闆如果推辭，就把信放下。要不要來，是她的事。」
+      fx: {give: [{item: baitie, qty: 1, cost: 0}], flag: [got_baitie, humble_baitie]}
+  missed: {flag: [got_baitie]}
+
+- id: m307
+  month: 3
+  title: 長生當鋪開了門
+  npc: dianzhu
+  where: shop
+  days: [3, 3]
+  prio: 9
+  side: task
+  item: dangpiao
+  itemName: 你的當票
+  truth: {goods: genuine, origin: clean, intent: plain}
+  neutral: true
+  intro: 今天不是第一天。長生當鋪的黑門開了，當鋪老闆自己走進了你的店。他臉上罩著一層紗，看不到臉。
+  openFace: neutral
+  open: 「許先生。長生當鋪開了這麼多年，第一次在第一天以外開門。北邊的霜到了，有些帳，要提前結。」
+  ask: {q: 北邊的霜，跟長生當鋪有什麼關係？, a: 「長生當鋪收的，是壽命。壽命押在哪裡，許先生想過嗎？」他沒有等你回答：「也許在當票庫。也許在北邊。也許，霜就是利息。」, f: neutral}
+  press:
+    - {q: 我媽也押過壽命嗎？, a: 「霜華小姐沒有押壽命。她押的是別的東西。」他停了一下：「當票，長生當鋪不給人看。」, f: neutral}
+    - {q: 你每年買燈，點在哪裡？, a: 「點在當票庫裡。普通的燈，照得到帳本而已。」他看著你：「有一盞不普通的，我看了十二年，沒買到。」, f: neutral}
+  silence: {narr: 當鋪老闆也不說話。屋裡越來越冷，你呵出的氣，是白的。, f: neutral}
+  opts:
+    special:
+      seal: 當燈
+      label: 拿狐尾燈換一年壽命
+      need: {has: {hudeng: 1}}
+      text: 你把狐尾燈放在櫃上。當鋪老闆伸手，停了一下，才把燈收進袖子裡：「一年。」他走到門口：「許先生，燈在長生當鋪也會亮。只是看的人，換了。」
+      fx: {take: [{item: hudeng, qty: 1}], lifespan: 12, flag: [sold_lamp], mem: {dianzhu: 你把狐尾燈當給了長生當鋪，換了一年壽命。}}
+    special2:
+      seal: 當匾
+      label: 當掉店的招牌
+      text: 你把店的招牌拆下來。當鋪老闆看了很久，點了點頭：「許家三代的招牌，長生當鋪收。半年壽命，加兩百靈石。」門口上方空了一塊，白白的。
+      fx: {stones: 200, lifespan: 6, flag: [pawned_sign], rep: {loose: -1}, tag: {loose: 當了招牌}, mem: {dianzhu: 你把許家店的招牌當給了長生當鋪。}}
+    decline: {label: 不當, text: 當鋪老闆點點頭：「許先生跟霜華小姐一樣。」他走了，門口的霜，跟著他一路退到街尾。, fx: {flag: [refused_dianzhu]}}
+
+- id: m308
+  month: 3
+  title: 收避難錢的「會員」
+  npc: jiadizi
+  where: shop
+  days: [3, 4]
+  prio: 8
+  side: sell
+  item: info
+  itemName: 一塊「避難名額」木牌
+  price: 40
+  truth: {goods: fake, origin: clean, intent: con}
+  lesson: 他說自己是寒潭會會員，可寒潭會的識別證是塑膠殼加手寫卡、背面有編號——如果你見過沈青那一張就知道；他腰上掛的是木頭。制服的藍色也淺了一層，是自己染的，不是寒潭會發的。他說「寒漪老師有交代」，可葉理事是親自上門送信的，寒漪要辦的事，不會叫一個會員挨家挨戶收錢。陸調查員的名冊上，也沒有這個名字。
+  verdict: [expose, report, decline]
+  intro: 一個穿藍色制服的年輕人推門進來，手裡捧著一疊木牌，嗓門很大。
+  openFace: smug
+  open: 「寒潭會會員，寒漪老師有交代！霜來之前，寒潭會安排聚落居民撤到南稜，每戶一個名額，四十塊靈石一塊牌子。許老闆，晚了就沒了喔。」
+  ask: {q: 你叫什麼名字？哪一組的？, a: 「李三。哪一組……就、就外勤組啊，老闆不懂啦。」, f: smug}
+  press:
+    - {q: 你的識別證呢？, a: 他拍了拍腰上一塊木牌：「這不是嗎？寒潭會新發的，舊的都收回去了。」, f: smug}
+    - {q: 寒漪老師不是明天要親自來嗎？, a: 「寒、寒漪老師那麼忙，哪會親自來。都是我們底下的人在跑。」, f: sweat}
+  silence: 「……三十。算老闆便宜一點，不要跟別家講。」
+  silenceDrop: 30
+  tells:
+    - {after: press, need: -1, text: 你提到寒漪的時候，他的眼睛往門外瞟了一下，腳尖朝著門。, f: uneasy}
+  appraise:
+    - {realm: 4, text: 他手上的木牌是新刨的，墨還沒乾。制服的藍色淺了一層，袖口的染料沾到手腕上。}
+  verify:
+    - {who: lu, cost: 0, a: 「李三？名冊上沒有這個人。寒潭會的撤離通知，一塊錢都不收。」}
+    - {who: bai, cost: 5, a: 「今天一早，已經有三家買了『名額』。賣牌子的人，昨天還在黑市擺攤。」}
+  opts:
+    deal: {label: 買一塊, text: 他把木牌塞給你，收了靈石，一出門就往巷子裡轉。, fx: {flag: [bought_fake_pass], mem: {jiadizi: 賣給你一塊四十靈石的「避難名額」。}}}
+    decline: {text: 「老闆不要，可別後悔！」他捧著木牌去了下一家。}
+    expose:
+      right: true
+      label: 點破
+      text: 你說：「寒潭會的識別證有編號，不是木頭。撤離通知不收錢，而且寒漪老師明天就要來我這裡。」他的臉一下子白了，木牌掉了一地，推開門就跑。街上幾個剛買了牌子的人追了出去。
+      f: shock
+      fx: {rep: {loose: 1}, tag: {loose: 眼尖}, flag: [fake_pass_exposed], mem: {jiadizi: 你當面拆穿了他賣假名額。}}
+    report:
+      text: 你去派出所說了。陸調查員親自帶人去巷子裡把他揪了出來，木牌燒了一地。「末日還沒來，」陸調查員說，「趁火打劫的先來了。」
+      fx: {rel: {lu: 1}, rep: {sect: 1}, flag: [fake_pass_reported], mem: {lu: 你報了冒充寒潭會會員收避難錢的人。}}
+
+# ───────────── 第四天：元嬰級的人來拜訪 ─────────────
+# 兩個版本：第一天請老人喝過茶的（qiyu_elder），和沒有的。
+# 選項決定終局：special = 守燈、special2 = 清帳、deal／decline = 典當。
+- id: m309
+  month: 3
+  title: 寒漪來訪
+  npc: hanyi
+  where: shop
+  days: [4, 4]
+  prio: 20
+  need: {flag: [qiyu_elder]}
+  side: task
+  item: baitie
+  itemName: 拜訪
+  truth: {goods: genuine, origin: clean, intent: plain}
+  neutral: true
+  intro: 中午前，整條街忽然安靜下來。一個穿洗到發白外套的女人走進你的店，鞋子上全是三天山路的泥，後面跟著的，是第一天那個來要熱水的老人——今天他鬍子上沒有霜，整個人沉得像一座山。兩個元嬰級的人，在你的櫃台前坐下，像兩個普通的客人。
+  openFace: neutral
+  open: 「寒潭會，寒漪。不好意思，突然來打擾。」她朝你點了點頭：「這位是玄霜巡守隊以前的隊長，大家叫他雪衣老師，是你媽的老師。他說第一天在你店裡喝了一杯茶，茶很淡，人很好。我們今天來，是拜訪，不是問罪——北邊的霜，需要一個許家的人，做一個選擇。」
+  ask: {q: 北邊的霜，到底是什麼？, a: 寒漪沉默了很久：「我走過的地方比大部分人多，看過海往下掉，看過整座山在一夜之間升高。我說不出來。」雪衣老人接過話：「玄霜巡守隊說那是封印。寒潭會說那是礦脈。有人說是一百年前那件事留下來的機器，長生當鋪說那是一本帳。說法很多，路只有幾條。你手上有什麼，就走得了哪一條。」, f: think}
+  press:
+    - {q: 為什麼是我？, a: 雪衣老人看著你：「十二年前，你媽選過一次。她提燈進去，霜退了。這一次，輪到她兒子。」, f: sad}
+    - {q: 我爸的案子呢？, a: 寒漪把一疊卷宗放在櫃上：「周正在外面站著。錢不語也在。許老闆如果有證據，今天就是對帳的日子。」, f: cold}
+  silence: {narr: 他們兩個都不說話，慢慢喝你泡的茶。窗外的霜，一點一點爬上了舊公路。, f: neutral}
+  tells:
+    - {after: open, need: -20, text: 雪衣老人朝你點了點頭，像在說：不急。}
+  opts:
+    special:
+      seal: 守燈
+      label: 把狐尾燈放在櫃上
+      need: {has: {hudeng: 1}, anyFlag: [mang_told_mother, mang_north, tie_xuanshuang, elder_lamp]}
+      text: 你把燈放在櫃上。雪衣老人伸手碰了碰燈罩，燈芯自己亮了，是很淡的藍。「霜華的燈。」他站起來：「走吧，孩子。玄霜巡守隊的人，從來都是提著燈進去的。」
+      f: cry
+      fx: {flag: [finale_lamp], mem: {xuelao: 你提著你媽的燈，跟他往北去了。, hanyi: 她來店裡拜訪，你選了守燈。}}
+    special2:
+      seal: 清帳
+      label: 把十二年前的帳攤開
+      need: {anyFlag: [qian_confronted, knows_raid, zhang_exposed, scar_caught, lu_knows_scar, got_pages]}
+      text: 你把你爸的帳冊、缺的那幾頁、還有這幾個月記下的每一筆，一樣一樣攤在櫃上。寒漪一頁一頁看完，抬起頭：「周正，錢不語，進來。」門外兩個人走進來的時候，腳是軟的。寒漪說：「先清聚落的帳，再清北邊的。」
+      f: cold
+      fx: {flag: [finale_ledger], mem: {hanyi: 她來店裡拜訪，你把十二年前的帳攤在她面前。}}
+    deal:
+      label: 「兩位說怎麼辦，就怎麼辦。」
+      text: 寒漪看了你很久，輕輕嘆了口氣：「也好。」雪衣老人站起來，拍了拍你的肩：「茶很好。」他們走的時候，長生當鋪的黑門，在街尾開了。
+      fx: {flag: [finale_pawn], mem: {hanyi: 她來店裡拜訪，你把選擇交還給她。}}
+    decline:
+      label: 請他們喝完茶
+      text: 你又幫他們兩個各加了一次茶。他們喝完，起身告辭。雪衣老人在門口回頭：「孩子，不選，也是一種選。」
+      fx: {flag: [finale_pawn, finale_refused], mem: {hanyi: 她來店裡拜訪，你只請她喝了茶。}}
+  missed: {flag: [finale_pawn, missed_visit]}
+
+- id: m309b
+  month: 3
+  title: 寒漪來訪
+  npc: hanyi
+  where: shop
+  days: [4, 4]
+  prio: 20
+  need: {not: [qiyu_elder]}
+  side: task
+  item: baitie
+  itemName: 拜訪
+  truth: {goods: genuine, origin: clean, intent: plain}
+  neutral: true
+  intro: 中午前，整條街忽然安靜下來。一個穿洗到發白外套的女人走進你的店，鞋子上全是三天山路的泥，後面跟著一個穿薄襯衫的老人。你認出他——第一天來要熱水的那個。他看了你一眼，沒有說話。兩個元嬰級的人在你的櫃台前坐下，像兩個普通的客人。
+  openFace: neutral
+  open: 「寒潭會，寒漪。不好意思，突然來打擾。」她朝你點了點頭：「這位是玄霜巡守隊以前的隊長，大家叫他雪衣老師。我們今天來，是拜訪，不是問罪——北邊的霜，需要一個許家的人，做一個選擇。」雪衣老人只說了一句：「許家的門，比十二年前難進。」
+  ask: {q: 北邊的霜，到底是什麼？, a: 寒漪沉默了很久：「我走過的地方比大部分人多，我說不出來。玄霜巡守隊說那是封印，寒潭會說那是礦脈，有人說是一百年前留下來的機器，長生當鋪說那是一本帳。你手上有什麼，就走得了哪一條。」, f: think}
+  press:
+    - {q: 為什麼是我？, a: 雪衣老人看著窗外：「因為十二年前，提燈進去的是你媽。」, f: cold}
+    - {q: 我爸的案子呢？, a: 寒漪把一疊卷宗放在櫃上：「周正在外面站著。錢不語也在。許老闆如果有證據，今天就是對帳的日子。」, f: cold}
+  silence: {narr: 他們兩個都不說話。雪衣老人的茶，一口都沒喝。窗外的霜，一點一點爬上了舊公路。, f: cold}
+  opts:
+    special:
+      seal: 守燈
+      label: 把狐尾燈放在櫃上
+      need: {has: {hudeng: 1}, anyFlag: [mang_told_mother, mang_north, tie_xuanshuang]}
+      text: 你把燈放在櫃上。雪衣老人的手停在燈罩上，很久，才說：「霜華的燈。」他終於端起茶喝了一口：「走吧。」
+      f: cry
+      fx: {flag: [finale_lamp], mem: {xuelao: 你提著你媽的燈，跟他往北去了。, hanyi: 她來店裡拜訪，你選了守燈。}}
+    special2:
+      seal: 清帳
+      label: 把十二年前的帳攤開
+      need: {anyFlag: [qian_confronted, knows_raid, zhang_exposed, scar_caught, lu_knows_scar, got_pages]}
+      text: 你把你爸的帳冊、缺的那幾頁、還有這幾個月記下的每一筆，一樣一樣攤在櫃上。寒漪一頁一頁看完：「周正，錢不語，進來。」她說：「先清聚落的帳，再清北邊的。」
+      f: cold
+      fx: {flag: [finale_ledger], mem: {hanyi: 她來店裡拜訪，你把十二年前的帳攤在她面前。}}
+    deal:
+      label: 「兩位說怎麼辦，就怎麼辦。」
+      text: 寒漪輕輕嘆了口氣：「也好。」他們走的時候，長生當鋪的黑門，在街尾開了。
+      fx: {flag: [finale_pawn], mem: {hanyi: 她來店裡拜訪，你把選擇交還給她。}}
+    decline:
+      label: 請他們喝完茶
+      text: 他們喝完茶，起身告辭。雪衣老人在門口停了一下：「不選，也是一種選。」
+      fx: {flag: [finale_pawn, finale_refused], mem: {hanyi: 她來店裡拜訪，你只請她喝了茶。}}
+  missed: {flag: [finale_pawn, missed_visit]}

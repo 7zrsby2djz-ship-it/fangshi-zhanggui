@@ -271,3 +271,7 @@ details summary{cursor:pointer}
 .event.withface{position:relative;padding-right:64px}
 .face.evface{position:absolute;right:8px;top:10px;width:48px;height:56px}
 .hud-day small.mon{font-size:12px;font-weight:500;color:var(--ink-2);margin-right:6px;letter-spacing:.08em}
+.event.finale{position:relative;padding:14px 16px 20px;border-width:2px}
+.event.finale h3{font-size:18px;margin-bottom:8px}
+.event.finale p+p{margin-top:10px}
+.event.finale .seal-stamp{position:static;display:block;width:64px;height:64px;margin:12px 0 0 auto;transform:rotate(-8deg)}

@@ -9,7 +9,7 @@ data = {
     'meta': meta['meta'], 'intro': meta['intro'], 'kaozheng': meta['kaozheng'], 'endings': meta['endings'],
     'items': L('items'), 'npcs': L('npcs'), 'news': L('news'), 'deals': L('deals')['deals'],
     'places': {**L('places')['places'], **{k: v for k, v in L('places').items() if k != 'places'}},
-    'events': {**L('events')['events'], 'monthStart': L('events').get('monthStart', {})},
+    'events': {**L('events')['events'], 'monthStart': L('events').get('monthStart', {}), 'drift': L('events').get('drift', [])},
     'intel': L('intel')['intel'], 'heat': L('intel')['heat'], 'accuse': L('intel')['accuse'],
 }
 data['meta']['truthLabels'] = meta['truthLabels']

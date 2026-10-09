@@ -459,7 +459,7 @@ function beginDay() {
     const ec = store.get(ECHO_KEY) || []; if (ec.length) { S.cards.push({ title: '上一次留下來的', text: ec[0] }); store.set(ECHO_KEY, ec.slice(1)); }
   }
   relicReactions();
-  if (S.pawnShiftNext != null && (S.dayCount || 0) >= S.pawnShiftNext) { S.pawnShiftNext = null; S.pawnShift = { k: dayKey(), m: rnd('pawnshift:' + dayKey()) < 0.5 ? 0.1 : -0.1 }; }
+  if (S.pawnShiftNext != null && (S.dayCount || 0) >= S.pawnShiftNext && pawnOpenToday()) { S.pawnShiftNext = null; S.pawnShift = { k: dayKey(), m: -0.1 }; }
   if (S.day === 3 && MON() === 1 && S.pendingDep) { const dep = S.pendingDep; S.pendingDep = null; addLot({ item: dep.item, qty: 1, cost: 0, known: true }); S.cards.push({ title: '長生當鋪送來的包裹', text: `一大早，有人把一個牛皮紙包放在門口。單子上的取件人寫的是你的名字，字跡也是你的。裡面是${IT[dep.item].name}。你不記得寄放過它。` }); }
   if (S.day === 1 && MON() > 1) {
     S.cards.push({ title: '長生當鋪的字條', text: `天還沒亮，門縫裡又塞進來一張字條：「許先生，尚餘${monthsText(S.lifespan)}。」`, face: 'think' });
@@ -965,6 +965,7 @@ function placeOpen(id) {
   if (p.minLevel && S.level < p.minLevel) return 'level';
   return p.hours.includes(S.slot);
 }
+function pawnOpenToday() { const p = PL.pawn; return !!p && (!p.days || p.days.includes(S.day)) && !closedDays(p).includes(S.day) && !(p.minLevel && S.level < p.minLevel); }
 function closedDays(p) { return Array.isArray(p.closed) ? (MON() === 1 ? p.closed : []) : ((p.closed || {})[MON()] || []); }
 function enterPlace(id) {
   S.place = { id, acted: false, homeSeen: null, did: false }; S.phase = 'place';
@@ -2443,7 +2444,7 @@ function start(data) {
   render();
 }
 window.claude?.hot?.snapshot?.(() => ({ S, view: UI.view, tab: UI.tab }));
-window.__fs = { gapYield, redeemCost, pawnMult, relicReactions, watchPlace, dropHeavy, dropCands, pickBack, toggleCarry, syncCarry, isCarryRelic, autoBiz, interruptsAll, lethalLeft, firstVisit, isLethal, spotOk, spotOk0, threadMemSave, deposit, isStoryDeal, shopFlavor, CARRY_N, useRelic, relicUseState, scaleEff, protectMult, deathChance, redeem, applyFx, heldRelics, relicEff, warnRelic, held, IT,  ALLEV, spotList, shopSellLot, shopSellable, die, goNight, shopDay, shopStats, hireStaff, fireStaff, buyUpg, buyGear, interruptsAvail, openInterrupt, ckptRestore, ckptInfo, ckptSave, burdenLimit, ascentRisk, achBook, unlockedBonuses, bonusPicks, threadState, checkAchieve, gearStats, spotBurden, DEATHS, THREADS, SH, PFX, explore, spotsAvail, linAct, EXPLORE, needOk, placeOpen, driftChoose, relicLots, newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN,
+window.__fs = { pawnOpenToday, gapYield, redeemCost, pawnMult, relicReactions, watchPlace, dropHeavy, dropCands, pickBack, toggleCarry, syncCarry, isCarryRelic, autoBiz, interruptsAll, lethalLeft, firstVisit, isLethal, spotOk, spotOk0, threadMemSave, deposit, isStoryDeal, shopFlavor, CARRY_N, useRelic, relicUseState, scaleEff, protectMult, deathChance, redeem, applyFx, heldRelics, relicEff, warnRelic, held, IT,  ALLEV, spotList, shopSellLot, shopSellable, die, goNight, shopDay, shopStats, hireStaff, fireStaff, buyUpg, buyGear, interruptsAvail, openInterrupt, ckptRestore, ckptInfo, ckptSave, burdenLimit, ascentRisk, achBook, unlockedBonuses, bonusPicks, threadState, checkAchieve, gearStats, spotBurden, DEATHS, THREADS, SH, PFX, explore, spotsAvail, linAct, EXPLORE, needOk, placeOpen, driftChoose, relicLots, newGame, startDeal, startWalkin, actAsk, actPress, actSilence, actHaggle, actAppraise, actVerify, decide, closeEnc, enterPlace, leavePlace, advanceSlot, meditate, endDay, beginDay, openShop, nextShopDeal, encOptions, canAct, verifyList, sellToSmith, sellToHuichun, buyFromHuichun, turnIn, marketStall, nextMonth, gradeOf, scoreTotal, stallsToday, stallDeal, dealAvail, netWorth, price, held, render, onAct, sellAtTea, sellIntel, intelOffer, accuse, accuseList, evidenceHad, appraiseLot, visitHome, askBai, overhear, buyTea, scanLearn, IN,
   get S() { return S; }, set S(v) { S = v; }, UI, D, DEALS, NP, IT };
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 })();

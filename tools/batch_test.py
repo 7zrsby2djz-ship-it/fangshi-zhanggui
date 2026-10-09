@@ -151,7 +151,7 @@ JS = r"""
   { const el = { dataset: {} }; T.onAct('leave', el); ok(T.S.phase === 'place' && T.S.slot === 0, 'leave needs second tap with warn relic'); T.onAct('leave', el); ok(T.S.phase !== 'place', 'second tap climbs'); }
   // 籤詩：隔天當鋪價錢浮動
   fresh(); give('qianshi'); T.S.flags.tea_story_heard = 1; T.S.dayCount = 1; T.S.cards = []; T.relicReactions(); T.S.dayCount = 4; T.relicReactions(); ok(T.S.flags.att_qianshi && T.S.pawnShiftNext === 5, 'qianshi attract sets pawn shift');
-  T.S.phase = 'day'; T.goNight(); T.endDay(); ok(T.pawnMult() !== 1 && T.redeemCost() !== T.D.meta.redeemCost, 'pawn price shifted next day ' + T.redeemCost()); T.S.phase = 'day'; T.S.night = null; T.goNight(); ok(!!T.S.night.pawnLine, 'pawn line in report');
+  T.S.phase = 'day'; T.goNight(); T.endDay(); ok(T.pawnOpenToday() ? T.pawnMult() < 1 : (T.pawnMult() === 1 && T.S.pawnShiftNext != null), 'pawn shift waits for pawn open day (day ' + T.S.day + ', ' + T.redeemCost() + ')'); T.S.phase = 'day'; T.S.night = null; T.goNight(); ok(!!T.S.night.pawnLine === T.pawnOpenToday(), 'pawn line only on the day it applies');
   // 第四十五件：沒見過空號鉛筆就用不提鉛筆的版本
   fresh(); delete T.S.codex.qianbi; Object.keys(T.IT).filter(k => T.IT[k].cat === 'relic' && k !== 'qianbi').forEach(k => T.S.codex[k] = true); T.S.flags.rth_15 = T.S.flags.rth_30 = 1; T.S.cards = []; T.relicReactions(); ok(T.S.cards.some(c => c.text.includes('像在等誰應')), 'rth_45 fallback without qianbi');
   // 用過之後：五件可用遺物的後續
@@ -170,6 +170,10 @@ JS = r"""
   fresh(); T.S.shop.staff = []; { let bad = 0, staffLine = 0, comma = 0; T.S.usedFl = {}; for (let i = 0; i < 60; i++) { T.S.usedFl = {}; T.S.day = (i % 6) + 1; T.S.month = 1 + (i % 3); const ls = T.shopFlavor({ acc: 1, caught: 1 }, 'x' + i); for (const l of ls) { { const rk = Object.keys(T.IT).find(k => T.IT[k].cat === 'relic' && l.replace(/戴舊安全帽/g, '').includes(T.IT[k].name)); if (rk) { bad++; out.push('  relic? ' + rk + ' ' + T.IT[rk].name + ' | ' + l); } } if (l.includes('夥計')) staffLine++; } } ok(!bad && !staffLine, 'flavor: no relic goods (' + bad + '), no staff lines without staff (' + staffLine + ')'); }
   // 跳過日子：沒夥計只用 gapSolo，同一句不連著出現
   fresh(); T.S.shop.staff = []; { const SHF = T.SH.flavor; const t1 = T.gapYield().text; ok(SHF.gapSolo.some(x => t1.startsWith(x)), 'gap solo line'); T.S.month = 2; const t2 = T.gapYield().text; ok(t1.slice(0, 10) !== t2.slice(0, 10), 'gap no repeat'); }
+  // 中-1／低-4：籤詩的當鋪價錢落在下一次開門那天，固定便宜一成
+  { fresh(); const base = T.redeemCost(); T.S.pawnShiftNext = 5; let hit = null, off = 0;
+    for (let d = 5; d <= 14 && !hit; d++) { T.S.dayCount = d; T.S.month = 1 + Math.floor((d - 1) / 6); T.S.day = ((d - 1) % 6) + 1; T.beginDay(); if (T.pawnMult() !== 1) { if (T.pawnOpenToday()) { T.S.phase = 'day'; T.S.night = null; T.goNight(); hit = { d, cost: T.redeemCost(), m: T.S.pawnShift.m, line: !!T.S.night.pawnLine }; } else off++; } }
+    ok(hit && hit.d === 7 && hit.line && hit.m === -0.1 && hit.cost === Math.round(base * 0.9) && !off, 'qianshi pawn shift on next pawn open day, 10% cheaper ' + JSON.stringify(hit) + ' base ' + base); }
   return { out, err };
 })()
 """

@@ -546,8 +546,8 @@ details.fold[open]>summary::before{content:"▾ "}
 .place.grey{opacity:.72}
 .place.grey span{color:var(--ink-3)}
 .thread-card .steps li.ghost{font-style:italic;opacity:.7}
-.ic.dcat{width:18px;height:18px;vertical-align:-3px;color:var(--cinnabar)}
-.sec-h .ic.dcat{width:16px;height:16px}
+.ic.dcat{width:22px;height:22px;vertical-align:-5px;color:var(--cinnabar)}
+.sec-h .ic.dcat{width:22px;height:22px}
 .opt.quietopt{border-style:dashed}
 details.fold>summary::-webkit-details-marker{display:none}
 .btn.nowrap,.tbl td.r .btn{white-space:nowrap}

@@ -33,6 +33,25 @@ assert not set(b1['deaths']) & set(data['deaths']); data['deaths'].update(b1['de
 data['threads'] += b1['threads']
 data['shop']['achievements'] += b1['achievements']
 data['shop']['bonuses'].update(b1['bonuses'])
+# 遺物接回事件（第二輪）
+hk = L('relic_hooks')
+for pid, sps in hk['spots'].items():
+    data['places'][pid]['spots'] = data['places'][pid].get('spots', []) + sps
+data['events']['drift'] += hk['drift']
+_evAll = {e['id']: e for e in data['events']['drift'] + data['shop']['events']}
+for eid, chs in hk['addChoices'].items():
+    assert eid in _evAll and _evAll[eid].get('choices'), 'addChoices target missing ' + eid
+    _evAll[eid]['choices'] += chs
+_spAll = {sp['id']: sp for pl in data['places'].values() if isinstance(pl, dict) for sp in pl.get('spots', [])}
+for sid, pt in hk['patchSpots'].items():
+    d = _spAll[sid]['fx']['death']
+    if isinstance(d, str): d = _spAll[sid]['fx']['death'] = {'id': d}
+    d['unless'] = {'anyOf': [d['unless'], pt['deathUnless']]} if d.get('unless') else pt['deathUnless']
+    if pt.get('saved'): d['savedIf'] = d.get('savedIf', []) + [{'need': pt['deathUnless'], 'text': pt['saved']}]
+# 遺物不是鑰匙：成對反應、自己引來的事、數量門檻
+data['relicReact'] = hk.get('reactions', {})
+for p in data['relicReact'].get('pairs', []): assert p['a'] in data['items'] and p['b'] in data['items'], 'pair ' + p['id']
+for a in data['relicReact'].get('attract', []): assert a['item'] in data['items'], 'attract ' + a['id']
 # 遺物效果：每一件遺物都要有
 rfx = L('relic_fx')
 for rid, e in rfx.items():
@@ -45,7 +64,7 @@ print('relics with effects', sum(1 for v in data['items'].values() if v.get('eff
 # 遺物防呆：每件都要「真的有作用」、保護的死法要真的會發生、要拿得到
 _txt0 = json.dumps({k: v for k, v in data.items() if k != 'items'}, ensure_ascii=False)
 _deathIds = set(re.findall(r'"death": ?\{"id": ?"(\w+)"', _txt0)) | set(re.findall(r'"death": ?"(\w+)"', _txt0)) | set(v['ascent'] for v in data['placeFx'].values())
-_needHas = set(re.findall(r'"has": ?\{"(\w+)"', _txt0))
+_needHas = set(k for blk in re.findall(r'"has": ?\{([^}]*)\}', _txt0) for k in re.findall(r'"(\w+)"', blk))
 _given = set(re.findall(r'"item": ?"(\w+)"', _txt0)) | set(b.get('give') for b in data['shop']['bonuses'].values() if isinstance(b, dict))
 _SPECIAL = {'extraStep', 'safeReturn', 'reveal', 'lessStep', 'erase', 'truth', 'noSkim', None}
 _onlyRandom = []
@@ -61,6 +80,8 @@ for rid, it in data['items'].items():
         assert u.get('where', 'any') in ('any', 'out', 'shop') and u.get('once') in ('day', 'consume'), 'bad use ' + rid
         assert u.get('label') and u.get('desc'), 'use needs label/desc ' + rid
     if rid not in _given: _onlyRandom.append(rid)
+_unref = [k for k, v in data['items'].items() if v.get('eff') and k not in _needHas]
+print('relics not read by any event:', len(_unref), _unref)
 print('relics: usable', sum(1 for v in data['items'].values() if (v.get('eff') or {}).get('use')), 'unlock something', len([k for k in data['items'] if k in _needHas and data['items'][k].get('eff')]), 'only random source', _onlyRandom)
 _sp = [sp['id'] for pl in data['places'].values() if isinstance(pl, dict) for sp in pl.get('spots', [])]
 assert len(_sp) == len(set(_sp)), 'duplicate spot id'

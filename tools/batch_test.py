@@ -91,6 +91,69 @@ JS = r"""
     T.S.cards = [{ title: e.title, text: e.text, drift: eid, choices: opts.map(x => ({ label: x.label })) }]; window.__deathRoll = () => 0.01; T.driftChoose(0, i < 0 ? 0 : i);
     ok(i >= 0 && !T.S.dead && T.S.cards[0].picked != null, 'event ' + eid + ' relic choice ' + (rid || '') + ' ' + (T.S.cards[0].notes || []).join('/'));
   }
+  // ── v2：遺物事件鉤子、身上三格、第一次去、記得、找上門上限、日報不重複、站著看、把最重的留下 ──
+  const satisfy = need => { if (!need) return; for (const [k, v] of Object.entries(need.has || {})) for (let i = 0; i < v; i++) give(k); [].concat(need.flag || []).forEach(f => T.S.flags[f] = 1); if (need.anyFlag) T.S.flags[[].concat(need.anyFlag)[0]] = 1; [].concat(need.not || []).forEach(f => delete T.S.flags[f]); if (need.minDays) T.S.dayCount = need.minDays + 1; if (need.anyOf) satisfy(need.anyOf[0]); };
+  const prep = () => T.EXPLORE.forEach(p => T.spotList(p).forEach(sp => { const a = sp.after && T.spotList(p).find(x => x.id === sp.after); if (a && !(a.fx && a.fx.death)) T.S.explored[a.id] = 1; }));
+  const HOOKS = [['ruin', 'ru_signback'], ['ruin', 'ru_shrine_return'], ['school', 'sc_tape_more'], ['school', 'sc_yearbook'], ['tea', 'tea_story_end'], ['cliff', 'cl_shell_bottle'], ['cliff', 'cl_bowl_back'], ['north', 'no_shell_feed'], ['north', 'no_vent_time'], ['lampst', 'ls_yellow'], ['lampst', 'ls_clock_back'], ['platform', 'pf_handover'], ['platform', 'pf_read'], ['stair', 'st_bus_back'], ['pawn', 'pw_slip']];
+  for (const [pid, sid] of HOOKS) {
+    fresh(); T.S.month = 2; const sp = T.spotList(pid).find(x => x.id === sid); if (!sp) { ok(false, 'hook spot missing ' + sid); continue; }
+    satisfy(sp.need); if (sp.after) T.S.explored[sp.after] = 1; T.S.visits = { [pid]: 1 }; if (sp.months) T.S.month = sp.months[0]; if (sp.days) T.S.day = sp.days[0];
+    window.__deathRoll = () => 0.99; T.S.slot = Math.min(T.S.slot, (T.D.places[pid].hours || [0])[0]); T.S.phase = 'day'; T.S.place = null; T.enterPlace(pid); T.explore(sid);
+    ok(T.S.explored[sid] && !T.S.dead, 'hook ' + sid + ' ' + JSON.stringify((T.S.place && T.S.place.found || {}).notes || []));
+  }
+  for (const eid of ['dr_budeng_door', 'dr_tangzhi_kid']) { fresh(); T.S.month = 2; const e = T.ALLEV[eid]; satisfy(e.need); ok(T.needOk(e.need), 'hook drift need ' + eid); T.S.cards = [{ title: e.title, text: e.text, drift: eid, choices: e.choices.map(x => ({ label: x.label })) }]; T.driftChoose(0, 0); ok(!T.S.dead && T.S.cards[0].picked != null, 'hook drift ' + eid + ' ' + (T.S.cards[0].notes || []).join('/')); }
+  for (const [eid, rid] of [['dr_branch_sign', 'anquanmao'], ['dr_fog_voice', 'wuguan'], ['dr_fog_again', 'wuguan'], ['se_bad_pill', 'boliye'], ['dr_frost_night', 'daoyu'], ['dr_overtime_due', 'qianbi']]) { const e = T.ALLEV[eid]; ok(e && e.choices.some(c => c.need && c.need.has && c.need.has[rid]), 'hook choice ' + eid + ' <- ' + rid); }
+  for (const [pid, sid, pre] of [['north', 'no_shell_sit', ['no_shell']], ['lampst', 'ls_return', ['ls_enter', 'ls_flicker']], ['platform', 'pf_yellow', ['pf_arrive', 'pf_announce']]]) {
+    const fl = { no_shell_sit: 'shell_fed', ls_return: 'lamp_on_time', pf_yellow: 'broadcast_fixed' }[sid];
+    fresh(); T.S.month = 2; pre.forEach(x => T.S.explored[x] = 1); T.S.flags[fl] = 1; T.S.visits = { [pid]: 1 }; T.S.lots = T.S.lots.filter(l => l.item !== 'naiya'); window.__deathRoll = () => 0.01; T.S.slot = 0; T.S.phase = 'day'; T.enterPlace(pid); T.explore(sid);
+    ok(!T.S.dead && T.S.explored[sid], 'patched ' + sid + ' saved by ' + fl);
+  }
+  // 身上三格
+  fresh(); const carryIds = Object.keys(T.IT).filter(k => T.isCarryRelic(k)).slice(0, 4); carryIds.forEach(give); T.syncCarry();
+  ok(T.S.carry.length === 3 && !T.S.carry.includes(carryIds[3]), 'carry 3 slots ' + JSON.stringify(T.S.carry));
+  { const e4 = T.relicEff().find(([id]) => id === carryIds[3])[1]; ok(!e4.carry && !e4.warn && e4.stored, '4th carry relic inactive in storage'); }
+  T.toggleCarry(carryIds[0]); T.toggleCarry(carryIds[3]); ok(T.S.carry.includes(carryIds[3]) && !T.S.carry.includes(carryIds[0]), 'carry swap');
+  T.S.phase = 'day'; T.S.night = null; T.goNight(); ok((T.S.night.carryLines || []).length === 3, 'night carry lines ' + JSON.stringify(T.S.night.carryLines));
+  // 第一次去：會死的地方先藏起來
+  fresh(); prep(); T.S.month = 2; T.S.visits = {}; const lethal0 = T.spotsAvail('cliff').filter(sp => T.isLethal(sp)).length; T.S.visits = { cliff: 1 }; const lethal1 = T.spotsAvail('cliff').filter(sp => T.isLethal(sp)).length;
+  ok(lethal0 === 0 && lethal1 > 0, 'first visit hides lethal ' + lethal0 + '/' + lethal1);
+  // 記得：換個做法不會死
+  fresh(); prep(); T.S.month = 2; T.S.visits = {}; T.EXPLORE.forEach(p => T.S.visits[p] = 1); { let ppid = null; const sp = T.EXPLORE.map(p => { const x = T.spotsAvail(p).find(sp => T.isLethal(sp) && !sp.repeat && T.needOk(sp.need) && !sp.strain && T.placeOpen(p) === true); if (x && !ppid) ppid = p; return x; }).find(Boolean); const did = typeof sp.fx.death === 'string' ? sp.fx.death : sp.fx.death.id; T.S.remember = { [did]: 1 }; T.S.burden = 0; window.__deathRoll = () => 0.01; T.S.phase = 'day'; T.enterPlace(ppid); T.explore(sp.id, true); ok(!T.S.dead && T.S.explored[sp.id] && T.S.burden >= 2, 'remember alt ' + sp.id + ' burden ' + T.S.burden); }
+  fresh(); T.S.remember = { cliff_jump: 1 }; T.die('cliff_jump'); ok(T.S.dead.again, 'second death remembered');
+  // 找上門：生意一天最多一件
+  let maxBiz = 0; for (let m = 1; m <= 3; m++) for (let d = 1; d <= 6; d++) { fresh(); T.S.month = m; T.S.day = d; T.S.dayCount = (m - 1) * 6 + d; maxBiz = Math.max(maxBiz, T.interruptsAvail().filter(x => !T.isStoryDeal(x)).length); }
+  ok(maxBiz <= 1, 'business interrupts per day <= 1 (' + maxBiz + ')');
+  { let autoN = 0, bad = 0; for (let m = 1; m <= 3; m++) for (let d = 1; d <= 6; d++) { fresh(); T.S.month = m; T.S.day = d; T.S.phase = 'day'; T.S.night = null; try { T.goNight(); autoN += (T.S.night && T.S.night.autoDeals || []).length; } catch (e) { bad++; err.push('autoBiz ' + e.message); } } ok(!bad, 'night auto business ok, handled ' + autoN); }
+  // 日報：同一局不重複
+  fresh(); { const seen = {}; let dup = 0; for (let i = 0; i < 40; i++) { T.S.day = (i % 6) + 1; T.S.month = 1 + Math.floor(i / 14); const ls = T.shopFlavor({ acc: 1, fakes: i % 3 === 0 ? 1 : 0, caught: 1 }, 'd'); for (const l of ls) { if (seen[l]) dup++; seen[l] = 1; } } ok(dup === 0, 'flavor no repeats over 40 days (' + Object.keys(seen).length + ' lines)'); }
+  // 站著看、白進白出
+  fresh(); T.S.burden = 3; T.S.slot = 0; T.S.phase = 'day'; T.enterPlace('ruin'); T.leavePlace(); ok(T.S.slot === 0 && T.S.phase === 'day', 'free leave when nothing done');
+  T.enterPlace('ruin'); T.watchPlace(); ok(T.S.place.acted && T.S.burden === 2, 'watch: acted, burden -1'); T.leavePlace(); ok(T.S.slot === 1 && T.S.visits.ruin === 1, 'watch costs slot, counts as visit');
+  // 把最重的留下
+  fresh(); T.S.visits = { ruin: 1 }; T.S.slot = 0; T.S.phase = 'day'; window.__deathRoll = () => 0.99; T.enterPlace('ruin'); { const gsp = T.spotsAvail('ruin').find(sp => !sp.repeat && !T.isLethal(sp) && sp.fx && sp.fx.give && !sp.strain); if (gsp) { T.explore(gsp.id); T.S.burden += 3; T.S.place.burdenAdded = 4; const b = T.S.burden; const c = T.dropCands().length; T.dropHeavy(); ok(c && T.S.burden === b - 2 && T.S.leftBehind.ruin, 'drop heaviest ' + gsp.id + ' ' + JSON.stringify(T.S.leftBehind)); T.leavePlace(); T.enterPlace('ruin'); T.pickBack(); ok(!T.S.leftBehind.ruin, 'pick back'); } else ok(false, 'no give spot in ruin'); }
+  // 寄放
+  fresh(); give('huangdeng'); T.S.phase = 'day'; T.S.slot = 0; T.enterPlace('pawn'); const pl = T.S.lots.find(l => l.item === 'huangdeng'); T.deposit(pl.id); ok(!T.held('huangdeng') && JSON.parse(localStorage.getItem('fangshi-pawn-v1')).item === 'huangdeng', 'deposit to pawn');
+  T.S = T.newGame(777); T.S.phase = 'morning'; ok(T.S.pendingDep && T.S.pendingDep.item === 'huangdeng' && !localStorage.getItem('fangshi-pawn-v1'), 'deposit picked up next run'); for (let d = 0; d < 2; d++) { T.S.phase = 'day'; T.goNight(); T.endDay(); } ok(T.held('huangdeng') === 1, 'deposit arrives day 3');
+  // 遺物不是鑰匙：成對、引來、門檻
+  fresh(); give('boliye'); give('xianbei'); T.S.cards = []; T.relicReactions(); ok(T.S.flags.pair_fern_shell && T.S.cards.some(c => c.title === '葉子鹹了'), 'pair reaction fern+shell');
+  T.S.cards = []; T.relicReactions(); ok(!T.S.cards.length, 'pair once');
+  fresh(); give('chanke'); T.S.dayCount = 1; T.S.cards = []; T.relicReactions(); T.S.dayCount = 3; T.relicReactions(); ok(T.S.flags.att_chanke, 'attract chanke after 2 days');
+  fresh(); Object.keys(T.IT).filter(k => T.IT[k].cat === 'relic').slice(0, 30).forEach(k => T.S.codex[k] = true); T.S.cards = []; T.relicReactions(); T.relicReactions(); ok(T.S.flags.rth_15 && T.S.flags.rth_30, 'thresholds 15/30');
+  // 林老師研究：沒變就不說加強
+  for (const id of ['naiya', 'tuoxie']) { fresh(); T.S.flags['studied_' + id] = true; const e = T.scaleEff(id, T.IT[id].eff); ok(!e.studied && e.studiedSame, 'studied honest ' + id); }
+  for (const id of ['banpai', 'xiangpi']) { fresh(); T.S.flags['studied_' + id] = true; const e = T.scaleEff(id, T.IT[id].eff); ok(e.studied, 'studied stronger ' + id + ' ' + JSON.stringify(e.use.fx || {}) + ' ' + (e.use.eraseMin || '')); }
+  // 逃過一劫：條件是遺物或夥計時，靠運氣活下來不能提那件東西
+  fresh(); window.__deathRoll = () => 0.9; { const n = T.applyFx({ death: { id: 'frost_window', chance: 0.75, unless: { staff: 'ahua' }, saved: '阿花嬸來敲門' } }); ok(!T.S.dead && !n.join('').includes('阿花嬸'), 'luck survive no staff text ' + n.join('/')); }
+  // QA 中-1：帶別的保護遺物，不會再冒出乳牙那段
+  fresh(); give('jinianc'); window.__deathRoll = () => 0.5; { const sp = T.spotList('school').find(x => x.id === 'sc_answer'); const n = T.applyFx(sp.fx); ok(!T.S.dead ? !n.join('').includes('乳牙') : true, 'jinianc no naiya text: ' + n.join('/').slice(0, 60)); }
+  // QA 中-2：回程有危險、帶警示遺物，要按兩次
+  fresh(); give('boliye'); T.S.flags.ascent_grace = true; T.S.slot = 0; T.S.phase = 'day'; T.enterPlace('ruin'); T.S.place.steps = 1; T.S.burden = T.burdenLimit() + 3; window.__deathRoll = () => 0.99;
+  { const el = { dataset: {} }; T.onAct('leave', el); ok(T.S.phase === 'place' && T.S.slot === 0, 'leave needs second tap with warn relic'); T.onAct('leave', el); ok(T.S.phase !== 'place', 'second tap climbs'); }
+  // 籤詩：隔天當鋪價錢浮動
+  fresh(); give('qianshi'); T.S.flags.tea_story_heard = 1; T.S.dayCount = 1; T.S.cards = []; T.relicReactions(); T.S.dayCount = 4; T.relicReactions(); ok(T.S.flags.att_qianshi && T.S.pawnShiftNext === 5, 'qianshi attract sets pawn shift');
+  T.S.phase = 'day'; T.goNight(); T.endDay(); ok(T.pawnMult() !== 1 && T.redeemCost() !== T.D.meta.redeemCost, 'pawn price shifted next day ' + T.redeemCost()); T.S.phase = 'day'; T.S.night = null; T.goNight(); ok(!!T.S.night.pawnLine, 'pawn line in report');
+  // 第四十五件：沒見過空號鉛筆就用不提鉛筆的版本
+  fresh(); delete T.S.codex.qianbi; Object.keys(T.IT).filter(k => T.IT[k].cat === 'relic' && k !== 'qianbi').forEach(k => T.S.codex[k] = true); T.S.flags.rth_15 = T.S.flags.rth_30 = 1; T.S.cards = []; T.relicReactions(); ok(T.S.cards.some(c => c.text.includes('像在等誰應')), 'rth_45 fallback without qianbi');
   return { out, err };
 })()
 """

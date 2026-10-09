@@ -1,0 +1,284 @@
+# ═════════════ 遺物接回事件（第二輪）：二十一件遺物會改變的地點與選項 ═════════════
+# spots：新地點（多半要帶著那件遺物才進得去）；drift：只在身上有那件遺物時發生的散事
+# addChoices：在既有事件後面加「身上有某件遺物才出現」的選項
+# patchSpots：替既有的危險地點加上「做過某件事就不會死」的條件（deathUnless／saved）
+spots:
+  ruin:
+    - id: ru_signback
+      title: 把路牌插回路口
+      hint: 斷掉的那一截，好像就是你口袋裡那塊
+      after: ru_edge
+      need: {has: {lupai: 1}}
+      text: 斷路邊那根歪掉的路牌桿，斷口剛好對得上你口袋裡的碎片。你把它塞回去，用鐵絲綁緊。「往埔里 32」後面，慢慢浮出一個你沒看過的單位，不是公里。風吹過來，路牌輕輕轉向斷崖的方向，停住了。
+      fx: {take: [{item: lupai, qty: 1}], flag: [road_sign_back], burden: -1, xp: 10}
+      note: 崩塌段的路牌插回去以後，「32」後面多了一個看不懂的單位，牌子轉向斷崖。
+    - id: ru_shrine_return
+      title: 把籤詩拿給土地公看
+      hint: 籤詩上那句「回頭方見舊時燈」，你看過太多次了
+      after: ru_shrine
+      need: {has: {qianshi: 1}}
+      text: 你把那張粉紅色的籤詩拿出來，對著小廟的籤筒拜了三拜。籤筒自己晃了一下，掉出另一張，紅紙還很新：「第九十籤：路在腳下不在前，燈在身後亦在前。」你不知道這是好籤還是壞籤。廟旁的老人說，這座廟沒有第九十籤。
+      fx: {flag: [shrine_new_poem], xp: 6, burden: -1}
+      note: 土地公廟掉出一張「第九十籤」。老人說，廟裡沒有第九十籤。
+  school:
+    - id: sc_tape_more
+      title: 把主機板接上錄音機
+      hint: 卡帶後半段，錄音機唸不出來
+      after: sc_tape
+      need: {has: {zhuban: 1}}
+      text: 林老師幫你把主機板碎片接在錄音機背後，燒焦的那一角冒出一點煙。卡帶繼續轉，點名點完以後，還有一段：一個大人的聲音說「今天的朝會先到這裡，請三年二班留下來」，接著是很多張椅子拉開的聲音，然後是你很熟悉的、自家店鐵門拉下來的聲音。林老師把錄音機關了，很久沒有說話。
+      fx: {flag: [tape_more], xp: 10, rel: {lin: 1}}
+      note: 卡帶的後半段，最後是你家店拉鐵門的聲音。
+    - id: sc_yearbook
+      title: 翻到六年二班那一頁
+      hint: 畢業紀念冊的團體照，第二排中間有一個空位
+      after: sc_roll
+      need: {has: {jinianc: 1}}
+      text: 你把畢業紀念冊翻到六年二班。團體照第二排的空位旁邊，有人用鉛筆寫了一個名字，就是三年二班點名簿最後一行那個。三年級就先走的孩子，到了畢業那一年，位子還留著。名字下面還有一行很小的字：「搭23:59那班，先走。」照片上其他小孩，都微微側著身，像在等他坐回來。
+      fx: {flag: [yearbook_name], xp: 10}
+      note: 畢業紀念冊的空位旁寫著：「搭23:59那班，先走。」
+  tea:
+    - id: tea_story_end
+      title: 把筆記本最後一行念給說書人聽
+      hint: 筆記本停在「1」的一半
+      after: tea_story
+      need: {has: {bijiben: 1}}
+      text: 散場後，你把數字筆記本翻到最後一頁，念給說書人聽：「1」的那一撇。他閉著眼睛聽，嘴巴動了動，把那句跳過的話講出一半：「車門打開，裡面坐著——一個在數數字的人，數到一，就……」他停住了，看著你：「剩下的，你自己數。」你回家的路上，覺得自己少了一點什麼。
+      fx: {flag: [story_half], lifespan: -1, xp: 15}
+      note: 說書人講出一半：「裡面坐著一個在數數字的人，數到一，就……」
+  cliff:
+    - id: cl_shell_bottle
+      title: 把貝殼放進海水瓶
+      hint: 貝殼還是濕的，海水瓶裡的水面一直斜向西
+      after: cl_bottle
+      need: {has: {xianbei: 1, xianshui: 1}}
+      text: 你把那顆新鮮的貝殼放進斜的海水瓶。水面晃了很久，最後斜向另一邊——東邊，聚落的方向。瓶底傳來一個很小的聲音，像有人在很遠的地方說「到了」。
+      fx: {flag: [sea_turned], xp: 10}
+      note: 貝殼放進海水瓶以後，水面改斜向東邊，聚落的方向。
+    - id: cl_bowl_back
+      title: 把碗放回船上的餐桌
+      hint: 半空中那艘船的餐桌，少了一個碗
+      after: cl_ship_climb
+      need: {has: {wanchu: 1}}
+      strain: true
+      text: 你又爬上那艘懸在半空的船，把碗放回餐桌上那個空位。碗一放下，船身輕輕晃了一下，好像終於坐穩了。船舷垂下一條繩梯，一直垂到斷崖步道。你沿著繩梯下來，背上輕了很多。
+      fx: {take: [{item: wanchu, qty: 1}], flag: [bowl_back], burden: -2, xp: 12}
+  north:
+    - id: no_shell_feed
+      title: 把蟬殼放在殼的膝蓋上
+      hint: 你的蟬殼，背上也裂了一條縫
+      after: no_shell
+      need: {has: {chanke: 1}}
+      text: 你把大蟬殼放在那個人形的膝蓋上。兩個殼的裂縫，慢慢對齊。人形背上的縫合起來一點，敲起來不再空空的。礦上的老人說：「餵過了，它就不會再找人坐進去。」
+      fx: {take: [{item: chanke, qty: 1}], flag: [shell_fed], xp: 10}
+    - id: no_vent_time
+      title: 照值班表上的時間進去
+      hint: 那張紙上寫著夜班的時間
+      after: no_vent
+      need: {has: {ventpaper: 1}}
+      text: 你照值班表上寫的時間，在通風口前面站好。時間一到，裡面的敲打聲停了。你把那張紙塞進通風口，它被吸進去，過了很久，吐出來一張新的：簽名欄的名字還是孟家和，底下那行字變成了「下面在敲。是我們的人了。」你不知道這是不是好消息。
+      fx: {take: [{item: ventpaper, qty: 1}], flag: [vent_named], xp: 10}
+      note: 通風口吐出新的值班表：「下面在敲。是我們的人了。」
+  lampst:
+    - id: ls_yellow
+      title: 把燈罩套在不準時的那盞燈上
+      hint: 那盞燈一閃一閃的，好像需要人提醒
+      after: ls_flicker
+      need: {has: {huangdeng: 1}}
+      text: 你踮起腳，把黃燈燈罩套在那盞不準時的燈上。燈罩亮了三秒，很平靜的黃光，然後那盞燈跟整條街一起，準時亮了。蹲著的小孩抬頭看了很久：「這樣就不用有人留下來當燈了。」
+      fx: {take: [{item: huangdeng, qty: 1}], flag: [lamp_on_time], xp: 15}
+    - id: ls_clock_back
+      title: 把沒有指針的鐘掛回鐘錶行
+      hint: 鐘錶行的牆上，有一個空的釘子
+      after: ls_windows
+      need: {has: {wuzhen: 1}}
+      text: 你把那個沒有指針的鐘掛回鐘錶行牆上的空釘子。整面牆的鐘一起「喀」了一聲，停在23:58的指針全部往前走了一格。23:59。街上的人都抬起頭，好像很久沒看過這個時間了。
+      fx: {take: [{item: wuzhen, qty: 1}], flag: [lampst_minute], xp: 15}
+      note: 燈街的鐘走到23:59了。
+  platform:
+    - id: pf_handover
+      title: 把站務日誌交還站務室
+      hint: 「代子寄存」那一頁，有人在等
+      after: pf_office
+      need: {has: {zhanwu: 1}}
+      text: 你把撕下來的那頁日誌放回站務室的桌上。桌子後面沒有人，可是那一頁自己翻了過去，下一行用一樣的字跡寫著：「已領回。」你走出站務室的時候，覺得身上多了一點時間。
+      fx: {take: [{item: zhanwu, qty: 1}], flag: [zhanwu_returned], lifespan: 1, xp: 15}
+    - id: pf_read
+      title: 照稿子念被劃掉的那句
+      hint: 廣播稿上劃掉的那一句，紙都破了
+      after: pf_announce
+      need: {has: {guangbo: 1}}
+      text: 你對著月台的喇叭，把廣播稿上被劃掉的那句念出來：「請旅客回到地面。」喇叭沉默了很久，然後用管理處櫃台值班那個人的聲音重複了一次：「請旅客回到地面。」黃線上的票根，一張一張翻了過來。
+      fx: {take: [{item: guangbo, qty: 1}], flag: [broadcast_fixed], xp: 15}
+  stair:
+    - id: st_bus_back
+      title: 拿車票給司機看
+      hint: 打過洞的車票，好像還能再坐一次
+      after: st_stop
+      need: {has: {chepiao: 1}}
+      strain: true
+      text: 你在站牌下等到23:59。車來了，司機看了一眼你的車票，在背面又打了一個洞：「回程。」車往上開，窗外的燈一排一排往下沉。你在崩塌段的路口下車，背上什麼都不重了。
+      fx: {burden: -99, flag: [rode_back], xp: 10}
+  pawn:
+    - id: pw_slip
+      title: 當鋪櫃台的寄存單
+      hint: 櫃台玻璃下面壓著一張很舊的單子
+      text: 當鋪櫃台的玻璃下面壓著一張寄存單，寄存人那一欄寫著「B2-17 負責人」，寄存物寫著「一雙室內鞋」，領取期限是「換人的那天」。老闆的面紗動了一下：「那張不賣，也不給看。你看到了，就當作沒看到。」
+      fx: {flag: [pawn_b217], xp: 4}
+      note: 長生當鋪有一張寄存單：「B2-17 負責人，寄存一雙室內鞋，領取期限：換人的那天。」
+
+drift:
+  - id: dr_budeng_door
+    month: [2, 3]
+    chance: 0.45
+    prio: 3
+    need: {has: {budeng: 1}}
+    title: 燈泡想掛出去
+    text: 那顆不熄的燈泡，今晚特別亮，亮到庫房的門縫透出光來。你拿著它站在店門口，霧裡有幾個影子停下來，好像在等你決定。
+    face: think
+    choices:
+      - label: 掛在店門口
+        desc: 讓晚上的客人看得到
+        text: 你把燈泡掛在招牌底下。那天晚上來了三個客人，付的都是溫的硬幣，買的都是你沒想過會賣出去的東西。其中一個走之前說：「好久沒看到這盞燈了。」
+        fx: {stones: 30, flag: [budeng_hung]}
+      - label: 收回庫房
+        desc: 晚上來的，你還不想認識
+        text: 你把燈泡收回去。門口的影子站了一會兒，散了。
+        fx: {xp: 3}
+  - id: dr_tangzhi_kid
+    month: [2, 3]
+    chance: 0.4
+    prio: 3
+    need: {has: {tangzhi: 1}, minDays: 3}
+    title: 那個小孩又來了
+    text: 那個說自己遲到很久的小學生又從霧裡走出來，站在店門口，看著你櫃上那張糖果紙。
+    face: sad
+    choices:
+      - label: 把糖果紙還給他
+        desc: 那本來就是他的
+        text: 你把糖果紙還給他。他把它摺成一顆星星，放進書包，說：「燈街的燈，十一點五十八分才會亮喔。不要早到。」他走回霧裡，這次沒有東西掉下來。
+        fx: {take: [{item: tangzhi, qty: 1}], flag: [kid_thanked], xp: 8, rel: {lin: 1}}
+      - label: 問他要去哪裡
+        desc: 他看起來不像要回家
+        text: 他想了很久：「去答到。」然後就走了。
+        fx: {xp: 3}
+
+addChoices:
+  dr_branch_sign:
+    - label: 戴安全帽爬上去拆
+      desc: 招牌掛得很高
+      need: {has: {anquanmao: 1}}
+      text: 你戴上那頂寫著「2027 平安」的安全帽爬上去拆。拆到一半，招牌後面掉下一大撮木屑，還有一枚很舊的硬幣，砸在你帽子上，「叩」的一聲。
+      fx: {flag: [branch_sign], give: [{item: muxie, qty: 1, cost: 0}], stones: 15, xp: 4}
+  dr_fog_voice:
+    - label: 打開那罐霧，讓它進去
+      desc: 罐子裡的霧在轉
+      need: {has: {wuguan: 1}}
+      text: 你打開果醬罐，對著門外的霧。叫你名字的聲音停了一下，門外的霧有一半被吸進罐子裡，罐子裡的光點多了一顆。剩下的霧散了，門口只留下一串很淺的腳印。
+      fx: {flag: [ignored_fog, fog_jarred], xp: 10}
+  dr_fog_again:
+    - label: 打開那罐霧，讓它進去
+      desc: 罐子裡的霧在轉
+      need: {has: {wuguan: 1}}
+      text: 你打開果醬罐。霧裡那個聲音說到一半就被吸了進去，罐子變得很冰。你蓋上蓋子，聽見裡面很小聲地，又叫了你一次。
+      fx: {flag: [fog_two_done, fog_jarred], xp: 10}
+  se_bad_pill:
+    - label: 把玻璃蕨葉放在藥丸旁邊
+      desc: 蕨葉碰到不對的東西會響
+      need: {has: {boliye: 1}}
+      text: 你把玻璃蕨葉放在藥丸旁邊。葉子自己響了，響得很急。你把整罐倒掉，倒進水溝的時候，水變成了灰色。
+      fx: {stones: -5, rep: {loose: 1}, xp: 6}
+  dr_frost_night:
+    - label: 把倒雨罐放在窗台
+      desc: 罐子裡的雨會往上落
+      need: {has: {daoyu: 1}}
+      text: 你把倒雨罐放在窗台。罐子裡的雨往上落，落到窗戶上，把剛結的霜一道一道沖掉。你睡得很好，早上起來身體很輕。
+      fx: {flag: [frost_closed], burden: -1, xp: 8}
+  dr_overtime_due:
+    - label: 用空號鉛筆把名字改掉
+      desc: 加班單上負責人那一格
+      need: {has: {qianbi: 1}}
+      text: 你用那支空號鉛筆，把加班單上你的名字改成一個空格。字一寫上去就不見了。門口的霧等了一會兒，像在等一個不存在的人，然後散了。鉛筆也短了一截，短到不能再寫。
+      fx: {take: [{item: qianbi, qty: 1}], flag: [overtime_done, overtime_void]}
+
+patchSpots:
+  no_shell_sit: {deathUnless: {flag: [shell_fed]}, saved: 殼的裂縫已經合起來了，你鑽不進去。你坐在殼旁邊，靠著它休息了一下，它是溫的。}
+  ls_return: {deathUnless: {flag: [lamp_on_time]}, saved: 那盞燈已經準時了，燈座上沒有缺口。小孩把碎片推回你手裡：「不用了，這盞燈有人提醒了。」}
+  pf_wait: {deathUnless: {flag: [zhanwu_returned]}, saved: 車進站了，門打開，站務室的人探出頭來看了你一眼：「寄存的已經領走了。你不在名單上。」門關上，車開走了。}
+  pf_yellow: {deathUnless: {flag: [broadcast_fixed]}, saved: 廣播說：「請旅客回到地面。」你踩過黃線，什麼都沒有發生，只有腳底下的票根，全部是翻過來的。}
+
+# ═════════════ 遺物不是鑰匙（總監＋Grok 第四輪）═════════════
+# pairs：庫房同時有這一對，隔天早上出一張卡（一對一次）。只給小獎勵，不給新東西。
+# attract：遺物在庫房放滿 days 天，自己引來一件事。
+# thresholds：見過的遺物總數到門檻，各出一張卡。
+reactions:
+  pairs:
+    - id: pair_fern_shell
+      a: boliye
+      b: xianbei
+      title: 葉子鹹了
+      text: 玻璃蕨葉跟貝殼放在同一格，隔天早上，葉子鹹了。來買東西的那個孩子用指甲刮了一點下來，刮完也不解釋，把鹽抹在自己舌尖上。
+      fx: {xp: 4}
+    - id: pair_clock_ticket
+      a: wuzhen
+      b: chepiao
+      title: 不上車的人
+      text: 無底月台那邊，聽說多了一個不上車的人。他今天來店裡，不問幾點。他問你那張末班車車票，是你自己留的，還是別人塞給你的。
+      fx: {xp: 5}
+    - id: pair_pencil_book
+      a: qianbi
+      b: bijiben
+      title: 多了一個號
+      text: 你沒有動筆。可是筆記本上多了一個號碼。林老師拿去看了很久，對著空教室叫了一聲。沒有人應。
+      fx: {xp: 5, rel: {lin: 1}}
+    - id: pair_fog_rain
+      a: wuguan
+      b: daoyu
+      title: 罐子裡在下雨
+      text: 一罐霧跟倒雨罐放在一起，隔天早上，兩個罐子的內壁都是濕的。霧那一罐，看得見很細的雨絲，從下往上飄。茶館的人說，今天外面一滴雨都沒有。
+      fx: {xp: 4}
+  attract:
+    - id: att_wuguan
+      item: wuguan
+      days: 3
+      title: 霧比你先到
+      text: 霧比你先到。茶館那位常客今天特別早，沒有敲門，站在門口說，今天的雨聞起來，像你庫房裡那個罐子。
+      fx: {xp: 3}
+    - id: att_budeng
+      item: budeng
+      days: 2
+      title: 只站著的客人
+      text: 入夜以後，燈泡在櫃上亮著。燈街來的客人進門，什麼都不買，只是站著。他把手靠近玻璃，像在確認這盞燈，還沒學會熄。
+      fx: {xp: 3}
+    - id: att_chanke
+      item: chanke
+      days: 2
+      title: 來聽第二次
+      text: 黃昏的時候，蟬殼輕輕響了一下。北邊礦上的人把安全帽摘下來，說他不是來賣東西的，是來聽第二次。
+      fx: {xp: 4, burden: -1}
+    - id: att_qianshi
+      item: qianshi
+      days: 2
+      need: {flag: [tea_story_heard]}
+      title: 這句他不念了
+      text: 你把籤詩拿給茶館的說書人看。他把籤折好還你，說這一句他不念了。下午長生當鋪的老闆路過，開口說話，比平常輕。
+      fx: {xp: 4, rel: {bai: 1}}
+  thresholds:
+    - id: rth_15
+      n: 15
+      title: 庫房開始有聲音
+      text: 見過的遺物，有十五件了。晚上關店以後，庫房偶爾會有一點聲音，像很多人在不同的房間裡，同時把東西放下。
+      fx: {xp: 5}
+    - id: rth_30
+      n: 30
+      title: 有人來數
+      text: 第三十件。一大早有個穿舊制服的人站在庫房門口，一件一件地數，數完在本子上打勾，什麼都沒拿就走了。你不知道他是哪一邊的人。
+      fx: {xp: 8}
+    - id: rth_45
+      n: 45
+      title: 廣播念到了那個號碼
+      text: 第四十五件。那天晚上，你在收音機裡聽到末班車的廣播。廣播念了一串號碼，是空號鉛筆寫出來的那一串。念完以後，廣播說：「請持有人，回到地面。」
+      fx: {xp: 10}
+      alt:
+        unlessSeen: qianbi
+        text: 第四十五件。那天晚上，你在收音機裡聽到末班車的廣播。廣播念了一串號碼，念得很慢，像在等誰應。念完以後，廣播說：「請持有人，回到地面。」

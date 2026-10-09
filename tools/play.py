@@ -134,10 +134,19 @@ with sync_playwright() as p:
             if pg.locator('.confirm').count():
                 if not confirm_if(style == 'reckless' or (style == 'greedy' and rng.random() < 0.3)): break
         if S('S.dead'): return True
+        if S('S.phase') == 'place' and not S('S.place.steps'):
+            w = btns('[data-act=watch]')
+            if w.count(): click(w.first); log['watched'] = log.get('watched', 0) + 1
+        if S('S.phase') == 'place' and S('S.place.steps') and S('T.ascentRisk()') > 0 and style != 'reckless':
+            d = btns('[data-act=drop]')
+            if d.count(): click(d.first); log['dropped'] = log.get('dropped', 0) + 1
         if S('S.phase') == 'place':
             lb = btns('[data-act=leave]').first; t = lb.inner_text()
-            if '上不來' in t: fr('離開按鈕變紅，提示回程風險（好事：有預警）')
+            if '負擔超過上限' in t: fr('離開按鈕變紅，提示回程風險（好事：有預警）')
+            free = not S('S.place.steps') and not S('S.place.did') and not S('S.place.watched')
             click(lb)
+            if S('S.phase') == 'place' and btns('[data-act=leave]').count(): log['leaveConfirm'] = log.get('leaveConfirm', 0) + 1; click(btns('[data-act=leave]').first)
+            if free: return False
         return True
     def town():
         if S('T.relicLots().some(l=>!S.flags["studied_"+l.item])') and btns('[data-act=enter][data-id=school]').count() and style != 'reckless':
@@ -163,8 +172,9 @@ with sync_playwright() as p:
                     click(pick); log['townSpots'] += 1
                     if pg.locator('.confirm').count() and not confirm_if(False): break
                     if S('S.dead') or S('S.phase') != 'place': break
+                did = S('!!(S.place && (S.place.steps || S.place.did))')
                 if S('S.phase') == 'place': click(btns('[data-act=leave]').first)
-                return True
+                if did: return True
         if style == 'cautious' and btns('[data-act=enter][data-id=office]').count() and S('T.accuseList().length'):
             click(btns('[data-act=enter][data-id=office]').first)
             l = btns('[data-act=accusesheet]')

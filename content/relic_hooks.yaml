@@ -367,7 +367,7 @@ reactions:
       days: 2
       need: {flag: [tea_story_heard]}
       title: 這句他不念了
-      text: 你把籤詩拿給茶館的說書人看。他把籤折好還你，說這一句他不念了。下午長生當鋪的老闆路過，開口說話，比平常輕。
+      text: 你把籤詩拿給茶館的說書人看。他把籤折好還你，說這句他不念了。聽說這句傳到當鋪老闆耳裡，他下次開門，開口會比平常輕。
       fx: {xp: 4, rel: {bai: 1}}
   thresholds:
     - id: rth_15

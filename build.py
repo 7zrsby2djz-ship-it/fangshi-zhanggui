@@ -96,10 +96,32 @@ for _id in _found | set(v['ascent'] for v in data['placeFx'].values()):
 _ids = [e['id'] for e in data['events']['drift']] + [e['id'] for e in data['shop']['events']]
 assert len(_ids) == len(set(_ids)), 'duplicate event id'
 data['meta']['truthLabels'] = meta['truthLabels']
+# 卡片版：十八個月骨架與新增死法
+cards = L('cards')
+assert not set(cards['deaths']) & set(data['deaths']), 'dup card death'
+data['deaths'].update(cards['deaths'])
+data['cards'] = {k: v for k, v in cards.items() if k != 'deaths'}
+# 卡片版：會死的交易選項
+lethal = L('lethal')
+assert not set(lethal['deaths']) & set(data['deaths']), 'dup lethal death'
+data['deaths'].update(lethal['deaths'])
+_dl = {d['id']: d for d in data['deals']}
+for _did, _ops in lethal['deals'].items():
+    for _k, _patch in _ops.items():
+        _op = _dl[_did]['opts'][_k]
+        assert _patch['death']['id'] in data['deaths'], _patch['death']['id']
+        _op['fx'] = dict(_op.get('fx') or {}, death=_patch['death'])
+print('lethal deal options', sum(len(v) for v in lethal['deals'].values()))
+assert len(data['cards']['months']) == 21, 'months'
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
 js = (root / 'game.js').read_text(encoding='utf-8').replace('__GAME_DATA__', payload)
 html = (root / 'template.html').read_text(encoding='utf-8').replace('/*__CSS__*/', (root / 'style.css').read_text(encoding='utf-8')).replace('/*__JS__*/', js)
 (root / 'dist' / 'data.json').write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding='utf-8')
-out = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else root / 'dist' / 'game.html'
-out.write_text(html, encoding='utf-8')
-print(out, len(html.encode('utf-8')), 'bytes')
+cg = root / 'cardgame'
+js2 = (cg / 'card.js').read_text(encoding='utf-8').replace('__GAME_DATA__', payload)
+html2 = (cg / 'template.html').read_text(encoding='utf-8').replace('/*__CSS__*/', (cg / 'card.css').read_text(encoding='utf-8')).replace('/*__JS__*/', js2)
+outdir = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else root / 'dist'
+outdir.mkdir(parents=True, exist_ok=True)
+(outdir / 'shop.html').write_text(html, encoding='utf-8')   # 舊版：店務經營
+(outdir / 'game.html').write_text(html2, encoding='utf-8')  # 卡片版
+print(outdir / 'game.html', len(html2.encode('utf-8')), 'bytes;', 'shop.html', len(html.encode('utf-8')), 'bytes')

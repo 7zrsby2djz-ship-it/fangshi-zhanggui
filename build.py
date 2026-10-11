@@ -101,6 +101,17 @@ cards = L('cards')
 assert not set(cards['deaths']) & set(data['deaths']), 'dup card death'
 data['deaths'].update(cards['deaths'])
 data['cards'] = {k: v for k, v in cards.items() if k != 'deaths'}
+# 卡片版：會死的交易選項
+lethal = L('lethal')
+assert not set(lethal['deaths']) & set(data['deaths']), 'dup lethal death'
+data['deaths'].update(lethal['deaths'])
+_dl = {d['id']: d for d in data['deals']}
+for _did, _ops in lethal['deals'].items():
+    for _k, _patch in _ops.items():
+        _op = _dl[_did]['opts'][_k]
+        assert _patch['death']['id'] in data['deaths'], _patch['death']['id']
+        _op['fx'] = dict(_op.get('fx') or {}, death=_patch['death'])
+print('lethal deal options', sum(len(v) for v in lethal['deals'].values()))
 assert len(data['cards']['months']) == 21, 'months'
 payload = json.dumps(data, ensure_ascii=False, separators=(',', ':')).replace('<', '\\u003c')
 js = (root / 'game.js').read_text(encoding='utf-8').replace('__GAME_DATA__', payload)

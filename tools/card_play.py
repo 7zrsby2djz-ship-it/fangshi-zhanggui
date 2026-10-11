@@ -19,7 +19,7 @@ with sync_playwright() as p:
     pg.route('**/fonts.googleapis.com/**', lambda r: r.abort()); pg.route('**/fonts.gstatic.com/**', lambda r: r.abort())
     pg.goto((ROOT / 'dist' / 'game.html').as_uri()); pg.evaluate('localStorage.clear()'); pg.reload()
     for run in range(runs):
-        rng = random.Random(run * 7 + len(style))
+        rng = random.Random(run * 7 + len(style) + int(__import__('os').environ.get('SEEDX', '0')))
         log = {'run': run, 'deaths': [], 'restores': 0, 'clicks': 0, 'end': None, 'stage': 0, 'kinds': {}}
         pg.click('[data-act=restart]')
         shots = 0
@@ -39,7 +39,7 @@ with sync_playwright() as p:
                 if log['restores'] >= maxRestore: log['gaveup'] = True; break
                 log['restores'] += 1
                 same = sum(1 for x in log['deaths'] if x[0] == st['stage'])
-                prev = pg.locator('#app [data-act=restore][data-v=prev]')
+                prev = pg.locator('#app [data-act=restore][data-v="3"]' if same >= 4 else '#app [data-act=restore][data-v="1"]')
                 if same >= 2 and prev.count(): prev.click()
                 else: pg.click('#app [data-act=restore]:not([data-v])')
                 continue
@@ -60,11 +60,11 @@ with sync_playwright() as p:
                         elif kind in ('smith', 'upgrade', 'pawn') and st['stones'] < 320:
                             k = [o for o in real if o['k'] in ('no', 'leave')][0]['k'] if [o for o in real if o['k'] in ('no', 'leave')] else real[-1]['k']
                         else:
-                            safe = [o for o in real if not o['deadly'] and not o['danger'] and not o['mem']] or real
+                            safe = [o for o in real if not o['danger'] and not o['mem']] or real  # 只看畫面上看得到的警告
                             if kind == 'out': safe = [o for o in safe if o['k'] != 'stay'] if rng.random() < 0.7 else [o for o in safe if o['k'] == 'stay'] or safe
                             k = rng.choice(safe)['k']
                     elif style == 'story':
-                        rel = [o for o in real if o['relic'] and not o['deadly']]
+                        rel = [o for o in real if o['relic'] and not o['danger']]
                         if info and rng.random() < 0.8: k = info[0]['k']
                         elif rel: k = rel[0]['k']
                         else:

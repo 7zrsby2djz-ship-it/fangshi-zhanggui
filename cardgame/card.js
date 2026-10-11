@@ -35,7 +35,9 @@ const pct = p => { const n = Math.round(p * 10); return n >= 10 ? '幾乎一定'
 
 let S = null;                       // 目前這一局
 let BK = load(BOOK, { deaths: {}, endings: {}, remember: {}, runs: 0, best: 0 });
-let UI = { sheet: null, armed: null };
+let UI = { sheet: null, armed: null, paused: false };
+let PREF = load('fs-card-pref-v1', { sound: true, voice: false });
+const savePref = () => store('fs-card-pref-v1', PREF);
 
 /* ---------------- 時間：舊內容的月份與天數，攤到十八個月上 ---------------- */
 const cmonthOf = st => st >= FROST0 ? 3 : st >= C.spans[2][0] ? 2 : 1;
@@ -61,7 +63,8 @@ function fresh() {
     v: 1, seed: Math.floor(Math.random() * 1e9).toString(36), stage: 1, tries: 0, rolls: 0,
     stones: st.stones, lifespan: st.lifespan, level: st.level, xp: st.xp, burden: st.burden,
     items: {}, flags: {}, done: {}, rel: {}, heat: 0, upg: [], gear: [], notes: [], pending: [], dueDebt: 0,
-    stats: { seen: 0, fooled: 0, cards: 0, trips: 0 }, deathsThisRun: 0,
+    stats: { seen: 0, fooled: 0, cards: 0, trips: 0, slack: 0 }, deathsThisRun: 0,
+    clock: 420, slack: 0, slackLog: [],
     queue: [], card: null, trip: null, dead: null, ended: null, phase: 'title', runNo: (BK.runs || 0) + 1,
   };
 }
@@ -83,6 +86,7 @@ function needOk(n) {
       case 'level': case 'realm': if (S.level < v) return false; break;
       case 'stones': if (S.stones < v) return false; break;
       case 'done': if (!arr(v).every(x => S.done[x])) return false; break;
+      case 'doneAs': for (const [i, q] of Object.entries(v)) if (S.done[i] !== q) return false; break;
       case 'rel': for (const [p, q] of Object.entries(v)) if ((S.rel[p] || 0) < q) return false; break;
       case 'heatMin': if (S.heat < v) return false; break;
       case 'holdAny': if (!arr(v).some(i => has(i))) return false; break;
@@ -162,10 +166,12 @@ function applyFx(fx, ctx = {}) {
 }
 function dangerOf(d) {
   if (!d) return 0;
+  if (d.if && !needOk(d.if)) return 0;
   if (d.unless && needOk(d.unless)) return 0;
   return clamp((d.chance ?? 1) * protectMult(d.id), 0, 1);
 }
 function rollDeath(d, ctx) {
+  if (d.if && !needOk(d.if)) return { dead: false, saved: null };
   if (d.unless && needOk(d.unless)) {
     const sv = (d.savedIf || []).find(x => needOk(x.need));
     return { dead: false, saved: sv ? sv.text : d.saved || null };
@@ -344,6 +350,61 @@ function deathHint(x, fx, key) {
   x.deadly = p > 0;
   if (p > 0 && warnRelic()) { x.risk = p; x.warn = effOf(warnRelic()).warn; }
 }
+/* ---------------- 沒管的事 ---------------- */
+const SLACK_MAX = 4;
+const SLACK_RE = /不管|不理|算了|先放|放著|不開|沒看到|裝作|假裝|裝沒|不去|關門|關上門|不要|走開|不回|別管|不收|不買|不答應|不說|躲|沒聽到|不接|不應|當沒|告辭|婉拒|拒絕|推掉|不碰|不動它|不出聲/;
+function slackOf(c, o) {
+  if (!c || !o || o.info) return false;
+  if (o.slack != null) return !!o.slack;
+  if (c.kind === 'deal') { const op = (DEALS[c.id].opts || {})[o.k] || {}; if (op.slack != null) return !!op.slack; return o.k === 'decline' || o.k === 'refer'; }
+  if (c.kind === 'ev' && o.k[0] === 'c') { const ch = (EV[c.id].choices || [])[+o.k.slice(1)] || {}; if (ch.slack != null) return !!ch.slack; return SLACK_RE.test(ch.label || '') && !(ch.fx && ch.fx.death); }
+  return false;
+}
+/* ---------------- 時鐘 ---------------- */
+const hhmm = t => `${String(Math.floor(t / 60) % 24).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+const period = t => t < 420 ? '開門前' : t < 660 ? '上午' : t < 780 ? '中午' : t < 1020 ? '下午' : t < 1140 ? '傍晚' : '夜裡';
+function setClock(card) {
+  const k = card.kind, j = R('ck' + S.stage + ':' + S.stats.cards + ':' + k + ':' + (card.id || ''));
+  if (k === 'month' || k === 'intro') S.clock = 400 + Math.floor(j * 35);
+  else if (k === 'dues') S.clock = Math.max(S.clock + 10, 600 + Math.floor(j * 60));
+  else if (k === 'out') S.clock = Math.max(S.clock + 15, 780 + Math.floor(j * 40));
+  else if (k === 'pawn') S.clock = Math.max(S.clock + 15, 1080 + Math.floor(j * 50));
+  else if (k === 'ending') S.clock += 5;
+  else S.clock += 30 + Math.floor(j * (k === 'place' || k === 'ascent' || k === 'pick' ? 60 : 75));
+  S.clock = Math.min(S.clock, 23 * 60 + 40);
+  card.time = S.clock;
+}
+/* ---------------- 聲音、朗讀 ---------------- */
+let AC = null;
+function snd(kind) {
+  if (!PREF.sound) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(); o.connect(g); g.connect(AC.destination);
+    const env = (type, f0, f1, vol, dur) => { o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur * 0.8); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur); o.start(t); o.stop(t + dur + 0.02); };
+    if (kind === 'tap') env('triangle', 660, 440, 0.05, 0.08);
+    else if (kind === 'turn') env('sine', 320, 520, 0.035, 0.15);
+    else if (kind === 'slack') env('sine', 392, 247, 0.05, 0.45);
+    else if (kind === 'stamp') env('square', 120, 38, 0.16, 0.32);
+  } catch (e) { /* 沒有聲音也能玩 */ }
+}
+function speak(text) {
+  try {
+    const ss = window.speechSynthesis; if (!ss || !text) return;
+    ss.cancel();
+    const u = new SpeechSynthesisUtterance(String(text).replace(/\s+/g, ' ').slice(0, 900));
+    u.lang = 'zh-TW'; u.rate = 1.05;
+    const vs = ss.getVoices(); const v = vs.find(x => /zh[-_]TW/i.test(x.lang)) || vs.find(x => /^zh/i.test(x.lang)); if (v) u.voice = v;
+    ss.speak(u);
+  } catch (e) { /* 不支援就算了 */ }
+}
+const hush = () => { try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) { /* */ } };
+function cardSpeech(c, resOnly) {
+  if (!c) return '';
+  if (resOnly && c.res) return [c.res.stamp, c.res.text, c.res.slackLine && '這件事，沒有人管了。'].filter(Boolean).join('。');
+  return [c.title, ...c.paras.map(p => p.t)].filter(Boolean).join('。');
+}
+
 function outCard() {
   const o = C.out;
   const opts = [{ k: 'town', label: o.town }, { k: 'far', label: o.far }, { k: 'stay', label: o.stay, desc: '負擔－2、身體適應＋8' }];
@@ -483,11 +544,13 @@ function choose(k) {
   c.pick = k;
   const r = resolve(c, o);
   c.res = r;
-  if (!r.death && (r.silent || (!r.text && !r.notes.filter(Boolean).length && !r.saved))) { S.stats.cards++; next(); return; }
+  if (!r.death && !r.slackLine && (r.silent || (!r.text && !r.notes.filter(Boolean).length && !r.saved))) { S.stats.cards++; snd('tap'); next(); return; }
   if (r.death) {
     BK.remember[c.key + ':' + k] = r.death.id; store(BOOK, BK);
     c.res.stamp = (DEATHS[r.death.id] || {}).seal || '出事了';
-  }
+    snd('stamp');
+  } else snd(r.slackLine ? 'slack' : 'tap');
+  if (PREF.voice) speak(cardSpeech(c, true));
   S.stats.cards++;
   save(); render(true);
 }
@@ -599,6 +662,11 @@ function resolve(c, o) {
     }
     case 'ending': break;
   }
+  if (!r.death && slackOf(c, o)) {
+    S.slack = (S.slack || 0) + 1; S.stats.slack = (S.stats.slack || 0) + 1; (S.slackLog = S.slackLog || []).push(c.title);
+    r.slackLine = true;
+    if (S.slack >= SLACK_MAX) r.death = { id: 'unmanaged' };
+  }
   if (r.death) { S.dead = r.death.id; S.deathsThisRun++; const b = BK.deaths[r.death.id] = BK.deaths[r.death.id] || { n: 0, first: Date.now() }; b.n++; store(BOOK, BK); }
   return r;
 }
@@ -617,18 +685,19 @@ function next() {
     }
     const spec = S.queue.shift();
     const card = makeCard(spec);
-    if (card) { S.card = card; break; }
+    if (card) { S.card = card; setClock(card); break; }
   }
   save(); render();
+  if (PREF.voice && S.card) speak(cardSpeech(S.card));
 }
 function advance() {
   // 錯過的故事：窗口過了還沒處理
   for (const d of D.deals) if (!S.done[d.id] && d.missed && inWindow(d, S.stage) && windowEnd(d, S.stage) === S.stage) { applyFx(d.missed); S.done[d.id] = 'missed'; }
-  S.stage += 1; S.tries = 0; S.rolls = 0;
+  S.stage += 1; S.tries = 0; S.rolls = 0; S.slack = 0; S.slackLog = [];
   S.queue = planStage(S.stage);
   pushCkpt();
 }
-function pushCkpt() { const ck = load(CKPT, []); const list = Array.isArray(ck) ? ck : []; list.push(snapshot()); store(CKPT, list.slice(-2)); }
+function pushCkpt() { const ck = load(CKPT, []); const list = Array.isArray(ck) ? ck : []; list.push(snapshot()); store(CKPT, list.slice(-4)); }
 function newRun() {
   S = fresh(); S.phase = 'play'; BK.runs = (BK.runs || 0) + 1; store(BOOK, BK);
   S.queue = planStage(1); store(CKPT, []); pushCkpt();
@@ -636,7 +705,8 @@ function newRun() {
 }
 function restoreMonth(back) {
   let list = load(CKPT, []); if (!Array.isArray(list) || !list.length) { newRun(); return; }
-  if (back && list.length > 1) { list = list.slice(0, -1); store(CKPT, list); }
+  const n = Math.min(+back || 0, list.length - 1);
+  if (n > 0) { list = list.slice(0, -n); store(CKPT, list); }
   const ck = JSON.parse(JSON.stringify(list[list.length - 1]));
   const tries = (S.tries || 0) + 1, dr = S.deathsThisRun;
   S = ck; S.tries = tries; S.deathsThisRun = dr; S.rolls = 0; S.phase = 'play'; S.dead = null; S.card = null;
@@ -656,18 +726,21 @@ function hud() {
   if (!S || S.phase === 'title') return '';
   const st = S.stage, m = MONTHS[st - 1];
   const chips = MONTHS.map((x, i) => `<span class="chip ${i + 1 < st ? 'past' : i + 1 === st ? 'now' : ''} ${x.frost ? 'frost' : ''}" ${i + 1 === st ? 'id="chipNow"' : ''}>${esc(x.chip)}</span>`).join('');
-  const where = S.card ? (S.card.kind === 'place' || S.card.kind === 'ascent' ? '在外面' : S.card.kind === 'pick' ? '出門' : S.card.kind === 'ending' ? '結局' : '顧店中') : '';
+  const k = S.card && S.card.kind;
+  const where = S.dead ? '出事了' : S.phase === 'over' ? '結局' : k === 'place' || k === 'ascent' ? '在外面' : k === 'pick' ? '出門' : k === 'ending' ? '結局' : '顧店中';
+  const t = S.clock || 420, warnLife = S.lifespan <= FROST0 - st + 1, sl = S.slack || 0;
   return `<div class="hud-top">
-    <div class="clock"><div class="day">第 ${st > 17 ? 18 : st} 個月・${esc(m.chip)}</div><div class="big">${esc(m.frost ? '結霜' : m.name)}</div></div>
-    <div class="life"><div class="lbl">剩下的壽命</div><div class="num ${S.lifespan <= FROST0 - st + 1 ? 'warn' : ''}">${S.lifespan}<small> 個月</small></div></div>
-    <button class="ghost menu" data-act="menu" aria-label="選單">選單</button>
+    <div class="clock"><div class="day">第 ${st > 17 ? 18 : st} 個月・<span id="per">${period(t)}</span></div><div class="big" id="clk">${hhmm(t)}</div></div>
+    <div class="slack ${sl >= SLACK_MAX - 1 ? 'warn' : ''}"><div class="lbl">這個月沒管的事</div><div class="num">${sl}<small>／${SLACK_MAX}</small></div></div>
+    <button class="ghost pause" data-act="pause">${UI.paused ? '繼續' : '暫停'}</button>
   </div>
   <div class="chips" id="chips">${chips}</div>
   <div class="hud-row">
-    <span class="state">${esc(where)}</span>
-    <span class="stats"><b class="g">${S.stones}</b> 靈石<i></i>${esc(lvName(S.level))}<i></i>負擔 <b class="${S.burden > limit() ? 'r' : ''}">${S.burden}</b>／${limit()}</span>
+    <span class="state">${esc(m.frost ? '結霜' : m.name)}・${esc(where)}</span>
+    <span class="tg"><button class="ghost sm" data-act="snd">聲音 ${PREF.sound ? '開' : '關'}</button><button class="ghost sm" data-act="vox">配音 ${PREF.voice ? '開' : '關'}</button></span>
   </div>
-  <div class="hud-tabs"><button class="ghost" data-act="sheet" data-v="bag">身上</button><button class="ghost" data-act="sheet" data-v="notes">筆記</button><button class="ghost" data-act="sheet" data-v="book">死法圖鑑</button></div>`;
+  <div class="hud-stats"><span><b class="g">${S.stones}</b> 靈石</span><span>${esc(lvName(S.level))}</span><span>負擔 <b class="${S.burden > limit() ? 'r' : ''}">${S.burden}</b>／${limit()}</span><span>壽命 <b class="${warnLife ? 'r' : ''}">${S.lifespan}</b> 個月</span></div>
+  <div class="hud-tabs"><button class="ghost" data-act="sheet" data-v="bag">身上</button><button class="ghost" data-act="sheet" data-v="notes">筆記</button><button class="ghost" data-act="sheet" data-v="book">死法圖鑑</button><button class="ghost" data-act="menu">選單</button></div>`;
 }
 function optHtml(o, i, c) {
   const picked = c.res && c.pick === o.k, dim = c.res && !picked;
@@ -679,8 +752,10 @@ function optHtml(o, i, c) {
   if (o.remember) sub2 += `<span class="tag mem">你記得：${esc(o.remember)}</span>`;
   if (o.risk != null) sub2 += `<span class="danger risk">${esc(o.warn || '')} ${esc(pct(o.risk))}會出事。</span>`;
   if (armed) sub2 += `<span class="danger risk strong">再按一次，就照這樣做。</span>`;
+  const sk = !c.res && slackOf(c, o) && (S.slack || 0) >= SLACK_MAX - 1;
+  if (sk) sub2 += `<span class="danger risk">再一件沒管，就出事。</span>`;
   if (o.disabled && o.why) sub2 += `<span class="desc">（${esc(o.why)}）</span>`;
-  return `<button class="opt ${o.info ? 'info' : ''} ${picked ? 'picked' : ''} ${dim ? 'dim' : ''} ${armed ? 'armed' : ''} ${o.deadly ? 'deadly' : ''}" data-act="opt" data-k="${esc(o.k)}" ${o.disabled || c.res ? 'disabled' : ''}>
+  return `<button class="opt ${o.info ? 'info' : ''} ${picked ? 'picked' : ''} ${dim ? 'dim' : ''} ${armed ? 'armed' : ''} ${o.deadly || sk ? 'deadly' : ''}" data-act="opt" data-k="${esc(o.k)}" ${o.disabled || c.res ? 'disabled' : ''}>
     <span class="let">${o.info ? '？' : LETTERS[i] || '·'}</span><span class="txt"><span class="lab">${esc(o.label)}</span>${sub2}</span></button>`;
 }
 function paraHtml(p) {
@@ -689,8 +764,8 @@ function paraHtml(p) {
   return `<p class="${cls}">${esc(p.t).replace(/\n/g, '<br>')}</p>`;
 }
 function cardHtml(c) {
-  const meta = [c.where, c.who && `${c.who}${c.role ? `・${c.role}` : ''}`].filter(Boolean).join('・');
-  let h = `<article class="card ${c.kind}"><div class="meta">${esc(meta)}</div><h2>${esc(c.title)}</h2>`;
+  const meta = [c.time != null && `${hhmm(c.time)}・${period(c.time)}`, c.where, c.who && `${c.who}${c.role ? `・${c.role}` : ''}`].filter(Boolean).join('・');
+  let h = `<article class="card ${c.kind}"><div class="meta"><span>${esc(meta)}</span><button class="read" data-act="read">朗讀</button></div><h2>${esc(c.title)}</h2>`;
   if (S.deja && c.kind === 'month') { h += `<p class="deja">似曾相識。你記得這個月是怎麼開始的，也記得上一次是在哪裡出的事。</p>`; S.deja = false; }
   h += c.paras.map(paraHtml).join('');
   const realOpts = c.opts.filter(o => !(c.res && o.info));
@@ -698,9 +773,10 @@ function cardHtml(c) {
   if (!(c.opts.length === 1 && c.opts[0].plain && !c.res)) h += `<div class="opts">${(c.res ? realOpts : c.opts).map(o => optHtml(o, o.info ? -1 : li++, c)).join('')}</div>`;
   if (c.res) {
     const r = c.res;
-    if (r.text || r.notes.length || r.saved || r.death) h += '<hr class="cut">';
+    if (r.text || r.notes.length || r.saved || r.death || r.slackLine) h += '<hr class="cut">';
     if (r.text) h += `<p class="res">${esc(r.text).replace(/\n/g, '<br>')}</p>`;
     if (r.saved) h += `<p class="saved">${esc(r.saved)}</p>`;
+    if (r.slackLine) h += `<p class="slackline">${r.death ? '這個月，你什麼都沒管。' : (S.slack || 0) >= SLACK_MAX - 1 ? '你保住了自己。這件事，沒有人管了。再一件，就出事。' : '你保住了自己。這件事，沒有人管了。'}</p>`;
     if (r.notes.filter(Boolean).length) h += `<p class="notes">${r.notes.filter(Boolean).map(esc).join('　')}</p>`;
     if (r.death) { const d = DEATHS[r.death.id] || {}; h += `<div class="stamp">${esc(r.stamp || d.seal || '出事了')}</div><button class="go danger" data-act="die">${esc(d.title || '出事了')}</button>`; }
     else h += `<button class="go" data-act="next">繼續</button>`;
@@ -710,15 +786,17 @@ function cardHtml(c) {
 function deathHtml() {
   const id = S.dead, d = DEATHS[id] || { title: '出事了', text: '' }, b = BK.deaths[id] || { n: 1 };
   const seen = Object.keys(BK.deaths).length, total = Object.keys(DEATHS).length;
-  const m = MONTHS[S.stage - 1];
-  return `<article class="card death"><div class="meta">${esc(d.cat || '')}・第 ${S.stage > 17 ? 18 : S.stage} 個月</div>
+  const m = MONTHS[S.stage - 1], ckN = (load(CKPT, []) || []).length;
+  const lst = id === 'unmanaged' && (S.slackLog || []).length ? `<p class="ledger">這個月你沒管的：${(S.slackLog || []).map(esc).join('、')}。</p>` : '';
+  return `<article class="card death"><div class="meta"><span>${hhmm(S.clock || 420)}・${esc(d.cat || '')}・第 ${S.stage > 17 ? 18 : S.stage} 個月</span><button class="read" data-act="read">朗讀</button></div>
   <div class="stamp big">${esc(d.seal || '死')}</div><h2>${esc(d.title)}</h2>
-  <p>${esc(d.text).replace(/\n/g, '<br>')}</p>
+  <p>${esc(sub(d.text)).replace(/\n/g, '<br>')}</p>${lst}
   <hr class="cut"><p class="hint">${b.n >= 2 ? '怎麼避開：' + esc(d.hint || '') : b.n === 1 ? '第一次這樣死。下一次，你會記得。' : ''}</p>
   ${b.n >= 2 ? '' : '<p class="small muted">同一種死法死第二次，這裡會告訴你怎麼避開。</p>'}
   <p class="small muted">死法圖鑑 ${seen}／${total}・這一局死了 ${S.deathsThisRun} 次</p>
   <button class="go" data-act="restore">回到這個月開頭（${esc(m.chip)}）</button>
-  ${(load(CKPT, []) || []).length > 1 ? `<button class="go quiet" data-act="restore" data-v="prev">回到上個月開頭（${esc((MONTHS[S.stage - 2] || m).chip)}）</button>` : ''}
+  ${ckN > 1 ? `<button class="go quiet" data-act="restore" data-v="1">回到上個月開頭（${esc((MONTHS[S.stage - 2] || m).chip)}）</button>` : ''}
+  ${ckN > 3 ? `<button class="go quiet" data-act="restore" data-v="3">回到三個月前（${esc((MONTHS[S.stage - 4] || m).chip)}）</button>` : ''}
   <button class="go quiet" data-act="restart">重新開張</button></article>`;
 }
 function overHtml() {
@@ -766,7 +844,8 @@ function render(resolved) {
     hd.hidden = false; hd.innerHTML = hud(); $('#scene').hidden = false;
     const scene = S.dead ? 'dead' : S.phase === 'over' ? 'frost' : (S.card && S.card.scene) || 'shop';
     if (scene !== lastScene) { drawScene(scene); lastScene = scene; }
-    app.innerHTML = S.dead ? deathHtml() : S.phase === 'over' ? overHtml() : S.card ? cardHtml(S.card) : '';
+    app.innerHTML = (S.dead ? deathHtml() : S.phase === 'over' ? overHtml() : S.card ? cardHtml(S.card) : '') + (UI.paused ? `<div class="pausebox"><div class="pz">暫停中</div><p>時間停住了。店裡很安靜。</p><button class="go" data-act="pause">繼續</button></div>` : '');
+    app.classList.toggle('paused', !!UI.paused);
     const ch = $('#chipNow'); if (ch) ch.scrollIntoView({ block: 'nearest', inline: 'center' });
   }
   const sh = $('#sheet'); if (UI.sheet) { sh.hidden = false; sh.innerHTML = sheetHtml(); } else sh.hidden = true;
@@ -777,10 +856,15 @@ function render(resolved) {
 document.addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b) return;
   const a = b.dataset.act;
+  if (UI.paused && a !== 'pause') return;
+  if (a === 'pause') { UI.paused = !UI.paused; if (UI.paused) hush(); render(); return; }
+  if (a === 'snd') { PREF.sound = !PREF.sound; savePref(); snd('tap'); render(); return; }
+  if (a === 'vox') { PREF.voice = !PREF.voice; savePref(); if (PREF.voice && S && S.card) speak(cardSpeech(S.card, !!S.card.res)); else hush(); render(); return; }
+  if (a === 'read') { const c = S && (S.dead ? null : S.card); if (c) speak(cardSpeech(c) + (c.res ? '。' + cardSpeech(c, true) : '')); else if (S && S.dead) { const d = DEATHS[S.dead] || {}; speak([d.seal, d.title, d.text].join('。')); } return; }
   if (a === 'opt') choose(b.dataset.k);
-  else if (a === 'next') next();
+  else if (a === 'next') { snd('turn'); next(); }
   else if (a === 'die') { S.card = null; save(); render(); }
-  else if (a === 'restore') { UI.sheet = null; restoreMonth(b.dataset.v === 'prev'); }
+  else if (a === 'restore') { UI.sheet = null; restoreMonth(b.dataset.v === 'prev' ? 1 : +(b.dataset.v || 0)); }
   else if (a === 'restart') { UI.sheet = null; newRun(); }
   else if (a === 'continue') { S = load(SAVE, null); if (S.dead) S.card = null; render(); }
   else if (a === 'title') { UI.sheet = null; if (S) S.phase = S.phase === 'over' ? 'over' : S.phase; S = null; render(); }
@@ -846,5 +930,12 @@ function drawScene(name) {
 
 // 測試用
 window.__fc = { get S() { return S; }, set S(v) { S = v; }, D, BK: () => BK, choose, next, newRun, restoreMonth, render, planStage, makeCard, needOk, limit, income };
+setInterval(() => {
+  if (!S || S.phase !== 'play' || S.dead || UI.paused || UI.sheet || !S.card || S.card.res || document.hidden) return;
+  if (S.clock >= 23 * 60 + 58) return;
+  S.clock += 1;
+  const el = $('#clk'); if (el) el.textContent = hhmm(S.clock);
+  const pe = $('#per'); if (pe) pe.textContent = period(S.clock);
+}, 2500);
 S = null; render();
 })();

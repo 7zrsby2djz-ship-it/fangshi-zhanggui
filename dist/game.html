@@ -375,8 +375,9 @@ function planStage(st) {
   const deals = D.deals.filter(d => dealOk(d, st) && !(d.repeatable && R('rep:' + d.id + ':' + st) > 0.35))
     .sort((a, b) => (windowEnd(a, st) === st ? 1 : 0) - (windowEnd(b, st) === st ? 1 : 0) || (b.prio || 0) - (a.prio || 0) || R('d' + a.id) - R('d' + b.id));
   const urgent = deals.filter(d => windowEnd(d, st) === st);
-  const nDeals = frost ? deals.length : clamp(urgent.length, 2, 3);
-  const pickD = deals.slice(0, nDeals);
+  // 快過期的先排；沒有急件時一個月最多一件普通生意，少點連點
+  const nDeals = frost ? deals.length : (urgent.length ? clamp(urgent.length, 1, 2) : (deals.length ? 1 : 0));
+  const pickD = (urgent.length ? urgent.concat(deals.filter(d => !urgent.includes(d))) : deals).slice(0, nDeals);
   // 散事
   const drifts = Object.values(EV).filter(e => e._k === 'drift' && evOk(e, st) && (frost || R('dr:' + e.id + ':' + st) < (e.chance ?? 0.4)))
     .sort((a, b) => (b.prio || 0) - (a.prio || 0) || R('o' + a.id) - R('o' + b.id));
@@ -392,10 +393,13 @@ function planStage(st) {
   }
   // 結霜四天：故事照天數排
   if (frost) mix.sort((a, b) => (a.t === 'deal' ? (DEALS[a.id].prio || 0) : 0) - (b.t === 'deal' ? (DEALS[b.id].prio || 0) : 0));
-  q.push(...mix);
+  // 空檔插在中段：先處理一半店裡的事，出門一趟，再回來收尾
+  const mid = Math.ceil(mix.length / 2);
+  q.push(...mix.slice(0, mid));
+  if (!frost || m.frost < 4) q.push({ t: 'out' });
+  q.push(...mix.slice(mid));
   if (!frost && st % 3 === 2) q.push({ t: 'smith' });
   if (!frost && st % 3 === 1 && st > 1) q.push({ t: 'upgrade' });
-  if (!frost || m.frost < 4) q.push({ t: 'out' });
   if (st < FROST0) q.push({ t: 'pawn' });
   if (m.dues) q.push({ t: 'dues', n: m.dues });
   return q;
@@ -471,13 +475,14 @@ function dealCard(d) {
   return card;
 }
 function dealOpts(card, d) {
-  const o = [];
   const asked = card.asked || {};
-  if (d.ask && !asked.ask) o.push({ k: 'i:ask', info: true, label: '問：' + d.ask.q });
-  (d.press || []).forEach((p, i) => { if (asked.ask && !asked['p' + i] && i < 2) o.push({ k: 'i:p' + i, info: true, label: '追問：' + p.q }); });
-  if (d.silence && !asked.silence && asked.ask) o.push({ k: 'i:silence', info: true, label: '不說話，等他' });
-  if ((d.haggle || []).length > card.haggled && d.side === 'sell') o.push({ k: 'i:haggle', info: true, label: '殺價' });
-  (d.verify || []).forEach((v, i) => { if (!asked['v' + i] && i < 2) o.push({ k: 'i:v' + i, info: true, label: `去問${(NP[v.who] || {}).name || v.who}${v.cost ? `（${v.cost} 靈石）` : ''}`, disabled: v.cost && S.stones < v.cost }); });
+  const info = [];
+  if (d.ask && !asked.ask) info.push({ k: 'i:ask', info: true, label: '問：' + d.ask.q });
+  (d.press || []).forEach((p, i) => { if (asked.ask && !asked['p' + i] && i < 2) info.push({ k: 'i:p' + i, info: true, label: '追問：' + p.q }); });
+  if (d.silence && !asked.silence && asked.ask) info.push({ k: 'i:silence', info: true, label: '不說話，等他' });
+  if ((d.haggle || []).length > card.haggled && d.side === 'sell') info.push({ k: 'i:haggle', info: true, label: '殺價' });
+  (d.verify || []).forEach((v, i) => { if (!asked['v' + i] && i < 2) info.push({ k: 'i:v' + i, info: true, label: `去問${(NP[v.who] || {}).name || v.who}${v.cost ? `（${v.cost} 靈石）` : ''}`, disabled: v.cost && S.stones < v.cost }); });
+  const o = [];
   const order = ['special', 'special2', 'deal', 'expose', 'report', 'refer', 'decline'];
   const keys = Object.keys(d.opts).sort((a, b) => (order.indexOf(a) + 1 || 9) - (order.indexOf(b) + 1 || 9));
   for (const k of keys) {
@@ -491,7 +496,8 @@ function dealOpts(card, d) {
     deathHint(x, op.fx, card.key + ':' + k);
     o.push(x);
   }
-  card.opts = o;
+  // 決定在前、打聽在後：想快推可以直接選，想問清楚往下捲
+  card.opts = o.concat(info);
 }
 function evCard(e) {
   if (!e || !needOk(e.need)) return null;
@@ -661,14 +667,25 @@ function duesCard(n0) {
   const card = { kind: 'dues', key: 'dues', title: dd.title, where: '許家店', scene: 'shop', paras: [P(dd.text.replace('{n}', n))], opts: [], n };
   card.opts.push({ k: 'pay', label: dd.pay.replace('{n}', n), disabled: S.stones < n, why: '錢不夠' });
   if (!S.dueDebt) card.opts.push({ k: 'beg', label: dd.beg, desc: '下次多收三成' });
-  if (S.stones < n && S.stones + C.pawn.gain >= n) { const x = { k: 'pawnpay', label: dd.pawnpay, desc: `壽命 －1 個月，靈石 ＋${C.pawn.gain}，再繳規費`, deadly: S.lifespan <= FROST0 - S.stage + 1 }; if (x.deadly) x.danger = '剩下的日子，不夠走到結霜了。'; card.opts.push(x); }
-  else if (S.stones < n) card.opts.push({ k: 'seal', label: '……', deadly: true, desc: dd.cant.replace('{n}', n) });
+  else if (!S.flags._duesBeg2) card.opts.push({ k: 'beg2', label: '再求一次，下個月一定繳', desc: '下次收雙倍，最後一次', slack: true });
+  if (S.stones < n) {
+    const needMore = n - S.stones;
+    const months = Math.max(1, Math.ceil(needMore / C.pawn.gain));
+    const gain = months * C.pawn.gain;
+    const x = { k: 'pawnpay', label: months > 1 ? `去當鋪再押 ${months} 個月` : dd.pawnpay, desc: `壽命 －${months} 個月，靈石 ＋${gain}，再繳規費`, months, gain, deadly: S.lifespan - months < FROST0 - S.stage };
+    if (x.deadly) x.danger = '剩下的日子，不夠走到結霜了。';
+    if (BK.remember['dues:pawnpay']) x.remember = (DEATHS.pawn_due || {}).seal || '收當';
+    card.opts.push(x);
+    if (months > 2) card.opts.push({ k: 'seal', label: '……', deadly: true, desc: dd.cant.replace('{n}', n) });
+  }
   return card;
 }
 function pawnCard() {
   const need = FROST0 - S.stage, left = S.lifespan, pw = C.pawn;
   const margin = left - need;
-  if (margin > 0 && R('pawn' + S.stage) > 0.2) return null;
+  // 還夠撐：少出現。只剩一個月：半數出現。已經不夠：一定出現。
+  if (margin > 1 && R('pawn' + S.stage) > 0.22) return null;
+  if (margin === 1 && R('pawn' + S.stage) > 0.5) return null;
   const card = { kind: 'pawn', key: 'pawn', title: pw.title, where: '許家店門口', scene: 'pawn', paras: [P(pw.text.replace('{left}', left).replace('{need}', need))], opts: [] };
   card.opts.push({ k: 'redeem', label: pw.redeem.replace('{cost}', pw.cost), disabled: S.stones < pw.cost, why: '錢不夠' });
   const sx = { k: 'sell', label: pw.sell.replace('{gain}', pw.gain), deadly: margin <= 1 };
@@ -680,7 +697,8 @@ function pawnCard() {
 function raidCard(spec) {
   const d = DEALS[spec.id], rd = C.raid, label = (d.lot && d.lot.label) || d.itemName || nm(d.item);
   const card = { kind: 'raid', id: d.id, key: 'raid', title: rd.title, where: '許家店', scene: 'shop', paras: [P(rd.text.replace('{item}', label))], opts: [], item: d.item, qty: d.qty || 1 };
-  card.opts.push({ k: 'give', label: rd.give, desc: `交出貨、罰 ${rd.fine} 靈石` });
+  const gaveBefore = BK.remember['raid:lie'] || BK.remember['raid:bribe'];
+  card.opts.push({ k: 'give', label: rd.give, desc: gaveBefore ? `交出貨、罰 ${rd.fine} 靈石（你記得：別再嘴硬）` : `交出貨、罰 ${rd.fine} 靈石` });
   for (const k of ['lie', 'bribe']) { const x = { k, label: rd[k], deadly: true }; deathHint(x, { death: { id: 'raid_' + k, chance: k === 'lie' ? 0.7 : 0.85 } }, 'raid:' + k); card.opts.push(x); }
   return card;
 }
@@ -699,8 +717,8 @@ function endingCard() {
 function choose(k) {
   const c = S.card; if (!c || c.res) return;
   const o = c.opts.find(x => x.k === k); if (!o || o.disabled) return;
-  // 警示類遺物：會死的選項要按兩次
-  if ((o.deadly && o.risk != null) && UI.armed !== k) { UI.armed = k; render(); return; }
+  // 會死的選項一律按兩次，避免手滑；有警示遺物時會多寫幾成
+  if (o.deadly && UI.armed !== k) { UI.armed = k; render(); return; }
   UI.armed = null;
   if (o.info) { info(c, k); save(); render(); return; }
   if (c.kind === 'ending') { finish(); return; }
@@ -808,7 +826,17 @@ function resolve(c, o) {
     case 'dues':
       if (o.k === 'pay') { S.stones -= c.n; S.dueDebt = 0; r.text = '他把錢點了兩次，在單子上蓋了一個章。'; r.notes.push(`靈石 －${c.n}`); }
       else if (o.k === 'beg') { S.dueDebt = c.n; r.text = C.dues.begText; }
-      else if (o.k === 'pawnpay') { S.lifespan -= 1; S.stones += C.pawn.gain - c.n; S.dueDebt = 0; r.text = C.dues.pawnpayText; r.notes.push('壽命 －1 個月', `靈石 ＋${C.pawn.gain}`, `靈石 －${c.n}`); if (S.lifespan < FROST0 - S.stage + 1) r.notes.push(`剩下 ${S.lifespan} 個月，到結霜要 ${FROST0 - S.stage} 個月`); if (S.lifespan <= 0) r.death = { id: 'pawn_due' }; }
+      else if (o.k === 'beg2') { S.flags._duesBeg2 = true; S.dueDebt = c.n * 2; r.text = '他看了你很久，在單子上又畫一個圈：「最後一次。下次，雙倍。」'; r.notes.push('規費欠著，下次收雙倍'); }
+      else if (o.k === 'pawnpay') {
+        const months = o.months || 1, gain = o.gain || C.pawn.gain;
+        S.lifespan -= months; S.stones += gain - c.n; S.dueDebt = 0;
+        r.text = months > 1
+          ? `長生當鋪的年輕人在帳本上連寫了 ${months} 格，把 ${gain} 靈石推給你。你回去把規費繳了。店裡比剛才冷了一點。`
+          : C.dues.pawnpayText;
+        r.notes.push(`壽命 －${months} 個月`, `靈石 ＋${gain}`, `靈石 －${c.n}`);
+        if (S.lifespan < FROST0 - S.stage + 1) r.notes.push(`剩下 ${S.lifespan} 個月，到結霜要 ${FROST0 - S.stage} 個月`);
+        if (S.lifespan <= 0) r.death = { id: 'pawn_due' };
+      }
       else r.death = { id: 'shop_sealed' };
       break;
     case 'pawn': {
@@ -830,7 +858,11 @@ function resolve(c, o) {
     r.slackLine = true;
     if (S.slack >= SLACK_MAX) r.death = { id: 'unmanaged' };
   }
-  if (r.death) { S.dead = r.death.id; S.deathsThisRun++; const b = BK.deaths[r.death.id] = BK.deaths[r.death.id] || { n: 0, first: Date.now() }; b.n++; store(BOOK, BK); }
+  if (r.death) {
+    S.dead = r.death.id; S.deathsThisRun++;
+    (S._deathLog = S._deathLog || []).push(r.death.id);
+    const b = BK.deaths[r.death.id] = BK.deaths[r.death.id] || { n: 0, first: Date.now() }; b.n++; store(BOOK, BK);
+  }
   return r;
 }
 
@@ -871,8 +903,8 @@ function restoreMonth(back) {
   const n = Math.min(+back || 0, list.length - 1);
   if (n > 0) { list = list.slice(0, -n); store(CKPT, list); }
   const ck = JSON.parse(JSON.stringify(list[list.length - 1]));
-  const tries = (S.tries || 0) + 1, dr = S.deathsThisRun;
-  S = ck; S.tries = tries; S.deathsThisRun = dr; S.rolls = 0; S.phase = 'play'; S.dead = null; S.card = null;
+  const tries = (S.tries || 0) + 1, dr = S.deathsThisRun, dlog = S._deathLog || [];
+  S = ck; S.tries = tries; S.deathsThisRun = dr; S._deathLog = dlog; S.rolls = 0; S.phase = 'play'; S.dead = null; S.card = null;
   S.deja = true;
   next();
 }
@@ -915,6 +947,7 @@ function optHtml(o, i, c) {
   if (o.remember) sub2 += `<span class="tag mem">你記得：${esc(o.remember)}</span>`;
   if (o.risk != null) sub2 += `<span class="danger risk">${esc(o.warn || '')} ${esc(pct(o.risk))}會出事。</span>`;
   if (armed) sub2 += `<span class="danger risk strong">再按一次，就照這樣做。</span>`;
+  else if (o.deadly && !o.danger && o.risk == null && !o.remember) sub2 += `<span class="danger">這一步，可能回不來。</span>`;
   const sk = !c.res && slackOf(c, o) && (S.slack || 0) >= SLACK_MAX - 1;
   if (sk) sub2 += `<span class="danger risk">再一件沒管，就出事。</span>`;
   if (o.disabled && o.why) sub2 += `<span class="desc">（${esc(o.why)}）</span>`;
@@ -957,9 +990,16 @@ function deathHtml() {
   <hr class="cut"><p class="hint">${b.n >= 2 ? '怎麼避開：' + esc(d.hint || '') : b.n === 1 ? '第一次這樣死。下一次，你會記得。' : ''}</p>
   ${b.n >= 2 ? '' : '<p class="small muted">同一種死法死第二次，這裡會告訴你怎麼避開。</p>'}
   <p class="small muted">死法圖鑑 ${seen}／${total}・這一局死了 ${S.deathsThisRun} 次</p>
-  <button class="go" data-act="restore">回到這個月開頭（${esc(m.chip)}）</button>
-  ${ckN > 1 ? `<button class="go quiet" data-act="restore" data-v="1">回到上個月開頭（${esc((MONTHS[S.stage - 2] || m).chip)}）</button>` : ''}
-  ${ckN > 3 ? `<button class="go quiet" data-act="restore" data-v="3">回到三個月前（${esc((MONTHS[S.stage - 4] || m).chip)}）</button>` : ''}
+  ${(() => {
+    const nSame = (S._deathLog || []).filter(x => x === id).length;
+    const money = id === 'pawn_due' || id === 'shop_sealed' || id === 'unmanaged';
+    const same = nSame >= 2 && ckN > 1;
+    const deep = money && nSame >= 2 && ckN > 3;
+    const cur = `<button class="go ${same ? 'quiet' : ''}" data-act="restore">回到這個月開頭（${esc(m.chip)}）</button>`;
+    const prev = ckN > 1 ? `<button class="go ${same && !deep ? '' : 'quiet'}" data-act="restore" data-v="1">回到上個月開頭（${esc((MONTHS[S.stage - 2] || m).chip)}）${same && !deep ? '・這個月這樣出過兩次了' : ''}</button>` : '';
+    const far = ckN > 3 ? `<button class="go ${deep ? '' : 'quiet'}" data-act="restore" data-v="3">回到三個月前（${esc((MONTHS[S.stage - 4] || m).chip)}）${deep ? '・錢／壽命卡關，早點重來' : ''}</button>` : '';
+    return (deep ? far + prev + cur : same ? prev + cur + far : cur + prev + far);
+  })()}
   <button class="go quiet" data-act="restart">重新開張</button></article>`;
 }
 function overHtml() {
@@ -1014,7 +1054,10 @@ function render(resolved) {
   const sh = $('#sheet'); if (UI.sheet) { sh.hidden = false; sh.innerHTML = sheetHtml(); } else sh.hidden = true;
   if (resolved) { const r = app.querySelector('.cut') || app.querySelector('.go'); if (r) r.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
   else if (!UI.armed) window.scrollTo(0, 0);
-  app.classList.remove('in'); void app.offsetWidth; app.classList.add('in');
+  // 只有換卡才播進場，避免每點一下都抖、也少卡手
+  const ck = S && (S.dead ? 'dead:' + S.dead : S.phase === 'over' ? 'over' : S.card ? (S.card.key + (S.card.res ? ':r' : '')) : 'none');
+  if (ck !== UI._ck) { UI._ck = ck; app.classList.remove('in'); void app.offsetWidth; app.classList.add('in'); }
+  else app.classList.add('in');
 }
 document.addEventListener('click', ev => {
   const b = ev.target.closest('[data-act]'); if (!b) return;

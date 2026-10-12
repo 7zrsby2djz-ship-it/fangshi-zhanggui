@@ -21,7 +21,7 @@ with sync_playwright() as p:
     for run in range(runs):
         rng = random.Random(run * 7 + len(style) + int(__import__('os').environ.get('SEEDX', '0')))
         log = {'run': run, 'deaths': [], 'restores': 0, 'clicks': 0, 'end': None, 'stage': 0, 'kinds': {}}
-        pg.click('[data-act=restart]')
+        pg.click('[data-act=restart]', force=True)
         shots = 0
         for step in range(3000):
             st = pg.evaluate('(()=>{const S=window.__fc.S;return S&&{stage:S.stage,dead:S.dead,phase:S.phase,kind:S.card&&S.card.kind,stones:S.stones,life:S.lifespan,lv:S.level,b:S.burden,ended:S.ended}})()')
@@ -39,25 +39,34 @@ with sync_playwright() as p:
                 if log['restores'] >= maxRestore: log['gaveup'] = True; break
                 log['restores'] += 1
                 same = sum(1 for x in log['deaths'] if x[0] == st['stage'])
-                prev = pg.locator('#app [data-act=restore][data-v="3"]' if same >= 4 else '#app [data-act=restore][data-v="1"]')
-                if same >= 2 and prev.count(): prev.click()
-                else: pg.click('#app [data-act=restore]:not([data-v])')
+                money = st['dead'] in ('pawn_due', 'shop_sealed', 'unmanaged')
+                if money and same >= 2 and pg.locator('#app [data-act=restore][data-v="3"]').count():
+                    pg.click('#app [data-act=restore][data-v="3"]', force=True)
+                elif same >= 2 and pg.locator('#app [data-act=restore][data-v="1"]').count():
+                    pg.click('#app [data-act=restore][data-v="1"]', force=True)
+                else:
+                    pg.click('#app [data-act=restore]:not([data-v])', force=True)
                 continue
             for sel in ('[data-act=die]', '[data-act=next]'):
-                if pg.locator(sel).count(): pg.click(sel); log['clicks'] += 1; break
+                if pg.locator(sel).count(): pg.click(sel, force=True); log['clicks'] += 1; break
             else:
-                opts = pg.evaluate('''[...document.querySelectorAll('#app .opt:not([disabled])')].map(b=>({k:b.dataset.k,info:b.classList.contains('info'),deadly:b.classList.contains('deadly'),danger:!!b.querySelector('.danger'),mem:!!b.querySelector('.mem'),relic:!!b.querySelector('.relic'),armed:b.classList.contains('armed')}))''')
+                opts = pg.evaluate('''[...document.querySelectorAll('#app .opt:not([disabled])')].map(b=>({k:b.dataset.k,info:b.classList.contains('info'),deadly:b.classList.contains('deadly'),danger:!!b.querySelector('.danger'),mem:!!b.querySelector('.mem'),relic:!!b.querySelector('.relic'),armed:b.classList.contains('armed'),disabled:!!b.disabled}))''')
                 if not opts:
-                    if pg.locator('#app .go').count(): pg.click('#app .go'); continue
+                    if pg.locator('#app .go').count(): pg.click('#app .go', force=True); continue
                     log['stuck'] = st; break
                 kind = st['kind']; log['kinds'][kind] = log['kinds'].get(kind, 0) + 1
                 armed = [o for o in opts if o['armed']]
-                if armed: k = armed[0]['k']
+                if armed: k = armed[0]['k']  # 確認會死人的第二下
                 else:
                     info = [o for o in opts if o['info']]; real = [o for o in opts if not o['info']]
                     if style == 'careful':
                         if info and rng.random() < 0.6: k = info[0]['k']
-                        elif kind in ('smith', 'upgrade', 'pawn') and st['stones'] < 320:
+                        elif kind == 'pawn':
+                            red = [o for o in real if o['k'] == 'redeem' and not o.get('disabled')]
+                            leave_dead = [o for o in real if o['k'] == 'leave' and o.get('deadly')]
+                            if (leave_dead or st['life'] <= 6) and red: k = red[0]['k']
+                            else: k = ([o for o in real if o['k'] in ('no', 'leave')] or real)[-1]['k']
+                        elif kind in ('smith', 'upgrade') and st['stones'] < 320:
                             k = [o for o in real if o['k'] in ('no', 'leave')][0]['k'] if [o for o in real if o['k'] in ('no', 'leave')] else real[-1]['k']
                         else:
                             safe = [o for o in real if not o['danger'] and not o['mem']] or real  # 只看畫面上看得到的警告
@@ -77,7 +86,7 @@ with sync_playwright() as p:
                         if kind == 'out': k = 'far'
                     else:
                         k = rng.choice(opts)['k']
-                pg.click(f'#app .opt[data-k="{k}"]'); log['clicks'] += 1
+                pg.click(f'#app .opt[data-k="{k}"]', force=True); log['clicks'] += 1
         log['errors'] = errs[:]; errs.clear()
         res.append(log)
         print(json.dumps(log, ensure_ascii=False))

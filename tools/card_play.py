@@ -61,6 +61,14 @@ with sync_playwright() as p:
                     info = [o for o in opts if o['info']]; real = [o for o in opts if not o['info']]
                     if style == 'careful':
                         if info and rng.random() < 0.6: k = info[0]['k']
+                        elif kind == 'dues':
+                            pay = [o for o in real if o['k'] == 'pay' and not o.get('disabled')]
+                            soft = [o for o in real if o['k'] in ('sellbag', 'split', 'beg', 'beg2') and not o.get('disabled') and not o.get('deadly')]
+                            if pay: k = pay[0]['k']
+                            elif soft: k = soft[0]['k']
+                            else:
+                                safe = [o for o in real if not o['danger'] and not o['deadly']] or real
+                                k = safe[0]['k']
                         elif kind == 'pawn':
                             red = [o for o in real if o['k'] == 'redeem' and not o.get('disabled')]
                             leave_dead = [o for o in real if o['k'] == 'leave' and o.get('deadly')]
@@ -75,6 +83,16 @@ with sync_playwright() as p:
                     elif style == 'story':
                         rel = [o for o in real if o['relic'] and not o['danger']]
                         if info and rng.random() < 0.8: k = info[0]['k']
+                        elif kind == 'dues':
+                            pay = [o for o in real if o['k'] == 'pay' and not o.get('disabled')]
+                            soft = [o for o in real if o['k'] in ('sellbag', 'split', 'beg') and not o.get('disabled') and not o.get('deadly')]
+                            if pay: k = pay[0]['k']
+                            elif soft: k = soft[0]['k']
+                            else: k = ([o for o in real if not o['deadly']] or real)[0]['k']
+                        elif kind == 'pawn':
+                            red = [o for o in real if o['k'] == 'redeem' and not o.get('disabled')]
+                            if st.get('life', 99) <= 8 and red: k = red[0]['k']
+                            else: k = ([o for o in real if o['k'] == 'leave'] or [o for o in real if not o['deadly']] or real)[0]['k']
                         elif rel: k = rel[0]['k']
                         else:
                             safe = [o for o in real if not o['mem'] and not o['danger']] or real

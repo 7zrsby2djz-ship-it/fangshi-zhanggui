@@ -116,7 +116,7 @@ function traffic() {
   for (const r of relics()) t += (effOf(r).passive || {}).traffic || 0;
   return t + (S.flags._traffic || 0);
 }
-function income() { return Math.round(46 + 10 * traffic() + (S.upg.includes('cart') ? 25 : 0) + (S.upg.includes('coldbox') ? 8 : 0)); }
+function income() { return Math.round(58 + 12 * traffic() + (S.upg.includes('cart') ? 25 : 0) + (S.upg.includes('coldbox') ? 8 : 0) + (S.upg.includes('sign') ? 10 : 0)); }
 function protectMult(deathId) {
   let m = 1;
   for (const f of gearFx()) if (f.protect && f.protect[deathId] != null) m *= f.protect[deathId];
@@ -294,6 +294,9 @@ function monthCard() {
   }
   const card = { kind: 'month', key: 'month' + st, title: m.frost ? `結霜・第${CN[m.frost]}天` : `${m.name}`, where: m.frost ? '六月' : `第 ${st} 個月`, scene: m.frost ? 'frost' : 'shop', paras, opts: [{ k: 'go', label: '開門' }] };
   if (notes.length) card.paras.push(P(notes.join('\n'), 'ledger'));
+  if (m.dues && S.stones + S.dueDebt * 0 < m.dues + S.dueDebt && BK.remember['dues:pawnpay']) {
+    card.paras.push(P('你記得規費單。這個月最好先把錢留著，庫房裡能賣的也能應急。', 'small'));
+  }
   if (S.lifespan <= 0) card.forceDeath = 'pawn_due';
   return card;
 }
@@ -499,13 +502,52 @@ function upgradeCard() {
   opts.push({ k: 'no', label: C.upgrade.leave });
   return { kind: 'upgrade', key: 'upgrade', title: C.upgrade.title, where: '許家店', scene: 'shop', paras: [P(C.upgrade.text + `\n現在每個月大約進帳 ${income()} 靈石。`)], opts };
 }
+
+function bagLiquidateValue() {
+  let v = 0, lots = [];
+  for (const p of (S.pending || [])) { v += Math.max(0, Math.round((p.val || 0) * 0.85)); lots.push({ kind: 'pending', p, val: Math.max(0, Math.round((p.val || 0) * 0.85)) }); }
+  for (const [id, q] of Object.entries(S.items || {})) {
+    const it = IT[id] || {};
+    if (!q || it.key || it.eff) continue; // 遺物與關鍵物不抵規費
+    const unit = Math.round(((it.base || 20) * 0.7));
+    const val = unit * q;
+    if (val > 0) { v += val; lots.push({ kind: 'item', id, q, val }); }
+  }
+  return { v, lots };
+}
+function liquidateFor(need) {
+  const { lots } = bagLiquidateValue();
+  lots.sort((a, b) => b.val - a.val);
+  let got = 0, notes = [];
+  for (const L of lots) {
+    if (got >= need) break;
+    if (L.kind === 'pending') {
+      S.pending = S.pending.filter(x => x !== L.p);
+      if (L.p.item && S.items[L.p.item]) take(L.p.item, L.p.qty);
+      got += L.val; notes.push(`「${L.p.label}」趕著賣掉，換 ${L.val} 靈石`);
+    } else {
+      take(L.id, L.q); got += L.val; notes.push(`庫房「${nm(L.id)}」×${L.q} 抵 ${L.val} 靈石`);
+    }
+  }
+  return { got, notes };
+}
 function duesCard(n0) {
-  const n = Math.round(n0 + S.dueDebt * 1.3), dd = C.dues;
+  const n = Math.round(n0 + S.dueDebt * 1.15), dd = C.dues;
   const card = { kind: 'dues', key: 'dues', title: dd.title, where: '許家店', scene: 'shop', paras: [P(dd.text.replace('{n}', n))], opts: [], n };
   card.opts.push({ k: 'pay', label: dd.pay.replace('{n}', n), disabled: S.stones < n, why: '錢不夠' });
   if (!S.dueDebt) card.opts.push({ k: 'beg', label: dd.beg, desc: '下次多收三成' });
   else if (!S.flags._duesBeg2) card.opts.push({ k: 'beg2', label: '再求一次，下個月一定繳', desc: '下次收雙倍，最後一次', slack: true });
   if (S.stones < n) {
+    const bag = bagLiquidateValue();
+    if (bag.v > 0) {
+      const need = n - S.stones;
+      const cover = Math.min(bag.v, need);
+      card.opts.push({ k: 'sellbag', label: cover >= need ? '把庫房趕著賣掉，湊規費' : `把能賣的先賣掉（約 ${cover} 靈石）`, desc: cover >= need ? `庫房約值 ${bag.v} 靈石，夠繳` : `還差 ${need - cover}，之後再想辦法`, safeMoney: true });
+    }
+    if (!S.flags._duesSplit) {
+      const half = Math.ceil(n / 2);
+      card.opts.push({ k: 'split', label: `先繳一半（${half}），其餘下月`, desc: '一次機會，下月照原額加一半，不再翻倍', disabled: S.stones < half, why: '連一半都湊不出來', safeMoney: true });
+    }
     const needMore = n - S.stones;
     const months = Math.max(1, Math.ceil(needMore / C.pawn.gain));
     const gain = months * C.pawn.gain;
@@ -513,7 +555,7 @@ function duesCard(n0) {
     if (x.deadly) x.danger = '剩下的日子，不夠走到結霜了。';
     if (BK.remember['dues:pawnpay']) x.remember = (DEATHS.pawn_due || {}).seal || '收當';
     card.opts.push(x);
-    if (months > 2) card.opts.push({ k: 'seal', label: '……', deadly: true, desc: dd.cant.replace('{n}', n) });
+    if (months > 2 || (x.deadly && bag.v + S.stones < n)) card.opts.push({ k: 'seal', label: '……', deadly: true, desc: dd.cant.replace('{n}', n) });
   }
   return card;
 }
@@ -521,14 +563,18 @@ function pawnCard() {
   const need = FROST0 - S.stage, left = S.lifespan, pw = C.pawn;
   const margin = left - need;
   // 還夠撐：少出現。只剩一個月：半數出現。已經不夠：一定出現。
-  if (margin > 1 && R('pawn' + S.stage) > 0.22) return null;
-  if (margin === 1 && R('pawn' + S.stage) > 0.5) return null;
+  if (margin > 2 && R('pawn' + S.stage) > 0.18) return null;
+  if (margin === 2 && R('pawn' + S.stage) > 0.4) return null;
+  if (margin === 1 && R('pawn' + S.stage) > 0.55) return null;
   const card = { kind: 'pawn', key: 'pawn', title: pw.title, where: '許家店門口', scene: 'pawn', paras: [P(pw.text.replace('{left}', left).replace('{need}', need))], opts: [] };
-  card.opts.push({ k: 'redeem', label: pw.redeem.replace('{cost}', pw.cost), disabled: S.stones < pw.cost, why: '錢不夠' });
+  const rx = { k: 'redeem', label: pw.redeem.replace('{cost}', pw.cost), disabled: S.stones < pw.cost, why: '錢不夠' };
+  if (margin <= 1 && !rx.disabled) rx.desc = '還來得及。把這個月贖回來。';
+  card.opts.push(rx);
   const sx = { k: 'sell', label: pw.sell.replace('{gain}', pw.gain), deadly: margin <= 1 };
   if (margin <= 1) sx.danger = '剩下的日子，不夠走到結霜了。';
   card.opts.push(sx);
-  card.opts.push({ k: 'leave', label: pw.leave, deadly: margin <= 0, danger: margin <= 0 ? '帳會自己走。' : null });
+  // 壽命已經不夠時，不給「再說吧」當無痛脫身：改成明確會死
+  card.opts.push({ k: 'leave', label: pw.leave, deadly: margin <= 0, danger: margin <= 0 ? '帳會自己走。' : (margin === 1 ? '只剩一個月緩衝了。' : null) });
   return card;
 }
 function raidCard(spec) {
@@ -664,6 +710,34 @@ function resolve(c, o) {
       if (o.k === 'pay') { S.stones -= c.n; S.dueDebt = 0; r.text = '他把錢點了兩次，在單子上蓋了一個章。'; r.notes.push(`靈石 －${c.n}`); }
       else if (o.k === 'beg') { S.dueDebt = c.n; r.text = C.dues.begText; }
       else if (o.k === 'beg2') { S.flags._duesBeg2 = true; S.dueDebt = c.n * 2; r.text = '他看了你很久，在單子上又畫一個圈：「最後一次。下次，雙倍。」'; r.notes.push('規費欠著，下次收雙倍'); }
+      else if (o.k === 'split') {
+        const half = Math.ceil(c.n / 2);
+        S.stones -= half; S.flags._duesSplit = true; S.dueDebt = c.n - half + Math.ceil(c.n / 2);
+        r.text = '他在單子上拆成兩截：「一半今天，一半下個月。下個月我照這張加一半收，不再翻倍。就這一次。」';
+        r.notes.push(`靈石 －${half}`, `下月還欠 ${S.dueDebt}`);
+      }
+      else if (o.k === 'sellbag') {
+        const need = Math.max(0, c.n - S.stones);
+        const { got, notes } = liquidateFor(need);
+        S.stones += got; r.notes.push(...notes);
+        if (S.stones >= c.n) {
+          S.stones -= c.n; S.dueDebt = 0;
+          r.text = '你把能賣的東西趕著出清，湊齊了規費。管理處的人點完錢，看了看空了一截的貨架，沒有多說。';
+          r.notes.push(`靈石 －${c.n}`);
+        } else {
+          const still = c.n - S.stones;
+          if (S.flags._duesSoldStage === S.stage) {
+            r.text = `能賣的都賣了，還差 ${still}。管理處的人搖頭：「傍晚封店。」`;
+            r.notes.push(`還差 ${still}`);
+            r.death = { id: 'shop_sealed' };
+          } else {
+            S.flags._duesSoldStage = S.stage;
+            r.text = `趕著賣掉一些，還差 ${still} 靈石。管理處的人把單子放回口袋：「我傍晚再來。到時候還湊不出來，就封了。」`;
+            r.notes.push(`還差 ${still}`);
+            r.next.push({ t: 'dues', n: c.n });
+          }
+        }
+      }
       else if (o.k === 'pawnpay') {
         const months = o.months || 1, gain = o.gain || C.pawn.gain;
         S.lifespan -= months; S.stones += gain - c.n; S.dueDebt = 0;
@@ -741,8 +815,20 @@ function restoreMonth(back) {
   if (n > 0) { list = list.slice(0, -n); store(CKPT, list); }
   const ck = JSON.parse(JSON.stringify(list[list.length - 1]));
   const tries = (S.tries || 0) + 1, dr = S.deathsThisRun, dlog = S._deathLog || [];
+  const lastDead = dlog[dlog.length - 1];
+  const moneyDead = lastDead === 'pawn_due' || lastDead === 'shop_sealed';
   S = ck; S.tries = tries; S.deathsThisRun = dr; S._deathLog = dlog; S.rolls = 0; S.phase = 'play'; S.dead = null; S.card = null;
   S.deja = true;
+  // 錢／壽命連死後重來：清掉規費雪球，並給一點救急（每局一次）
+  if (moneyDead) {
+    S.dueDebt = 0;
+    S.flags._duesBeg2 = false;
+    if (!S.flags._mercyCash) {
+      S.flags._mercyCash = true;
+      S.stones += 60;
+      S._mercyNote = '抽屜裡多出六十靈石，像有人趁你不在時塞進來的。單子上的欠費圈也被擦淡了。';
+    }
+  }
   next();
 }
 function finish() {
@@ -799,7 +885,7 @@ function paraHtml(p) {
 function cardHtml(c) {
   const meta = [c.time != null && `${hhmm(c.time)}・${period(c.time)}`, c.where, c.who && `${c.who}${c.role ? `・${c.role}` : ''}`].filter(Boolean).join('・');
   let h = `<article class="card ${c.kind}"><div class="meta"><span>${esc(meta)}</span><button class="read" data-act="read">朗讀</button></div><h2>${esc(c.title)}</h2>`;
-  if (S.deja && c.kind === 'month') { h += `<p class="deja">似曾相識。你記得這個月是怎麼開始的，也記得上一次是在哪裡出的事。</p>`; S.deja = false; }
+  if (S.deja && c.kind === 'month') { h += `<p class="deja">似曾相識。你記得這個月是怎麼開始的，也記得上一次是在哪裡出的事。</p>`; S.deja = false; if (S._mercyNote) { h += `<p class="deja">${esc(S._mercyNote)}</p>`; S._mercyNote = null; } }
   h += c.paras.map(paraHtml).join('');
   const realOpts = c.opts.filter(o => !(c.res && o.info));
   let li = 0;
